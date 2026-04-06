@@ -1,0 +1,33 @@
+name: E2E Smoke Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Make script executable
+        run: chmod +x scripts/e2e-test.sh
+
+      - name: Run E2E test (default target)
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+        run: |
+          # Fallback if repo variable not set
+          if [ -z "$BASE_URL" ]; then
+            BASE_URL="https://app.teosegypt.com"
+          fi
+          echo "Running against: $BASE_URL"
+          BASE_URL="$BASE_URL" ./scripts/e2e-test.sh
