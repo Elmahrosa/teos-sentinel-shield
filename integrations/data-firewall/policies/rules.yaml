@@ -1,0 +1,41 @@
+# Safe Ingestion Engine — Domain Policy Rules
+# Evaluated by PolicyEngine before every fetch.
+# Takes precedence over robots.txt check.
+
+domains:
+  # Block paywalled sites entirely
+  - domain: "wsj.com"
+    allow: false
+    reason: "paywalled content"
+
+  - domain: "ft.com"
+    allow: false
+    reason: "paywalled content"
+
+  # Allow with crawl controls
+  - domain: "wikipedia.org"
+    allow: true
+    crawl_budget: 500
+    delay_seconds: 1
+    max_concurrent: 2
+
+  - domain: "github.com"
+    allow: true
+    crawl_budget: 200
+    delay_seconds: 2
+    max_concurrent: 1
+
+  - domain: "arxiv.org"
+    allow: true
+    crawl_budget: 1000
+    delay_seconds: 1
+    max_concurrent: 2
+
+  - domain: "docs.python.org"
+    allow: true
+    crawl_budget: 2000
+    delay_seconds: 0.5
+    max_concurrent: 2
+
+# Default for unlisted domains — robots.txt always enforced
+default: allow

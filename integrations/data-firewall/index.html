@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Safe Ingestion Engine — Compliance-First Web Data Infrastructure</title>
+<meta name="description" content="Compliance-first web data ingestion infrastructure for AI systems. SSRF protection, PII scrubbing, robots.txt enforcement, audit logging, and asynchronous processing." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b10;--bg2:#0d1117;--bg3:#111720;--card:#131920;
+  --border:#1e2630;--border2:#243040;
+  --text:#d8e0ea;--muted:#8899aa;--muted2:#aabbc8;
+  --green:#0aff6e;--white:#f0f4f8;
+  --font-d:'Syne',sans-serif;--font-m:'DM Mono',monospace;--font-b:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:16px;line-height:1.6;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:62px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,11,16,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--font-m);font-size:12px;letter-spacing:2px;color:var(--green);text-transform:uppercase;text-decoration:none}
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{font-family:var(--font-m);font-size:11px;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:.2s}
+.nav-links a:hover{color:var(--green)}
+.nav-cta{background:var(--green);color:#000!important;padding:7px 16px;border-radius:6px;font-weight:500;transition:.2s!important}
+.nav-cta:hover{background:#fff!important}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(ellipse at center,rgba(10,255,110,.06) 0%,transparent 70%);pointer-events:none}
+.eyebrow-sm{font-family:var(--font-m);font-size:11px;letter-spacing:4px;color:var(--green);text-transform:uppercase;margin-bottom:22px;opacity:0;animation:fadeUp .8s .1s forwards}
+h1{font-family:var(--font-d);font-size:clamp(40px,7vw,84px);font-weight:800;line-height:1.05;color:var(--white);margin-bottom:14px;opacity:0;animation:fadeUp .8s .2s forwards}
+h1 span{color:var(--green)}
+.hero-sub{font-size:17px;color:var(--muted2);max-width:720px;margin:0 auto 36px;line-height:1.75;opacity:0;animation:fadeUp .8s .35s forwards}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .5s forwards}
+.btn-p{background:var(--green);color:#000;padding:13px 30px;border:none;border-radius:8px;font-family:var(--font-m);font-size:12px;font-weight:500;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+.btn-p:hover{background:#fff;transform:translateY(-1px)}
+.btn-s{background:transparent;color:var(--muted2);padding:13px 30px;border:1px solid var(--border2);border-radius:8px;font-family:var(--font-m);font-size:12px;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+.btn-s:hover{border-color:var(--green);color:var(--green)}
+
+.stats-bar{display:flex;justify-content:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.stat{flex:1;max-width:220px;padding:22px 16px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-v{font-family:var(--font-m);font-size:24px;font-weight:500;color:var(--white);line-height:1}
+.stat-l{font-family:var(--font-m);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:5px}
+
+.sec{padding:88px 24px;max-width:1100px;margin:0 auto}
+.ey{font-family:var(--font-m);font-size:10px;letter-spacing:4px;color:var(--green);text-transform:uppercase;margin-bottom:12px}
+.st{font-family:var(--font-d);font-size:clamp(26px,4vw,46px);font-weight:700;color:var(--white);margin-bottom:14px;line-height:1.2}
+.sd{font-size:15px;color:var(--muted2);max-width:700px;line-height:1.8;margin-bottom:44px}
+
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.feat{background:var(--card);padding:30px 26px;transition:.2s}
+.feat:hover{background:var(--bg3)}
+.feat-ico{font-size:20px;margin-bottom:14px}
+.feat-t{font-family:var(--font-d);font-size:16px;font-weight:600;color:var(--white);margin-bottom:8px}
+.feat-d{font-size:13px;color:var(--muted2);line-height:1.7}
+
+.code-wrap{background:#060a0f;border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin:24px 0}
+.code-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.dots{display:flex;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.code-lbl{font-family:var(--font-m);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.copy-btn{font-family:var(--font-m);font-size:10px;letter-spacing:1px;color:var(--muted);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;transition:.15s}
+.copy-btn:hover{color:var(--green);border-color:var(--green)}
+pre{padding:20px 18px;overflow-x:auto;font-family:var(--font-m);font-size:12px;line-height:1.85;color:#8899aa}
+.tg{color:var(--green)} .ta{color:#ffb347} .tw{color:var(--white)} .tm{color:#445566}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 40px 30px;text-align:center}
+.f-logo{font-family:var(--font-m);font-size:12px;letter-spacing:3px;color:var(--green);text-transform:uppercase;margin-bottom:14px}
+.f-links{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-bottom:22px}
+.f-links a{font-family:var(--font-m);font-size:11px;letter-spacing:1px;color:var(--muted);text-decoration:none;transition:.15s}
+.f-links a:hover{color:var(--green)}
+.f-copy{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:1px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+@media(max-width:700px){
+  nav{padding:0 16px}
+  .nav-links a:not(.nav-cta){display:none}
+  .stats-bar{flex-wrap:wrap}
+  .stat{min-width:50%;border-right:none;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#top" class="nav-logo">// Safe Ingestion Engine</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#example">Example</a>
+    <a href="mailto:ayman@teosegypt.com" class="nav-cta">Request Access →</a>
+  </div>
+</nav>
+
+<div class="hero" id="top">
+  <div class="eyebrow-sm">// Compliance-First Web Data Infrastructure for AI Systems</div>
+  <h1>Ingest the web.<br><span>Safely.</span></h1>
+  <p class="hero-sub">SSRF protection, PII scrubbing, robots.txt enforcement, audit logging, and asynchronous processing — built into the ingestion layer by design.</p>
+  <div class="hero-btns">
+    <a href="mailto:ayman@teosegypt.com?subject=Safe%20Ingestion%20Engine%20Inquiry" class="btn-p">Request Access →</a>
+    <a href="#features" class="btn-s">See How It Works →</a>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-v">SSRF</div><div class="stat-l">Protected</div></div>
+  <div class="stat"><div class="stat-v">PII</div><div class="stat-l">Scrubbed</div></div>
+  <div class="stat"><div class="stat-v">robots.txt</div><div class="stat-l">Enforced</div></div>
+  <div class="stat"><div class="stat-v">Audit</div><div class="stat-l">Ready</div></div>
+</div>
+
+<div class="sec" id="features">
+  <div class="ey">// Capabilities</div>
+  <div class="st">Built for compliance from day one.</div>
+  <p class="sd">Safe Ingestion Engine is designed for AI pipelines, RAG systems, and data-sensitive applications that require auditable, policy-aware web ingestion.</p>
+
+  <div class="feat-grid">
+    <div class="feat"><div class="feat-ico">🛡</div><div class="feat-t">SSRF Protection</div><div class="feat-d">Private IPs, loopback ranges, and metadata endpoints are blocked before outbound requests are made.</div></div>
+    <div class="feat"><div class="feat-ico">🧼</div><div class="feat-t">PII Scrubbing</div><div class="feat-d">Sensitive identifiers are redacted or hashed before content is returned or stored.</div></div>
+    <div class="feat"><div class="feat-ico">📜</div><div class="feat-t">robots.txt Enforcement</div><div class="feat-d">Policy checks are applied before fetch, not after, helping prevent non-compliant ingestion.</div></div>
+    <div class="feat"><div class="feat-ico">⚙️</div><div class="feat-t">Policy Engine</div><div class="feat-d">Domain rules, crawl limits, and safety controls are handled declaratively.</div></div>
+    <div class="feat"><div class="feat-ico">⚡</div><div class="feat-t">Async Pipeline</div><div class="feat-d">FastAPI, Redis, and Celery power asynchronous ingestion and job processing.</div></div>
+    <div class="feat"><div class="feat-ico">🧾</div><div class="feat-t">Audit Logging</div><div class="feat-d">Every request can be traced through a structured ingestion and policy trail.</div></div>
+  </div>
+</div>
+
+<div class="sec" id="architecture">
+  <div class="ey">// Architecture</div>
+  <div class="st">Governance enforced at the pipeline layer.</div>
+
+  <div class="code-wrap">
+    <div class="code-hdr">
+      <div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div>
+      <div class="code-lbl">Pipeline</div>
+    </div>
+    <pre>Client → API → Policy Engine → Safe Fetch → PII Scrubber → Audit Log → Output</pre>
+  </div>
+</div>
+
+<div class="sec" id="example">
+  <div class="ey">// Example</div>
+  <div class="st">Simple API flow.</div>
+
+  <div class="code-wrap">
+    <div class="code-hdr">
+      <div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div>
+      <div class="code-lbl">Quick Start</div>
+      <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+    </div>
+    <pre id="qscode"><span class="tm"># Submit ingestion job</span>
+<span class="tg">curl</span> <span class="tw">-X POST https://your-host/v1/ingest_async</span> \
+  <span class="ta">-H</span> <span class="tw">"X-API-Key: your-key"</span> \
+  <span class="ta">-H</span> <span class="tw">"Content-Type: application/json"</span> \
+  <span class="ta">-d</span> <span class="tw">'{"url":"https://example.com"}'</span>
+
+<span class="tm"># Poll result</span>
+<span class="tg">curl</span> <span class="tw">https://your-host/v1/jobs/abc123</span> \
+  <span class="ta">-H</span> <span class="tw">"X-API-Key: your-key"</span></pre>
+  </div>
+</div>
+
+<footer>
+  <div class="f-logo">Safe Ingestion Engine</div>
+  <div class="f-links">
+    <a href="#features">Features</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#example">Example</a>
+    <a href="https://github.com/Elmahrosa/safe-ingestion-engine" target="_blank">GitHub</a>
+    <a href="mailto:ayman@teosegypt.com">Contact</a>
+  </div>
+  <div class="f-copy">Built by Elmahrosa International · Cairo, Egypt</div>
+</footer>
+
+<script>
+function copyCode(btn) {
+  navigator.clipboard.writeText(document.getElementById('qscode').innerText).then(() => {
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
