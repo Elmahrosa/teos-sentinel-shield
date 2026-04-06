@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # 1. The Core Scanning Engine (MCP)
+  core-engine:
+    build: ./integrations/core-engine
+    ports: ["3001:3001"]
+    env_file: .env
+    restart: always
+
+  # 2. The Data Protection Layer (FastAPI)
+  data-firewall:
+    build: ./integrations/data-firewall
+    ports: ["8000:8000"]
+    env_file: .env
+    restart: always
+
+  # 3. The Telegram Gateway (Controller)
+  gateway-bot:
+    build: ./integrations/gateway-bot
+    env_file: .env
+    depends_on:
+      - core-engine
+    restart: always
+
+  # 4. Enterprise Dashboard (Next.js)
+  dashboard:
+    build: ./dashboard
+    ports: ["3000:3000"]
+    env_file: .env
+    restart: always
