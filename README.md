@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # teos-sentinel-shield
 (The Sovereign AI Defense Infrastructure)
 # 🛡️ TEOS Sentinel Shield
