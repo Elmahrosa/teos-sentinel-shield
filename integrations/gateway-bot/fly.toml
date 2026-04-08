@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for teos-gateway-bot on 2026-04-08T11:51:54Z
+# fly.toml app configuration file generated for teos-gateway-bot on 2026-04-08T15:27:53Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'teos-gateway-bot'
-primary_region = 'iad'
+primary_region = 'cdg'
 
 [build]
 
