@@ -5,14 +5,16 @@ import dotenv from 'dotenv';
 import { Telegraf } from 'telegraf';
 import axios from 'axios';
 
-// Import routes
-import healthRoutes from './routes/health.js';
-import activationRoutes from './routes/activation.js';
+// Import routes (Removed .js extensions for compatibility)
+import healthRoutes from './routes/health';
+import activationRoutes from './routes/activation';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// Use the key from your .env file
 const BOT_TOKEN = process.env.GATEWAY_BOT_TOKEN;
 const BOT_SECRET = process.env.BOT_SHARED_SECRET;
 
@@ -48,6 +50,7 @@ if (BOT_TOKEN) {
       
       ctx.reply(`✅ تم التفعيل!\nرخصتك: ${response.data.licenseKey}`);
     } catch (error) {
+      console.error('Bot Verification Error:', error.response?.data || error.message);
       ctx.reply('❌ فشل التفعيل');
     }
   });
