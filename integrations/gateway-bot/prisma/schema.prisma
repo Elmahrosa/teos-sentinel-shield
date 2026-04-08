@@ -22,7 +22,7 @@ model License {
   activationId   String     @unique
   telegramUserId String
   tier           String
-  licenseKey     String     @unique @default(cuid())
+  licenseKey     String     @unique
   status         String     @default("activated")
   createdAt      DateTime   @default(now())
   activation     Activation @relation(fields: [activationId], references: [id])
