@@ -3,13 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // Updated for Neon Cloud
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Activation {
   id             String    @id @default(cuid())
-  txHash         String
+  txHash         String    @unique
   telegramUserId String
   network        String
   status         String
@@ -18,10 +18,11 @@ model Activation {
 }
 
 model License {
-  id             String     @id
-  activationId   String
-  telegramUserId String     // Added for faster lookups
+  id             String     @id @default(cuid())
+  activationId   String     @unique
+  telegramUserId String
   tier           String
+  licenseKey     String     @unique @default(cuid())
   status         String     @default("activated")
   createdAt      DateTime   @default(now())
   activation     Activation @relation(fields: [activationId], references: [id])
@@ -30,7 +31,7 @@ model License {
 model ShieldedUrl {
   id        String   @id @default(cuid())
   url       String
-  userId    String   // Telegram User ID
+  userId    String
   createdAt DateTime @default(now())
 
   @@index([userId])
