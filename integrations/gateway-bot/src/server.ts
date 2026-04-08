@@ -1,13 +1,13 @@
 ﻿import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import { Telegraf } from 'telegraf';
 import axios from 'axios';
 
-// Import routes (Removed .js extensions for compatibility)
-import healthRoutes from './routes/health';
-import activationRoutes from './routes/activation';
+// Import routes (Mandatory .js extensions for NodeNext compatibility)
+import healthRoutes from './routes/health.js';
+import activationRoutes from './routes/activation.js';
 
 dotenv.config();
 
@@ -50,7 +50,9 @@ if (BOT_TOKEN) {
       
       ctx.reply(`✅ تم التفعيل!\nرخصتك: ${response.data.licenseKey}`);
     } catch (error) {
-      console.error('Bot Verification Error:', error.response?.data || error.message);
+      // Cast error as any to bypass "unknown" type safety for response/message
+      const err = error as any;
+      console.error('Bot Verification Error:', err.response?.data || err.message || err);
       ctx.reply('❌ فشل التفعيل');
     }
   });

@@ -1,4 +1,3 @@
-cat <<EOT > src/routes/activation.ts
 import { Router, Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import { PrismaClient } from '@prisma/client';
@@ -22,7 +21,6 @@ router.post('/verify', async (req: Request, res: Response) => {
     });
 
     if (existingActivation) {
-      // Find the associated license
       const license = await prisma.license.findFirst({
         where: { activationId: existingActivation.id }
       });
@@ -35,10 +33,10 @@ router.post('/verify', async (req: Request, res: Response) => {
     }
 
     // 3. Generate Sovereign License Key
-    const licenseKey = \`TEOS-\${tier.substring(0, 3).toUpperCase()}-\${nanoid(8).toUpperCase()}\`;
+    const licenseKey = `TEOS-${tier.substring(0, 3).toUpperCase()}-${nanoid(8).toUpperCase()}`;
 
     // 4. Atomic Transaction: Save Activation and License
-    const result = await prisma.\$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const activation = await tx.activation.create({
         data: {
           txHash,
@@ -59,7 +57,7 @@ router.post('/verify', async (req: Request, res: Response) => {
       return license;
     });
 
-    console.log(\`[DB] New License Secured: \${result.id} for User \${telegramUserId}\`);
+    console.log(`[DB] New License Secured: ${result.id} for User ${telegramUserId}`);
 
     res.json({
       ok: true,
@@ -75,4 +73,3 @@ router.post('/verify', async (req: Request, res: Response) => {
 });
 
 export default router;
-EOT
