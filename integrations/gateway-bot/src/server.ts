@@ -67,7 +67,7 @@ app.post("/activation/verify", async (req, res) => {
   }
 });
 
-// ─── Helper ───────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────
 const WALLET = env.TREASURY_WALLET;
 
 const tierInfo: Record<string, { price: string; sol: number; desc: string }> = {
@@ -76,8 +76,22 @@ const tierInfo: Record<string, { price: string; sol: number; desc: string }> = {
   sovereign:{ price: "75+ SOL",  sol: 75,   desc: "نشر خاص + كود المصدر" },
 };
 
-// Store user tier selection in memory
 const userTierSession: Record<string, string> = {};
+
+// ─── Tier Limits ──────────────────────────────────────────────
+const TIER_DAILY_SCANS: Record<string, number> = {
+  free: 3,
+  pioneer: 50,
+  builder: 500,
+  sovereign: Infinity,
+};
+
+const TIER_MONTHLY_SHIELDS: Record<string, number> = {
+  free: 5,
+  pioneer: 500,
+  builder: Infinity,
+  sovereign: Infinity,
+};
 
 // ─── /start ───────────────────────────────────────────────────
 bot.start(async (ctx) => {
@@ -124,7 +138,7 @@ bot.command("help", (ctx) => {
     `▸ /start — الصفحة الرئيسية\n` +
     `▸ /plans — عرض الباقات والأسعار\n` +
     `▸ /pay — كيفية الدفع وتفعيل الرخصة\n` +
-    `▸ /scan [رابط] — فحص رابط (5 مجاناً)\n` +
+    `▸ /scan [رابط] — فحص رابط\n` +
     `▸ /shield [رابط] — حماية رابط\n` +
     `▸ /list — روابطك المحمية\n` +
     `▸ /status — حالة رخصتك\n` +
@@ -141,15 +155,18 @@ bot.command("plans", (ctx) => {
   ctx.reply(
     `💰 *باقات TEOS السيادية:*\n\n` +
     `💎 *Pioneer — 1.5 SOL*\n` +
-    `• روابط محمية غير محدودة\n` +
+    `• 50 فحص/يوم\n` +
+    `• 500 رابط محمي/شهر\n` +
     `• دعم فني أولوية\n` +
     `• API أساسي\n\n` +
     `🚀 *Builder — 12 SOL*\n` +
-    `• كل مميزات Pioneer\n` +
+    `• 500 فحص/يوم\n` +
+    `• روابط محمية غير محدودة\n` +
     `• API كامل للمؤسسات\n` +
     `• لوحة تحكم خاصة\n` +
     `• تقارير أمنية شهرية\n\n` +
     `👑 *Sovereign — 75+ SOL*\n` +
+    `• فحوصات وروابط غير محدودة\n` +
     `• نشر خاص على سيرفرك\n` +
     `• كود المصدر الكامل\n` +
     `• إعداد احترافي مخصص\n` +
@@ -210,12 +227,15 @@ bot.command("status", async (ctx) => {
         { parse_mode: "Markdown" }
       );
     } else {
-      const freeCount = await prisma.shieldedUrl.count({ where: { userId } });
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayScans = await prisma.shieldedUrl.count({ where: { userId, createdAt: { gte: todayStart } } });
       ctx.reply(
         `📊 *حالة حسابك:*\n\n` +
         `⚠️ *الباقة:* مجاني\n` +
-        `🔗 *الروابط المستخدمة:* ${freeCount}/5\n\n` +
-        `ترقّ الآن للحصول على روابط غير محدودة!\n_/plans للاطلاع على الباقات_`,
+        `🔍 *الفحوصات اليوم:* ${todayScans}/${TIER_DAILY_SCANS.free}\n` +
+        `🔗 *الروابط المستخدمة:* ${urlCount}/${TIER_MONTHLY_SHIELDS.free}\n\n` +
+        `ترقّ الآن للحصول على حدود أعلى!\n_/plans للاطلاع على الباقات_`,
         { parse_mode: "Markdown" }
       );
     }
@@ -230,10 +250,18 @@ bot.command("balance", async (ctx) => {
   const license = await prisma.license.findFirst({ where: { telegramUserId: userId } });
   const urlCount = await prisma.shieldedUrl.count({ where: { userId } });
 
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayScans = await prisma.shieldedUrl.count({ where: { userId, createdAt: { gte: todayStart } } });
+  const userTier = license?.tier || "free";
+  const dailyLimit = TIER_DAILY_SCANS[userTier] ?? 3;
+  const remaining = Math.max(0, dailyLimit - todayScans);
+
   if (license) {
     ctx.reply(
       `💰 *رصيدك:*\n\n` +
-      `✅ باقة ${license.tier.toUpperCase()} — روابط غير محدودة\n` +
+      `✅ باقة ${license.tier.toUpperCase()}\n` +
+      `🔍 فحوصات متبقية اليوم: *${remaining}/${dailyLimit}*\n` +
       `🔗 روابط محمية: ${urlCount}`,
       { parse_mode: "Markdown" }
     );
@@ -241,7 +269,8 @@ bot.command("balance", async (ctx) => {
     ctx.reply(
       `💰 *رصيدك:*\n\n` +
       `🆓 المستوى المجاني\n` +
-      `🔗 الفحوصات المتبقية: ${Math.max(0, 5 - urlCount)}/5\n\n` +
+      `🔍 فحوصات متبقية اليوم: *${remaining}/${TIER_DAILY_SCANS.free}*\n` +
+      `🔗 الروابط المتبقية: ${Math.max(0, TIER_MONTHLY_SHIELDS.free - urlCount)}/${TIER_MONTHLY_SHIELDS.free}\n\n` +
       `_/plans للترقية_`,
       { parse_mode: "Markdown" }
     );
@@ -322,35 +351,47 @@ bot.command("activate", async (ctx) => {
 // ─── /scan ────────────────────────────────────────────────────
 bot.command("scan", async (ctx) => {
   const parts = ctx.message.text.split(" ");
-  if (parts.length < 2) {
-    return ctx.reply("⚠️ مثال: /scan example.com");
-  }
+  if (parts.length < 2) return ctx.reply("⚠️ مثال: /scan example.com");
 
   const url = parts[1].trim();
   const userId = ctx.from.id.toString();
   const license = await prisma.license.findFirst({ where: { telegramUserId: userId } });
-  const scanCount = await prisma.shieldedUrl.count({ where: { userId } });
+  const userTier = license?.tier || "free";
 
-  if (!license && scanCount >= 5) {
-    return ctx.reply(
-      `⚠️ *وصلت للحد المجاني (5/5)*\n\n` +
-      `للحصول على فحوصات غير محدودة، رقّ إلى Pioneer\n` +
-      `_/plans للاطلاع على الباقات_`,
-      { parse_mode: "Markdown" }
-    );
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayScans = await prisma.shieldedUrl.count({
+    where: { userId, createdAt: { gte: todayStart } }
+  });
+
+  const dailyLimit = TIER_DAILY_SCANS[userTier] ?? 3;
+  const remaining = dailyLimit - todayScans;
+
+  if (remaining <= 0) {
+    const upgradeMsg = userTier === "free"
+      ? `⛔ *وصلت للحد اليومي (${dailyLimit}/يوم)*\n\nرقّ إلى Pioneer للحصول على 50 فحص/يوم\n/plans`
+      : userTier === "pioneer"
+      ? `⛔ *وصلت للحد اليومي (${dailyLimit}/يوم)*\n\nرقّ إلى Builder للحصول على 500 فحص/يوم\n/plans`
+      : `⛔ وصلت للحد اليومي`;
+    return ctx.reply(upgradeMsg, { parse_mode: "Markdown" });
   }
 
-  await ctx.reply(`🔍 *جاري فحص:* ${url}\n${license ? "✅ [غير محدود]" : `[مجاني ${scanCount + 1}/5]`}`, { parse_mode: "Markdown" });
+  await ctx.reply(
+    `🔍 *جاري فحص:* ${url}\n` +
+    `📊 الفحوصات المتبقية اليوم: *${remaining - 1}/${dailyLimit}*`,
+    { parse_mode: "Markdown" }
+  );
 
-  // Save scan record
   await prisma.shieldedUrl.create({ data: { url, userId } });
 
-  // Simulate scan result (replace with real scan engine when ready)
   setTimeout(() => {
+    const upgradeReminder = remaining - 1 <= 1 && userTier !== "sovereign"
+      ? `\n\n⚠️ *${remaining - 1} فحص متبقي اليوم* — /plans للترقية`
+      : "";
     ctx.reply(
       `✅ *فحص مكتمل:* ${url}\n\n` +
       `🟢 لا توجد تهديدات مكتشفة\n` +
-      `🔒 الرابط آمن للاستخدام`,
+      `🔒 الرابط آمن للاستخدام` + upgradeReminder,
       { parse_mode: "Markdown" }
     );
   }, 1500);
@@ -364,13 +405,15 @@ bot.command("shield", async (ctx) => {
   const url = parts[1].trim();
   const userId = ctx.from.id.toString();
   const license = await prisma.license.findFirst({ where: { telegramUserId: userId } });
+  const userTier = license?.tier || "free";
   const urlCount = await prisma.shieldedUrl.count({ where: { userId } });
+  const monthlyLimit = TIER_MONTHLY_SHIELDS[userTier] ?? 5;
 
-  if (!license && urlCount >= 5) {
-    return ctx.reply(
-      `⚠️ *وصلت للحد المجاني (5/5)*\n\nرقّ إلى Pioneer للحماية غير المحدودة\n_/plans_`,
-      { parse_mode: "Markdown" }
-    );
+  if (monthlyLimit !== Infinity && urlCount >= monthlyLimit) {
+    const upgradeMsg = userTier === "free"
+      ? `⚠️ *وصلت للحد المجاني (${monthlyLimit} روابط)*\n\nرقّ إلى Pioneer للحصول على 500 رابط/شهر\n/plans`
+      : `⚠️ *وصلت للحد الشهري (${monthlyLimit} روابط)*\n\nرقّ إلى Builder للحماية غير المحدودة\n/plans`;
+    return ctx.reply(upgradeMsg, { parse_mode: "Markdown" });
   }
 
   await prisma.shieldedUrl.create({ data: { url, userId } });
@@ -396,8 +439,8 @@ bot.on("callback_query", async (ctx) => {
   if (data === "free_trial") {
     ctx.reply(
       `🆓 *المستوى المجاني:*\n\n` +
-      `• 5 فحوصات روابط مجانية\n` +
-      `• 5 روابط محمية\n\n` +
+      `• ${TIER_DAILY_SCANS.free} فحوصات/يوم\n` +
+      `• ${TIER_MONTHLY_SHIELDS.free} روابط محمية\n\n` +
       `استخدم /scan [رابط] للبدء الآن!`,
       { parse_mode: "Markdown" }
     );
@@ -409,7 +452,6 @@ bot.on("callback_query", async (ctx) => {
     const info = tierInfo[tier];
     const userId = (ctx.callbackQuery as any).from.id.toString();
 
-    // Save tier selection
     userTierSession[userId] = tier;
 
     ctx.reply(
@@ -433,9 +475,7 @@ bot.on("text", async (ctx) => {
 
   // Solana tx hashes are base58, 87-88 chars
   if (text.length < 60 || text.length > 100) {
-    return ctx.reply(
-      `❓ لم أفهم رسالتك.\n\nاستخدم /help لعرض الأوامر المتاحة.`
-    );
+    return ctx.reply(`❓ لم أفهم رسالتك.\n\nاستخدم /help لعرض الأوامر المتاحة.`);
   }
 
   const userId = ctx.from.id.toString();
