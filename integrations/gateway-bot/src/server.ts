@@ -11,7 +11,6 @@ const app = express();
 const prisma = new PrismaClient();
 const bot = new Telegraf(env.GATEWAY_BOT_TOKEN);
 
-// ─── Middleware ───────────────────────────────────────────────
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
@@ -21,7 +20,7 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", node: "Alexandria", ts: new Date().toISOString() });
 });
 
-// ─── Activation Route (single, Solana-verified) ───────────────
+// ─── Activation Route ─────────────────────────────────────────
 app.post("/activation/verify", async (req, res) => {
   try {
     const { txHash, telegramUserId, tier = "pioneer" } = req.body;
@@ -30,11 +29,9 @@ app.post("/activation/verify", async (req, res) => {
     if (incomingSecret !== env.BOT_SHARED_SECRET) {
       return res.status(403).json({ ok: false, error: "Unauthorized gateway" });
     }
-
     if (!txHash || !telegramUserId) {
       return res.status(400).json({ ok: false, error: "txHash and telegramUserId required" });
     }
-
     if (!Object.keys(tierPrices).includes(tier)) {
       return res.status(400).json({ ok: false, error: "Invalid tier" });
     }
@@ -42,23 +39,12 @@ app.post("/activation/verify", async (req, res) => {
     // Replay attack protection
     const existing = await prisma.activation.findUnique({ where: { txHash } });
     if (existing) {
-      const license = await prisma.license.findUnique({
-        where: { activationId: existing.id },
-      });
-      return res.json({
-        ok: true,
-        licenseKey: license?.licenseKey,
-        status: "already_active",
-        note: "Existing license retrieved",
-      });
+      const license = await prisma.license.findUnique({ where: { activationId: existing.id } });
+      return res.json({ ok: true, licenseKey: license?.licenseKey, status: "already_active" });
     }
 
     // On-chain verification
-    const verification = await verifySolanaPayment({
-      txHash,
-      expectedTier: tier as Tier,
-    });
-
+    const verification = await verifySolanaPayment({ txHash, expectedTier: tier as Tier });
     if (!verification.ok) {
       return res.status(400).json({ ok: false, error: verification.reason });
     }
@@ -68,36 +54,17 @@ app.post("/activation/verify", async (req, res) => {
 
     const result = await prisma.$transaction(async (tx) => {
       const activation = await tx.activation.create({
-        data: {
-          txHash,
-          telegramUserId: telegramUserId.toString(),
-          network: "solana",
-          status: "completed",
-        },
+        data: { txHash, telegramUserId: telegramUserId.toString(), network: "solana", status: "completed" },
       });
-
       const license = await tx.license.create({
-        data: {
-          activationId: activation.id,
-          telegramUserId: telegramUserId.toString(),
-          tier,
-          licenseKey,
-          status: "activated",
-        },
+        data: { activationId: activation.id, telegramUserId: telegramUserId.toString(), tier, licenseKey, status: "activated" },
       });
-
       return license;
     });
 
     console.log(`[LICENSE] ${result.licenseKey} → user ${telegramUserId} (${tier})`);
+    return res.json({ ok: true, licenseKey: result.licenseKey, tier, status: "activated", activatedAt: new Date().toISOString() });
 
-    return res.json({
-      ok: true,
-      licenseKey: result.licenseKey,
-      tier,
-      status: "activated",
-      activatedAt: new Date().toISOString(),
-    });
   } catch (error) {
     console.error("[ACTIVATION ERROR]", error);
     return res.status(500).json({ ok: false, error: "Vault write failure" });
@@ -107,9 +74,7 @@ app.post("/activation/verify", async (req, res) => {
 // ─── Bot Commands ─────────────────────────────────────────────
 bot.start((ctx) => {
   ctx.reply(
-    "🛡️ مرحباً بك في بوابة المحروسة (TEOS)\n\n" +
-    "نظام تأمين الأصول الرقمية السيادي.\n" +
-    "اختر الباقة المناسبة للبدء:",
+    "🛡️ مرحباً بك في بوابة المحروسة (TEOS)\n\nاختر الباقة المناسبة للبدء:",
     {
       reply_markup: {
         inline_keyboard: [
@@ -146,9 +111,7 @@ bot.command("plans", (ctx) => {
 bot.command("status", async (ctx) => {
   const userId = ctx.from.id.toString();
   try {
-    const license = await prisma.license.findFirst({
-      where: { telegramUserId: userId },
-    });
+    const license = await prisma.license.findFirst({ where: { telegramUserId: userId } });
     const urlCount = await prisma.shieldedUrl.count({ where: { userId } });
     const statusLabel = license
       ? `✅ نشط — ${license.tier} (${license.licenseKey})`
@@ -161,17 +124,13 @@ bot.command("status", async (ctx) => {
 
 bot.command("shield", async (ctx) => {
   const parts = ctx.message.text.split(" ");
-  if (parts.length < 2) {
-    return ctx.reply("⚠️ مثال: /shield example.com");
-  }
+  if (parts.length < 2) return ctx.reply("⚠️ مثال: /shield example.com");
   const url = parts[1];
   const userId = ctx.from.id.toString();
   try {
     const license = await prisma.license.findFirst({ where: { telegramUserId: userId } });
     const urlCount = await prisma.shieldedUrl.count({ where: { userId } });
-    if (!license && urlCount >= 5) {
-      return ctx.reply("⚠️ وصلت للحد الأقصى (5/5). يرجى الترقية لـ Pioneer.");
-    }
+    if (!license && urlCount >= 5) return ctx.reply("⚠️ وصلت للحد الأقصى (5/5). يرجى الترقية لـ Pioneer.");
     await prisma.shieldedUrl.create({ data: { url, userId } });
     ctx.reply(`✅ تم التأمين: ${url}`);
   } catch {
@@ -187,16 +146,11 @@ bot.command("list", async (ctx) => {
   ctx.reply(`🔗 روابطك المؤمنة:\n\n${list}`);
 });
 
-// Tier selection callback
 bot.on("callback_query", async (ctx) => {
   const data = (ctx.callbackQuery as any).data as string;
   if (data.startsWith("tier:")) {
     const tier = data.replace("tier:", "");
-    const prices: Record<string, string> = {
-      pioneer: "1.5 SOL",
-      builder: "12 SOL",
-      sovereign: "75+ SOL",
-    };
+    const prices: Record<string, string> = { pioneer: "1.5 SOL", builder: "12 SOL", sovereign: "75+ SOL" };
     await ctx.answerCbQuery();
     ctx.reply(
       `اخترت باقة ${tier.toUpperCase()} — ${prices[tier]}\n\n` +
@@ -207,12 +161,10 @@ bot.on("callback_query", async (ctx) => {
   }
 });
 
-// Text handler — only processes tx hashes (64 chars), ignores everything else
+// Only process strings that look like Solana tx hashes (87-88 chars base58)
 bot.on("text", async (ctx) => {
   const text = ctx.message.text.trim();
   if (text.startsWith("/")) return;
-
-  // Solana tx hashes are base58, 87-88 chars
   if (text.length < 60 || text.length > 100) {
     return ctx.reply("❓ أرسل Transaction Hash أو استخدم /help لعرض الأوامر.");
   }
@@ -220,28 +172,15 @@ bot.on("text", async (ctx) => {
   await ctx.reply("⏳ جاري التحقق من الدفع على البلوكشين...");
 
   try {
-    // Auto-detect tier from active session — default pioneer
     const response = await fetch(`http://localhost:${env.PORT}/activation/verify`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-bot-secret": env.BOT_SHARED_SECRET,
-      },
-      body: JSON.stringify({
-        txHash: text,
-        telegramUserId: ctx.from.id.toString(),
-        tier: "pioneer",
-      }),
+      headers: { "Content-Type": "application/json", "x-bot-secret": env.BOT_SHARED_SECRET },
+      body: JSON.stringify({ txHash: text, telegramUserId: ctx.from.id.toString(), tier: "pioneer" }),
     });
-
     const data = await response.json() as any;
-
     if (data.ok) {
       ctx.reply(
-        `✅ تم التفعيل بنجاح!\n\n` +
-        `رخصتك: \`${data.licenseKey}\`\n` +
-        `الباقة: ${data.tier}\n\n` +
-        `احتفظ برخصتك في مكان آمن.`,
+        `✅ تم التفعيل بنجاح!\n\nرخصتك: \`${data.licenseKey}\`\nالباقة: ${data.tier}\n\nاحتفظ برخصتك في مكان آمن.`,
         { parse_mode: "Markdown" }
       );
     } else {
@@ -266,14 +205,9 @@ async function main() {
 
   app.listen(env.PORT, () => {
     console.log(`[SERVER] Running on http://localhost:${env.PORT}`);
-    console.log(`[SERVER] Health: GET /health`);
-    console.log(`[SERVER] Activate: POST /activation/verify`);
   });
 }
 
-main().catch((err) => {
-  console.error("[FATAL]", err);
-  process.exit(1);
-});
+main().catch((err) => { console.error("[FATAL]", err); process.exit(1); });
 
 export default app;
