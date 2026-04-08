@@ -23,7 +23,6 @@ This repository acts as the **Control Plane** for our 4 core private engines:
 
 ---
 *CEO & Founder: Ayman Seif | Alexandria, Egypt*
-=======
 # 🛡️ TEOS Sentinel Shield
 **Sovereign AI Security Infrastructure | Alexandria, Egypt**
 
@@ -36,4 +35,3 @@ TEOS Sentinel is a unified defense suite designed to secure AI Agents and LLM da
 
 ---
 *CEO & Founder: Ayman Seif*
->>>>>>> b5250c4 (feat: Initial Elmahrosa Sovereign Shield Hub)

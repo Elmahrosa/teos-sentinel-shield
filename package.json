@@ -8,11 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
+    "@solana/web3.js": "latest",
     "framer-motion": "latest",
     "lucide-react": "latest",
-    "@solana/web3.js": "latest"
+    "next": "16.2.2",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   }
 }
