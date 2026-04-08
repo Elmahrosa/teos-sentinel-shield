@@ -1,53 +1,69 @@
-import express from 'express';
-import { env } from './config.js';
-// استيراد الـ Routes ككتل (Modules)
-import * as activationModule from './routes/activation.js';
-import * as healthModule from './routes/health.js';
+﻿import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
 import { Telegraf } from 'telegraf';
 import axios from 'axios';
 
+// Import routes
+import healthRoutes from './routes/health.js';
+import activationRoutes from './routes/activation.js';
+
+dotenv.config();
+
 const app = express();
+const PORT = process.env.PORT || 8080;
+const BOT_TOKEN = process.env.GATEWAY_BOT_TOKEN;
+const BOT_SECRET = process.env.BOT_SHARED_SECRET;
+
+// Middleware
+app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
-// وظيفة ذكية لاستخراج الـ Router الحقيقي من الـ Module
-const getRouter = (mod: any) => {
-  // جرب استخراج الـ router أو الـ default أو الموديل نفسه كدالة
-  return mod.router || mod.default || (typeof mod === 'function' ? mod : null);
-};
+// Mount routes
+app.use('/health', healthRoutes);
+app.use('/activation', activationRoutes);
 
-const activationRouter = getRouter(activationModule);
-const healthRouter = getRouter(healthModule);
+// Initialize Telegram Bot
+if (BOT_TOKEN) {
+  const bot = new Telegraf(BOT_TOKEN);
+  
+  bot.start((ctx) => {
+    ctx.reply('🛡️ بوابة المحروسة (TEOS) جاهزة للعمل من الإسكندرية.\n\nاختر باقتك للبدء:');
+  });
+  
+  bot.on('text', async (ctx) => {
+    const txHash = ctx.message.text;
+    if (txHash.length < 30) return;
+    
+    try {
+      const response = await axios.post(`http://localhost:${PORT}/activation/verify`, {
+        txHash,
+        telegramUserId: ctx.from.id.toString(),
+        network: 'solana'
+      }, {
+        headers: { 'x-bot-secret': BOT_SECRET }
+      });
+      
+      ctx.reply(`✅ تم التفعيل!\nرخصتك: ${response.data.licenseKey}`);
+    } catch (error) {
+      ctx.reply('❌ فشل التفعيل');
+    }
+  });
+  
+  bot.launch().then(() => {
+    console.log('🤖 TEOS Bot is Live & Connected!');
+  }).catch(err => {
+    console.error('Bot launch failed:', err.message);
+  });
+}
 
-if (healthRouter) app.use('/health', healthRouter);
-if (activationRouter) app.use('/activation', activationRouter);
-
-// إعداد البوت باستخدام التوكن من ملف الـ .env
-const bot = new Telegraf(process.env.GATEWAY_BOT_TOKEN || '');
-
-bot.start((ctx) => {
-  ctx.reply('🛡️ بوابة المحروسة (TEOS) جاهزة للعمل من الإسكندرية.');
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📊 Health: http://localhost:${PORT}/health`);
+  console.log(`🔗 Activation: POST http://localhost:${PORT}/activation/verify`);
 });
 
-bot.on('text', async (ctx) => {
-  const txHash = ctx.message.text;
-  if (txHash.length < 30) return;
-  try {
-    const response = await axios.post(`http://localhost:${env.PORT}/activation/verify`, {
-      txHash,
-      telegramUserId: ctx.from.id.toString(),
-      network: 'solana'
-    }, {
-      headers: { 'x-bot-secret': env.BOT_SHARED_SECRET }
-    });
-    ctx.reply('✅ تم التفعيل بنجاح!');
-  } catch (error) {
-    ctx.reply('❌ فشل في التفعيل.');
-  }
-});
-
-app.listen(env.PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${env.PORT}`);
-  if (process.env.GATEWAY_BOT_TOKEN) {
-    bot.launch().then(() => console.log('🤖 TEOS Bot is Live & Connected!'));
-  }
-});
+export default app;
