@@ -3,24 +3,35 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql" // Updated for Neon Cloud
   url      = env("DATABASE_URL")
 }
 
 model Activation {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   txHash         String
   telegramUserId String
   network        String
   status         String
-  createdAt      DateTime @default(now())
-  License        License[]
+  createdAt      DateTime  @default(now())
+  licenses       License[]
 }
 
 model License {
-  id           String     @id
-  activationId String
-  tier         String
-  createdAt    DateTime   @default(now())
-  activation   Activation @relation(fields: [activationId], references: [id])
+  id             String     @id
+  activationId   String
+  telegramUserId String     // Added for faster lookups
+  tier           String
+  status         String     @default("activated")
+  createdAt      DateTime   @default(now())
+  activation     Activation @relation(fields: [activationId], references: [id])
+}
+
+model ShieldedUrl {
+  id        String   @id @default(cuid())
+  url       String
+  userId    String   // Telegram User ID
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
