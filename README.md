@@ -1,6 +1,14 @@
+<div align="center">
+
 # 🛡️ TEOS Sentinel Shield
-### Sovereign AI Execution Firewall  
+### **Sovereign AI Execution Firewall**
 **Powered by Elmahrosa International | Alexandria, Egypt**
+
+[![Governed by ICBC](https://img.shields.io/badge/Governance-ICBC%20Constitution-blue)](https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution)
+[![License: TESL v2.0](https://img.shields.io/badge/License-TESL%20v2.0-red)](https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution)
+[![Fork Policy: Restricted](https://img.shields.io/badge/Forks-Restricted-orange)](https://github.com/Elmahrosa/Teos-Sentinel-Shield)
+
+</div>
 
 ---
 
