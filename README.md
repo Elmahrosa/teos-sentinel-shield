@@ -1,39 +1,148 @@
-# teos-sentinel-shield
-(The Sovereign AI Defense Infrastructure)
 # 🛡️ TEOS Sentinel Shield
-**Sovereign AI Defense Infrastructure | Powered by Elmahrosa International**
-
-TEOS Sentinel Shield is the official gateway to the Elmahrosa AI Security Ecosystem. It orchestrates our private backend engines to provide a secure, automated, and sovereign environment for AI Agents.
-
-## 🏗️ The Infrastructure Architecture
-This repository acts as the **Control Plane** for our 4 core private engines:
-1.  **Code Guard:** Real-time execution-time risk scanning.
-2.  **Data Shield:** Secure ingestion and sanitization.
-3.  **Linker Bot:** Biometric control & instant Telegram alerts.
-4.  **CI/CD Pipeline:** Automated enterprise-grade security flow.
-
-## 🚀 Key Features
-- **Zero-Trust Security:** Your code never leaves your sovereign environment.
-- **Automated Billing:** Pay via Solana (SOL/USDC) or Bank Transfer to get instant access.
-- **Enterprise Integration:** Deployable as a dedicated infrastructure for large teams.
-
-## 🛠️ Getting Started
-*This is the public gateway. To access the private modules and documentation, please visit our official bot:*
-[Launch TEOS Linker Bot](https://t.me/teoslinker_bot)
+### Sovereign AI Execution Firewall  
+**Powered by Elmahrosa International | Alexandria, Egypt**
 
 ---
-*CEO & Founder: Ayman Seif | Alexandria, Egypt*
-=======
-# 🛡️ TEOS Sentinel Shield
-**Sovereign AI Security Infrastructure | Alexandria, Egypt**
 
-TEOS Sentinel is a unified defense suite designed to secure AI Agents and LLM data ingestion. 
+## 🌍 Overview
 
-## 🏗️ Architecture
-- **Control Plane:** Next.js Dashboard (in /dashboard)
-- **Security Engines:** Private integrations (in /integrations)
-- **Automation:** GitHub Actions (in /.github/workflows)
+TEOS Sentinel Shield is a **Sovereign AI Defense Infrastructure** designed to protect autonomous systems by analyzing code **before execution**.
+
+It acts as an **AI execution firewall**, returning deterministic decisions:
+
+**ALLOW · WARN · BLOCK**
+
+This repository is the **public control plane** of the TEOS ecosystem, orchestrating private security engines and providing a secure gateway via Telegram and API.
 
 ---
-*CEO & Founder: Ayman Seif*
->>>>>>> b5250c4 (feat: Initial Elmahrosa Sovereign Shield Hub)
+
+## 🏛️ TEOS Sovereign Architecture
+
+```
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│  🏛️  TEOS SOVEREIGN AI SECURITY SUITE                                          │
+└───────────────┬───────────────────────────────┬───────────────────────────────┘
+│                               │
+▼                               ▼
+┌───────────────────────┐               ┌───────────────────────┐
+│  📜 Constitutional     │               │  🤖 Sovereign Control  │
+│  Governance           │               │  Hub                   │
+│  (Teos-Constitution)  │               │  (Private System)      │
+└───────────┬────────────┘               └───────────┬────────────┘
+│                                   │
+├───────────────────┬───────────────┤
+│                   │               │
+▼                   ▼               ▼
+┌───────────────────┐ ┌───────────────┐ ┌───────────────────┐
+│  🛡️ Sentinel      │ │  🤖 Linker Bot │ │  📋 Compliance     │
+│  Security Shield  │ │  Gateway       │ │  Orchestrator     │
+│  (AI Firewall)    │ │  (Telegram)    │ │  (Audit & Risk)   │
+└───────────┬─────────┘ └───────┬───────┘ └───────┬───────────┘
+│                 │                 │
+├─────────┬───────┴───────┬───────────┤
+│         │               │         │
+▼         ▼               ▼         ▼
+┌───────────────────┐ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│  🔍 Code Risk MCP │ │  🔒 Safe Data  │ │  👥 Data Mixer │ │  🕵️ Comply     │
+│  (Code Analysis)  │ │  Ingestion     │ │  (Privacy)     │ │  Crawler      │
+└───────────────────┘ └───────────────┘ └───────────────┘ └───────────────┘
+
+```
+
+---
+
+## 🔍 What This Means
+
+TEOS Sentinel Shield is **not a single tool**.
+
+It is a **multi-layer AI security system** designed to:
+
+- Prevent unsafe code execution
+- Protect data ingestion pipelines
+- Enforce compliance and auditability
+- Provide sovereign control over AI systems
+
+---
+
+## 🚀 Core Capabilities (Live)
+
+- 🛡 **Real-Time Code Risk Analysis**  
+  Detect dangerous code before execution (ALLOW / WARN / BLOCK)
+
+- 📦 **Dependency Vulnerability Scanning**  
+  Identify insecure packages and supply-chain risks
+
+- 🤖 **Telegram Command Gateway**  
+  Simple user access via bot interface
+
+- ⚙️ **CI/CD Integration Ready**  
+  Enforce security inside developer workflows
+
+- 💳 **Usage-Based Monetization**  
+  Pay-as-you-go and tiered plans (crypto-ready)
+
+---
+
+## 💰 Pricing Model
+
+- **Free** — 5 scans  
+- **Pay-as-you-go** — $0.49 per request  
+- **Starter** — $9 → 50 scans  
+- **Builder** — $49 → 500 scans  
+- **Pro** — $99 → 1,000 scans + dependency scanning  
+- **Sovereign** — Custom enterprise deployment  
+
+---
+
+## 🛠️ Access the System
+
+👉 Launch via Telegram:  
+https://t.me/teoslinker_bot
+
+---
+
+## 🧠 Design Principles
+
+- **Zero-Trust Security**  
+- **Deterministic Risk Decisions**  
+- **Sovereign Infrastructure Ownership**  
+- **Modular & Upgradeable Architecture**  
+
+---
+
+## 🏗️ Deployment Model
+
+This repository acts as:
+
+- 🌐 **Frontend / Control Plane**
+- 🔗 **Integration Hub**
+- 🧭 **User Entry Point**
+
+All core engines remain **private and secure**.
+
+---
+
+## 🏛️ Governance
+
+Built under the **TEOS Sovereign Framework**, aligned with:
+
+- Constitutional AI governance
+- Compliance-first architecture
+- National and enterprise deployment readiness
+
+---
+
+## 👤 Founder
+
+**Ayman Seif**  
+Founder — Elmahrosa International  
+Alexandria, Egypt  
+
+---
+
+## ⚡ Final Note
+
+> TEOS Sentinel Shield is the foundation of a sovereign AI security ecosystem.  
+> Built for developers, enterprises, and governments who need control, not trust.
+
