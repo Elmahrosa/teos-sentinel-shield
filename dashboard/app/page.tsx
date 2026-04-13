@@ -1,120 +1,1094 @@
-import { Shield, Lock, Cpu, MessageSquare, CheckCircle, ArrowRight, ShieldCheck } from "lucide-react";
+<!DOCTYPE html>
 
-export default function Home() {
-  const tiers = [
-    { 
-      name: "Starter", 
-      price: "1.5 SOL", 
-      features: ["Basic Agent Scanning", "Standard Logging", "Community Support"] 
-    },
-    { 
-      name: "Pro", 
-      price: "12 SOL", 
-      features: ["Full Engine Integration", "Private PII Redaction", "Priority 24/7 Support"], 
-      popular: true 
-    },
-    { 
-      name: "Sovereign", 
-      price: "From 75 SOL", 
-      features: ["Air-gapped Deployment", "Source Code Licensing", "White-glove Setup"] 
-    },
-  ];
+<html lang="en">
 
-  return (
-    <main className="min-h-screen bg-[#050505] text-white selection:bg-gold-500/30">
-      {/* Hero Section - Strong Value Positioning */}
-      <section className="mx-auto flex max-w-6xl flex-col items-center px-6 py-28 text-center">
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-gold-500/20 bg-gold-500/5 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gold-500">
-          <ShieldCheck className="w-3 h-3" /> Sovereign AI Security Infrastructure
-        </div>
+<head>
 
-        <h1 className="max-w-5xl text-6xl font-black tracking-tighter sm:text-8xl leading-[0.9] mb-6 uppercase">
-          Secure AI Agents. <br />
-          Protect LLM Pipelines. <br />
-          <span className="text-zinc-700">Deploy Sovereign Infra.</span>
-        </h1>
+<meta charset="UTF-8">
 
-        <p className="mt-4 max-w-2xl text-sm font-medium uppercase tracking-[0.15em] text-zinc-500">
-          Enterprise-ready • API-driven • Private infrastructure
-        </p>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <div className="mt-12 flex flex-col gap-4 sm:flex-row">
-          <a
-            href="https://t.me/teoslinker_bot?start=activate_access"
-            className="rounded-2xl bg-gold-500 px-10 py-5 font-black text-xs uppercase tracking-widest text-black transition-all hover:scale-105 hover:bg-gold-400 shadow-[0_0_30px_-5px_rgba(212,175,55,0.4)]"
-          >
-            Activate Secure Access
-          </a>
-          <a
-            href="https://github.com/Elmahrosa/teos-sentinel-shield"
-            className="rounded-2xl border border-white/10 px-10 py-5 font-black text-xs uppercase tracking-widest text-zinc-400 transition hover:bg-white/5"
-          >
-            View Repository
-          </a>
-        </div>
-      </section>
+<title>TEOS Sentinel — AI Execution Firewall</title>
 
-      {/* Target Audience Trust Signal */}
-      <section className="border-y border-white/5 bg-white/[0.01] py-12 text-center">
-        <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-zinc-500 font-bold text-sm md:text-lg uppercase tracking-tighter">
-          <span>AI Startups</span>
-          <span>LLM Platforms</span>
-          <span>Web3 Infrastructure</span>
-          <span>Government Systems</span>
-        </div>
-      </section>
+<meta name="description" content="Deterministic AI security. Analyze code before execution. ALLOW / WARN / BLOCK in real time. Built for AI agents, trading bots, and enterprise security.">
 
-      {/* Pricing Section - The Monetization Funnel */}
-      <section id="pricing" className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mb-16 text-center">
-          <h2 className="text-4xl font-black uppercase tracking-tighter">Licensing Tiers</h2>
-          <p className="mt-2 text-xs uppercase tracking-[0.2em] text-zinc-500">Hard Market Positioning • Managed via Elmahrosa Gateway</p>
-        </div>
+<meta property="og:title" content="TEOS Sentinel — AI Execution Firewall">
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {tiers.map((tier) => (
-            <div key={tier.name} className={`relative flex flex-col rounded-[2.5rem] bg-zinc-950 p-10 border ${tier.popular ? 'border-gold-500 shadow-[0_0_40px_-15px_rgba(212,175,55,0.3)]' : 'border-white/5'}`}>
-              {tier.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gold-500 px-4 py-1 text-[10px] font-black uppercase tracking-tighter text-black">
-                  Recommended
-                </div>
-              )}
-              <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500">{tier.name}</h3>
-              <div className="mt-4 text-4xl font-black tracking-tight">{tier.price}</div>
-              
-              {tier.popular && (
-                <p className="mt-3 text-[10px] text-zinc-500 uppercase tracking-widest">
-                  Limited onboarding slots available
-                </p>
-              )}
+<meta property="og:description" content="It blocks dangerous code BEFORE execution. 5 free scans.">
 
-              <ul className="mt-10 flex-grow space-y-4">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-400">
-                    <CheckCircle className="h-4 w-4 text-gold-500" /> {f}
-                  </li>
-                ))}
-              </ul>
+<meta property="og:type" content="website">
 
-              <a 
-                href={tier.name === 'Sovereign' 
-                  ? "mailto:ayman@teosegypt.com?subject=Sovereign Deployment Inquiry" 
-                  : `https://t.me/teoslinker_bot?start=plan_${tier.name.toLowerCase().replace(/\s+/g, '')}`
-                }
-                className={`mt-10 w-full rounded-2xl py-4 text-center text-[10px] font-black uppercase tracking-widest transition-all ${
-                  tier.popular ? 'bg-gold-500 text-black hover:bg-gold-400' : 'bg-white/5 text-white hover:bg-white/10'
-                }`}
-              >
-                {tier.name === 'Sovereign' ? 'Request Sovereign Deployment' : 'Activate Secure Access'}
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 
-      <footer className="mx-auto max-w-6xl px-6 py-20 text-center border-t border-white/5 text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-600">
-        © {new Date().getFullYear()} Elmahrosa International — TEOS • Alexandria, Egypt
-      </footer>
-    </main>
-  );
-}
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+
+  :root {
+
+    --black: #0a0a0a;
+
+    --white: #f5f3ee;
+
+    --accent: #e8ff00;
+
+    --red: #ff3b3b;
+
+    --orange: #ff7a00;
+
+    --green: #00ff88;
+
+    --muted: rgba(245,243,238,0.45);
+
+    --border: rgba(245,243,238,0.12);
+
+    --font-head: 'Syne', sans-serif;
+
+    --font-mono: 'Space Mono', monospace;
+
+  }
+
+
+
+  html { scroll-behavior: smooth; }
+
+
+
+  body {
+
+    background: var(--black);
+
+    color: var(--white);
+
+    font-family: var(--font-head);
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+  }
+
+
+
+  /* NAV */
+
+  nav {
+
+    display: flex; align-items: center; justify-content: space-between;
+
+    padding: 1.25rem 2rem;
+
+    border-bottom: 1px solid var(--border);
+
+    position: sticky; top: 0; z-index: 100;
+
+    background: rgba(10,10,10,0.92);
+
+    backdrop-filter: blur(12px);
+
+  }
+
+  .logo {
+
+    font-family: var(--font-mono);
+
+    font-size: 0.85rem;
+
+    letter-spacing: 0.12em;
+
+    color: var(--accent);
+
+    text-transform: uppercase;
+
+  }
+
+  nav a {
+
+    color: var(--muted);
+
+    text-decoration: none;
+
+    font-size: 0.82rem;
+
+    letter-spacing: 0.06em;
+
+    transition: color 0.2s;
+
+  }
+
+  nav a:hover { color: var(--white); }
+
+  .nav-links { display: flex; gap: 2rem; }
+
+  .nav-cta {
+
+    background: var(--accent);
+
+    color: var(--black) !important;
+
+    padding: 0.5rem 1.25rem;
+
+    border-radius: 2px;
+
+    font-weight: 700;
+
+    font-family: var(--font-mono);
+
+    font-size: 0.78rem;
+
+    letter-spacing: 0.08em;
+
+  }
+
+  .nav-cta:hover { background: #d4e800 !important; }
+
+
+
+  /* HERO */
+
+  .hero {
+
+    padding: 6rem 2rem 5rem;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+  }
+
+  .hero-tag {
+
+    display: inline-block;
+
+    font-family: var(--font-mono);
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0.18em;
+
+    text-transform: uppercase;
+
+    color: var(--accent);
+
+    border: 1px solid rgba(232,255,0,0.3);
+
+    padding: 0.35rem 0.85rem;
+
+    border-radius: 2px;
+
+    margin-bottom: 2rem;
+
+  }
+
+  h1 {
+
+    font-size: clamp(3rem, 8vw, 7rem);
+
+    font-weight: 800;
+
+    line-height: 0.95;
+
+    letter-spacing: -0.03em;
+
+    margin-bottom: 1.5rem;
+
+  }
+
+  h1 span { color: var(--accent); }
+
+  .hero-sub {
+
+    font-family: var(--font-mono);
+
+    font-size: 1rem;
+
+    color: var(--muted);
+
+    max-width: 540px;
+
+    line-height: 1.7;
+
+    margin-bottom: 2.5rem;
+
+  }
+
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+
+  .btn-primary {
+
+    display: inline-flex; align-items: center; gap: 0.5rem;
+
+    background: var(--accent);
+
+    color: var(--black);
+
+    font-family: var(--font-mono);
+
+    font-size: 0.85rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+
+    padding: 0.85rem 1.75rem;
+
+    border-radius: 2px;
+
+    text-decoration: none;
+
+    transition: transform 0.15s, background 0.15s;
+
+  }
+
+  .btn-primary:hover { background: #d4e800; transform: translateY(-1px); }
+
+  .btn-ghost {
+
+    display: inline-flex; align-items: center; gap: 0.5rem;
+
+    color: var(--white);
+
+    font-family: var(--font-mono);
+
+    font-size: 0.82rem;
+
+    letter-spacing: 0.06em;
+
+    padding: 0.85rem 1.5rem;
+
+    border: 1px solid var(--border);
+
+    border-radius: 2px;
+
+    text-decoration: none;
+
+    transition: border-color 0.2s, background 0.2s;
+
+  }
+
+  .btn-ghost:hover { border-color: rgba(245,243,238,0.35); background: rgba(245,243,238,0.05); }
+
+  .hero-note {
+
+    font-family: var(--font-mono);
+
+    font-size: 0.72rem;
+
+    color: var(--muted);
+
+    display: flex; align-items: center; gap: 0.5rem;
+
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+
+
+  /* VERDICT DEMO */
+
+  .verdict-strip {
+
+    border-top: 1px solid var(--border);
+
+    border-bottom: 1px solid var(--border);
+
+    padding: 2rem;
+
+    background: rgba(255,255,255,0.02);
+
+    overflow: hidden;
+
+  }
+
+  .verdict-scroll {
+
+    display: flex; gap: 3rem; animation: scrollLeft 18s linear infinite;
+
+    white-space: nowrap;
+
+  }
+
+  @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  .verdict-item {
+
+    display: inline-flex; align-items: center; gap: 0.75rem;
+
+    font-family: var(--font-mono); font-size: 0.8rem;
+
+  }
+
+  .verdict-badge {
+
+    padding: 0.25rem 0.6rem; border-radius: 2px; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.1em;
+
+  }
+
+  .v-allow { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+
+  .v-warn { background: rgba(255,122,0,0.15); color: var(--orange); border: 1px solid rgba(255,122,0,0.3); }
+
+  .v-block { background: rgba(255,59,59,0.15); color: var(--red); border: 1px solid rgba(255,59,59,0.3); }
+
+  .verdict-code { color: var(--muted); }
+
+
+
+  /* HOW IT WORKS */
+
+  .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+  .section-label {
+
+    font-family: var(--font-mono);
+
+    font-size: 0.72rem;
+
+    letter-spacing: 0.2em;
+
+    text-transform: uppercase;
+
+    color: var(--accent);
+
+    margin-bottom: 1rem;
+
+  }
+
+  h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1rem; }
+
+  h2 .dim { color: var(--muted); }
+
+
+
+  .flow-grid {
+
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+
+    border-radius: 4px; overflow: hidden; margin-top: 3rem;
+
+  }
+
+  .flow-step {
+
+    background: var(--black); padding: 2rem 1.5rem;
+
+    position: relative;
+
+  }
+
+  .flow-num {
+
+    font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted);
+
+    letter-spacing: 0.12em; margin-bottom: 1rem;
+
+  }
+
+  .flow-icon {
+
+    font-size: 1.5rem; margin-bottom: 0.75rem; display: block;
+
+  }
+
+  .flow-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+  .flow-desc { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+
+
+  /* TERMINAL */
+
+  .terminal-wrap { margin-top: 3rem; }
+
+  .terminal {
+
+    background: #111; border: 1px solid var(--border);
+
+    border-radius: 6px; overflow: hidden;
+
+    font-family: var(--font-mono); font-size: 0.82rem;
+
+  }
+
+  .terminal-bar {
+
+    background: #1a1a1a; padding: 0.6rem 1rem;
+
+    display: flex; align-items: center; gap: 0.5rem;
+
+    border-bottom: 1px solid var(--border);
+
+  }
+
+  .tb { width: 10px; height: 10px; border-radius: 50%; }
+
+  .tb-r { background: #ff5f57; } .tb-y { background: #febc2e; } .tb-g { background: #28c840; }
+
+  .terminal-title { font-size: 0.7rem; color: var(--muted); margin-left: 0.5rem; letter-spacing: 0.08em; }
+
+  .terminal-body { padding: 1.5rem; line-height: 2; }
+
+  .t-prompt { color: var(--accent); }
+
+  .t-cmd { color: var(--white); }
+
+  .t-comment { color: #555; }
+
+  .t-allow { color: var(--green); font-weight: 700; }
+
+  .t-warn { color: var(--orange); font-weight: 700; }
+
+  .t-block { color: var(--red); font-weight: 700; }
+
+  .t-muted { color: var(--muted); }
+
+  .t-score { color: #888; }
+
+
+
+  /* PRICING */
+
+  .pricing-section { padding: 5rem 2rem; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  .pricing-inner { max-width: 1100px; margin: 0 auto; }
+
+  .pricing-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+
+    border-radius: 4px; overflow: hidden; margin-top: 3rem;
+
+  }
+
+  .price-card {
+
+    background: var(--black); padding: 1.75rem 1.25rem;
+
+    display: flex; flex-direction: column; gap: 0.75rem;
+
+    position: relative; transition: background 0.2s;
+
+  }
+
+  .price-card:hover { background: #111; }
+
+  .price-card.featured {
+
+    background: rgba(232,255,0,0.04);
+
+    outline: 1px solid rgba(232,255,0,0.25);
+
+    outline-offset: -1px;
+
+  }
+
+  .price-tier {
+
+    font-family: var(--font-mono); font-size: 0.68rem;
+
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted);
+
+  }
+
+  .price-badge {
+
+    position: absolute; top: 0.75rem; right: 0.75rem;
+
+    background: var(--accent); color: var(--black);
+
+    font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
+
+    padding: 0.2rem 0.5rem; border-radius: 2px; letter-spacing: 0.08em;
+
+  }
+
+  .price-amount {
+
+    font-size: 1.75rem; font-weight: 800; line-height: 1;
+
+  }
+
+  .price-amount .unit { font-size: 0.85rem; font-weight: 400; color: var(--muted); }
+
+  .price-desc {
+
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); line-height: 1.5;
+
+  }
+
+  .price-cta {
+
+    margin-top: auto;
+
+    display: block; text-align: center;
+
+    font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
+
+    padding: 0.6rem; border-radius: 2px; text-decoration: none;
+
+    transition: all 0.15s;
+
+  }
+
+  .price-cta-ghost {
+
+    border: 1px solid var(--border); color: var(--white);
+
+  }
+
+  .price-cta-ghost:hover { border-color: rgba(245,243,238,0.3); background: rgba(255,255,255,0.04); }
+
+  .price-cta-accent {
+
+    background: var(--accent); color: var(--black);
+
+  }
+
+  .price-cta-accent:hover { background: #d4e800; }
+
+
+
+  /* SOCIAL PROOF */
+
+  .proof-row {
+
+    display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;
+
+    margin-top: 3rem; padding-top: 3rem;
+
+    border-top: 1px solid var(--border);
+
+  }
+
+  .proof-stat { text-align: center; }
+
+  .proof-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+
+  .proof-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
+
+
+
+  /* CONSTITUTION BANNER */
+
+  .constitution-banner {
+
+    margin: 0 2rem; border: 1px solid rgba(232,255,0,0.2);
+
+    background: rgba(232,255,0,0.03);
+
+    border-radius: 4px; padding: 2rem 2.5rem;
+
+    display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;
+
+  }
+
+  .const-icon { font-size: 2.5rem; flex-shrink: 0; }
+
+  .const-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+  .const-desc { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+
+
+
+  /* FOOTER */
+
+  footer {
+
+    border-top: 1px solid var(--border);
+
+    padding: 2rem;
+
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+
+    max-width: 1100px; margin: 0 auto;
+
+  }
+
+  .footer-logo { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.1em; }
+
+  .footer-links { display: flex; gap: 1.5rem; }
+
+  .footer-links a { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); text-decoration: none; }
+
+  .footer-links a:hover { color: var(--white); }
+
+
+
+  @media (max-width: 600px) {
+
+    .nav-links { display: none; }
+
+    .hero { padding: 3rem 1.25rem 3rem; }
+
+    .pricing-grid { grid-template-columns: 1fr 1fr; }
+
+    footer { flex-direction: column; }
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<nav>
+
+  <div class="logo">TEOS Sentinel</div>
+
+  <div class="nav-links">
+
+    <a href="#how">How it works</a>
+
+    <a href="#pricing">Pricing</a>
+
+    <a href="#governance">Governance</a>
+
+    <a href="https://t.me/your_bot" target="_blank">Telegram</a>
+
+  </div>
+
+  <a href="https://t.me/your_bot" class="nav-cta nav-links" target="_blank">Get 5 Free Scans →</a>
+
+</nav>
+
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="hero-tag">AI Execution Firewall · Deterministic Security</div>
+
+  <h1>
+
+    Block<br>
+
+    dangerous<br>
+
+    <span>code</span><br>
+
+    before it runs.
+
+  </h1>
+
+  <p class="hero-sub">
+
+    TEOS Sentinel intercepts AI agent actions before execution.<br>
+
+    ALLOW / WARN / BLOCK — deterministic. Milliseconds. No LLM guessing.
+
+  </p>
+
+  <div class="hero-actions">
+
+    <a href="https://t.me/your_bot" class="btn-primary" target="_blank">
+
+      Start Free on Telegram →
+
+    </a>
+
+    <a href="#how" class="btn-ghost">See how it works</a>
+
+  </div>
+
+  <p class="hero-note" style="margin-top:1.5rem;">
+
+    <span class="dot"></span>
+
+    5 free scans. No credit card. Live now.
+
+  </p>
+
+</section>
+
+
+
+<!-- VERDICT TICKER -->
+
+<div class="verdict-strip">
+
+  <div class="verdict-scroll">
+
+    <!-- first set -->
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">rm -rf /</span><span class="verdict-code">→ Destructive filesystem command</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">console.log("hello")</span><span class="verdict-code">→ Safe output op</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">fetch("api.internal/admin")</span><span class="verdict-code">→ Internal endpoint access</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">eval(atob(payload))</span><span class="verdict-code">→ Obfuscated eval detected</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">Math.sqrt(144)</span><span class="verdict-code">→ Pure computation</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">process.env.SECRET_KEY</span><span class="verdict-code">→ Credential access</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">DROP TABLE users;</span><span class="verdict-code">→ Destructive DB op</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">sudo chmod 777 /etc</span><span class="verdict-code">→ Privilege escalation</span></span>
+
+    <!-- duplicated for infinite scroll -->
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">rm -rf /</span><span class="verdict-code">→ Destructive filesystem command</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">console.log("hello")</span><span class="verdict-code">→ Safe output op</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">fetch("api.internal/admin")</span><span class="verdict-code">→ Internal endpoint access</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">eval(atob(payload))</span><span class="verdict-code">→ Obfuscated eval detected</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">Math.sqrt(144)</span><span class="verdict-code">→ Pure computation</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">process.env.SECRET_KEY</span><span class="verdict-code">→ Credential access</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">DROP TABLE users;</span><span class="verdict-code">→ Destructive DB op</span></span>
+
+    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">sudo chmod 777 /etc</span><span class="verdict-code">→ Privilege escalation</span></span>
+
+  </div>
+
+</div>
+
+
+
+<!-- HOW IT WORKS -->
+
+<section class="section" id="how">
+
+  <div class="section-label">// how it works</div>
+
+  <h2>Your AI agent<br><span class="dim">never fires blind again.</span></h2>
+
+
+
+  <div class="flow-grid">
+
+    <div class="flow-step">
+
+      <div class="flow-num">01 —</div>
+
+      <span class="flow-icon">⚡</span>
+
+      <div class="flow-title">Agent triggers action</div>
+
+      <div class="flow-desc">Your AI agent or script submits code or an on-chain instruction to TEOS before execution.</div>
+
+    </div>
+
+    <div class="flow-step">
+
+      <div class="flow-num">02 —</div>
+
+      <span class="flow-icon">🔬</span>
+
+      <div class="flow-title">Sentinel scans</div>
+
+      <div class="flow-desc">Rule-based engine scores the input across 40+ risk patterns. No LLM. Deterministic. Auditable.</div>
+
+    </div>
+
+    <div class="flow-step">
+
+      <div class="flow-num">03 —</div>
+
+      <span class="flow-icon">🛡</span>
+
+      <div class="flow-title">Verdict in ms</div>
+
+      <div class="flow-desc">ALLOW, WARN, or BLOCK returned with score, flags, and reasoning. Your agent acts accordingly.</div>
+
+    </div>
+
+    <div class="flow-step">
+
+      <div class="flow-num">04 —</div>
+
+      <span class="flow-icon">📡</span>
+
+      <div class="flow-title">You get alerted</div>
+
+      <div class="flow-desc">Instant Telegram notification with full scan report. Track everything from your dashboard.</div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="terminal-wrap" id="terminal-demo">
+
+    <div class="terminal">
+
+      <div class="terminal-bar">
+
+        <span class="tb tb-r"></span><span class="tb tb-y"></span><span class="tb tb-g"></span>
+
+        <span class="terminal-title">TEOS Sentinel · agent-code-risk-mcp · live demo</span>
+
+      </div>
+
+      <div class="terminal-body">
+
+        <div><span class="t-prompt">user → </span><span class="t-cmd">/scan eval("require('child_process').exec('rm -rf /')")</span></div>
+
+        <div class="t-comment">  # scanning...</div>
+
+        <div>&nbsp;</div>
+
+        <div><span class="t-muted">┌─ TEOS SENTINEL REPORT ─────────────────────┐</span></div>
+
+        <div><span class="t-muted">│</span> Verdict: <span class="t-block">🚫 BLOCK</span></div>
+
+        <div><span class="t-muted">│</span> Score:   <span class="t-score">1.0 / 1.0 (maximum risk)</span></div>
+
+        <div><span class="t-muted">│</span> Flags:   <span class="t-block">EVAL_EXECUTION · CHILD_PROCESS · DESTRUCTIVE_FS</span></div>
+
+        <div><span class="t-muted">│</span> Reason:  <span class="t-muted">Obfuscated shell injection via eval() detected</span></div>
+
+        <div><span class="t-muted">└────────────────────────────────────────────┘</span></div>
+
+        <div>&nbsp;</div>
+
+        <div><span class="t-prompt">user → </span><span class="t-cmd">/scan const x = Math.sqrt(price * quantity)</span></div>
+
+        <div class="t-comment">  # scanning...</div>
+
+        <div>&nbsp;</div>
+
+        <div><span class="t-muted">┌─ TEOS SENTINEL REPORT ─────────────────────┐</span></div>
+
+        <div><span class="t-muted">│</span> Verdict: <span class="t-allow">✅ ALLOW</span></div>
+
+        <div><span class="t-muted">│</span> Score:   <span class="t-score">0.0 / 1.0 (no risk detected)</span></div>
+
+        <div><span class="t-muted">│</span> Flags:   <span class="t-allow">NONE</span></div>
+
+        <div><span class="t-muted">│</span> Reason:  <span class="t-muted">Pure arithmetic computation. Safe to execute.</span></div>
+
+        <div><span class="t-muted">└────────────────────────────────────────────┘</span></div>
+
+        <div>&nbsp;</div>
+
+        <div><span class="t-prompt">user → </span><span class="t-cmd">/topup</span></div>
+
+        <div><span class="t-muted">  → Choose your tier:</span></div>
+
+        <div><span class="t-muted">  [1] Pay-as-you-go  $0.49/scan</span></div>
+
+        <div><span class="t-muted">  [2] Starter        $9 / 50 scans</span></div>
+
+        <div><span class="t-muted">  [3] Builder ⭐    $49 / 500 scans</span></div>
+
+        <div><span class="t-muted">  [4] Pro            $99 / 1000 scans + deps</span></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- PRICING -->
+
+<section class="pricing-section" id="pricing">
+
+  <div class="pricing-inner">
+
+    <div class="section-label">// pricing</div>
+
+    <h2>Start free.<br><span class="dim">Scale when it matters.</span></h2>
+
+
+
+    <div class="pricing-grid">
+
+      <div class="price-card">
+
+        <div class="price-tier">Free</div>
+
+        <div class="price-amount">$0</div>
+
+        <div class="price-desc">5 scans to experience the firewall firsthand.</div>
+
+        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Start free →</a>
+
+      </div>
+
+      <div class="price-card">
+
+        <div class="price-tier">Pay-as-you-go</div>
+
+        <div class="price-amount">$0.49<span class="unit"> /scan</span></div>
+
+        <div class="price-desc">No commitment. Top up when you need it.</div>
+
+        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Top up →</a>
+
+      </div>
+
+      <div class="price-card">
+
+        <div class="price-tier">Starter</div>
+
+        <div class="price-amount">$9<span class="unit"> /mo</span></div>
+
+        <div class="price-desc">50 scans. For active developers and hobbyists.</div>
+
+        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Get Starter →</a>
+
+      </div>
+
+      <div class="price-card featured">
+
+        <div class="price-badge">BEST VALUE</div>
+
+        <div class="price-tier">Builder</div>
+
+        <div class="price-amount">$49<span class="unit"> /mo</span></div>
+
+        <div class="price-desc">500 scans. API access. CI/CD integration. Most popular.</div>
+
+        <a href="https://t.me/your_bot" class="price-cta price-cta-accent" target="_blank">Get Builder →</a>
+
+      </div>
+
+      <div class="price-card">
+
+        <div class="price-tier">Pro</div>
+
+        <div class="price-amount">$99<span class="unit"> /mo</span></div>
+
+        <div class="price-desc">1,000 scans + dependency graph analysis.</div>
+
+        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Get Pro →</a>
+
+      </div>
+
+      <div class="price-card">
+
+        <div class="price-tier">Sovereign</div>
+
+        <div class="price-amount">$5K<span class="unit">+</span></div>
+
+        <div class="price-desc">Custom. Institutional DPI. National-scale AI governance.</div>
+
+        <a href="mailto:ayman@teosegypt.com" class="price-cta price-cta-ghost">Contact us →</a>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="proof-row">
+
+      <div class="proof-stat"><div class="proof-num">40+</div><div class="proof-label">Risk patterns</div></div>
+
+      <div class="proof-stat"><div class="proof-num">&lt;50ms</div><div class="proof-label">Verdict latency</div></div>
+
+      <div class="proof-stat"><div class="proof-num">100%</div><div class="proof-label">Deterministic — no AI guessing</div></div>
+
+      <div class="proof-stat"><div class="proof-num">3</div><div class="proof-label">Verdicts: ALLOW / WARN / BLOCK</div></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- GOVERNANCE ANCHOR -->
+
+<section class="section" id="governance" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <div class="constitution-banner">
+
+    <div class="const-icon">⚖️</div>
+
+    <div>
+
+      <div class="const-title">Anchored in the International Civic Blockchain Constitution</div>
+
+      <div class="const-desc">
+
+        TEOS Sentinel operates under the Teos-International-Civic-Blockchain-Constitution — a governance root that grants enterprise and institutional buyers the authority, legal clarity, and differentiation they need to deploy AI security at national scale. Not just a product. A standard.
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- FINAL CTA -->
+
+<section style="text-align:center; padding: 5rem 2rem; border-top: 1px solid var(--border);">
+
+  <div class="section-label" style="text-align:center; display:block;">// launch now</div>
+
+  <h2 style="margin-bottom:1rem;">Your AI agent<br>needs a firewall.</h2>
+
+  <p style="font-family:var(--font-mono); font-size:0.9rem; color:var(--muted); margin-bottom:2rem; max-width:440px; margin-left:auto; margin-right:auto; line-height:1.7;">
+
+    5 free scans. No card required. Live on Telegram now.<br>
+
+    Takes 30 seconds to start.
+
+  </p>
+
+  <a href="https://t.me/teoslinker_bot" class="btn-primary" style="font-size:1rem; padding:1rem 2.5rem;" target="_blank">
+
+    Open Telegram Bot →
+
+  </a>
+
+</section>
+
+
+
+<footer>
+
+  <div class="footer-logo">TEOS Sentinel · Elmahrosa International · Alexandria, Egypt</div>
+
+  <div class="footer-links">
+
+    <a href="https://github.com/Elmahrosa" target="_blank">GitHub</a>
+
+    <a href="https://t.me/Elmahrosapi" target="_blank">Telegram Community</a>
+
+    <a href="https://linkedin.com/in/aymanseif" target="_blank">LinkedIn</a>
+
+    <a href="mailto:ayman@teosegypt.com">Contact</a>
+
+  </div>
+
+</footer>
+
+
+
+</body>
+
+</html>
+
