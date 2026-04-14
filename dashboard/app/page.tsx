@@ -61,34 +61,96 @@ export default function HomePage() {
           box-shadow:var(--shadow);
           font-weight:800;
         }
-        .brand-text small{display:block; color:var(--gold2); letter-spacing:.12em; text-transform:uppercase; font-size:11px}
+        .brand-text small{
+          display:block;
+          color:var(--gold2);
+          letter-spacing:.12em;
+          text-transform:uppercase;
+          font-size:11px
+        }
         .brand-text strong{display:block; font-size:15px}
         .nav-links{display:flex; gap:20px; align-items:center}
         .nav-links a{text-decoration:none; color:var(--muted); font-size:14px}
         .nav-links a:hover{color:var(--text)}
         .btn{
-          display:inline-flex; align-items:center; justify-content:center; gap:10px;
-          padding:13px 18px; border-radius:14px; text-decoration:none; font-weight:700;
-          transition:.18s ease; border:1px solid transparent;
+          display:inline-flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+          padding:13px 18px;
+          border-radius:14px;
+          text-decoration:none;
+          font-weight:700;
+          transition:.18s ease;
+          border:1px solid transparent;
         }
         .btn:hover{transform:translateY(-1px)}
-        .btn-primary{background:linear-gradient(135deg, var(--gold), var(--gold2)); color:#1a1406; box-shadow:var(--shadow)}
-        .btn-secondary{border-color:var(--line); background:rgba(255,255,255,.03)}
+        .btn-primary{
+          background:linear-gradient(135deg, var(--gold), var(--gold2));
+          color:#1a1406;
+          box-shadow:var(--shadow)
+        }
+        .btn-secondary{
+          border-color:var(--line);
+          background:rgba(255,255,255,.03)
+        }
         .hero{padding:56px 0 34px}
-        .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:28px; align-items:center;}
+        .hero-grid{
+          display:grid;
+          grid-template-columns:1.15fr .85fr;
+          gap:28px;
+          align-items:center;
+        }
         .eyebrow{
-          display:inline-flex; align-items:center; gap:10px;
-          padding:10px 14px; border-radius:999px;
+          display:inline-flex;
+          align-items:center;
+          gap:10px;
+          padding:10px 14px;
+          border-radius:999px;
           border:1px solid rgba(231,182,76,.28);
           background:rgba(231,182,76,.08);
-          color:var(--gold2); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+          color:var(--gold2);
+          font-size:12px;
+          letter-spacing:.12em;
+          text-transform:uppercase;
         }
-        .pulse{width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 rgba(40,209,124,.7); animation:pulse 2s infinite}
-        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(40,209,124,.65)}70%{box-shadow:0 0 0 14px rgba(40,209,124,0)}100%{box-shadow:0 0 0 0 rgba(40,209,124,0)}}
-        h1{margin:18px 0 16px; line-height:.95; font-size:clamp(42px, 9vw, 82px); letter-spacing:-.04em;}
-        .lead{color:var(--soft); font-size:18px; line-height:1.7; max-width:760px; margin:0 0 26px;}
-        .hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px}
-        .micro{color:var(--muted); font-size:13px; line-height:1.7;}
+        .pulse{
+          width:9px;
+          height:9px;
+          border-radius:50%;
+          background:var(--green);
+          box-shadow:0 0 0 0 rgba(40,209,124,.7);
+          animation:pulse 2s infinite
+        }
+        @keyframes pulse{
+          0%{box-shadow:0 0 0 0 rgba(40,209,124,.65)}
+          70%{box-shadow:0 0 0 14px rgba(40,209,124,0)}
+          100%{box-shadow:0 0 0 0 rgba(40,209,124,0)}
+        }
+        h1{
+          margin:18px 0 16px;
+          line-height:.95;
+          font-size:clamp(42px, 9vw, 82px);
+          letter-spacing:-.04em;
+        }
+        .lead{
+          color:var(--soft);
+          font-size:18px;
+          line-height:1.7;
+          max-width:760px;
+          margin:0 0 26px;
+        }
+        .hero-actions{
+          display:flex;
+          gap:14px;
+          flex-wrap:wrap;
+          margin-bottom:18px
+        }
+        .micro{
+          color:var(--muted);
+          font-size:13px;
+          line-height:1.7;
+        }
         .panel{
           background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
           border:1px solid var(--line);
@@ -96,16 +158,37 @@ export default function HomePage() {
           box-shadow:var(--shadow);
         }
         .terminal{overflow:hidden}
-        .terminal-top{display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.03)}
+        .terminal-top{
+          display:flex;
+          align-items:center;
+          gap:8px;
+          padding:14px 16px;
+          border-bottom:1px solid var(--line);
+          background:rgba(255,255,255,.03)
+        }
         .dot{width:10px; height:10px; border-radius:50%}
-        .terminal-body{padding:20px 22px; font:14px/1.9 "Space Mono", monospace; color:#d7e3ff}
+        .terminal-body{
+          padding:20px 22px;
+          font:14px/1.9 "Space Mono", monospace;
+          color:#d7e3ff
+        }
         .allow{color:var(--green); font-weight:700}
         .warn{color:var(--orange); font-weight:700}
         .block{color:var(--red); font-weight:700}
         .section{padding:28px 0}
         .section-head{margin-bottom:20px}
-        .section-kicker{color:var(--gold2); font-size:12px; text-transform:uppercase; letter-spacing:.14em; margin-bottom:8px}
-        .section h2{margin:0; font-size:clamp(28px, 5vw, 50px); letter-spacing:-.03em}
+        .section-kicker{
+          color:var(--gold2);
+          font-size:12px;
+          text-transform:uppercase;
+          letter-spacing:.14em;
+          margin-bottom:8px
+        }
+        .section h2{
+          margin:0;
+          font-size:clamp(28px, 5vw, 50px);
+          letter-spacing:-.03em
+        }
         .section p{color:var(--soft); line-height:1.8}
         .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
         .grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
@@ -113,40 +196,90 @@ export default function HomePage() {
         .card h3{margin:0 0 8px; font-size:18px}
         .card p{margin:0; color:var(--muted); font-size:14px; line-height:1.8}
         .mini{
-          display:inline-block; margin-bottom:12px; padding:6px 10px; border-radius:999px;
-          background:rgba(126,182,255,.09); border:1px solid rgba(126,182,255,.22); color:var(--blue);
-          font-size:11px; text-transform:uppercase; letter-spacing:.12em;
+          display:inline-block;
+          margin-bottom:12px;
+          padding:6px 10px;
+          border-radius:999px;
+          background:rgba(126,182,255,.09);
+          border:1px solid rgba(126,182,255,.22);
+          color:var(--blue);
+          font-size:11px;
+          text-transform:uppercase;
+          letter-spacing:.12em;
         }
         .pricing .card{display:flex; flex-direction:column; min-height:280px}
-        .price{font-size:40px; font-weight:800; letter-spacing:-.03em; margin:8px 0}
-        .price small{font-size:15px; color:var(--muted); font-weight:600}
-        .list{padding:0; margin:14px 0 0; list-style:none}
-        .list li{padding:8px 0; border-top:1px solid rgba(255,255,255,.06); color:var(--soft); font-size:14px}
-        .featured{outline:1px solid rgba(231,182,76,.35); background:linear-gradient(180deg, rgba(231,182,76,.08), rgba(255,255,255,.03))}
+        .price{
+          font-size:40px;
+          font-weight:800;
+          letter-spacing:-.03em;
+          margin:8px 0
+        }
+        .price small{
+          font-size:15px;
+          color:var(--muted);
+          font-weight:600
+        }
+        .list{
+          padding:0;
+          margin:14px 0 0;
+          list-style:none
+        }
+        .list li{
+          padding:8px 0;
+          border-top:1px solid rgba(255,255,255,.06);
+          color:var(--soft);
+          font-size:14px
+        }
+        .featured{
+          outline:1px solid rgba(231,182,76,.35);
+          background:linear-gradient(180deg, rgba(231,182,76,.08), rgba(255,255,255,.03))
+        }
         .arch{display:grid; gap:14px}
-        .arch-row{display:grid; grid-template-columns:190px 1fr; gap:18px; align-items:start; padding:18px 20px;}
-        .arch-label{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold2)}
+        .arch-row{
+          display:grid;
+          grid-template-columns:190px 1fr;
+          gap:18px;
+          align-items:start;
+          padding:18px 20px;
+        }
+        .arch-label{
+          font-size:12px;
+          letter-spacing:.14em;
+          text-transform:uppercase;
+          color:var(--gold2)
+        }
         .arch-row strong{display:block; margin-bottom:4px; font-size:18px}
         .arch-row p{margin:0 0 10px; color:var(--muted)}
         .chips{display:flex; flex-wrap:wrap; gap:8px}
         .chip{
-          font:12px "Space Mono", monospace; padding:7px 10px; border-radius:999px;
-          border:1px solid var(--line); background:rgba(255,255,255,.03); color:#d7e3ff
+          font:12px "Space Mono", monospace;
+          padding:7px 10px;
+          border-radius:999px;
+          border:1px solid var(--line);
+          background:rgba(255,255,255,.03);
+          color:#d7e3ff
         }
         .note{
-          padding:18px 20px; border-left:3px solid var(--gold); background:rgba(231,182,76,.06);
-          color:var(--soft); border-radius:16px;
-        }
-        .steps{display:grid; gap:12px}
-        .step{display:grid; grid-template-columns:54px 1fr; gap:16px; padding:18px}
-        .num{
-          width:54px; height:54px; border-radius:16px; display:grid; place-items:center;
-          font:700 16px "Space Mono", monospace;
-          background:rgba(231,182,76,.08); border:1px solid rgba(231,182,76,.25); color:var(--gold2)
+          padding:18px 20px;
+          border-left:3px solid var(--gold);
+          background:rgba(231,182,76,.06);
+          color:var(--soft);
+          border-radius:16px;
         }
         .cta{padding:34px; text-align:center}
-        footer{padding:26px 0 40px; color:var(--muted); font-size:13px}
-        .foot{display:flex; justify-content:space-between; gap:16px; align-items:center; border-top:1px solid var(--line); padding-top:20px}
+        footer{
+          padding:26px 0 40px;
+          color:var(--muted);
+          font-size:13px
+        }
+        .foot{
+          display:flex;
+          justify-content:space-between;
+          gap:16px;
+          align-items:center;
+          border-top:1px solid var(--line);
+          padding-top:20px
+        }
         @media (max-width: 980px){
           .hero-grid,.grid-4,.grid-3{grid-template-columns:1fr}
           .arch-row{grid-template-columns:1fr}
@@ -180,8 +313,15 @@ export default function HomePage() {
             <a href="#how">How it works</a>
             <a href="#pricing">Pricing</a>
             <a href="#architecture">Architecture</a>
-            <a href="#deploy">Deploy</a>
-            <a className="btn btn-primary" href="https://t.me/teoslinker_bot?start=scan" target="_blank" rel="noopener noreferrer">Open Bot</a>
+            <a href="#ready">Ready</a>
+            <a
+              className="btn btn-primary"
+              href="https://t.me/teoslinker_bot?start=scan"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open Bot
+            </a>
           </nav>
         </div>
       </header>
@@ -190,45 +330,80 @@ export default function HomePage() {
         <section className="hero">
           <div className="wrap hero-grid">
             <div>
-              <div className="eyebrow mono"><span className="pulse"></span> Live now · local core tested · launch-ready page</div>
-              <h1>Sovereign AI<br/>Execution Firewall</h1>
+              <div className="eyebrow mono">
+                <span className="pulse"></span>
+                Live now · local core tested · launch-ready page
+              </div>
+              <h1>
+                Sovereign AI
+                <br />
+                Execution Firewall
+              </h1>
               <p className="lead">
                 Scan AI-generated code before it runs. TEOS Sentinel Shield gives deterministic
                 <strong> ALLOW / WARN / BLOCK</strong> decisions for agents, bots, and CI pipelines —
                 with a Telegram-first entry point and a sovereign architecture you can scale later.
               </p>
               <div className="hero-actions">
-                <a className="btn btn-primary" href="https://t.me/teoslinker_bot?start=scan" target="_blank" rel="noopener noreferrer">Start free scan</a>
-                <a className="btn btn-secondary" href="#pricing">See pricing</a>
+                <a
+                  className="btn btn-primary"
+                  href="https://t.me/teoslinker_bot?start=scan"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Start free scan
+                </a>
+                <a className="btn btn-secondary" href="#pricing">
+                  See pricing
+                </a>
               </div>
               <div className="micro mono">
-                Free tier: 5 scans · Pay-as-you-go: $0.49/scan · Target payment path: x402 on Base · Sovereign tier for B2B / government
+                Free tier: 5 scans · USDC-only paid activation · Sovereign onboarding available
               </div>
             </div>
 
             <div className="panel terminal">
               <div className="terminal-top">
-                <div className="dot" style={{background:"#ff6464"}}></div>
-                <div className="dot" style={{background:"#ffb84d"}}></div>
-                <div className="dot" style={{background:"#28d17c"}}></div>
-                <span className="mono" style={{marginLeft:8,color:"var(--muted)"}}>scan preview</span>
+                <div className="dot" style={{ background: "#ff6464" }}></div>
+                <div className="dot" style={{ background: "#ffb84d" }}></div>
+                <div className="dot" style={{ background: "#28d17c" }}></div>
+                <span className="mono" style={{ marginLeft: 8, color: "var(--muted)" }}>
+                  scan preview
+                </span>
               </div>
               <div className="terminal-body">
-                {"$ teos-scan incoming_agent_patch.py"}<br/>
-                {"> secret exposure: false"}<br/>
-                {"> shell destruction risk: true"}<br/>
-                {"> dependency chain risk: medium"}<br/>
-                {"> policy verdict: "}<span className="block">BLOCK</span><br/><br/>
+                {"$ teos-scan incoming_agent_patch.py"}
+                <br />
+                {"> secret exposure: false"}
+                <br />
+                {"> shell destruction risk: true"}
+                <br />
+                {"> dependency chain risk: medium"}
+                <br />
+                {"> policy verdict: "}
+                <span className="block">BLOCK</span>
+                <br />
+                <br />
 
-                {"$ teos-scan autopatch_worker.py"}<br/>
-                {"> secret exposure: false"}<br/>
-                {"> unsafe eval: false"}<br/>
-                {"> network exfiltration: false"}<br/>
-                {"> policy verdict: "}<span className="allow">ALLOW</span><br/><br/>
+                {"$ teos-scan autopatch_worker.py"}
+                <br />
+                {"> secret exposure: false"}
+                <br />
+                {"> unsafe eval: false"}
+                <br />
+                {"> network exfiltration: false"}
+                <br />
+                {"> policy verdict: "}
+                <span className="allow">ALLOW</span>
+                <br />
+                <br />
 
-                {"$ teos-scan plugin_update.ts"}<br/>
-                {"> dependency anomaly: true"}<br/>
-                {"> policy verdict: "}<span className="warn">WARN</span>
+                {"$ teos-scan plugin_update.ts"}
+                <br />
+                {"> dependency anomaly: true"}
+                <br />
+                {"> policy verdict: "}
+                <span className="warn">WARN</span>
               </div>
             </div>
           </div>
@@ -249,7 +424,9 @@ export default function HomePage() {
               <div className="panel card">
                 <span className="mini mono">2</span>
                 <h3>Risk engine runs</h3>
-                <p><strong>agent-code-risk-mcp</strong> analyzes the payload and returns a deterministic decision.</p>
+                <p>
+                  <strong>agent-code-risk-mcp</strong> analyzes the payload and returns a deterministic decision.
+                </p>
               </div>
               <div className="panel card">
                 <span className="mini mono">3</span>
@@ -259,7 +436,7 @@ export default function HomePage() {
               <div className="panel card">
                 <span className="mini mono">4</span>
                 <h3>Upgrade on limit</h3>
-                <p>After 5 free scans, the user upgrades to pay-per-scan or a plan. Enterprise leads go to Sovereign.</p>
+                <p>After 5 free scans, the user upgrades to a paid plan. Enterprise leads go to Sovereign.</p>
               </div>
             </div>
           </div>
@@ -273,8 +450,15 @@ export default function HomePage() {
             </div>
             <div className="grid-3">
               <div className="panel card">
-                <div className="mono" style={{color:"var(--gold2)", fontSize:12, textTransform:"uppercase", letterSpacing:".12em"}}>Free</div>
-                <div className="price">5 <small>scans</small></div>
+                <div
+                  className="mono"
+                  style={{ color: "var(--gold2)", fontSize: 12, textTransform: "uppercase", letterSpacing: ".12em" }}
+                >
+                  Free
+                </div>
+                <div className="price">
+                  5 <small>scans</small>
+                </div>
                 <p>No card. Best for trying the firewall and seeing real verdicts in Telegram.</p>
                 <ul className="list">
                   <li>5 total scans</li>
@@ -282,29 +466,74 @@ export default function HomePage() {
                   <li>Telegram access</li>
                 </ul>
               </div>
-              <div className="panel card featured">
-                <div className="mono" style={{color:"var(--gold2)", fontSize:12, textTransform:"uppercase", letterSpacing:".12em"}}>Fast conversion</div>
-                <div className="price">$0.49 <small>/ scan</small></div>
-                <p>Best frictionless path for first payments while subscriptions are still being tightened.</p>
+
+              <div className="panel card">
+                <div
+                  className="mono"
+                  style={{ color: "var(--gold2)", fontSize: 12, textTransform: "uppercase", letterSpacing: ".12em" }}
+                >
+                  Starter
+                </div>
+                <div className="price">$9</div>
+                <p>Good for early users who want more scans and simple manual activation.</p>
                 <ul className="list">
-                  <li>No monthly commitment</li>
-                  <li>Good for solo builders</li>
-                  <li>Easy upgrade inside bot</li>
+                  <li>50 scans</li>
+                  <li>USDC-only activation</li>
+                  <li>Telegram-first flow</li>
                 </ul>
               </div>
-              <div className="panel card">
-                <div className="mono" style={{color:"var(--gold2)", fontSize:12, textTransform:"uppercase", letterSpacing:".12em"}}>Plans</div>
-                <div className="price">$9 / $49 / $99</div>
-                <p>Starter, Builder, and Pro for repeat usage. Sovereign is custom for enterprise and government.</p>
+
+              <div className="panel card featured">
+                <div
+                  className="mono"
+                  style={{ color: "var(--gold2)", fontSize: 12, textTransform: "uppercase", letterSpacing: ".12em" }}
+                >
+                  Builder
+                </div>
+                <div className="price">$49</div>
+                <p>Best fit for active builders who want higher volume and a clearer upgrade path.</p>
                 <ul className="list">
-                  <li>Starter → 50 scans</li>
-                  <li>Builder → 500 scans</li>
-                  <li>Pro → 1000 scans + deps</li>
+                  <li>500 scans</li>
+                  <li>USDC-only activation</li>
+                  <li>Most practical upgrade</li>
+                </ul>
+              </div>
+
+              <div className="panel card">
+                <div
+                  className="mono"
+                  style={{ color: "var(--gold2)", fontSize: 12, textTransform: "uppercase", letterSpacing: ".12em" }}
+                >
+                  Pro
+                </div>
+                <div className="price">$99</div>
+                <p>Designed for heavier usage and dependency-aware workflows.</p>
+                <ul className="list">
+                  <li>1000 scans</li>
+                  <li>Dependency analysis path</li>
+                  <li>Manual USDC onboarding</li>
+                </ul>
+              </div>
+
+              <div className="panel card">
+                <div
+                  className="mono"
+                  style={{ color: "var(--gold2)", fontSize: 12, textTransform: "uppercase", letterSpacing: ".12em" }}
+                >
+                  Sovereign
+                </div>
+                <div className="price">Custom</div>
+                <p>Custom enterprise onboarding for teams that need support, governance, and deployment scope alignment.</p>
+                <ul className="list">
+                  <li>Custom pricing</li>
+                  <li>Custom support scope</li>
+                  <li>Direct contact onboarding</li>
                 </ul>
               </div>
             </div>
-            <div className="note mono" style={{marginTop:18}}>
-              Recommended launch conversion path: show <strong>Free</strong> first, then push <strong>$0.49/scan</strong> as the easiest paid step. Keep subscriptions visible but secondary until payment automation is fully hardened.
+
+            <div className="note mono" style={{ marginTop: 18 }}>
+              TEOS Sentinel Shield currently uses a USDC-only activation flow for paid plans. Sovereign pricing is custom based on deployment scope, governance, and support requirements.
             </div>
           </div>
         </section>
@@ -328,11 +557,12 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+
               <div className="panel arch-row">
                 <div className="arch-label mono">Gateway</div>
                 <div>
                   <strong>teoslinker-bot</strong>
-                  <p>Telegram bot for scan intake, plan upgrade, and payment flow.</p>
+                  <p>Telegram bot for scan intake, plan upgrade, and manual activation flow.</p>
                   <div className="chips">
                     <span className="chip">Telegram</span>
                     <span className="chip">Scan UI</span>
@@ -340,6 +570,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+
               <div className="panel arch-row">
                 <div className="arch-label mono">Core</div>
                 <div>
@@ -352,24 +583,30 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+
               <div className="panel arch-row">
                 <div className="arch-label mono">Future</div>
                 <div>
-                  <strong>safe-ingestion-engine · teos-comply-crawl · teos-civic-mixer · Teos-Sovereign-System</strong>
-                  <p>Expansion into secure data intake, compliance crawling, privacy, and sovereign orchestration.</p>
+                  <strong>
+                    safe-ingestion-engine · teos-comply-crawl · teos-civic-mixer ·
+                    Teos-Sovereign-System · governance law layer
+                  </strong>
+                  <p>Expansion into secure data intake, compliance crawling, privacy, sovereign orchestration, and governance alignment.</p>
                   <div className="chips">
                     <span className="chip">Data firewall</span>
                     <span className="chip">Compliance crawler</span>
                     <span className="chip">Privacy layer</span>
                     <span className="chip">Control hub</span>
+                    <span className="chip">Governance</span>
                   </div>
                 </div>
               </div>
+
               <div className="panel arch-row">
                 <div className="arch-label mono">Governance</div>
                 <div>
                   <strong>TEOS law layer · TESL non-fork license</strong>
-                  <p>Governance should stay framed as your legal and licensing layer, not as a speculative revenue promise on the landing page.</p>
+                  <p>Governance stays framed as your legal and licensing layer, not as speculative public marketing language.</p>
                   <div className="chips">
                     <span className="chip">Governance root</span>
                     <span className="chip">Non-fork license</span>
@@ -381,38 +618,30 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section" id="deploy">
+        <section className="section" id="ready">
           <div className="wrap">
             <div className="section-head">
-              <div className="section-kicker mono">Deploy</div>
-              <h2>Exactly where to add this</h2>
+              <div className="section-kicker mono">Ready to start</div>
+              <h2>Built for fast risk checks before execution</h2>
             </div>
 
-            <div className="steps">
-              <div className="panel step">
-                <div className="num">1</div>
-                <div>
-                  <h3 style={{margin:"0 0 8px"}}>Replace the homepage source</h3>
-                  <p style={{margin:0}}>Put this code in <span className="mono">dashboard/app/page.tsx</span>. This is the file you should replace for the live homepage.</p>
-                </div>
+            <div className="grid-3">
+              <div className="panel card">
+                <span className="mini mono">Use case</span>
+                <h3>AI agent safety</h3>
+                <p>Scan generated code before execution and stop risky actions before they run.</p>
               </div>
 
-              <div className="panel step">
-                <div className="num">2</div>
-                <div>
-                  <h3 style={{margin:"0 0 8px"}}>Keep only real launch links</h3>
-                  <p style={{margin:0}}>This page already points users to <span className="mono">https://t.me/teoslinker_bot?start=scan</span>. Do not keep placeholder bot links.</p>
-                </div>
+              <div className="panel card">
+                <span className="mini mono">Access</span>
+                <h3>Telegram-first workflow</h3>
+                <p>Start free, review plans, and request activation directly from the bot.</p>
               </div>
 
-              <div className="panel step">
-                <div className="num">3</div>
-                <div>
-                  <h3 style={{margin:"0 0 8px"}}>Commit and push</h3>
-                  <pre>{`git add dashboard/app/page.tsx
-git commit -m "Replace homepage with clean launch page"
-git push origin main`}</pre>
-                </div>
+              <div className="panel card">
+                <span className="mini mono">Upgrade</span>
+                <h3>Sovereign ready</h3>
+                <p>Move from free scans to paid plans or custom Sovereign onboarding as your usage grows.</p>
               </div>
             </div>
           </div>
@@ -422,9 +651,18 @@ git push origin main`}</pre>
           <div className="wrap">
             <div className="panel cta">
               <div className="section-kicker mono">Launch now</div>
-              <h2 style={{marginTop:0}}>Your AI agent needs a firewall.</h2>
-              <p style={{maxWidth:760, margin:"0 auto 18px", color:"var(--soft)"}}>Start with 5 free scans, convert fast with pay-per-scan, then move serious buyers into Pro or Sovereign.</p>
-              <a className="btn btn-primary" href="https://t.me/teoslinker_bot?start=scan" target="_blank" rel="noopener noreferrer">Open @teoslinker_bot</a>
+              <h2 style={{ marginTop: 0 }}>Your AI agent needs a firewall.</h2>
+              <p style={{ maxWidth: 760, margin: "0 auto 18px", color: "var(--soft)" }}>
+                Start with 5 free scans, then move to Starter, Builder, Pro, or Sovereign as your usage grows.
+              </p>
+              <a
+                className="btn btn-primary"
+                href="https://t.me/teoslinker_bot?start=scan"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open @teoslinker_bot
+              </a>
             </div>
           </div>
         </section>
@@ -435,10 +673,6 @@ git push origin main`}</pre>
           <div>© TEOS Sentinel Shield · Elmahrosa International</div>
           <div className="mono">Sovereign AI Execution Firewall</div>
         </div>
-        <strong>
-  safe-ingestion-engine · teos-comply-crawl · teos-civic-mixer ·
-  Teos-Sovereign-System · governance law layer
-</strong>
       </footer>
     </>
   );
