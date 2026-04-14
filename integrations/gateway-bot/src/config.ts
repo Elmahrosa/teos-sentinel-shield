@@ -7,10 +7,12 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(8080),
   NODE_ENV: z.string().default("development"),
   DATABASE_URL: z.string(),
-  BOT_SHARED_SECRET: z.string().min(10),
-  LICENSE_SIGNING_SECRET: z.string().min(10),
-  GATEWAY_BOT_TOKEN: z.string().min(10),
-  APP_BASE_URL: z.string().url().default("https://teos-sentinel-shield.vercel.app")
+  BOT_SHARED_SECRET: z.string().min(16),
+  LICENSE_SIGNING_SECRET: z.string().min(16),
+  GATEWAY_BOT_TOKEN: z.string().min(16),
+  APP_BASE_URL: z.string().url().default("https://teos-sentinel-shield.vercel.app"),
+  USDC_RECEIVER_WALLET: z.string().min(20),
+  CONTACT_EMAIL: z.string().email().default("ayman@teosegypt.com")
 });
 
 export const env = envSchema.parse(process.env);
@@ -39,7 +41,8 @@ export const tierPlans = {
   sovereign: {
     label: "Sovereign",
     priceUsd: null,
-    scans: null
+    scans: null,
+    custom: true
   }
 } as const;
 
