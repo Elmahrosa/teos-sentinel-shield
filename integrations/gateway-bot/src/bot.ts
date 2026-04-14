@@ -4,13 +4,13 @@ import { env, tierPlans, type TierPlanKey } from "./config.js";
 
 const bot = new Telegraf(env.GATEWAY_BOT_TOKEN);
 
-function planButtons() {
+function planKeyboard() {
   return Markup.inlineKeyboard([
     [Markup.button.callback("🆓 Free · 5 scans", "plan_free")],
     [Markup.button.callback("⚡ Starter · $9 · 50 scans", "plan_starter")],
     [Markup.button.callback("🚀 Builder · $49 · 500 scans", "plan_builder")],
     [Markup.button.callback("👑 Pro · $99 · 1000 scans + deps", "plan_pro")],
-    [Markup.button.callback("🏛 Sovereign · Enterprise", "plan_sovereign")]
+    [Markup.button.callback("🏛 Sovereign · Custom", "plan_sovereign")]
   ]);
 }
 
@@ -20,25 +20,25 @@ bot.start(async (ctx) => {
       "🛡️ Welcome to TEOS Sentinel Shield",
       "",
       "Sovereign AI Execution Firewall",
-      "Scan AI-generated code before it runs.",
+      "USDC-only activation flow",
       "",
-      "Choose a plan to continue:"
+      "Choose a plan:"
     ].join("\n"),
-    planButtons()
+    planKeyboard()
   );
 });
 
 bot.action(/^plan_(free|starter|builder|pro|sovereign)$/, async (ctx) => {
   const tier = ctx.match[1] as TierPlanKey;
+  await ctx.answerCbQuery();
 
   if (tier === "free") {
-    await ctx.answerCbQuery();
     await ctx.reply(
       [
         "✅ Free plan selected",
         "You get 5 scans.",
         "",
-        "Open the app to start:",
+        "Launch page:",
         env.APP_BASE_URL
       ].join("\n")
     );
@@ -46,28 +46,27 @@ bot.action(/^plan_(free|starter|builder|pro|sovereign)$/, async (ctx) => {
   }
 
   if (tier === "sovereign") {
-    await ctx.answerCbQuery();
     await ctx.reply(
       [
-        "🏛 Sovereign plan selected",
-        "Enterprise onboarding is handled manually.",
-        "",
-        "Contact:",
-        "ayman@teosegypt.com"
+        "🏛 Sovereign selected",
+        "Custom onboarding only",
+        `Contact: ${env.CONTACT_EMAIL}`
       ].join("\n")
     );
     return;
   }
 
   const plan = tierPlans[tier];
-  await ctx.answerCbQuery();
   await ctx.reply(
     [
-      `You selected ${plan.label}.`,
+      `Plan: ${plan.label}`,
       `Price: $${plan.priceUsd}`,
       `Scans: ${plan.scans}`,
       "",
-      "Reply with this exact format to request activation:",
+      "USDC payment flow:",
+      `Send USDC to the receiver wallet configured by TEOS.`,
+      "",
+      "Then reply in this format:",
       `ACTIVATE ${tier.toUpperCase()} your@email.com`
     ].join("\n")
   );
@@ -80,17 +79,17 @@ bot.on("text", async (ctx) => {
     return;
   }
 
-  const parts = text.split(/\s+/);
+  const parts = text.split(/\\s+/);
   if (parts.length < 3) {
-    await ctx.reply("❌ Invalid format. Use: ACTIVATE STARTER your@email.com");
+    await ctx.reply("❌ Use: ACTIVATE STARTER your@email.com");
     return;
   }
 
-  const tierRaw = parts[1].toLowerCase();
+  const tier = parts[1].toLowerCase();
   const email = parts.slice(2).join(" ").trim();
 
-  if (!["starter", "builder", "pro"].includes(tierRaw)) {
-    await ctx.reply("❌ Allowed activation tiers: STARTER, BUILDER, PRO");
+  if (!["starter", "builder", "pro"].includes(tier)) {
+    await ctx.reply("❌ Allowed paid tiers: STARTER, BUILDER, PRO");
     return;
   }
 
@@ -98,9 +97,10 @@ bot.on("text", async (ctx) => {
     const response = await axios.post(
       "http://localhost:8080/activation/request",
       {
-        tier: tierRaw,
+        tier,
         email,
-        telegramUserId: ctx.from.id.toString()
+        telegramUserId: ctx.from.id.toString(),
+        paymentMethod: "usdc_manual"
       },
       {
         headers: {
@@ -116,7 +116,7 @@ bot.on("text", async (ctx) => {
         `Tier: ${response.data.tier}`,
         `Status: ${response.data.status}`,
         "",
-        "You will be activated after payment confirmation or manual approval."
+        "Payment will be confirmed manually for now."
       ].join("\n")
     );
   } catch (error: any) {
@@ -128,5 +128,5 @@ bot.on("text", async (ctx) => {
 });
 
 bot.launch().then(() => {
-  console.log("🤖 TEOS Gateway Bot is live");
+  console.log("🤖 TEOS Gateway Bot live");
 });
