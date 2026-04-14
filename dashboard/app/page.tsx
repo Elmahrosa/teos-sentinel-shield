@@ -435,6 +435,10 @@ git push origin main`}</pre>
           <div>© TEOS Sentinel Shield · Elmahrosa International</div>
           <div className="mono">Sovereign AI Execution Firewall</div>
         </div>
+        <strong>
+  safe-ingestion-engine · teos-comply-crawl · teos-civic-mixer ·
+  Teos-Sovereign-System · governance law layer
+</strong>
       </footer>
     </>
   );
