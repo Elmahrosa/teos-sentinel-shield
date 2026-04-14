@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { env } from "./config.js";
+import { bot } from "./bot.js";
 import * as activationModule from "./routes/activation.js";
 import * as healthModule from "./routes/health.js";
 
@@ -21,6 +22,8 @@ const healthRouter = getRouter(healthModule);
 if (healthRouter) app.use("/health", healthRouter);
 if (activationRouter) app.use("/activation", activationRouter);
 
-app.listen(env.PORT, () => {
+app.listen(env.PORT, async () => {
   console.log(`🚀 Gateway server running on http://localhost:${env.PORT}`);
+  await bot.launch();
+  console.log("🤖 TEOS Gateway Bot live");
 });
