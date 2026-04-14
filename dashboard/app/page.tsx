@@ -1,1094 +1,441 @@
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TEOS Sentinel — AI Execution Firewall</title>
-
-<meta name="description" content="Deterministic AI security. Analyze code before execution. ALLOW / WARN / BLOCK in real time. Built for AI agents, trading bots, and enterprise security.">
-
-<meta property="og:title" content="TEOS Sentinel — AI Execution Firewall">
-
-<meta property="og:description" content="It blocks dangerous code BEFORE execution. 5 free scans.">
-
-<meta property="og:type" content="website">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-
-<style>
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-
-
-  :root {
-
-    --black: #0a0a0a;
-
-    --white: #f5f3ee;
-
-    --accent: #e8ff00;
-
-    --red: #ff3b3b;
-
-    --orange: #ff7a00;
-
-    --green: #00ff88;
-
-    --muted: rgba(245,243,238,0.45);
-
-    --border: rgba(245,243,238,0.12);
-
-    --font-head: 'Syne', sans-serif;
-
-    --font-mono: 'Space Mono', monospace;
-
-  }
-
-
-
-  html { scroll-behavior: smooth; }
-
-
-
-  body {
-
-    background: var(--black);
-
-    color: var(--white);
-
-    font-family: var(--font-head);
-
-    min-height: 100vh;
-
-    overflow-x: hidden;
-
-  }
-
-
-
-  /* NAV */
-
-  nav {
-
-    display: flex; align-items: center; justify-content: space-between;
-
-    padding: 1.25rem 2rem;
-
-    border-bottom: 1px solid var(--border);
-
-    position: sticky; top: 0; z-index: 100;
-
-    background: rgba(10,10,10,0.92);
-
-    backdrop-filter: blur(12px);
-
-  }
-
-  .logo {
-
-    font-family: var(--font-mono);
-
-    font-size: 0.85rem;
-
-    letter-spacing: 0.12em;
-
-    color: var(--accent);
-
-    text-transform: uppercase;
-
-  }
-
-  nav a {
-
-    color: var(--muted);
-
-    text-decoration: none;
-
-    font-size: 0.82rem;
-
-    letter-spacing: 0.06em;
-
-    transition: color 0.2s;
-
-  }
-
-  nav a:hover { color: var(--white); }
-
-  .nav-links { display: flex; gap: 2rem; }
-
-  .nav-cta {
-
-    background: var(--accent);
-
-    color: var(--black) !important;
-
-    padding: 0.5rem 1.25rem;
-
-    border-radius: 2px;
-
-    font-weight: 700;
-
-    font-family: var(--font-mono);
-
-    font-size: 0.78rem;
-
-    letter-spacing: 0.08em;
-
-  }
-
-  .nav-cta:hover { background: #d4e800 !important; }
-
-
-
-  /* HERO */
-
-  .hero {
-
-    padding: 6rem 2rem 5rem;
-
-    max-width: 1100px;
-
-    margin: 0 auto;
-
-  }
-
-  .hero-tag {
-
-    display: inline-block;
-
-    font-family: var(--font-mono);
-
-    font-size: 0.72rem;
-
-    letter-spacing: 0.18em;
-
-    text-transform: uppercase;
-
-    color: var(--accent);
-
-    border: 1px solid rgba(232,255,0,0.3);
-
-    padding: 0.35rem 0.85rem;
-
-    border-radius: 2px;
-
-    margin-bottom: 2rem;
-
-  }
-
-  h1 {
-
-    font-size: clamp(3rem, 8vw, 7rem);
-
-    font-weight: 800;
-
-    line-height: 0.95;
-
-    letter-spacing: -0.03em;
-
-    margin-bottom: 1.5rem;
-
-  }
-
-  h1 span { color: var(--accent); }
-
-  .hero-sub {
-
-    font-family: var(--font-mono);
-
-    font-size: 1rem;
-
-    color: var(--muted);
-
-    max-width: 540px;
-
-    line-height: 1.7;
-
-    margin-bottom: 2.5rem;
-
-  }
-
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
-
-  .btn-primary {
-
-    display: inline-flex; align-items: center; gap: 0.5rem;
-
-    background: var(--accent);
-
-    color: var(--black);
-
-    font-family: var(--font-mono);
-
-    font-size: 0.85rem;
-
-    font-weight: 700;
-
-    letter-spacing: 0.06em;
-
-    padding: 0.85rem 1.75rem;
-
-    border-radius: 2px;
-
-    text-decoration: none;
-
-    transition: transform 0.15s, background 0.15s;
-
-  }
-
-  .btn-primary:hover { background: #d4e800; transform: translateY(-1px); }
-
-  .btn-ghost {
-
-    display: inline-flex; align-items: center; gap: 0.5rem;
-
-    color: var(--white);
-
-    font-family: var(--font-mono);
-
-    font-size: 0.82rem;
-
-    letter-spacing: 0.06em;
-
-    padding: 0.85rem 1.5rem;
-
-    border: 1px solid var(--border);
-
-    border-radius: 2px;
-
-    text-decoration: none;
-
-    transition: border-color 0.2s, background 0.2s;
-
-  }
-
-  .btn-ghost:hover { border-color: rgba(245,243,238,0.35); background: rgba(245,243,238,0.05); }
-
-  .hero-note {
-
-    font-family: var(--font-mono);
-
-    font-size: 0.72rem;
-
-    color: var(--muted);
-
-    display: flex; align-items: center; gap: 0.5rem;
-
-  }
-
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
-
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-
-
-  /* VERDICT DEMO */
-
-  .verdict-strip {
-
-    border-top: 1px solid var(--border);
-
-    border-bottom: 1px solid var(--border);
-
-    padding: 2rem;
-
-    background: rgba(255,255,255,0.02);
-
-    overflow: hidden;
-
-  }
-
-  .verdict-scroll {
-
-    display: flex; gap: 3rem; animation: scrollLeft 18s linear infinite;
-
-    white-space: nowrap;
-
-  }
-
-  @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-  .verdict-item {
-
-    display: inline-flex; align-items: center; gap: 0.75rem;
-
-    font-family: var(--font-mono); font-size: 0.8rem;
-
-  }
-
-  .verdict-badge {
-
-    padding: 0.25rem 0.6rem; border-radius: 2px; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.1em;
-
-  }
-
-  .v-allow { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
-
-  .v-warn { background: rgba(255,122,0,0.15); color: var(--orange); border: 1px solid rgba(255,122,0,0.3); }
-
-  .v-block { background: rgba(255,59,59,0.15); color: var(--red); border: 1px solid rgba(255,59,59,0.3); }
-
-  .verdict-code { color: var(--muted); }
-
-
-
-  /* HOW IT WORKS */
-
-  .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
-
-  .section-label {
-
-    font-family: var(--font-mono);
-
-    font-size: 0.72rem;
-
-    letter-spacing: 0.2em;
-
-    text-transform: uppercase;
-
-    color: var(--accent);
-
-    margin-bottom: 1rem;
-
-  }
-
-  h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1rem; }
-
-  h2 .dim { color: var(--muted); }
-
-
-
-  .flow-grid {
-
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
-    gap: 1px; background: var(--border); border: 1px solid var(--border);
-
-    border-radius: 4px; overflow: hidden; margin-top: 3rem;
-
-  }
-
-  .flow-step {
-
-    background: var(--black); padding: 2rem 1.5rem;
-
-    position: relative;
-
-  }
-
-  .flow-num {
-
-    font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted);
-
-    letter-spacing: 0.12em; margin-bottom: 1rem;
-
-  }
-
-  .flow-icon {
-
-    font-size: 1.5rem; margin-bottom: 0.75rem; display: block;
-
-  }
-
-  .flow-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-
-  .flow-desc { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
-
-
-
-  /* TERMINAL */
-
-  .terminal-wrap { margin-top: 3rem; }
-
-  .terminal {
-
-    background: #111; border: 1px solid var(--border);
-
-    border-radius: 6px; overflow: hidden;
-
-    font-family: var(--font-mono); font-size: 0.82rem;
-
-  }
-
-  .terminal-bar {
-
-    background: #1a1a1a; padding: 0.6rem 1rem;
-
-    display: flex; align-items: center; gap: 0.5rem;
-
-    border-bottom: 1px solid var(--border);
-
-  }
-
-  .tb { width: 10px; height: 10px; border-radius: 50%; }
-
-  .tb-r { background: #ff5f57; } .tb-y { background: #febc2e; } .tb-g { background: #28c840; }
-
-  .terminal-title { font-size: 0.7rem; color: var(--muted); margin-left: 0.5rem; letter-spacing: 0.08em; }
-
-  .terminal-body { padding: 1.5rem; line-height: 2; }
-
-  .t-prompt { color: var(--accent); }
-
-  .t-cmd { color: var(--white); }
-
-  .t-comment { color: #555; }
-
-  .t-allow { color: var(--green); font-weight: 700; }
-
-  .t-warn { color: var(--orange); font-weight: 700; }
-
-  .t-block { color: var(--red); font-weight: 700; }
-
-  .t-muted { color: var(--muted); }
-
-  .t-score { color: #888; }
-
-
-
-  /* PRICING */
-
-  .pricing-section { padding: 5rem 2rem; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-
-  .pricing-inner { max-width: 1100px; margin: 0 auto; }
-
-  .pricing-grid {
-
-    display: grid;
-
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-
-    gap: 1px; background: var(--border); border: 1px solid var(--border);
-
-    border-radius: 4px; overflow: hidden; margin-top: 3rem;
-
-  }
-
-  .price-card {
-
-    background: var(--black); padding: 1.75rem 1.25rem;
-
-    display: flex; flex-direction: column; gap: 0.75rem;
-
-    position: relative; transition: background 0.2s;
-
-  }
-
-  .price-card:hover { background: #111; }
-
-  .price-card.featured {
-
-    background: rgba(232,255,0,0.04);
-
-    outline: 1px solid rgba(232,255,0,0.25);
-
-    outline-offset: -1px;
-
-  }
-
-  .price-tier {
-
-    font-family: var(--font-mono); font-size: 0.68rem;
-
-    text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted);
-
-  }
-
-  .price-badge {
-
-    position: absolute; top: 0.75rem; right: 0.75rem;
-
-    background: var(--accent); color: var(--black);
-
-    font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
-
-    padding: 0.2rem 0.5rem; border-radius: 2px; letter-spacing: 0.08em;
-
-  }
-
-  .price-amount {
-
-    font-size: 1.75rem; font-weight: 800; line-height: 1;
-
-  }
-
-  .price-amount .unit { font-size: 0.85rem; font-weight: 400; color: var(--muted); }
-
-  .price-desc {
-
-    font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); line-height: 1.5;
-
-  }
-
-  .price-cta {
-
-    margin-top: auto;
-
-    display: block; text-align: center;
-
-    font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
-
-    padding: 0.6rem; border-radius: 2px; text-decoration: none;
-
-    transition: all 0.15s;
-
-  }
-
-  .price-cta-ghost {
-
-    border: 1px solid var(--border); color: var(--white);
-
-  }
-
-  .price-cta-ghost:hover { border-color: rgba(245,243,238,0.3); background: rgba(255,255,255,0.04); }
-
-  .price-cta-accent {
-
-    background: var(--accent); color: var(--black);
-
-  }
-
-  .price-cta-accent:hover { background: #d4e800; }
-
-
-
-  /* SOCIAL PROOF */
-
-  .proof-row {
-
-    display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;
-
-    margin-top: 3rem; padding-top: 3rem;
-
-    border-top: 1px solid var(--border);
-
-  }
-
-  .proof-stat { text-align: center; }
-
-  .proof-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
-
-  .proof-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
-
-
-
-  /* CONSTITUTION BANNER */
-
-  .constitution-banner {
-
-    margin: 0 2rem; border: 1px solid rgba(232,255,0,0.2);
-
-    background: rgba(232,255,0,0.03);
-
-    border-radius: 4px; padding: 2rem 2.5rem;
-
-    display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;
-
-  }
-
-  .const-icon { font-size: 2.5rem; flex-shrink: 0; }
-
-  .const-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
-
-  .const-desc { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
-
-
-
-  /* FOOTER */
-
-  footer {
-
-    border-top: 1px solid var(--border);
-
-    padding: 2rem;
-
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-
-    max-width: 1100px; margin: 0 auto;
-
-  }
-
-  .footer-logo { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.1em; }
-
-  .footer-links { display: flex; gap: 1.5rem; }
-
-  .footer-links a { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); text-decoration: none; }
-
-  .footer-links a:hover { color: var(--white); }
-
-
-
-  @media (max-width: 600px) {
-
-    .nav-links { display: none; }
-
-    .hero { padding: 3rem 1.25rem 3rem; }
-
-    .pricing-grid { grid-template-columns: 1fr 1fr; }
-
-    footer { flex-direction: column; }
-
-  }
-
-</style>
-
-</head>
-
-<body>
-
-
-
-<nav>
-
-  <div class="logo">TEOS Sentinel</div>
-
-  <div class="nav-links">
-
-    <a href="#how">How it works</a>
-
-    <a href="#pricing">Pricing</a>
-
-    <a href="#governance">Governance</a>
-
-    <a href="https://t.me/your_bot" target="_blank">Telegram</a>
-
-  </div>
-
-  <a href="https://t.me/your_bot" class="nav-cta nav-links" target="_blank">Get 5 Free Scans →</a>
-
-</nav>
-
-
-
-<!-- HERO -->
-
-<section class="hero">
-
-  <div class="hero-tag">AI Execution Firewall · Deterministic Security</div>
-
-  <h1>
-
-    Block<br>
-
-    dangerous<br>
-
-    <span>code</span><br>
-
-    before it runs.
-
-  </h1>
-
-  <p class="hero-sub">
-
-    TEOS Sentinel intercepts AI agent actions before execution.<br>
-
-    ALLOW / WARN / BLOCK — deterministic. Milliseconds. No LLM guessing.
-
-  </p>
-
-  <div class="hero-actions">
-
-    <a href="https://t.me/your_bot" class="btn-primary" target="_blank">
-
-      Start Free on Telegram →
-
-    </a>
-
-    <a href="#how" class="btn-ghost">See how it works</a>
-
-  </div>
-
-  <p class="hero-note" style="margin-top:1.5rem;">
-
-    <span class="dot"></span>
-
-    5 free scans. No credit card. Live now.
-
-  </p>
-
-</section>
-
-
-
-<!-- VERDICT TICKER -->
-
-<div class="verdict-strip">
-
-  <div class="verdict-scroll">
-
-    <!-- first set -->
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">rm -rf /</span><span class="verdict-code">→ Destructive filesystem command</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">console.log("hello")</span><span class="verdict-code">→ Safe output op</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">fetch("api.internal/admin")</span><span class="verdict-code">→ Internal endpoint access</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">eval(atob(payload))</span><span class="verdict-code">→ Obfuscated eval detected</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">Math.sqrt(144)</span><span class="verdict-code">→ Pure computation</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">process.env.SECRET_KEY</span><span class="verdict-code">→ Credential access</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">DROP TABLE users;</span><span class="verdict-code">→ Destructive DB op</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">sudo chmod 777 /etc</span><span class="verdict-code">→ Privilege escalation</span></span>
-
-    <!-- duplicated for infinite scroll -->
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">rm -rf /</span><span class="verdict-code">→ Destructive filesystem command</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">console.log("hello")</span><span class="verdict-code">→ Safe output op</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">fetch("api.internal/admin")</span><span class="verdict-code">→ Internal endpoint access</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">eval(atob(payload))</span><span class="verdict-code">→ Obfuscated eval detected</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-allow">ALLOW</span><span class="verdict-code">Math.sqrt(144)</span><span class="verdict-code">→ Pure computation</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-warn">WARN</span><span class="verdict-code">process.env.SECRET_KEY</span><span class="verdict-code">→ Credential access</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">DROP TABLE users;</span><span class="verdict-code">→ Destructive DB op</span></span>
-
-    <span class="verdict-item"><span class="verdict-badge v-block">BLOCK</span><span class="verdict-code">sudo chmod 777 /etc</span><span class="verdict-code">→ Privilege escalation</span></span>
-
-  </div>
-
-</div>
-
-
-
-<!-- HOW IT WORKS -->
-
-<section class="section" id="how">
-
-  <div class="section-label">// how it works</div>
-
-  <h2>Your AI agent<br><span class="dim">never fires blind again.</span></h2>
-
-
-
-  <div class="flow-grid">
-
-    <div class="flow-step">
-
-      <div class="flow-num">01 —</div>
-
-      <span class="flow-icon">⚡</span>
-
-      <div class="flow-title">Agent triggers action</div>
-
-      <div class="flow-desc">Your AI agent or script submits code or an on-chain instruction to TEOS before execution.</div>
-
-    </div>
-
-    <div class="flow-step">
-
-      <div class="flow-num">02 —</div>
-
-      <span class="flow-icon">🔬</span>
-
-      <div class="flow-title">Sentinel scans</div>
-
-      <div class="flow-desc">Rule-based engine scores the input across 40+ risk patterns. No LLM. Deterministic. Auditable.</div>
-
-    </div>
-
-    <div class="flow-step">
-
-      <div class="flow-num">03 —</div>
-
-      <span class="flow-icon">🛡</span>
-
-      <div class="flow-title">Verdict in ms</div>
-
-      <div class="flow-desc">ALLOW, WARN, or BLOCK returned with score, flags, and reasoning. Your agent acts accordingly.</div>
-
-    </div>
-
-    <div class="flow-step">
-
-      <div class="flow-num">04 —</div>
-
-      <span class="flow-icon">📡</span>
-
-      <div class="flow-title">You get alerted</div>
-
-      <div class="flow-desc">Instant Telegram notification with full scan report. Track everything from your dashboard.</div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="terminal-wrap" id="terminal-demo">
-
-    <div class="terminal">
-
-      <div class="terminal-bar">
-
-        <span class="tb tb-r"></span><span class="tb tb-y"></span><span class="tb tb-g"></span>
-
-        <span class="terminal-title">TEOS Sentinel · agent-code-risk-mcp · live demo</span>
-
-      </div>
-
-      <div class="terminal-body">
-
-        <div><span class="t-prompt">user → </span><span class="t-cmd">/scan eval("require('child_process').exec('rm -rf /')")</span></div>
-
-        <div class="t-comment">  # scanning...</div>
-
-        <div>&nbsp;</div>
-
-        <div><span class="t-muted">┌─ TEOS SENTINEL REPORT ─────────────────────┐</span></div>
-
-        <div><span class="t-muted">│</span> Verdict: <span class="t-block">🚫 BLOCK</span></div>
-
-        <div><span class="t-muted">│</span> Score:   <span class="t-score">1.0 / 1.0 (maximum risk)</span></div>
-
-        <div><span class="t-muted">│</span> Flags:   <span class="t-block">EVAL_EXECUTION · CHILD_PROCESS · DESTRUCTIVE_FS</span></div>
-
-        <div><span class="t-muted">│</span> Reason:  <span class="t-muted">Obfuscated shell injection via eval() detected</span></div>
-
-        <div><span class="t-muted">└────────────────────────────────────────────┘</span></div>
-
-        <div>&nbsp;</div>
-
-        <div><span class="t-prompt">user → </span><span class="t-cmd">/scan const x = Math.sqrt(price * quantity)</span></div>
-
-        <div class="t-comment">  # scanning...</div>
-
-        <div>&nbsp;</div>
-
-        <div><span class="t-muted">┌─ TEOS SENTINEL REPORT ─────────────────────┐</span></div>
-
-        <div><span class="t-muted">│</span> Verdict: <span class="t-allow">✅ ALLOW</span></div>
-
-        <div><span class="t-muted">│</span> Score:   <span class="t-score">0.0 / 1.0 (no risk detected)</span></div>
-
-        <div><span class="t-muted">│</span> Flags:   <span class="t-allow">NONE</span></div>
-
-        <div><span class="t-muted">│</span> Reason:  <span class="t-muted">Pure arithmetic computation. Safe to execute.</span></div>
-
-        <div><span class="t-muted">└────────────────────────────────────────────┘</span></div>
-
-        <div>&nbsp;</div>
-
-        <div><span class="t-prompt">user → </span><span class="t-cmd">/topup</span></div>
-
-        <div><span class="t-muted">  → Choose your tier:</span></div>
-
-        <div><span class="t-muted">  [1] Pay-as-you-go  $0.49/scan</span></div>
-
-        <div><span class="t-muted">  [2] Starter        $9 / 50 scans</span></div>
-
-        <div><span class="t-muted">  [3] Builder ⭐    $49 / 500 scans</span></div>
-
-        <div><span class="t-muted">  [4] Pro            $99 / 1000 scans + deps</span></div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- PRICING -->
-
-<section class="pricing-section" id="pricing">
-
-  <div class="pricing-inner">
-
-    <div class="section-label">// pricing</div>
-
-    <h2>Start free.<br><span class="dim">Scale when it matters.</span></h2>
-
-
-
-    <div class="pricing-grid">
-
-      <div class="price-card">
-
-        <div class="price-tier">Free</div>
-
-        <div class="price-amount">$0</div>
-
-        <div class="price-desc">5 scans to experience the firewall firsthand.</div>
-
-        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Start free →</a>
-
-      </div>
-
-      <div class="price-card">
-
-        <div class="price-tier">Pay-as-you-go</div>
-
-        <div class="price-amount">$0.49<span class="unit"> /scan</span></div>
-
-        <div class="price-desc">No commitment. Top up when you need it.</div>
-
-        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Top up →</a>
-
-      </div>
-
-      <div class="price-card">
-
-        <div class="price-tier">Starter</div>
-
-        <div class="price-amount">$9<span class="unit"> /mo</span></div>
-
-        <div class="price-desc">50 scans. For active developers and hobbyists.</div>
-
-        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Get Starter →</a>
-
-      </div>
-
-      <div class="price-card featured">
-
-        <div class="price-badge">BEST VALUE</div>
-
-        <div class="price-tier">Builder</div>
-
-        <div class="price-amount">$49<span class="unit"> /mo</span></div>
-
-        <div class="price-desc">500 scans. API access. CI/CD integration. Most popular.</div>
-
-        <a href="https://t.me/your_bot" class="price-cta price-cta-accent" target="_blank">Get Builder →</a>
-
-      </div>
-
-      <div class="price-card">
-
-        <div class="price-tier">Pro</div>
-
-        <div class="price-amount">$99<span class="unit"> /mo</span></div>
-
-        <div class="price-desc">1,000 scans + dependency graph analysis.</div>
-
-        <a href="https://t.me/your_bot" class="price-cta price-cta-ghost" target="_blank">Get Pro →</a>
-
-      </div>
-
-      <div class="price-card">
-
-        <div class="price-tier">Sovereign</div>
-
-        <div class="price-amount">$5K<span class="unit">+</span></div>
-
-        <div class="price-desc">Custom. Institutional DPI. National-scale AI governance.</div>
-
-        <a href="mailto:ayman@teosegypt.com" class="price-cta price-cta-ghost">Contact us →</a>
-
-      </div>
-
-    </div>
-
-
-
-    <div class="proof-row">
-
-      <div class="proof-stat"><div class="proof-num">40+</div><div class="proof-label">Risk patterns</div></div>
-
-      <div class="proof-stat"><div class="proof-num">&lt;50ms</div><div class="proof-label">Verdict latency</div></div>
-
-      <div class="proof-stat"><div class="proof-num">100%</div><div class="proof-label">Deterministic — no AI guessing</div></div>
-
-      <div class="proof-stat"><div class="proof-num">3</div><div class="proof-label">Verdicts: ALLOW / WARN / BLOCK</div></div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- GOVERNANCE ANCHOR -->
-
-<section class="section" id="governance" style="padding-top:3rem; padding-bottom:3rem;">
-
-  <div class="constitution-banner">
-
-    <div class="const-icon">⚖️</div>
-
-    <div>
-
-      <div class="const-title">Anchored in the International Civic Blockchain Constitution</div>
-
-      <div class="const-desc">
-
-        TEOS Sentinel operates under the Teos-International-Civic-Blockchain-Constitution — a governance root that grants enterprise and institutional buyers the authority, legal clarity, and differentiation they need to deploy AI security at national scale. Not just a product. A standard.
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- FINAL CTA -->
-
-<section style="text-align:center; padding: 5rem 2rem; border-top: 1px solid var(--border);">
-
-  <div class="section-label" style="text-align:center; display:block;">// launch now</div>
-
-  <h2 style="margin-bottom:1rem;">Your AI agent<br>needs a firewall.</h2>
-
-  <p style="font-family:var(--font-mono); font-size:0.9rem; color:var(--muted); margin-bottom:2rem; max-width:440px; margin-left:auto; margin-right:auto; line-height:1.7;">
-
-    5 free scans. No card required. Live on Telegram now.<br>
-
-    Takes 30 seconds to start.
-
-  </p>
-
-  <a href="https://t.me/teoslinker_bot" class="btn-primary" style="font-size:1rem; padding:1rem 2.5rem;" target="_blank">
-
-    Open Telegram Bot →
-
-  </a>
-
-</section>
-
-
-
-<footer>
-
-  <div class="footer-logo">TEOS Sentinel · Elmahrosa International · Alexandria, Egypt</div>
-
-  <div class="footer-links">
-
-    <a href="https://github.com/Elmahrosa" target="_blank">GitHub</a>
-
-    <a href="https://t.me/Elmahrosapi" target="_blank">Telegram Community</a>
-
-    <a href="https://linkedin.com/in/aymanseif" target="_blank">LinkedIn</a>
-
-    <a href="mailto:ayman@teosegypt.com">Contact</a>
-
-  </div>
-
-</footer>
-
-
-
-</body>
-
-</html>
-
+export const metadata = {
+  title: "TEOS Sentinel Shield — Sovereign AI Execution Firewall",
+  description:
+    "Scan AI-generated code before execution. Deterministic ALLOW / WARN / BLOCK decisions for agents, CI pipelines, and sovereign deployments.",
+};
+
+export default function HomePage() {
+  return (
+    <>
+      <style>{`
+        :root{
+          --bg:#09111f;
+          --bg2:#0d172a;
+          --card:#101b30;
+          --line:rgba(255,255,255,.10);
+          --soft:rgba(255,255,255,.72);
+          --muted:rgba(255,255,255,.55);
+          --text:#f5f7fb;
+          --gold:#e7b64c;
+          --gold2:#ffd977;
+          --green:#28d17c;
+          --orange:#ff9a3d;
+          --red:#ff6464;
+          --blue:#7eb6ff;
+          --max:1180px;
+          --shadow:0 20px 60px rgba(0,0,0,.35);
+          --radius:22px;
+        }
+        *{box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{
+          margin:0;
+          font-family:Inter,system-ui,sans-serif;
+          color:var(--text);
+          background:
+            radial-gradient(circle at top right, rgba(231,182,76,.12), transparent 28%),
+            radial-gradient(circle at top left, rgba(126,182,255,.08), transparent 22%),
+            linear-gradient(180deg, #08101d 0%, #0a1322 100%);
+        }
+        a{color:inherit}
+        .mono{font-family:"Space Mono", monospace}
+        .wrap{width:min(var(--max), calc(100% - 32px)); margin:0 auto}
+        .nav{
+          position:sticky; top:0; z-index:20;
+          backdrop-filter: blur(12px);
+          background:rgba(8,16,29,.78);
+          border-bottom:1px solid var(--line);
+        }
+        .nav-inner{
+          width:min(var(--max), calc(100% - 32px));
+          margin:0 auto;
+          min-height:72px;
+          display:flex; align-items:center; justify-content:space-between; gap:16px;
+        }
+        .brand{display:flex; align-items:center; gap:12px; text-decoration:none}
+        .brand-mark{
+          width:40px; height:40px; border-radius:12px;
+          display:grid; place-items:center;
+          background:linear-gradient(135deg, rgba(231,182,76,.28), rgba(126,182,255,.20));
+          border:1px solid rgba(255,255,255,.12);
+          box-shadow:var(--shadow);
+          font-weight:800;
+        }
+        .brand-text small{display:block; color:var(--gold2); letter-spacing:.12em; text-transform:uppercase; font-size:11px}
+        .brand-text strong{display:block; font-size:15px}
+        .nav-links{display:flex; gap:20px; align-items:center}
+        .nav-links a{text-decoration:none; color:var(--muted); font-size:14px}
+        .nav-links a:hover{color:var(--text)}
+        .btn{
+          display:inline-flex; align-items:center; justify-content:center; gap:10px;
+          padding:13px 18px; border-radius:14px; text-decoration:none; font-weight:700;
+          transition:.18s ease; border:1px solid transparent;
+        }
+        .btn:hover{transform:translateY(-1px)}
+        .btn-primary{background:linear-gradient(135deg, var(--gold), var(--gold2)); color:#1a1406; box-shadow:var(--shadow)}
+        .btn-secondary{border-color:var(--line); background:rgba(255,255,255,.03)}
+        .hero{padding:56px 0 34px}
+        .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:28px; align-items:center;}
+        .eyebrow{
+          display:inline-flex; align-items:center; gap:10px;
+          padding:10px 14px; border-radius:999px;
+          border:1px solid rgba(231,182,76,.28);
+          background:rgba(231,182,76,.08);
+          color:var(--gold2); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+        }
+        .pulse{width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 rgba(40,209,124,.7); animation:pulse 2s infinite}
+        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(40,209,124,.65)}70%{box-shadow:0 0 0 14px rgba(40,209,124,0)}100%{box-shadow:0 0 0 0 rgba(40,209,124,0)}}
+        h1{margin:18px 0 16px; line-height:.95; font-size:clamp(42px, 9vw, 82px); letter-spacing:-.04em;}
+        .lead{color:var(--soft); font-size:18px; line-height:1.7; max-width:760px; margin:0 0 26px;}
+        .hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px}
+        .micro{color:var(--muted); font-size:13px; line-height:1.7;}
+        .panel{
+          background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+          border:1px solid var(--line);
+          border-radius:var(--radius);
+          box-shadow:var(--shadow);
+        }
+        .terminal{overflow:hidden}
+        .terminal-top{display:flex; align-items:center; gap:8px; padding:14px 16px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.03)}
+        .dot{width:10px; height:10px; border-radius:50%}
+        .terminal-body{padding:20px 22px; font:14px/1.9 "Space Mono", monospace; color:#d7e3ff}
+        .allow{color:var(--green); font-weight:700}
+        .warn{color:var(--orange); font-weight:700}
+        .block{color:var(--red); font-weight:700}
+        .section{padding:28px 0}
+        .section-head{margin-bottom:20px}
+        .section-kicker{color:var(--gold2); font-size:12px; text-transform:uppercase; letter-spacing:.14em; margin-bottom:8px}
+        .section h2{margin:0; font-size:clamp(28px, 5vw, 50px); letter-spacing:-.03em}
+        .section p{color:var(--soft); line-height:1.8}
+        .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+        .grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
+        .card{padding:22px}
+        .card h3{margin:0 0 8px; font-size:18px}
+        .card p{margin:0; color:var(--muted); font-size:14px; line-height:1.8}
+        .mini{
+          display:inline-block; margin-bottom:12px; padding:6px 10px; border-radius:999px;
+          background:rgba(126,182,255,.09); border:1px solid rgba(126,182,255,.22); color:var(--blue);
+          font-size:11px; text-transform:uppercase; letter-spacing:.12em;
+        }
+        .pricing .card{display:flex; flex-direction:column; min-height:280px}
+        .price{font-size:40px; font-weight:800; letter-spacing:-.03em; margin:8px 0}
+        .price small{font-size:15px; color:var(--muted); font-weight:600}
+        .list{padding:0; margin:14px 0 0; list-style:none}
+        .list li{padding:8px 0; border-top:1px solid rgba(255,255,255,.06); color:var(--soft); font-size:14px}
+        .featured{outline:1px solid rgba(231,182,76,.35); background:linear-gradient(180deg, rgba(231,182,76,.08), rgba(255,255,255,.03))}
+        .arch{display:grid; gap:14px}
+        .arch-row{display:grid; grid-template-columns:190px 1fr; gap:18px; align-items:start; padding:18px 20px;}
+        .arch-label{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold2)}
+        .arch-row strong{display:block; margin-bottom:4px; font-size:18px}
+        .arch-row p{margin:0 0 10px; color:var(--muted)}
+        .chips{display:flex; flex-wrap:wrap; gap:8px}
+        .chip{
+          font:12px "Space Mono", monospace; padding:7px 10px; border-radius:999px;
+          border:1px solid var(--line); background:rgba(255,255,255,.03); color:#d7e3ff
+        }
+        .note{
+          padding:18px 20px; border-left:3px solid var(--gold); background:rgba(231,182,76,.06);
+          color:var(--soft); border-radius:16px;
+        }
+        .steps{display:grid; gap:12px}
+        .step{display:grid; grid-template-columns:54px 1fr; gap:16px; padding:18px}
+        .num{
+          width:54px; height:54px; border-radius:16px; display:grid; place-items:center;
+          font:700 16px "Space Mono", monospace;
+          background:rgba(231,182,76,.08); border:1px solid rgba(231,182,76,.25); color:var(--gold2)
+        }
+        .cta{padding:34px; text-align:center}
+        footer{padding:26px 0 40px; color:var(--muted); font-size:13px}
+        .foot{display:flex; justify-content:space-between; gap:16px; align-items:center; border-top:1px solid var(--line); padding-top:20px}
+        @media (max-width: 980px){
+          .hero-grid,.grid-4,.grid-3{grid-template-columns:1fr}
+          .arch-row{grid-template-columns:1fr}
+        }
+        @media (max-width: 760px){
+          .nav-links{display:none}
+          .hero{padding-top:34px}
+          .hero-actions{flex-direction:column; align-items:stretch}
+          .btn{width:100%}
+          .foot{flex-direction:column; align-items:flex-start}
+        }
+      `}</style>
+
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet"
+      />
+
+      <header className="nav">
+        <div className="nav-inner">
+          <a className="brand" href="#top">
+            <div className="brand-mark">T</div>
+            <div className="brand-text">
+              <small className="mono">Elmahrosa International</small>
+              <strong>TEOS Sentinel Shield</strong>
+            </div>
+          </a>
+          <nav className="nav-links">
+            <a href="#how">How it works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#deploy">Deploy</a>
+            <a className="btn btn-primary" href="https://t.me/teoslinker_bot?start=scan" target="_blank" rel="noopener noreferrer">Open Bot</a>
+          </nav>
+        </div>
+      </header>
+
+      <main id="top">
+        <section className="hero">
+          <div className="wrap hero-grid">
+            <div>
+              <div className="eyebrow mono"><span className="pulse"></span> Live now · local core tested · launch-ready page</div>
+              <h1>Sovereign AI<br/>Execution Firewall</h1>
+              <p className="lead">
+                Scan AI-generated code before it runs. TEOS Sentinel Shield gives deterministic
+                <strong> ALLOW / WARN / BLOCK</strong> decisions for agents, bots, and CI pipelines —
+                with a Telegram-first entry point and a sovereign architecture you can scale later.
+              </p>
+              <div className="hero-actions">
+                <a className="btn btn-primary" href="https://t.me/teoslinker_bot?start=scan" target="_blank" rel="noopener noreferrer">Start free scan</a>
+                <a className="btn btn-secondary" href="#pricing">See pricing</a>
+              </div>
+              <div className="micro mono">
+                Free tier: 5 scans · Pay-as-you-go: $0.49/scan · Target payment path: x402 on Base · Sovereign tier for B2B / government
+              </div>
+            </div>
+
+            <div className="panel terminal">
+              <div className="terminal-top">
+                <div className="dot" style={{background:"#ff6464"}}></div>
+                <div className="dot" style={{background:"#ffb84d"}}></div>
+                <div className="dot" style={{background:"#28d17c"}}></div>
+                <span className="mono" style={{marginLeft:8,color:"var(--muted)"}}>scan preview</span>
+              </div>
+              <div className="terminal-body">
+                {"$ teos-scan incoming_agent_patch.py"}<br/>
+                {"> secret exposure: false"}<br/>
+                {"> shell destruction risk: true"}<br/>
+                {"> dependency chain risk: medium"}<br/>
+                {"> policy verdict: "}<span className="block">BLOCK</span><br/><br/>
+
+                {"$ teos-scan autopatch_worker.py"}<br/>
+                {"> secret exposure: false"}<br/>
+                {"> unsafe eval: false"}<br/>
+                {"> network exfiltration: false"}<br/>
+                {"> policy verdict: "}<span className="allow">ALLOW</span><br/><br/>
+
+                {"$ teos-scan plugin_update.ts"}<br/>
+                {"> dependency anomaly: true"}<br/>
+                {"> policy verdict: "}<span className="warn">WARN</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="how">
+          <div className="wrap">
+            <div className="section-head">
+              <div className="section-kicker mono">How it works</div>
+              <h2>Simple first-run flow for real users</h2>
+            </div>
+            <div className="grid-4">
+              <div className="panel card">
+                <span className="mini mono">1</span>
+                <h3>Open the bot</h3>
+                <p>User starts in Telegram, taps the scan entry point, and pastes code or repo content.</p>
+              </div>
+              <div className="panel card">
+                <span className="mini mono">2</span>
+                <h3>Risk engine runs</h3>
+                <p><strong>agent-code-risk-mcp</strong> analyzes the payload and returns a deterministic decision.</p>
+              </div>
+              <div className="panel card">
+                <span className="mini mono">3</span>
+                <h3>Verdict is returned</h3>
+                <p>The bot sends back <strong>ALLOW</strong>, <strong>WARN</strong>, or <strong>BLOCK</strong> with short reasoning.</p>
+              </div>
+              <div className="panel card">
+                <span className="mini mono">4</span>
+                <h3>Upgrade on limit</h3>
+                <p>After 5 free scans, the user upgrades to pay-per-scan or a plan. Enterprise leads go to Sovereign.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section pricing" id="pricing">
+          <div className="wrap">
+            <div className="section-head">
+              <div className="section-kicker mono">Pricing</div>
+              <h2>Clean launch pricing</h2>
+            </div>
+            <div className="grid-3">
+              <div className="panel card">
+                <div className="mono" style={{color:"var(--gold2)", fontSize:12, textTransform:"uppercase", letterSpacing:".12em"}}>Free</div>
+                <div className="price">5 <small>scans</small></div>
+                <p>No card. Best for trying the firewall and seeing real verdicts in Telegram.</p>
+                <ul className="list">
+                  <li>5 total scans</li>
+                  <li>ALLOW / WARN / BLOCK verdicts</li>
+                  <li>Telegram access</li>
+                </ul>
+              </div>
+              <div className="panel card featured">
+                <div className="mono" style={{color:"var(--gold2)", fontSize:12, textTransform:"uppercase", letterSpacing:".12em"}}>Fast conversion</div>
+                <div className="price">$0.49 <small>/ scan</small></div>
+                <p>Best frictionless path for first payments while subscriptions are still being tightened.</p>
+                <ul className="list">
+                  <li>No monthly commitment</li>
+                  <li>Good for solo builders</li>
+                  <li>Easy upgrade inside bot</li>
+                </ul>
+              </div>
+              <div className="panel card">
+                <div className="mono" style={{color:"var(--gold2)", fontSize:12, textTransform:"uppercase", letterSpacing:".12em"}}>Plans</div>
+                <div className="price">$9 / $49 / $99</div>
+                <p>Starter, Builder, and Pro for repeat usage. Sovereign is custom for enterprise and government.</p>
+                <ul className="list">
+                  <li>Starter → 50 scans</li>
+                  <li>Builder → 500 scans</li>
+                  <li>Pro → 1000 scans + deps</li>
+                </ul>
+              </div>
+            </div>
+            <div className="note mono" style={{marginTop:18}}>
+              Recommended launch conversion path: show <strong>Free</strong> first, then push <strong>$0.49/scan</strong> as the easiest paid step. Keep subscriptions visible but secondary until payment automation is fully hardened.
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="architecture">
+          <div className="wrap">
+            <div className="section-head">
+              <div className="section-kicker mono">Architecture</div>
+              <h2>Current stack + future layers</h2>
+            </div>
+            <div className="arch">
+              <div className="panel arch-row">
+                <div className="arch-label mono">Frontend</div>
+                <div>
+                  <strong>teos-sentinel-shield</strong>
+                  <p>Vercel landing page and control plane entry point.</p>
+                  <div className="chips">
+                    <span className="chip">Landing page</span>
+                    <span className="chip">Pricing</span>
+                    <span className="chip">Bot CTA</span>
+                  </div>
+                </div>
+              </div>
+              <div className="panel arch-row">
+                <div className="arch-label mono">Gateway</div>
+                <div>
+                  <strong>teoslinker-bot</strong>
+                  <p>Telegram bot for scan intake, plan upgrade, and payment flow.</p>
+                  <div className="chips">
+                    <span className="chip">Telegram</span>
+                    <span className="chip">Scan UI</span>
+                    <span className="chip">Upgrade flow</span>
+                  </div>
+                </div>
+              </div>
+              <div className="panel arch-row">
+                <div className="arch-label mono">Core</div>
+                <div>
+                  <strong>agent-code-risk-mcp + teosmcp-ci-example</strong>
+                  <p>Deterministic code risk engine and CI/CD integration path for B2B teams.</p>
+                  <div className="chips">
+                    <span className="chip">ALLOW / WARN / BLOCK</span>
+                    <span className="chip">CI integration</span>
+                    <span className="chip">Policy gating</span>
+                  </div>
+                </div>
+              </div>
+              <div className="panel arch-row">
+                <div className="arch-label mono">Future</div>
+                <div>
+                  <strong>safe-ingestion-engine · teos-comply-crawl · teos-civic-mixer · Teos-Sovereign-System</strong>
+                  <p>Expansion into secure data intake, compliance crawling, privacy, and sovereign orchestration.</p>
+                  <div className="chips">
+                    <span className="chip">Data firewall</span>
+                    <span className="chip">Compliance crawler</span>
+                    <span className="chip">Privacy layer</span>
+                    <span className="chip">Control hub</span>
+                  </div>
+                </div>
+              </div>
+              <div className="panel arch-row">
+                <div className="arch-label mono">Governance</div>
+                <div>
+                  <strong>TEOS law layer · TESL non-fork license</strong>
+                  <p>Governance should stay framed as your legal and licensing layer, not as a speculative revenue promise on the landing page.</p>
+                  <div className="chips">
+                    <span className="chip">Governance root</span>
+                    <span className="chip">Non-fork license</span>
+                    <span className="chip">Institutional framing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="deploy">
+          <div className="wrap">
+            <div className="section-head">
+              <div className="section-kicker mono">Deploy</div>
+              <h2>Exactly where to add this</h2>
+            </div>
+
+            <div className="steps">
+              <div className="panel step">
+                <div className="num">1</div>
+                <div>
+                  <h3 style={{margin:"0 0 8px"}}>Replace the homepage source</h3>
+                  <p style={{margin:0}}>Put this code in <span className="mono">dashboard/app/page.tsx</span>. This is the file you should replace for the live homepage.</p>
+                </div>
+              </div>
+
+              <div className="panel step">
+                <div className="num">2</div>
+                <div>
+                  <h3 style={{margin:"0 0 8px"}}>Keep only real launch links</h3>
+                  <p style={{margin:0}}>This page already points users to <span className="mono">https://t.me/teoslinker_bot?start=scan</span>. Do not keep placeholder bot links.</p>
+                </div>
+              </div>
+
+              <div className="panel step">
+                <div className="num">3</div>
+                <div>
+                  <h3 style={{margin:"0 0 8px"}}>Commit and push</h3>
+                  <pre>{`git add dashboard/app/page.tsx
+git commit -m "Replace homepage with clean launch page"
+git push origin main`}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="wrap">
+            <div className="panel cta">
+              <div className="section-kicker mono">Launch now</div>
+              <h2 style={{marginTop:0}}>Your AI agent needs a firewall.</h2>
+              <p style={{maxWidth:760, margin:"0 auto 18px", color:"var(--soft)"}}>Start with 5 free scans, convert fast with pay-per-scan, then move serious buyers into Pro or Sovereign.</p>
+              <a className="btn btn-primary" href="https://t.me/teoslinker_bot?start=scan" target="_blank" rel="noopener noreferrer">Open @teoslinker_bot</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div className="wrap foot">
+          <div>© TEOS Sentinel Shield · Elmahrosa International</div>
+          <div className="mono">Sovereign AI Execution Firewall</div>
+        </div>
+      </footer>
+    </>
+  );
+}
