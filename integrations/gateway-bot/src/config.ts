@@ -7,19 +7,40 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(8080),
   NODE_ENV: z.string().default("development"),
   DATABASE_URL: z.string(),
-  SOLANA_RPC_URL: z.string().url(),
-  SOLANA_RECEIVER_WALLET: z.string().min(20),
   BOT_SHARED_SECRET: z.string().min(10),
   LICENSE_SIGNING_SECRET: z.string().min(10),
-  PIONEER_PRICE_SOL: z.coerce.number().positive(),
-  BUILDER_PRICE_SOL: z.coerce.number().positive(),
-  SOVEREIGN_MIN_PRICE_SOL: z.coerce.number().positive()
+  GATEWAY_BOT_TOKEN: z.string().min(10),
+  APP_BASE_URL: z.string().url().default("https://teos-sentinel-shield.vercel.app")
 });
 
 export const env = envSchema.parse(process.env);
 
-export const tierPrices = {
-  pioneer: env.PIONEER_PRICE_SOL,
-  builder: env.BUILDER_PRICE_SOL,
-  sovereign: env.SOVEREIGN_MIN_PRICE_SOL
+export const tierPlans = {
+  free: {
+    label: "Free",
+    scans: 5
+  },
+  starter: {
+    label: "Starter",
+    priceUsd: 9,
+    scans: 50
+  },
+  builder: {
+    label: "Builder",
+    priceUsd: 49,
+    scans: 500
+  },
+  pro: {
+    label: "Pro",
+    priceUsd: 99,
+    scans: 1000,
+    deps: true
+  },
+  sovereign: {
+    label: "Sovereign",
+    priceUsd: null,
+    scans: null
+  }
 } as const;
+
+export type TierPlanKey = keyof typeof tierPlans;
