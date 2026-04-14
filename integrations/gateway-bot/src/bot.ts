@@ -49,7 +49,7 @@ bot.action(/^plan_(free|starter|builder|pro|sovereign)$/, async (ctx) => {
     await ctx.reply(
       [
         "🏛 Sovereign selected",
-        "Custom onboarding only",
+        "Custom onboarding only.",
         `Contact: ${env.CONTACT_EMAIL}`
       ].join("\n")
     );
@@ -64,9 +64,9 @@ bot.action(/^plan_(free|starter|builder|pro|sovereign)$/, async (ctx) => {
       `Scans: ${plan.scans}`,
       "",
       "USDC payment flow:",
-      `Send USDC to the receiver wallet configured by TEOS.`,
+      `Send payment to the configured USDC wallet.`,
       "",
-      "Then reply in this format:",
+      "Then reply in this exact format:",
       `ACTIVATE ${tier.toUpperCase()} your@email.com`
     ].join("\n")
   );
@@ -79,7 +79,7 @@ bot.on("text", async (ctx) => {
     return;
   }
 
-  const parts = text.split(/\\s+/);
+  const parts = text.split(/\s+/);
   if (parts.length < 3) {
     await ctx.reply("❌ Use: ACTIVATE STARTER your@email.com");
     return;
@@ -127,6 +127,4 @@ bot.on("text", async (ctx) => {
   }
 });
 
-bot.launch().then(() => {
-  console.log("🤖 TEOS Gateway Bot live");
-});
+export { bot };
