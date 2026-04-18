@@ -9,6 +9,7 @@
 
   <style>
     body { background: #0a0a0a; }
+    html { scroll-behavior: smooth; }
   </style>
 </head>
 
@@ -22,10 +23,11 @@
       <p class="text-xs text-zinc-400">Sovereign AI Execution Firewall</p>
     </div>
 
-    <div class="hidden md:flex gap-6 text-sm text-zinc-300">
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="https://t.me/teoslinker_bot" class="border px-4 py-2 rounded-xl">Open Bot</a>
+    <div class="hidden md:flex gap-6 text-sm text-zinc-300 items-center">
+      <a href="#pricing" class="hover:text-white">Pricing</a>
+      <a href="#roadmap" class="hover:text-white">Roadmap</a>
+      <a href="#faq" class="hover:text-white">FAQ</a>
+      <a href="https://t.me/teoslinker_bot" class="border px-4 py-2 rounded-xl hover:bg-white/5">Open Bot</a>
     </div>
   </div>
 </header>
@@ -33,26 +35,27 @@
 <!-- HERO -->
 <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10">
   <div>
-    <div class="text-xs mb-4 text-emerald-400">LIVE • TELEGRAM BOT • REAL SCANS</div>
+    <div class="text-xs mb-4 text-emerald-400">LIVE • TELEGRAM BOT • REAL SCANS • DODO PAYMENTS</div>
 
-    <h1 class="text-4xl md:text-6xl font-bold">
+    <h1 class="text-4xl md:text-6xl font-bold leading-tight">
       Secure AI execution<br>
       before risky code runs
     </h1>
 
-    <p class="mt-6 text-zinc-300">
+    <p class="mt-6 text-zinc-300 text-lg">
       Scan code instantly and get a clear verdict:
       <b>ALLOW, WARN, or BLOCK</b>.
+      TEOS Sentinel Shield gives you a Telegram-first security workflow with real scan credits and paid upgrade paths.
     </p>
 
-    <div class="mt-8 flex gap-3">
+    <div class="mt-8 flex gap-3 flex-wrap">
       <a href="https://t.me/teoslinker_bot"
-         class="bg-white text-black px-5 py-3 rounded-xl font-medium">
+         class="bg-white text-black px-5 py-3 rounded-xl font-medium hover:bg-zinc-200">
         Start Free
       </a>
 
       <a href="#pricing"
-         class="border px-5 py-3 rounded-xl">
+         class="border px-5 py-3 rounded-xl hover:bg-white/5">
         View Pricing
       </a>
     </div>
@@ -100,47 +103,158 @@
   </div>
 </section>
 
-<!-- PRICING -->
-<section id="pricing" class="max-w-7xl mx-auto px-6 py-16">
-  <h2 class="text-3xl font-bold mb-6">Pricing</h2>
-
-  <div class="grid md:grid-cols-5 gap-5">
-
-    <div class="bg-zinc-900 p-6 rounded-xl">
-      <h3>Free</h3>
-      <p class="text-2xl">$0</p>
-      <p>5 scans</p>
-      <a href="https://t.me/teoslinker_bot" class="block mt-4 border p-2 text-center rounded">Start</a>
+<!-- HOW IT WORKS -->
+<section class="max-w-7xl mx-auto px-6 py-8">
+  <div class="grid md:grid-cols-3 gap-5">
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">1. Open the bot</div>
+      <p class="mt-2 text-zinc-300 text-sm">Start with the Telegram bot and test the free plan before upgrading.</p>
     </div>
 
-    <div class="bg-zinc-900 p-6 rounded-xl">
-      <h3>Starter</h3>
-      <p class="text-2xl">$9.99</p>
-      <p>50 scans</p>
-      <a href="#" class="block mt-4 border p-2 text-center rounded">Buy</a>
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">2. Link your email</div>
+      <p class="mt-2 text-zinc-300 text-sm">Use <b>/email your@email.com</b> so payment activation can match your account correctly.</p>
+    </div>
+
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">3. Pay and activate</div>
+      <p class="mt-2 text-zinc-300 text-sm">Complete payment through Dodo and your credits activate automatically after success.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="max-w-7xl mx-auto px-6 py-16">
+  <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+    <div>
+      <h2 class="text-3xl font-bold">Pricing</h2>
+      <p class="text-zinc-400 mt-2">Simple USD pricing aligned with the live bot.</p>
+    </div>
+    <div class="text-sm text-zinc-400">
+      Support: @teosegypt
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-5">
+
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <h3 class="text-lg font-semibold">Free</h3>
+      <p class="text-2xl mt-2">$0</p>
+      <p class="text-zinc-400">5 scans</p>
+      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
+        <li>• 5 real scans</li>
+        <li>• ALLOW / WARN / BLOCK</li>
+        <li>• Telegram bot access</li>
+      </ul>
+      <a href="https://t.me/teoslinker_bot" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Start Free</a>
+    </div>
+
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <h3 class="text-lg font-semibold">Starter</h3>
+      <p class="text-2xl mt-2">$9.99</p>
+      <p class="text-zinc-400">50 scans / month</p>
+      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
+        <li>• Basic code risk scanning</li>
+        <li>• Fast activation after payment</li>
+        <li>• Good for early users</li>
+      </ul>
+      <a href="https://checkout.dodopayments.com/buy/pdt_0NcxjnrwUDXBtoblQEyeK" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Starter</a>
     </div>
 
     <div class="bg-emerald-500/10 border border-emerald-500 p-6 rounded-xl">
-      <h3>Builder</h3>
-      <p class="text-2xl">$49</p>
-      <p>500 scans</p>
-      <a href="#" class="block mt-4 border p-2 text-center rounded">Buy</a>
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold">Builder</h3>
+        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full">Recommended</span>
+      </div>
+      <p class="text-2xl mt-2">$49</p>
+      <p class="text-zinc-400">500 scans / month</p>
+      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
+        <li>• Dependency auditing</li>
+        <li>• Better workflow coverage</li>
+        <li>• Built for active builders</li>
+      </ul>
+      <a href="https://checkout.dodopayments.com/buy/pdt_0NcxkbT0sHGyG9pbBdzXo" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Builder</a>
     </div>
 
-    <div class="bg-zinc-900 p-6 rounded-xl">
-      <h3>Pro</h3>
-      <p class="text-2xl">$99</p>
-      <p>1000 scans</p>
-      <a href="#" class="block mt-4 border p-2 text-center rounded">Buy</a>
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <h3 class="text-lg font-semibold">Pro</h3>
+      <p class="text-2xl mt-2">$99</p>
+      <p class="text-zinc-400">1000 scans / month</p>
+      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
+        <li>• CI-ready workflow support</li>
+        <li>• Higher usage capacity</li>
+        <li>• Serious production usage</li>
+      </ul>
+      <a href="https://checkout.dodopayments.com/buy/pdt_0NcoHFbcVOk0OeDbKtq4y" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Pro</a>
     </div>
 
-    <div class="bg-zinc-900 p-6 rounded-xl">
-      <h3>Sovereign</h3>
-      <p class="text-2xl">$12k</p>
-      <p>Unlimited</p>
-      <a href="https://t.me/teosegypt" class="block mt-4 border p-2 text-center rounded">Contact</a>
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <h3 class="text-lg font-semibold">Sovereign</h3>
+      <p class="text-2xl mt-2">$12k</p>
+      <p class="text-zinc-400">Unlimited / year</p>
+      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
+        <li>• Unlimited scans</li>
+        <li>• Guided support</li>
+        <li>• Private deployment path</li>
+      </ul>
+      <a href="https://checkout.dodopayments.com/buy/pdt_0NcxoGk4zm8n48TMVKOss" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Sovereign</a>
     </div>
 
+  </div>
+
+  <div class="mt-8 bg-zinc-900 border border-white/10 rounded-xl p-5 text-sm text-zinc-300">
+    <p class="font-semibold text-white">How to activate after payment</p>
+    <p class="mt-2">1. Open the bot and run <b>/email your@email.com</b></p>
+    <p>2. Choose your plan and complete payment</p>
+    <p>3. Credits activate automatically after successful payment</p>
+    <p class="mt-3 text-zinc-400">All purchases are final. Free plan is available for evaluation before payment.</p>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="max-w-7xl mx-auto px-6 py-16">
+  <h2 class="text-3xl font-bold mb-6">Roadmap</h2>
+
+  <div class="grid md:grid-cols-2 gap-5">
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">Phase 1 — Live now</div>
+      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
+        <li>• Telegram bot live</li>
+        <li>• Real scan credits</li>
+        <li>• Dodo payment checkout</li>
+        <li>• Email-linked activation flow</li>
+      </ul>
+    </div>
+
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">Phase 2 — Frontend upgrade</div>
+      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
+        <li>• Live Vercel frontend polish</li>
+        <li>• Better conversion sections</li>
+        <li>• Upgrade button optimization</li>
+        <li>• Social proof and live status widgets</li>
+      </ul>
+    </div>
+
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">Phase 3 — Product expansion</div>
+      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
+        <li>• CI/CD package examples</li>
+        <li>• Better dependency audit layer</li>
+        <li>• Team and enterprise workflows</li>
+        <li>• Dashboard improvements</li>
+      </ul>
+    </div>
+
+    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
+      <div class="text-emerald-400 font-semibold">Phase 4 — Sovereign stack</div>
+      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
+        <li>• Private deployment options</li>
+        <li>• Larger enterprise onboarding</li>
+        <li>• More engines inside TEOS ecosystem</li>
+        <li>• Long-term sovereign control plane</li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -149,27 +263,35 @@
   <h2 class="text-3xl font-bold mb-6">FAQ</h2>
 
   <div class="space-y-4">
-    <div class="bg-zinc-900 p-4 rounded">
+    <div class="bg-zinc-900 p-4 rounded border border-white/10">
       <b>What does it do?</b>
-      <p>Scans code and returns ALLOW / WARN / BLOCK.</p>
+      <p class="mt-2 text-zinc-300">Scans code and returns ALLOW / WARN / BLOCK.</p>
     </div>
 
-    <div class="bg-zinc-900 p-4 rounded">
-      <b>How to activate paid plans?</b>
-      <p>Use /email then pay via /upgrade in bot.</p>
+    <div class="bg-zinc-900 p-4 rounded border border-white/10">
+      <b>How do paid plans activate?</b>
+      <p class="mt-2 text-zinc-300">Use <b>/email</b> in the bot, then complete payment. Your credits activate automatically after successful payment.</p>
     </div>
 
-    <div class="bg-zinc-900 p-4 rounded">
-      <b>Refunds?</b>
-      <p>No refunds. Free tier available.</p>
+    <div class="bg-zinc-900 p-4 rounded border border-white/10">
+      <b>Do you offer refunds?</b>
+      <p class="mt-2 text-zinc-300">No refunds. The free tier is available so users can evaluate before upgrading.</p>
+    </div>
+
+    <div class="bg-zinc-900 p-4 rounded border border-white/10">
+      <b>Who is support?</b>
+      <p class="mt-2 text-zinc-300">Support: @teosegypt<br>Group: @elmahrosapi</p>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer class="border-t border-white/10 mt-10">
-  <div class="max-w-7xl mx-auto px-6 py-8 flex justify-between text-sm text-zinc-400">
-    <div>TEOS Sentinel Shield</div>
+  <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between gap-4 text-sm text-zinc-400">
+    <div>
+      <div class="text-white font-semibold">TEOS Sentinel Shield</div>
+      <div>Powered by Elmahrosa International</div>
+    </div>
     <div>
       Support: @teosegypt<br>
       Group: @elmahrosapi
