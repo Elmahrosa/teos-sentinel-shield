@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export default function Home() {
   return (
     <main
@@ -419,6 +418,3 @@ const buyButton = {
   borderRadius: 10,
   textAlign: "center" as const,
 };
-=======
-PASTE_THE_CODE_HERE
->>>>>>> b0cbc2a (fix: clean app page syntax)
