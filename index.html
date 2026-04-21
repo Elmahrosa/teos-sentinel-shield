@@ -1,303 +1,96 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TEOS Sentinel Shield</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    body { background: #0a0a0a; }
-    html { scroll-behavior: smooth; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEOS Sentinel Shield — Sovereign AI Defense</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}
+  header{padding:24px 40px;border-bottom:1px solid #1a1a2e;display:flex;justify-content:space-between;align-items:center}
+  .logo{font-size:20px;font-weight:700;color:#7c6af7}
+  .badge{background:#1a1a2e;border:1px solid #7c6af7;color:#7c6af7;padding:4px 12px;border-radius:20px;font-size:12px}
+  .hero{text-align:center;padding:80px 40px 60px}
+  .hero h1{font-size:48px;font-weight:800;margin-bottom:16px;line-height:1.1}
+  .hero h1 span{color:#7c6af7}
+  .hero p{font-size:18px;color:#888;max-width:560px;margin:0 auto 40px}
+  .scan-box{background:#111118;border:1px solid #1a1a2e;border-radius:16px;padding:32px;max-width:680px;margin:0 auto}
+  textarea{width:100%;background:#0a0a0f;border:1px solid #2a2a3e;border-radius:8px;color:#e0e0e0;padding:16px;font-family:monospace;font-size:14px;resize:vertical;min-height:120px;outline:none}
+  textarea:focus{border-color:#7c6af7}
+  button{width:100%;margin-top:16px;padding:14px;background:#7c6af7;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s}
+  button:hover{opacity:.85}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .result{margin-top:20px;padding:20px;border-radius:8px;display:none;font-family:monospace;font-size:14px}
+  .ALLOW{background:#0d2818;border:1px solid #1a5c35;color:#4ade80}
+  .WARN{background:#2a1f00;border:1px solid #7a5500;color:#facc15}
+  .BLOCK{background:#2a0808;border:1px solid #7a1515;color:#f87171}
+  .decision{font-size:28px;font-weight:800;margin-bottom:8px}
+  .score{font-size:13px;color:#888;margin-bottom:12px}
+  .findings li{margin:4px 0;list-style:disc;margin-left:20px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:680px;margin:40px auto 0;padding:0 0 80px}
+  .stat{background:#111118;border:1px solid #1a1a2e;border-radius:12px;padding:24px;text-align:center}
+  .stat .n{font-size:32px;font-weight:800;color:#7c6af7}
+  .stat .l{font-size:13px;color:#666;margin-top:4px}
+  footer{text-align:center;padding:24px;border-top:1px solid #1a1a2e;color:#444;font-size:13px}
+</style>
 </head>
-
-<body class="text-zinc-100">
-
-<!-- HEADER -->
-<header class="border-b border-white/10 bg-black/70 backdrop-blur">
-  <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-    <div>
-      <h1 class="text-lg font-semibold">TEOS Sentinel Shield</h1>
-      <p class="text-xs text-zinc-400">Sovereign AI Execution Firewall</p>
-    </div>
-
-    <div class="hidden md:flex gap-6 text-sm text-zinc-300 items-center">
-      <a href="#pricing" class="hover:text-white">Pricing</a>
-      <a href="#roadmap" class="hover:text-white">Roadmap</a>
-      <a href="#faq" class="hover:text-white">FAQ</a>
-      <a href="https://t.me/teoslinker_bot" class="border px-4 py-2 rounded-xl hover:bg-white/5">Open Bot</a>
-    </div>
-  </div>
+<body>
+<header>
+  <div class="logo">⚔️ TEOS Sentinel</div>
+  <span class="badge">LIVE</span>
 </header>
-
-<!-- HERO -->
-<section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10">
-  <div>
-    <div class="text-xs mb-4 text-emerald-400">LIVE • TELEGRAM BOT • REAL SCANS • DODO PAYMENTS</div>
-
-    <h1 class="text-4xl md:text-6xl font-bold leading-tight">
-      Secure AI execution<br>
-      before risky code runs
-    </h1>
-
-    <p class="mt-6 text-zinc-300 text-lg">
-      Scan code instantly and get a clear verdict:
-      <b>ALLOW, WARN, or BLOCK</b>.
-      TEOS Sentinel Shield gives you a Telegram-first security workflow with real scan credits and paid upgrade paths.
-    </p>
-
-    <div class="mt-8 flex gap-3 flex-wrap">
-      <a href="https://t.me/teoslinker_bot"
-         class="bg-white text-black px-5 py-3 rounded-xl font-medium hover:bg-zinc-200">
-        Start Free
-      </a>
-
-      <a href="#pricing"
-         class="border px-5 py-3 rounded-xl hover:bg-white/5">
-        View Pricing
-      </a>
-    </div>
-
-    <div class="mt-8 grid grid-cols-3 gap-4 text-sm">
-      <div class="bg-zinc-900 p-4 rounded-xl">
-        <div class="text-2xl font-bold">5</div>
-        <div class="text-zinc-400">Free scans</div>
-      </div>
-      <div class="bg-zinc-900 p-4 rounded-xl">
-        <div class="text-2xl font-bold">3</div>
-        <div class="text-zinc-400">Verdicts</div>
-      </div>
-      <div class="bg-zinc-900 p-4 rounded-xl">
-        <div class="text-2xl font-bold">24/7</div>
-        <div class="text-zinc-400">Bot access</div>
-      </div>
+<div class="hero">
+  <h1>AI Code Security<br><span>Firewall</span></h1>
+  <p>Paste any code. Get an instant ALLOW / WARN / BLOCK decision before execution.</p>
+  <div class="scan-box">
+    <textarea id="code" placeholder="Paste code to scan...&#10;&#10;e.g. eval(require('child_process').exec('rm -rf /'))"></textarea>
+    <button id="scanBtn" onclick="scan()">⚡ Scan Now — Free</button>
+    <div class="result" id="result">
+      <div class="decision" id="decision"></div>
+      <div class="score" id="scoreText"></div>
+      <ul class="findings" id="findings"></ul>
     </div>
   </div>
-
-  <!-- DEMO -->
-  <div class="bg-zinc-900 p-6 rounded-2xl border border-white/10">
-    <div class="text-sm flex justify-between">
-      <span>TEOS Sentinel</span>
-      <span class="text-emerald-400">LIVE</span>
-    </div>
-
-    <div class="mt-4 space-y-3 text-sm">
-      <div class="bg-black p-3 rounded">
-        <div class="text-zinc-400">Input</div>
-        <div class="text-xs font-mono">/scan code</div>
-      </div>
-
-      <div class="bg-yellow-500/10 p-3 rounded border border-yellow-500/20">
-        <div class="text-yellow-300 font-bold">WARN</div>
-        <div>Detected risky pattern</div>
-      </div>
-
-      <div class="grid grid-cols-3 gap-3">
-        <div class="bg-black p-2 rounded">Builder</div>
-        <div class="bg-black p-2 rounded">500</div>
-        <div class="bg-black p-2 rounded">Auto</div>
-      </div>
-    </div>
+  <div class="stats">
+    <div class="stat"><div class="n">ALLOW</div><div class="l">Clean code passes instantly</div></div>
+    <div class="stat"><div class="n">WARN</div><div class="l">Review flagged patterns</div></div>
+    <div class="stat"><div class="n">BLOCK</div><div class="l">Dangerous code stopped</div></div>
   </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="max-w-7xl mx-auto px-6 py-8">
-  <div class="grid md:grid-cols-3 gap-5">
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">1. Open the bot</div>
-      <p class="mt-2 text-zinc-300 text-sm">Start with the Telegram bot and test the free plan before upgrading.</p>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">2. Link your email</div>
-      <p class="mt-2 text-zinc-300 text-sm">Use <b>/email your@email.com</b> so payment activation can match your account correctly.</p>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">3. Pay and activate</div>
-      <p class="mt-2 text-zinc-300 text-sm">Complete payment through Dodo and your credits activate automatically after success.</p>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section id="pricing" class="max-w-7xl mx-auto px-6 py-16">
-  <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
-    <div>
-      <h2 class="text-3xl font-bold">Pricing</h2>
-      <p class="text-zinc-400 mt-2">Simple USD pricing aligned with the live bot.</p>
-    </div>
-    <div class="text-sm text-zinc-400">
-      Support: @teosegypt
-    </div>
-  </div>
-
-  <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-5">
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <h3 class="text-lg font-semibold">Free</h3>
-      <p class="text-2xl mt-2">$0</p>
-      <p class="text-zinc-400">5 scans</p>
-      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
-        <li>• 5 real scans</li>
-        <li>• ALLOW / WARN / BLOCK</li>
-        <li>• Telegram bot access</li>
-      </ul>
-      <a href="https://t.me/teoslinker_bot" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Start Free</a>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <h3 class="text-lg font-semibold">Starter</h3>
-      <p class="text-2xl mt-2">$9.99</p>
-      <p class="text-zinc-400">50 scans / month</p>
-      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
-        <li>• Basic code risk scanning</li>
-        <li>• Fast activation after payment</li>
-        <li>• Good for early users</li>
-      </ul>
-      <a href="https://checkout.dodopayments.com/buy/pdt_0NcxjnrwUDXBtoblQEyeK" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Starter</a>
-    </div>
-
-    <div class="bg-emerald-500/10 border border-emerald-500 p-6 rounded-xl">
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-semibold">Builder</h3>
-        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full">Recommended</span>
-      </div>
-      <p class="text-2xl mt-2">$49</p>
-      <p class="text-zinc-400">500 scans / month</p>
-      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
-        <li>• Dependency auditing</li>
-        <li>• Better workflow coverage</li>
-        <li>• Built for active builders</li>
-      </ul>
-      <a href="https://checkout.dodopayments.com/buy/pdt_0NcxkbT0sHGyG9pbBdzXo" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Builder</a>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <h3 class="text-lg font-semibold">Pro</h3>
-      <p class="text-2xl mt-2">$99</p>
-      <p class="text-zinc-400">1000 scans / month</p>
-      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
-        <li>• CI-ready workflow support</li>
-        <li>• Higher usage capacity</li>
-        <li>• Serious production usage</li>
-      </ul>
-      <a href="https://checkout.dodopayments.com/buy/pdt_0NcoHFbcVOk0OeDbKtq4y" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Pro</a>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <h3 class="text-lg font-semibold">Sovereign</h3>
-      <p class="text-2xl mt-2">$12k</p>
-      <p class="text-zinc-400">Unlimited / year</p>
-      <ul class="mt-4 text-sm text-zinc-300 space-y-2">
-        <li>• Unlimited scans</li>
-        <li>• Guided support</li>
-        <li>• Private deployment path</li>
-      </ul>
-      <a href="https://checkout.dodopayments.com/buy/pdt_0NcxoGk4zm8n48TMVKOss" class="block mt-5 border p-2 text-center rounded hover:bg-white/5">Buy Sovereign</a>
-    </div>
-
-  </div>
-
-  <div class="mt-8 bg-zinc-900 border border-white/10 rounded-xl p-5 text-sm text-zinc-300">
-    <p class="font-semibold text-white">How to activate after payment</p>
-    <p class="mt-2">1. Open the bot and run <b>/email your@email.com</b></p>
-    <p>2. Choose your plan and complete payment</p>
-    <p>3. Credits activate automatically after successful payment</p>
-    <p class="mt-3 text-zinc-400">All purchases are final. Free plan is available for evaluation before payment.</p>
-  </div>
-</section>
-
-<!-- ROADMAP -->
-<section id="roadmap" class="max-w-7xl mx-auto px-6 py-16">
-  <h2 class="text-3xl font-bold mb-6">Roadmap</h2>
-
-  <div class="grid md:grid-cols-2 gap-5">
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">Phase 1 — Live now</div>
-      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
-        <li>• Telegram bot live</li>
-        <li>• Real scan credits</li>
-        <li>• Dodo payment checkout</li>
-        <li>• Email-linked activation flow</li>
-      </ul>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">Phase 2 — Frontend upgrade</div>
-      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
-        <li>• Live Vercel frontend polish</li>
-        <li>• Better conversion sections</li>
-        <li>• Upgrade button optimization</li>
-        <li>• Social proof and live status widgets</li>
-      </ul>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">Phase 3 — Product expansion</div>
-      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
-        <li>• CI/CD package examples</li>
-        <li>• Better dependency audit layer</li>
-        <li>• Team and enterprise workflows</li>
-        <li>• Dashboard improvements</li>
-      </ul>
-    </div>
-
-    <div class="bg-zinc-900 p-6 rounded-xl border border-white/10">
-      <div class="text-emerald-400 font-semibold">Phase 4 — Sovereign stack</div>
-      <ul class="mt-3 text-sm text-zinc-300 space-y-2">
-        <li>• Private deployment options</li>
-        <li>• Larger enterprise onboarding</li>
-        <li>• More engines inside TEOS ecosystem</li>
-        <li>• Long-term sovereign control plane</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq" class="max-w-5xl mx-auto px-6 py-16">
-  <h2 class="text-3xl font-bold mb-6">FAQ</h2>
-
-  <div class="space-y-4">
-    <div class="bg-zinc-900 p-4 rounded border border-white/10">
-      <b>What does it do?</b>
-      <p class="mt-2 text-zinc-300">Scans code and returns ALLOW / WARN / BLOCK.</p>
-    </div>
-
-    <div class="bg-zinc-900 p-4 rounded border border-white/10">
-      <b>How do paid plans activate?</b>
-      <p class="mt-2 text-zinc-300">Use <b>/email</b> in the bot, then complete payment. Your credits activate automatically after successful payment.</p>
-    </div>
-
-    <div class="bg-zinc-900 p-4 rounded border border-white/10">
-      <b>Do you offer refunds?</b>
-      <p class="mt-2 text-zinc-300">No refunds. The free tier is available so users can evaluate before upgrading.</p>
-    </div>
-
-    <div class="bg-zinc-900 p-4 rounded border border-white/10">
-      <b>Who is support?</b>
-      <p class="mt-2 text-zinc-300">Support: @teosegypt<br>Group: @elmahrosapi</p>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="border-t border-white/10 mt-10">
-  <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between gap-4 text-sm text-zinc-400">
-    <div>
-      <div class="text-white font-semibold">TEOS Sentinel Shield</div>
-      <div>Powered by Elmahrosa International</div>
-    </div>
-    <div>
-      Support: @teosegypt<br>
-      Group: @elmahrosapi
-    </div>
-  </div>
-</footer>
-
+</div>
+<footer>Built by Elmahrosa International · Alexandria, Egypt · <a href="https://t.me/teoslinker_bot" style="color:#7c6af7">Telegram Bot</a></footer>
+<script>
+const API = "https://teoslinker-bot.railway.app";
+async function scan() {
+  const code = document.getElementById("code").value.trim();
+  if (!code) return;
+  const btn = document.getElementById("scanBtn");
+  btn.disabled = true; btn.textContent = "Scanning...";
+  const res = document.getElementById("result");
+  res.style.display = "none";
+  try {
+    const r = await fetch(API + "/api/ci/scan", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({code})
+    });
+    const d = await r.json();
+    document.getElementById("decision").textContent = d.decision;
+    document.getElementById("scoreText").textContent = `Risk score: ${d.score}/100`;
+    const fl = document.getElementById("findings");
+    fl.innerHTML = "";
+    (d.findings||[]).forEach(f => { const li = document.createElement("li"); li.textContent = f; fl.appendChild(li); });
+    res.className = "result " + d.decision;
+    res.style.display = "block";
+  } catch(e) {
+    res.className = "result WARN";
+    res.innerHTML = "<div class='decision'>ERROR</div><div>Cannot reach API. Check Railway status.</div>";
+    res.style.display = "block";
+  }
+  btn.disabled = false; btn.textContent = "⚡ Scan Now — Free";
+}
+document.getElementById("code").addEventListener("keydown", e => {
+  if (e.ctrlKey && e.key === "Enter") scan();
+});
+</script>
 </body>
 </html>
