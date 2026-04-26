@@ -15,7 +15,13 @@
 </div>
 
 ---
+## Investor Deck
 
+TEOS Sentinel Shield seed round pitch deck is available here:
+
+[Open Seed Round Pitch Deck](docs/seed-round-pitch-deck.html)
+
+TEOS Sentinel Shield is a compliance-driven AI execution firewall for autonomous agents, audit-grade controls, and sovereign AI infrastructure.
 # 🌍 Overview
 
 TEOS Sentinel Shield is a **deterministic AI execution firewall** that analyzes code **before execution** and returns a clear security decision:
