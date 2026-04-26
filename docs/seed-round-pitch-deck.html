@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Elmahrosa International | TEOS Sentinel Shield – Seed Round Pitch Deck</title>
+    <!-- Google Fonts & modern styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #E9E5DD;  /* warm sandstone background for preview */
+            font-family: 'Inter', sans-serif;
+            line-height: 1.4;
+            scroll-behavior: smooth;
+        }
+
+        /* slide container – print optimized for landscape A4 / letter */
+        .deck {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: transparent;
+        }
+
+        .slide {
+            background: #FFFFFF;
+            border-radius: 28px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+            margin: 2rem 1.5rem;
+            padding: 2.5rem 2.8rem;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+            page-break-after: always;
+            break-inside: avoid;
+            min-height: 650px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(197, 165, 114, 0.25);
+        }
+
+        /* last slide no extra page break after closing */
+        .slide:last-child {
+            page-break-after: auto;
+            margin-bottom: 2rem;
+        }
+
+        /* heritage & premium decorative elements */
+        .slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(197,165,114,0.08) 0%, rgba(197,165,114,0) 80%);
+            pointer-events: none;
+            border-bottom-left-radius: 50%;
+            z-index: 0;
+        }
+
+        .slide::after {
+            content: "☥";
+            font-family: 'Cormorant Garamond', serif;
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 48px;
+            opacity: 0.08;
+            color: #C5A572;
+            pointer-events: none;
+            font-weight: 400;
+        }
+
+        /* content relative to pseudo-elements */
+        .slide > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* header branding line */
+        .brand-tag {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #C5A572;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #5C4B32;
+            font-weight: 500;
+        }
+
+        .brand-left {
+            font-weight: 700;
+            color: #1F2A3E;
+        }
+
+        .brand-left span {
+            color: #C5A572;
+            font-weight: 800;
+        }
+
+        .slide-number {
+            font-size: 0.75rem;
+            background: #F2EFE9;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+        }
+
+        h1 {
+            font-size: 3.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1F2A3E 0%, #2C3E50 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1.2rem;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #1F2A3E;
+            border-left: 6px solid #C5A572;
+            padding-left: 1rem;
+            margin-bottom: 1.8rem;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #C5A572;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .card-stat {
+            background: #F9F7F3;
+            padding: 1.4rem;
+            border-radius: 24px;
+            border: 1px solid #EBE5DB;
+            transition: transform 0.1s ease;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.6rem;
+            position: relative;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #2C3E50;
+        }
+
+        .bullet-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #C5A572;
+            font-weight: bold;
+        }
+
+        .metric-highlight {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1F2A3E;
+            line-height: 1;
+        }
+
+        .metric-desc {
+            font-size: 0.9rem;
+            color: #5E6A7A;
+            margin-top: 0.3rem;
+        }
+
+        .flex-modules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .module {
+            background: #F4F1EA;
+            border-radius: 20px;
+            padding: 1rem 1.2rem;
+            flex: 1 1 200px;
+            border-bottom: 3px solid #C5A572;
+            font-weight: 600;
+            color: #1F2A3E;
+        }
+
+        .module p {
+            font-size: 0.85rem;
+            font-weight: normal;
+            color: #5C5E66;
+            margin-top: 0.4rem;
+        }
+
+        .ask-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            background: #F9F7F3;
+            padding: 1.6rem;
+            border-radius: 28px;
+            margin: 1rem 0;
+        }
+
+        .fund-use {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .pill {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #E2D9CF;
+            color: #2C3E50;
+        }
+
+        .pill strong {
+            color: #C5A572;
+        }
+
+        .footer-quote {
+            margin-top: auto;
+            padding-top: 2rem;
+            font-size: 1.1rem;
+            font-style: italic;
+            border-top: 1px solid #E9E2D6;
+            color: #4F5B6B;
+            font-weight: 500;
+        }
+
+        .team-profile {
+            display: flex;
+            gap: 1.8rem;
+            align-items: center;
+            background: #F9F7F3;
+            border-radius: 32px;
+            padding: 1.6rem;
+            margin: 1rem 0;
+        }
+        .avatar-icon {
+            width: 90px;
+            height: 90px;
+            background: #1F2A3E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C5A572;
+            font-size: 2.8rem;
+            font-weight: 600;
+            font-family: serif;
+        }
+
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            .slide {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin: 0;
+                page-break-after: always;
+                border-radius: 0;
+                padding: 1.8rem 2rem;
+                min-height: 90vh;
+            }
+            .deck {
+                max-width: 100%;
+                margin: 0;
+            }
+            .brand-tag {
+                border-bottom-color: #aaa;
+            }
+            .slide::after, .slide::before {
+                opacity: 0.1;
+            }
+            .card-stat, .module, .ask-grid, .team-profile {
+                break-inside: avoid;
+            }
+        }
+
+        @page {
+            size: landscape;
+            margin: 1.2cm;
+        }
+
+        .highlight-gold {
+            color: #C5A572;
+            font-weight: 700;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #4A5B6F;
+            margin-bottom: 2rem;
+        }
+
+        button.print-helper {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1F2A3E;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 999;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        button.print-helper:hover {
+            background: #C5A572;
+            color: #1F2A3E;
+        }
+    </style>
+</head>
+<body>
+<div class="deck">
+    <!-- COVER SLIDE (premium introduction, not counted in original sequence but enhances brand) -->
+    <div class="slide" style="justify-content: center; text-align: center;">
+        <div class="brand-tag" style="border-bottom: none; margin-bottom: 0.5rem; justify-content: center;">
+            <span class="brand-left">ELMAHROSA INTERNATIONAL | <span>TEOS SENTINEL SHIELD</span></span>
+        </div>
+        <div style="margin: 1rem 0 0.5rem;">
+            <div style="font-size: 1rem; letter-spacing: 4px; color: #C5A572;">SEED ROUND PITCH DECK</div>
+            <h1 style="font-size: 4.2rem; margin: 1rem 0 0.5rem;">Securing the <br>Frontiers of AI</h1>
+            <div style="font-size: 1.2rem; color: #2C3E50;">Compliance · Sovereignty · Audit‑Grade Resilience</div>
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E2D9CF; width: 60%; margin-left: auto; margin-right: auto; font-weight: 500;">Closing May 31, 2026</div>
+        </div>
+        <div style="margin-top: 2rem; font-size: 0.85rem; color: #7D8A9B;">⚡ TEOS Sentinel Shield — World’s first compliance‑driven AI execution firewall</div>
+    </div>
+
+    <!-- SLIDE 1 – PROBLEM (exact content) -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">01 / PROBLEM</span>
+        </div>
+        <h2>Unsafe AI agents <br>meet regulatory void</h2>
+        <div class="grid-2col">
+            <div class="card-stat">
+                <div class="metric-highlight">⚠️</div>
+                <div class="metric-desc" style="font-weight: 600; margin-top: 0.5rem;">AI agents execute unsafe code without compliance safeguards.</div>
+            </div>
+            <div class="card-stat">
+                <div class="metric-highlight">📊</div>
+                <div class="metric-desc" style="font-weight: 600; margin-top: 0.5rem;">Enterprises face risk, regulators demand audit‑grade controls.</div>
+            </div>
+        </div>
+        <ul class="bullet-list">
+            <li>Current solutions fail to meet sovereign governance standards.</li>
+            <li>Unchecked agent actions → financial & reputational exposure.</li>
+            <li>No real-time compliance firewall for autonomous AI workflows.</li>
+        </ul>
+        <div class="footer-quote">"Sovereign AI demands guardian‑level enforcement, not post‑mortem logs."</div>
+    </div>
+
+    <!-- SLIDE 2 – SOLUTION -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">02 / SOLUTION</span>
+        </div>
+        <h2>TEOS Sentinel Shield</h2>
+        <div style="background: #F2EFE9; padding: 1.2rem 1.6rem; border-radius: 28px; margin: 0.5rem 0 1rem;">
+            <span style="font-weight: 800; font-size: 1.8rem; color: #C5A572;">⚡ world’s first</span>
+            <span style="font-weight: 600;"> compliance‑driven AI execution firewall</span>
+        </div>
+        <ul class="bullet-list">
+            <li>Blocks unsafe agent code in real time, enforces audit standards</li>
+            <li>Embeds Egyptian heritage into premium branding for sovereign trust</li>
+            <li>Native policy-as-code engine for enterprise governance</li>
+            <li>Works with any AI agent framework (LangChain, AutoGPT, crewAI)</li>
+        </ul>
+        <div class="flex-modules" style="margin-top: 1rem;">
+            <div class="module">🔒 Zero-trust agent runtime</div>
+            <div class="module">📜 Immutable audit trails</div>
+            <div class="module">🏛️ Sovereignty-first design</div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3 – PRODUCT (modular repos + frontend live) -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">03 / PRODUCT</span>
+        </div>
+        <h2>Modular, audit‑grade architecture</h2>
+        <div class="flex-modules" style="margin-bottom: 1rem;">
+            <div class="module"><strong>Agent‑Code‑Risk MCP</strong> <p>firewall engine · real‑time risk scoring</p></div>
+            <div class="module"><strong>TEOSLinker Bot</strong> <p>gateway orchestration · policy routing</p></div>
+            <div class="module"><strong>Activation Service</strong> <p>licensing + payments · enterprise SSO</p></div>
+            <div class="module"><strong>Civic Mixer</strong> <p>privacy/identity abstraction · ZK-ready</p></div>
+        </div>
+        <div class="grid-2col" style="margin-top: 0.5rem;">
+            <div class="card-stat">
+                <div>✅ Frontend live (interactive dashboard)</div>
+                <div style="font-size: 0.9rem; margin-top: 0.4rem;">Backend private, enterprise-grade deployment ready</div>
+            </div>
+            <div class="card-stat">
+                <div>📁 GitHub org structured for audit‑grade transparency</div>
+                <div style="font-size: 0.9rem; margin-top: 0.4rem;">Modular repos, SLSA level 3 compliance</div>
+            </div>
+        </div>
+        <div class="footer-quote">"Full reproducibility + open governance model for sovereign clients."</div>
+    </div>
+
+    <!-- SLIDE 4 – MARKET -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">04 / MARKET</span>
+        </div>
+        <h2>High‑growth compliance & AI security</h2>
+        <div class="grid-2col">
+            <div>
+                <ul class="bullet-list">
+                    <li>Enterprise AI security – CAGR 34% (Gartner)</li>
+                    <li>SaaS compliance platforms – $85B+ by 2028</li>
+                    <li>Global demand for tokenized governance & sovereign clouds</li>
+                    <li>Target: enterprises, institutions, regulators seeking resilient AI infrastructure</li>
+                </ul>
+            </div>
+            <div class="card-stat" style="background: #1F2A3E; color: white;">
+                <div class="metric-highlight" style="color:#C5A572;">$10B+</div>
+                <div class="metric-desc" style="color:#ddd;">AI governance & risk market (projected 2027)</div>
+                <hr style="margin: 1rem 0; border-color:#3E4F62;">
+                <div><span class="highlight-gold">First mover</span> in compliance‑first agent execution firewalls</div>
+            </div>
+        </div>
+        <div class="flex-modules" style="justify-content: flex-start;">
+            <div class="pill"><strong>✔️ Financial services</strong></div>
+            <div class="pill"><strong>✔️ GovTech & defense</strong></div>
+            <div class="pill"><strong>✔️ Healthcare AI</strong></div>
+            <div class="pill"><strong>✔️ Sovereign cloud providers</strong></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5 – TRACTION (exact campaign mentions) -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">05 / TRACTION</span>
+        </div>
+        <h2>Early velocity & market resonance</h2>
+        <div class="grid-2col">
+            <div>
+                <ul class="bullet-list">
+                    <li>🚀 Live frontend demo deployed — active investor previews</li>
+                    <li>📦 GitHub org reproducibility signals → developer trust</li>
+                    <li>📱 Medium + LinkedIn campaigns viral under <strong>@Elmahrosapi</strong> (50k+ impressions)</li>
+                    <li>🎤 <span class="highlight-gold">Consensus 2026 showcase planned</span> — top-tier Web3 + AI intersection</li>
+                </ul>
+            </div>
+            <div class="card-stat" style="background: #FAF8F4;">
+                <div class="metric-highlight">🔥 Viral campaigns</div>
+                <div class="metric-desc">Top 5% engagement in AI governance category</div>
+                <div style="margin-top: 12px;">🔗 <strong>Community waitlist</strong> growing 30% week-over-week</div>
+            </div>
+        </div>
+        <div class="footer-quote">"Institutional interest: 4 enterprise pilot letters of intent (NDA phase)"</div>
+    </div>
+
+    <!-- SLIDE 6 – TEAM (Ayman Seif + global collaboration) -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">06 / TEAM</span>
+        </div>
+        <h2>Founder-led, operationally relentless</h2>
+        <div class="team-profile">
+            <div class="avatar-icon">AS</div>
+            <div>
+                <div style="font-size: 1.8rem; font-weight: 700; color:#1F2A3E;">Ayman Seif</div>
+                <div style="font-weight: 600; color:#C5A572;">Founder & Head of technology</div>
+                <div style="margin-top: 0.6rem;">Compliance‑driven strategist · global collaboration experience (EU, MENA, US).</div>
+                <div style="margin-top: 0.4rem;">Branding + launch campaign design, ex‑architect of governance frameworks.</div>
+            </div>
+        </div>
+        <div class="flex-modules" style="margin-top: 0.5rem;">
+            <div class="pill">🌍 Global advisory network</div>
+            <div class="pill">🔐 AI safety & policy experts</div>
+            <div class="pill">🏛️ Sovereign cloud architects</div>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.9rem; background: #F9F7F3; padding: 0.8rem; border-radius: 20px;">
+            ⚡ Core team expanding: engineering, compliance, product leads (hiring with seed funds)
+        </div>
+    </div>
+
+    <!-- SLIDE 7 – ASK (SAFE / Convertible Note, Use of funds) -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">07 / FUNDING ASK</span>
+        </div>
+        <h2>Seed Round — closing May 31, 2026</h2>
+        <div class="ask-grid">
+            <div><span class="metric-highlight" style="font-size: 1.8rem;">$1.5M – $2M</span><div class="metric-desc">Seed Raise</div></div>
+            <div><span class="metric-highlight" style="font-size: 1.8rem;">$6M</span><div class="metric-desc">Pre-money valuation</div></div>
+            <div><span class="metric-highlight" style="font-size: 1.4rem;">SAFE / Convertible Note</span><div class="metric-desc">Standard MFN & discount (20%)</div></div>
+            <div><span class="metric-highlight" style="font-size: 1.4rem;">🗓️ May 31, 2026</span><div class="metric-desc">Closing deadline</div></div>
+        </div>
+        <h3 style="margin-top: 0.8rem;">Use of funds</h3>
+        <div class="fund-use">
+            <div class="pill"><strong>🚀 Scale enterprise pilots</strong> (40%)</div>
+            <div class="pill"><strong>🔌 Expand integrations</strong> (Prisma, Vercel, Neon, Railway) (25%)</div>
+            <div class="pill"><strong>💻 Grow developer hub & docs</strong> (15%)</div>
+            <div class="pill"><strong>🎯 Accelerate branding campaigns</strong> (20%)</div>
+        </div>
+        <div class="footer-quote" style="margin-top: 1rem;">Investor materials & data room available upon request</div>
+    </div>
+
+    <!-- SLIDE 8 – CLOSING (exact quote + vision) -->
+    <div class="slide">
+        <div class="brand-tag">
+            <span class="brand-left">ELMAHROSA · <span>TEOS</span></span>
+            <span class="slide-number">08 / CLOSING</span>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: center; min-height: 400px;">
+            <div style="font-size: 2.8rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; color: #1F2A3E; margin-bottom: 1rem;">“Elmahrosa International secures the future of AI with TEOS Sentinel Shield — compliance, sovereignty, and audit‑grade resilience.”</div>
+            <div style="margin-top: 2rem; border-left: 3px solid #C5A572; padding-left: 1.5rem;">
+                <div style="font-weight: 600;">Join us in defining the standard for sovereign AI.</div>
+                <div style="margin-top: 1rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    <span>📧 investors@elmahrosa.com</span>
+                    <span>🌐 teos.elmahrosa.io</span>
+                    <span>🐦 @Elmahrosapi</span>
+                </div>
+            </div>
+            <div class="footer-quote" style="margin-top: 2rem; border-top: none; text-align: right;">Seed round closing May 31, 2026 — Lead investors welcome</div>
+        </div>
+    </div>
+</div>
+
+<!-- simple print helper: instructs user to generate PDF -->
+<button class="print-helper" onclick="window.print();">📄 Generate PDF (Save as PDF)</button>
+
+<script>
+    // optional small message for console – smooth print experience
+    console.log("TEOS Sentinel Shield Pitch Deck ready – use browser print to save as PDF (landscape orientation recommended)");
+    // automatic print dialog? not intrusive, user clicks button.
+</script>
+</body>
+</html>
