@@ -1,129 +1,209 @@
-# TEOS Sentinel Shield
+# 🛡️ TEOS Sentinel Shield
 
-**Runtime Security for Autonomous Systems**
+## Execution Control Infrastructure for Autonomous AI
+
+**Generate → Validate → Execute**
 
 [![CI](https://github.com/Elmahrosa/teos-sentinel-shield/actions/workflows/ci.yml/badge.svg)](https://github.com/Elmahrosa/teos-sentinel-shield/actions/workflows/ci.yml)
 [![License: TESL](https://img.shields.io/badge/License-TESL-gold)](./LICENSE)
 [![Live](https://img.shields.io/badge/Live-teos--sentinel--shield.vercel.app-blue)](https://teos-sentinel-shield.vercel.app)
 
-> Generate → Validate → Execute
+> Deterministic execution control for autonomous systems.
 
-TEOS Sentinel Shield is a deterministic AI execution firewall. It intercepts AI-generated code and tool calls before they reach production runtime, returning an instant **ALLOW / WARN / BLOCK** verdict. No probabilistic scoring. No guesswork. Policy-driven and fully auditable.
+TEOS Sentinel Shield validates AI-generated code, dependencies, and CI workflows **before execution**, returning policy-driven:
 
-Part of the [TEOS Sovereign Security Stack](https://github.com/Elmahrosa) by Elmahrosa International.
+- ✅ ALLOW  
+- ⚠️ WARN  
+- 🚫 BLOCK
 
----
+verdicts to reduce runtime, supply-chain, and autonomous agent risk.
 
-## The Problem
-
-Most AI stacks go: **Generate → Execute**
-
-LLM safety tools cover prompts and outputs. AppSec tools cover static code and post-deployment scans. Neither validates AI-generated outputs **at the moment of execution**.
-
-TEOS inserts the missing layer:
+Unlike prompt safety filters or post-deployment scanners, TEOS sits at the missing control point:
 
 **Generate → Validate → Execute**
 
----
-
-## Core Verdicts
-
-| Verdict | Meaning |
-|---------|---------|
-| ✅ ALLOW | Code matches safe policy. Execution proceeds. |
-| ⚠️ WARN | Elevated risk detected. Flagged for human review. |
-| 🚫 BLOCK | Dangerous pattern identified. Execution halted. Incident logged. |
-
-Verdicts are deterministic — driven by a configurable policy engine, not probabilistic AI scoring.
+Built by **Elmahrosa International** as part of the **TEOS Sovereign Security Stack**.
 
 ---
 
-## Stack Architecture
+# The Problem
 
+Most AI systems still operate as:
+
+```text
+Generate → Execute
 ```
+
+That leaves a dangerous gap between generation and action.
+
+Prompt safety does not stop dangerous execution.
+
+Traditional AppSec does not validate AI-generated actions at runtime.
+
+TEOS inserts an execution control layer in that gap.
+
+---
+
+# Core Verdict Model
+
+| Verdict | Action | Meaning |
+|--------|--------|---------|
+| ✅ ALLOW | Proceed | Safe against policy rules |
+| ⚠️ WARN | Review | Elevated risk requires inspection |
+| 🚫 BLOCK | Halt | Dangerous pattern prevented |
+
+Deterministic verdicts.
+
+Policy-driven.
+
+Auditable.
+
+No probabilistic guesswork.
+
+---
+
+# Live Capabilities
+
+## Code Risk Validation
+Detects patterns including:
+
+- eval / exec abuse
+- child_process risks
+- destructive commands
+- secret exposure
+- unsafe permissions
+- remote command download behavior
+
+Command:
+
+```bash
+/scan <code>
+```
+
+---
+
+## Dependency Risk Scanning
+
+Checks:
+
+- floating versions
+- known supply-chain risks
+- external GitHub/URL dependencies
+- suspicious local package references
+
+Command:
+
+```bash
+/deps {"dependencies":{"express":"latest"}}
+```
+
+---
+
+## CI/CD Workflow Audit
+
+Checks:
+
+- unpinned GitHub Actions
+- workflow supply-chain risk
+- secrets exposure patterns
+- risky CI behaviors
+
+Command:
+
+```bash
+/ci uses: actions/checkout@v4
+```
+
+---
+
+# Architecture
+
+```text
 AI Agent / LLM
       ↓
-Sentinel Shield  ← You are here
+Generate
       ↓
-Policy Engine
+TEOS Sentinel Shield
+  (Validate)
       ↓
-Runtime Execution (safe code only)
+ALLOW / WARN / BLOCK
+      ↓
+Execution
 ```
 
-**Infrastructure:**
-- **Dashboard** (`/dashboard`) — Next.js 15 control plane, TypeScript
-- **Integrations** (`/integrations`) — CI/CD hooks, GitHub Actions gate
-- **Activation Service** — Solana payment verification, tier-based licensing
-- **Telegram Gateway** — Live bot interface with Arabic UX support
+Components:
 
-**Deployed on:** Fly.io + Neon PostgreSQL
-
----
-
-## Pricing
-
-| Tier | Price | Scans/day |
-|------|-------|-----------|
-| Starter | $9.99/mo | 3 |
-| Pioneer | $29/mo | 50 |
-| Builder ⭐ | $49/mo | 500 |
-| Sovereign | Custom | Unlimited |
-
-[View full pricing →](./PRICING.md)
+- Sentinel Dashboard (Control Plane)
+- Telegram Security Gateway
+- Activation / Credits Service
+- Risk Policy Engine
+- CI Audit Layer
 
 ---
 
-## Quick Start
+# Pricing
+
+| Tier | Price | Included |
+|------|-------|----------|
+| Free | 5 scans | Trial access |
+| Starter | $9/mo | 50 scans |
+| Builder | $49/mo | 500 scans + dependency audit |
+| Pro | $99/mo | 1000 scans + dependency + CI audit |
+
+---
+
+# Why TEOS
+
+- Execution control, not just detection
+- Runtime protection for autonomous code
+- Supply-chain aware dependency checks
+- CI workflow risk inspection
+- Sovereign-first security architecture
+
+---
+
+# Quick Start
 
 ```bash
 git clone https://github.com/Elmahrosa/teos-sentinel-shield
 cd teos-sentinel-shield
-cp .env.example .env
 npm install
 npm run dev
 ```
 
-Configure your `.env` with your Solana RPC endpoint and Telegram bot token. See [Architecture →](./ARCHITECTURE.md) for full environment variable reference.
+---
+
+# Documentation
+
+- Architecture
+- Roadmap
+- Pricing
+- Security Policy
 
 ---
 
-## Documentation
+# Security
 
-- [Architecture](./ARCHITECTURE.md) — stack design, data flow, environment variables
-- [Roadmap](./ROADMAP.md) — current phase, next milestones
-- [Pricing](./PRICING.md) — tier breakdown and enterprise options
-- [Security Policy](./SECURITY.md) — vulnerability reporting
+Report vulnerabilities privately:
 
----
+ayman@teosegypt.com
 
-## Security
-
-Report vulnerabilities privately to **ayman@teosegypt.com**. Do not open public issues for security matters. See [SECURITY.md](./SECURITY.md).
+See SECURITY.md.
 
 ---
 
-## License
+# License
 
-TEOS Enterprise Source License (TESL). See [LICENSE](./LICENSE).
+TESL — TEOS Enterprise Source License
 
-Commercial use requires a paid license. Contact ayman@teosegypt.com.
+Commercial licensing available.
 
 ---
 
-## About
+## Core Thesis
 
-**Elmahrosa International** | Alexandria, Egypt
-
-CEO & Founder: Ayman Seif — [LinkedIn](https://linkedin.com/in/aymanseif) | [ayman@teosegypt.com](mailto:ayman@teosegypt.com)
-
-Telegram Community (75+ countries): [t.me/Elmahrosapi](https://t.me/Elmahrosapi)
-
-## Part of TEOS Sovereign Security Stack
-
-Canonical stack repo:
-https://github.com/Elmahrosa/teos-sovereign-security-stack
-
-Core thesis:
+```text
 Generate → Validate → Execute
+```
 
-TEOS Sentinel Shield is the runtime execution firewall for autonomous AI agents.
+TEOS Sentinel Shield is execution control infrastructure for autonomous AI.
