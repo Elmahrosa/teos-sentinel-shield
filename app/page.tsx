@@ -1266,7 +1266,7 @@ export default function Page() {
                   "Full scan suite access",
                 ]}
                 cta="Get Pro"
-                href="https://dodo.pe/teos-ai-engine-5"
+                href="https://dodo.pe/teos-pro"
               />
             </div>
 
