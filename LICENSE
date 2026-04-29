@@ -1,0 +1,48 @@
+TEOS Enterprise Source License (TESL)
+Version 1.0 — April 2026
+
+Copyright (c) 2026 Elmahrosa International. All rights reserved.
+CEO & Founder: Ayman Seif, Alexandria, Egypt.
+
+DEFINITIONS
+
+"Software" means the source code, documentation, and associated files in this
+repository.
+
+"Elmahrosa" means Elmahrosa International and its authorized representatives.
+
+"Commercial Use" means any use of the Software to generate revenue, provide
+services to third parties, or operate within a commercial product or service.
+
+PERMISSIONS
+
+Permission is hereby granted, free of charge, to any individual to:
+
+1. View and read the source code for personal study and evaluation.
+2. Fork the repository and create derivative works for non-commercial,
+   personal, or educational purposes only.
+3. Submit pull requests and contribute improvements under this license.
+
+RESTRICTIONS
+
+The following are NOT permitted without a separate written commercial license
+from Elmahrosa:
+
+1. Commercial Use of the Software or any derivative work.
+2. Deployment of the Software or derivative works in production environments
+   serving third parties.
+3. Resale, sublicensing, or redistribution of the Software.
+4. Removal or alteration of this license notice or copyright attribution.
+
+COMMERCIAL LICENSE
+
+To obtain a commercial license, contact: ayman@teosegypt.com
+
+DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+ELMAHROSA INTERNATIONAL BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
