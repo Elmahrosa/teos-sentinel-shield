@@ -1,23 +1,28 @@
 {
   "name": "teos-sentinel-shield",
   "version": "1.0.0",
-  "description": "Sovereign AI Security Gateway",
+  "description": "Runtime Security for Autonomous Systems — deterministic AI execution firewall",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@solana/web3.js": "^1.98.4",
-    "framer-motion": "latest",
-    "lucide-react": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "framer-motion": "^11.3.8",
+    "lucide-react": "^0.462.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "@types/react": "^19.2.14",
-    "typescript": "^6.0.3"
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.1.0",
+    "typescript": "^5.7.0"
   }
 }
