@@ -334,7 +334,7 @@ function NavBar() {
             className="btn-gold"
             style={{ padding: "9px 22px", borderRadius: 7, fontSize: ".78rem", textDecoration: "none", display: "inline-block" }}
           >
-            Open Bot
+            Launch Security Bot
           </a>
         </div>
       </div>
@@ -1239,7 +1239,7 @@ export default function Page() {
                   "Audit log access",
                 ]}
                 cta="Get Starter"
-                href="https://dodo.pe/ljdm3j4qpid"
+                href="https://dodo.pe/tts"
               />
               <PricingCard
                 tier="Builder"
@@ -1252,7 +1252,7 @@ export default function Page() {
                   "Priority support",
                 ]}
                 cta="Get Builder"
-                href="https://dodo.pe/lfbruwuaf6"
+                href="https://dodo.pe/tts2"
                 featured
               />
               <PricingCard
@@ -1266,7 +1266,7 @@ export default function Page() {
                   "Full scan suite access",
                 ]}
                 cta="Get Pro"
-                href="https://dodo.pe/yw9uc2qlguf"
+                href="https://dodo.pe/teos-ai-engine-5"
               />
             </div>
 
