@@ -1,1572 +1,1073 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-/* ─────────────────────────────────────────────────────────────
-   TEOS SENTINEL SHIELD — Landing Page
-   Runtime Security for Autonomous Systems
-   Rebuilt: production-accurate, honest copy, live feature state
-   Design: Sovereign terminal enterprise — Syne + JetBrains Mono
-   ───────────────────────────────────────────────────────────── */
+// ─── Constants ───────────────────────────────────────────────
+const TELEGRAM_BOT = "https://t.me/teoslinker_bot";
+const GITHUB_REPO = "https://github.com/Elmahrosa";
+const COMMUNITY = "https://t.me/Elmahrosapi";
+const CONTACT_EMAIL = "mailto:ayman@teosegypt.com?subject=TEOS%20Sentinel%20Shield";
+const UPGRADE_LINK = TELEGRAM_BOT;
 
-const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+// ─── Types ───────────────────────────────────────────────────
+type Verdict = "ALLOW" | "WARN" | "BLOCK";
 
-  :root {
-    --bg:      #040810;
-    --bg2:     #060c1a;
-    --card:    #080d1e;
-    --card2:   #0a1228;
-    --border:  #172240;
-    --border2: #1e2e50;
-    --gold:    #c9a227;
-    --gold-b:  #eec84a;
-    --cyan:    #00a8e8;
-    --cyan-b:  #3dd6f5;
-    --text:    #dde3f4;
-    --muted:   #5a6a8a;
-    --dim:     #2a3a5a;
-  }
+interface VerdictStyle {
+  color: string;
+  bg: string;
+  border: string;
+  textColor: string;
+  glyph: string;
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    -webkit-font-smoothing: antialiased;
-  }
+// ─── Inline SVG icon provider ────────────────────────────────
+const iconPaths: Record<string, JSX.Element> = {
+  hexagon: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 2L21 7v10l-9 5-9-5V7z" />
+    </svg>
+  ),
+  box: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" />
+      <line x1="12" y1="12" x2="12" y2="21" />
+      <line x1="12" y1="12" x2="20" y2="7.5" />
+      <line x1="12" y1="12" x2="4" y2="7.5" />
+    </svg>
+  ),
+  gear: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+    </svg>
+  ),
+  messaging: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M21 11.5a8.38 8.38 0 01-.9 3.8A8.5 8.5 0 0112 20.5a8.38 8.38 0 01-3.8-.9L3 21l1.4-5.2A8.38 8.38 0 014 12a8.5 8.5 0 015.2-7.6A8.38 8.38 0 0112 3.5" />
+    </svg>
+  ),
+  lightning: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  ),
+  check: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  shield: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+  magnifier: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  ),
+  coin: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <text x="12" y="16" textAnchor="middle" fontSize="8" fill="currentColor" fontWeight="bold">$</text>
+    </svg>
+  ),
+  robot: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="4" y="7" width="16" height="12" rx="3" />
+      <path d="M12 3v4M8 3v4M16 3v4M10 14h4M9 17h6" />
+    </svg>
+  ),
+};
 
-  /* ── Keyframes ── */
-  @keyframes fadeUp   { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeIn   { from { opacity:0; }                             to { opacity:1; } }
-  @keyframes scanLine { 0%,100% { top: -2px; } 100% { top: calc(100% + 2px); } }
-  @keyframes pulse    { 0%,100% { opacity:.5; } 50% { opacity:1; } }
-  @keyframes glow     { 0%,100% { box-shadow:0 0 8px rgba(0,168,232,.25); } 50% { box-shadow:0 0 28px rgba(0,168,232,.6); } }
-  @keyframes goldGlow { 0%,100% { box-shadow:0 0 8px rgba(201,162,39,.2); } 50% { box-shadow:0 0 28px rgba(201,162,39,.5); } }
-  @keyframes blink    { 0%,100% { opacity:1; } 50% { opacity:0; } }
-  @keyframes shimmer  { 0% { background-position:-200% center; } 100% { background-position:200% center; } }
-  @keyframes gridDrift { 0% { transform:translateY(0); } 100% { transform:translateY(60px); } }
-  @keyframes rotateHex { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-  @keyframes slideRight { from { width:0; } to { width:100%; } }
-  @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
-
-  /* ── Utility animation classes ── */
-  .anim-fadeup { animation: fadeUp .7s cubic-bezier(.22,1,.36,1) both; }
-  .d1 { animation-delay:.08s; }  .d2 { animation-delay:.16s; }
-  .d3 { animation-delay:.24s; }  .d4 { animation-delay:.32s; }
-  .d5 { animation-delay:.44s; }  .d6 { animation-delay:.56s; }
-
-  .gold-shimmer {
-    background: linear-gradient(90deg, var(--gold), var(--gold-b), var(--gold), var(--gold-b));
-    background-size: 300% auto;
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 4s linear infinite;
-  }
-  .cyan-shimmer {
-    background: linear-gradient(90deg, var(--cyan), var(--cyan-b), var(--cyan));
-    background-size: 300% auto;
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 3s linear infinite;
-  }
-
-  /* ── Grid background ── */
-  .grid-bg {
-    background-image:
-      linear-gradient(rgba(23,34,64,.55) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(23,34,64,.55) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-  .grid-drift {
-    animation: gridDrift 8s linear infinite;
-  }
-
-  /* ── Cards ── */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    transition: border-color .25s, box-shadow .25s, transform .25s;
-  }
-  .card:hover {
-    border-color: rgba(0,168,232,.5);
-    box-shadow: 0 0 0 1px rgba(0,168,232,.15), 0 12px 40px rgba(0,0,0,.6);
-    transform: translateY(-3px);
-  }
-  .card-gold:hover {
-    border-color: rgba(201,162,39,.5) !important;
-    box-shadow: 0 0 0 1px rgba(201,162,39,.2), 0 12px 40px rgba(0,0,0,.6) !important;
-    animation: goldGlow 2s ease-in-out infinite;
-  }
-
-  /* ── Buttons ── */
-  .btn-gold {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-b) 100%);
-    color: #04080e;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    letter-spacing: .06em;
-    transition: filter .2s, transform .2s, box-shadow .2s;
-  }
-  .btn-gold:hover {
-    filter: brightness(1.12);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(201,162,39,.45);
-  }
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    letter-spacing: .04em;
-    transition: border-color .2s, color .2s, background .2s;
-  }
-  .btn-ghost:hover {
-    border-color: var(--cyan);
-    color: var(--cyan-b);
-    background: rgba(0,168,232,.06);
-  }
-  .btn-cyan {
-    background: transparent;
-    border: 1px solid rgba(0,168,232,.35);
-    color: var(--cyan-b);
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    letter-spacing: .04em;
-    transition: all .2s;
-  }
-  .btn-cyan:hover {
-    background: rgba(0,168,232,.1);
-    border-color: var(--cyan);
-    box-shadow: 0 0 20px rgba(0,168,232,.2);
-  }
-
-  /* ── Verdict tags ── */
-  .verdict-allow { background:rgba(34,197,94,.1);  color:#4ade80; border:1px solid rgba(34,197,94,.25); }
-  .verdict-warn  { background:rgba(234,179,8,.1);  color:#fbbf24; border:1px solid rgba(234,179,8,.25); }
-  .verdict-block { background:rgba(239,68,68,.1);  color:#f87171; border:1px solid rgba(239,68,68,.25); }
-
-  .verdict-card-allow { border-left: 3px solid #22c55e; background: rgba(34,197,94,.04); }
-  .verdict-card-warn  { border-left: 3px solid #eab308; background: rgba(234,179,8,.04); }
-  .verdict-card-block { border-left: 3px solid #ef4444; background: rgba(239,68,68,.04); }
-
-  /* ── Tier card ── */
-  .tier-featured {
-    border-color: var(--gold) !important;
-    box-shadow: 0 0 0 1px rgba(201,162,39,.25), 0 0 60px rgba(201,162,39,.07);
-    position: relative;
-  }
-
-  /* ── Nav ── */
-  .nav-blur {
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    background: rgba(4,8,16,.82);
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* ── Scan animation ── */
-  .scan-beam {
-    position: absolute;
-    left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-    animation: scanLine 2.4s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  /* ── Live dot ── */
-  .live-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #22c55e;
-    animation: pulse 1.8s ease-in-out infinite;
-    box-shadow: 0 0 0 3px rgba(34,197,94,.2);
-  }
-
-  /* ── Section header line ── */
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .7rem;
-    font-weight: 600;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--cyan);
-  }
-
-  /* ── Terminal block ── */
-  .terminal {
-    background: #040810;
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    overflow: hidden;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .8rem;
-    box-shadow: 0 24px 64px rgba(0,0,0,.7);
-  }
-  .terminal-bar {
-    background: #0d1a30;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    padding: .6rem 1rem;
-    gap: .5rem;
-  }
-  .dot { width:11px; height:11px; border-radius:50%; }
-
-  /* ── Capability pill ── */
-  .live-pill {
-    background: rgba(34,197,94,.1);
-    border: 1px solid rgba(34,197,94,.25);
-    color: #4ade80;
-    font-size: .65rem;
-    letter-spacing: .12em;
-    padding: 2px 8px;
-    border-radius: 999px;
-  }
-
-  /* ── Hero radial ── */
-  .hero-radial {
-    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,168,232,.07) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 30% at 80% 60%, rgba(201,162,39,.05) 0%, transparent 60%);
-  }
-
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-
-  /* ── Step connector ── */
-  .step-arrow {
-    color: var(--gold);
-    font-size: 1.6rem;
-    opacity: .6;
-    line-height: 1;
-  }
-
-  /* ── Mobile ── */
-  @media (max-width: 768px) {
-    .hide-mobile { display: none !important; }
-    .hero-term { display: none !important; }
-  }
-`;
-
-/* ──────────── Sub-components ──────────── */
-
-function NavBar() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", fn);
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
+function Icon({ name, className = "" }: { name: string; className?: string }) {
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50"
-      style={scrolled ? {} : { background: "transparent" }}
-    >
-      <div
-        className={`transition-all duration-500 ${scrolled ? "nav-blur" : ""}`}
-      >
-        <div
-          className="max-w-6xl mx-auto px-6 flex items-center justify-between"
-          style={{ height: "64px" }}
-        >
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div
-              className="flex items-center justify-center"
-              style={{
-                width: 32,
-                height: 32,
-                background: "linear-gradient(135deg,#c9a227,#eec84a)",
-                borderRadius: 6,
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"
-                  fill="#040810"
-                  stroke="#040810"
-                  strokeWidth="1"
-                />
-                <path d="M9 12l2 2 4-4" stroke="#c9a227" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span
-              style={{
-                fontFamily: "Syne, sans-serif",
-                fontWeight: 800,
-                fontSize: ".95rem",
-                letterSpacing: ".04em",
-                color: "#dde3f4",
-              }}
-            >
-              TEOS<span style={{ color: "var(--gold)" }}>.</span>SENTINEL
-            </span>
-          </div>
-
-          {/* Nav links */}
-          <div
-            className="hide-mobile flex items-center gap-8"
-            style={{ fontFamily: "JetBrains Mono", fontSize: ".75rem", color: "var(--muted)" }}
-          >
-            {["How It Works", "Capabilities", "Pricing", "Why TEOS"].map((l) => (
-              <a
-                key={l}
-                href={`#${l.toLowerCase().replace(/\s+/g, "-")}`}
-                style={{ color: "var(--muted)", textDecoration: "none", transition: "color .2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
-              >
-                {l}
-              </a>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <a
-            href="https://t.me/teoslinker_bot"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-gold"
-            style={{ padding: "9px 22px", borderRadius: 7, fontSize: ".78rem", textDecoration: "none", display: "inline-block" }}
-          >
-            Launch Security Bot
-          </a>
-        </div>
-      </div>
-    </nav>
+    <span className={`inline-flex items-center justify-center ${className}`} style={{ lineHeight: 1 }}>
+      {iconPaths[name] ?? null}
+    </span>
   );
 }
 
-function HeroTerminal() {
-  const lines = [
-    { delay: 0,    text: "$ /scan",                color: "var(--cyan-b)" },
-    { delay: 600,  text: "▸ Analyzing AST patterns...",  color: "var(--muted)" },
-    { delay: 1100, text: "▸ Checking eval() usage",  color: "var(--muted)" },
-    { delay: 1600, text: "▸ Supply chain trace...",   color: "var(--muted)" },
-    { delay: 2100, text: "VERDICT: ██ BLOCK",         color: "#f87171" },
-    { delay: 2400, text: "REASON:  Detected shell injection via exec()", color: "#f87171" },
-    { delay: 2900, text: "RISK:    CRITICAL — execution halted",          color: "#fbbf24" },
-    { delay: 3500, text: "",                           color: "" },
-    { delay: 3600, text: "$ /deps",                color: "var(--cyan-b)" },
-    { delay: 4200, text: "▸ 23 packages resolved",   color: "var(--muted)" },
-    { delay: 4700, text: "VERDICT: ✓ ALLOW",          color: "#4ade80" },
-  ];
+// ─── Verdict Simulator (frontend‑only demo) ──────────────────
+const BLOCK_PATTERNS = [
+  "rm -rf", "rm -r /", "drop table", "drop database",
+  "format c:", "del /f /s /q", ":(){ :|:& };:", "chmod 777 /",
+  "eval(", "exec(", "> /dev/sda", "dd if=/dev/zero",
+  "require('child_process')", "os.system(", "subprocess.call",
+];
+const WARN_PATTERNS = [
+  "curl", "wget", "bash <", "pip install", "npm install -g",
+  "sudo", "chmod", "base64 -d", "| sh", "> /etc/",
+];
 
-  const [visible, setVisible] = useState<number[]>([]);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting && !started) setStarted(true); },
-      { threshold: 0.3 }
-    );
-    const el = document.getElementById("hero-terminal");
-    if (el) observer.observe(el);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    lines.forEach((_, i) => {
-      setTimeout(() => setVisible((v) => [...v, i]), lines[i].delay);
-    });
-  }, [started]);
-
-  return (
-    <div id="hero-terminal" className="terminal hero-term" style={{ width: "100%", maxWidth: 420 }}>
-      <div className="terminal-bar">
-        <div className="dot" style={{ background: "#ff5f57" }} />
-        <div className="dot" style={{ background: "#febc2e" }} />
-        <div className="dot" style={{ background: "#28c840" }} />
-        <span style={{ marginLeft: 12, color: "var(--muted)", fontSize: ".7rem" }}>
-          teos-sentinel — live
-        </span>
-        <div className="live-dot" style={{ marginLeft: "auto" }} />
-      </div>
-      <div style={{ padding: "1.2rem 1.4rem", minHeight: 260, position: "relative" }}>
-        {started && <div className="scan-beam" />}
-        {lines.map((l, i) =>
-          visible.includes(i) ? (
-            <div
-              key={i}
-              style={{
-                color: l.color || "transparent",
-                fontSize: ".76rem",
-                lineHeight: "1.8",
-                animation: "fadeIn .25s ease both",
-                fontWeight: l.text.startsWith("VERDICT") ? 600 : 400,
-              }}
-            >
-              {l.text}
-            </div>
-          ) : null
-        )}
-        {visible.length > 0 && visible.length < lines.length && (
-          <span style={{ color: "var(--cyan-b)" }}>
-            █<span className="cursor-blink" style={{ animation: "blink .8s step-end infinite" }}>_</span>
-          </span>
-        )}
-      </div>
-    </div>
-  );
+function simulateVerdict(input: string): { verdict: Verdict; rule: string; score: number } {
+  const lower = input.toLowerCase();
+  for (const p of BLOCK_PATTERNS) {
+    if (lower.includes(p)) return { verdict: "BLOCK", rule: "R01.DESTRUCTIVE_SHELL", score: 100 };
+  }
+  for (const p of WARN_PATTERNS) {
+    if (lower.includes(p)) return { verdict: "WARN", rule: "R12.NETWORK_FETCH", score: 45 };
+  }
+  return { verdict: "ALLOW", rule: "PASS", score: 0 };
 }
 
-function ProofChip({ label, variant }: { label: string; variant: "allow" | "warn" | "block" | "live" | "neutral" }) {
-  const styles: Record<string, { bg: string; color: string; border: string }> = {
-    allow:   { bg: "rgba(34,197,94,.1)",  color: "#4ade80", border: "rgba(34,197,94,.25)" },
-    warn:    { bg: "rgba(234,179,8,.1)",  color: "#fbbf24", border: "rgba(234,179,8,.25)" },
-    block:   { bg: "rgba(239,68,68,.1)",  color: "#f87171", border: "rgba(239,68,68,.25)" },
-    live:    { bg: "rgba(0,168,232,.1)",  color: "var(--cyan-b)", border: "rgba(0,168,232,.25)" },
-    neutral: { bg: "rgba(90,106,138,.12)", color: "var(--muted)", border: "rgba(90,106,138,.25)" },
-  };
-  const s = styles[variant];
+const VERDICT_STYLES: Record<Verdict, VerdictStyle> = {
+  ALLOW: { color: "#22c55e", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)", textColor: "#4ade80", glyph: "✓" },
+  WARN:  { color: "#f59e0b", bg: "rgba(245,158,11,0.06)", border: "rgba(245,158,11,0.25)", textColor: "#fbbf24", glyph: "⚠" },
+  BLOCK: { color: "#ef4444", bg: "rgba(239,68,68,0.06)",  border: "rgba(239,68,68,0.25)",  textColor: "#f87171", glyph: "✕" },
+};
+
+// ─── Live Dot Component ──────────────────────────────────────
+function LiveDot({ size = 8 }: { size?: number }) {
   return (
-    <div
+    <span
+      className="inline-block rounded-full flex-shrink-0"
       style={{
-        background: s.bg, color: s.color,
-        border: `1px solid ${s.border}`,
-        borderRadius: 999, padding: "6px 14px",
-        fontSize: ".68rem", fontWeight: 600,
-        letterSpacing: ".1em", display: "inline-flex", alignItems: "center", gap: 6,
+        width: size,
+        height: size,
+        background: "#22c55e",
+        boxShadow: "0 0 0 3px rgba(34,197,94,0.2)",
+        animation: "pulse-dot 2s ease-in-out infinite",
       }}
-    >
-      {variant === "live" && <div className="live-dot" style={{ width: 6, height: 6 }} />}
-      {label}
-    </div>
+    />
   );
 }
 
-function CapabilityCard({ icon, title, cmd, desc }: { icon: string; title: string; cmd: string; desc: string }) {
+// ─── Nav Link ────────────────────────────────────────────────
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <div className="card" style={{ borderRadius: 12, padding: "1.5rem", cursor: "default" }}>
-      <div className="flex items-start justify-between mb-4">
-        <div style={{ fontSize: "1.6rem" }}>{icon}</div>
-        <div className="live-pill">LIVE</div>
-      </div>
-      <div style={{ fontFamily: "Syne, sans-serif", fontWeight: 700, fontSize: "1rem", color: "var(--text)", marginBottom: 6 }}>
-        {title}
-      </div>
-      <div
-        style={{
-          fontFamily: "JetBrains Mono", fontSize: ".7rem", color: "var(--cyan)",
-          background: "rgba(0,168,232,.07)", border: "1px solid rgba(0,168,232,.15)",
-          borderRadius: 5, padding: "3px 10px", display: "inline-block", marginBottom: 10,
-        }}
-      >
-        {cmd}
-      </div>
-      <div style={{ fontSize: ".78rem", color: "var(--muted)", lineHeight: 1.7 }}>{desc}</div>
-    </div>
+    <a
+      href={href}
+      className="text-sm text-slate-400 hover:text-amber-400 transition-colors duration-200 no-underline font-medium tracking-wide"
+    >
+      {children}
+    </a>
   );
 }
 
-function VerdictCard({
-  verdict, code, reason, risk,
-}: { verdict: "ALLOW" | "WARN" | "BLOCK"; code: string; reason: string; risk: string }) {
-  const cfg = {
-    ALLOW: { cls: "verdict-card-allow", tag: "verdict-allow", dot: "#22c55e", glyph: "✓" },
-    WARN:  { cls: "verdict-card-warn",  tag: "verdict-warn",  dot: "#eab308", glyph: "⚠" },
-    BLOCK: { cls: "verdict-card-block", tag: "verdict-block", dot: "#ef4444", glyph: "✕" },
-  }[verdict];
-
+// ─── Section Label ───────────────────────────────────────────
+function SectionLabel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`card ${cfg.cls}`}
-      style={{ borderRadius: 12, overflow: "hidden" }}
+      className={`text-[11px] font-semibold tracking-[0.15em] uppercase text-amber-400 mb-4 ${className}`}
     >
-      {/* Terminal bar */}
-      <div
-        style={{
-          background: "var(--card2)", borderBottom: "1px solid var(--border)",
-          padding: ".6rem 1rem", display: "flex", alignItems: "center", gap: 8,
-        }}
-      >
-        <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#ff5f57" }} />
-        <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#febc2e" }} />
-        <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#28c840" }} />
-        <span style={{ marginLeft: 6, fontSize: ".65rem", color: "var(--muted)", fontFamily: "JetBrains Mono" }}>
-          teos-sentinel · /scan
-        </span>
-      </div>
-
-      <div style={{ padding: "1.2rem 1.4rem" }}>
-        {/* Code input */}
-        <div style={{ fontSize: ".72rem", color: "var(--muted)", marginBottom: 4, fontFamily: "JetBrains Mono" }}>
-          INPUT
-        </div>
-        <div
-          style={{
-            fontFamily: "JetBrains Mono", fontSize: ".72rem", color: "var(--dim)",
-            background: "rgba(0,0,0,.3)", border: "1px solid var(--border)",
-            borderRadius: 6, padding: "8px 12px", marginBottom: "1rem",
-            whiteSpace: "pre-wrap", wordBreak: "break-all", lineHeight: 1.6,
-          }}
-        >
-          {code}
-        </div>
-
-        {/* Verdict badge */}
-        <div className="flex items-center gap-3 mb-3">
-          <span
-            className={cfg.tag}
-            style={{
-              fontFamily: "JetBrains Mono", fontSize: ".75rem", fontWeight: 700,
-              padding: "4px 14px", borderRadius: 6, letterSpacing: ".12em",
-            }}
-          >
-            {cfg.glyph} {verdict}
-          </span>
-        </div>
-
-        <div style={{ fontSize: ".72rem", fontFamily: "JetBrains Mono", lineHeight: 1.8 }}>
-          <div>
-            <span style={{ color: "var(--muted)" }}>REASON  </span>
-            <span style={{ color: "var(--text)" }}>{reason}</span>
-          </div>
-          <div>
-            <span style={{ color: "var(--muted)" }}>RISK    </span>
-            <span style={{ color: "var(--text)" }}>{risk}</span>
-          </div>
-        </div>
-      </div>
+      {children}
     </div>
   );
 }
 
-function PricingCard({
-  tier, price, scans, features, cta, href, featured,
+// ─── Card ────────────────────────────────────────────────────
+function Card({
+  children,
+  className = "",
+  featured = false,
 }: {
-  tier: string; price: string; scans: string; features: string[];
-  cta: string; href: string; featured?: boolean;
+  children: React.ReactNode;
+  className?: string;
+  featured?: boolean;
 }) {
   return (
     <div
-      className={`card ${featured ? "tier-featured card-gold" : ""}`}
-      style={{
-        borderRadius: 14, padding: "2rem 1.75rem", display: "flex",
-        flexDirection: "column", position: "relative",
-      }}
+      className={`rounded-2xl p-6 transition-all duration-300 border ${
+        featured
+          ? "border-amber-500/30 bg-amber-500/[0.03] shadow-[0_0_0_1px_rgba(251,191,36,0.15),0_0_60px_rgba(251,191,36,0.05)]"
+          : "border-white/[0.07] bg-white/[0.02] hover:border-amber-500/20 hover:bg-white/[0.04]"
+      } ${className}`}
     >
+      {children}
+    </div>
+  );
+}
+
+// ─── Button Variants ─────────────────────────────────────────
+function ButtonPrimary({
+  href,
+  children,
+  className = "",
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-[#080c12] font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(251,191,36,0.35)] no-underline ${className}`}
+      style={{ padding: "12px 24px", fontSize: 14, letterSpacing: "0.01em" }}
+    >
+      {children}
+    </a>
+  );
+}
+
+function ButtonGhost({
+  href,
+  children,
+  className = "",
+  isExternal = false,
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  isExternal?: boolean;
+}) {
+  const externalProps = isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {};
+  return (
+    <a
+      href={href}
+      {...externalProps}
+      className={`inline-flex items-center gap-2 bg-transparent text-slate-300 font-medium rounded-lg border border-white/[0.12] transition-all duration-200 hover:border-amber-500/40 hover:text-amber-400 hover:bg-amber-500/[0.04] no-underline ${className}`}
+      style={{ padding: "12px 24px", fontSize: 14 }}
+    >
+      {children}
+    </a>
+  );
+}
+
+// ─── Price Card ──────────────────────────────────────────────
+function PriceCard({
+  name,
+  price,
+  period,
+  scanLimit,
+  features,
+  href,
+  featured = false,
+  isExternal = true,
+}: {
+  name: string;
+  price: string;
+  period: string;
+  scanLimit: string;
+  features: string[];
+  href: string;
+  featured?: boolean;
+  isExternal?: boolean;
+}) {
+  return (
+    <Card featured={featured} className="flex flex-col gap-5 relative">
       {featured && (
-        <div
-          style={{
-            position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)",
-            background: "linear-gradient(135deg,var(--gold),var(--gold-b))",
-            color: "#040810", fontFamily: "Syne,sans-serif", fontWeight: 700,
-            fontSize: ".65rem", letterSpacing: ".15em", padding: "4px 16px",
-            borderRadius: 999,
-          }}
-        >
-          RECOMMENDED
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-br from-amber-400 to-amber-600 text-[#080c12] text-[10px] font-bold tracking-[0.12em] uppercase px-4 py-1 rounded-full whitespace-nowrap">
+          Recommended
         </div>
       )}
-
-      <div style={{ fontFamily: "Syne,sans-serif", fontWeight: 800, fontSize: "1.1rem", color: featured ? "var(--gold-b)" : "var(--text)", marginBottom: 8 }}>
-        {tier}
+      <div>
+        <div className={`text-sm font-semibold mb-2 ${featured ? "text-amber-400" : "text-slate-300"}`}>
+          {name}
+        </div>
+        <div className="flex items-baseline gap-1">
+          <span className="text-3xl font-bold text-slate-100 tracking-tight">{price}</span>
+          <span className="text-xs text-slate-500">{period}</span>
+        </div>
+        <div className="mt-1.5">
+          <span className="text-[11px] font-mono text-sky-400/80 bg-sky-500/[0.08] border border-sky-500/15 rounded-md px-2.5 py-1">
+            {scanLimit}
+          </span>
+        </div>
       </div>
-
-      <div style={{ marginBottom: 6 }}>
-        <span style={{ fontFamily: "Syne,sans-serif", fontWeight: 800, fontSize: "2rem", color: "var(--text)" }}>
-          {price}
-        </span>
-        {price !== "$0" && (
-          <span style={{ fontSize: ".8rem", color: "var(--muted)", marginLeft: 4 }}>/month</span>
-        )}
-      </div>
-
-      <div
-        style={{
-          fontFamily: "JetBrains Mono", fontSize: ".7rem", color: "var(--cyan)",
-          background: "rgba(0,168,232,.07)", border: "1px solid rgba(0,168,232,.15)",
-          borderRadius: 6, padding: "4px 12px", display: "inline-block", marginBottom: "1.5rem",
-        }}
-      >
-        {scans}
-      </div>
-
-      <ul style={{ listStyle: "none", marginBottom: "1.75rem", flex: 1 }}>
-        {features.map((f) => (
-          <li
-            key={f}
-            style={{
-              fontSize: ".78rem", color: "var(--muted)", padding: "5px 0",
-              borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8,
-            }}
-          >
-            <span style={{ color: featured ? "var(--gold)" : "var(--cyan)", fontSize: ".7rem" }}>✓</span>
-            {f}
+      <ul className="flex flex-col gap-2.5 flex-1 list-none p-0 m-0">
+        {features.map((f, i) => (
+          <li key={i} className="flex items-start gap-2.5 text-[13px] text-slate-400 leading-relaxed">
+            <span className={featured ? "text-amber-400 flex-shrink-0 mt-0.5" : "text-emerald-400 flex-shrink-0 mt-0.5"}>
+              ✓
+            </span>
+            <span>{f}</span>
           </li>
         ))}
       </ul>
-
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={featured ? "btn-gold" : "btn-ghost"}
-        style={{
-          display: "block", textAlign: "center", textDecoration: "none",
-          padding: "12px", borderRadius: 8, fontSize: ".82rem",
-        }}
-      >
-        {cta}
-      </a>
-    </div>
+      {featured ? (
+        <ButtonPrimary href={href} className="justify-center w-full text-sm">
+          Get {name}
+        </ButtonPrimary>
+      ) : (
+        <ButtonGhost href={href} isExternal={isExternal} className="justify-center w-full text-sm">
+          {name === "Free" ? "Start Free" : name === "Enterprise" ? "Contact Us" : `Get ${name}`}
+        </ButtonGhost>
+      )}
+    </Card>
   );
 }
 
-function WhyCard({ icon, title, desc }: { icon: string; title: string; desc: string }) {
-  return (
-    <div className="card" style={{ borderRadius: 12, padding: "1.6rem" }}>
-      <div style={{ fontSize: "1.4rem", marginBottom: 12 }}>{icon}</div>
-      <div style={{ fontFamily: "Syne,sans-serif", fontWeight: 700, fontSize: ".95rem", color: "var(--text)", marginBottom: 8 }}>
-        {title}
-      </div>
-      <div style={{ fontSize: ".78rem", color: "var(--muted)", lineHeight: 1.75 }}>{desc}</div>
-    </div>
-  );
-}
+// ─── Main Component ──────────────────────────────────────────
+export default function SentinelLanding() {
+  const [scrolled, setScrolled] = useState(false);
+  const [scanInput, setScanInput] = useState("rm -rf /");
+  const [scanResult, setScanResult] = useState<{
+    verdict: Verdict;
+    rule: string;
+    score: number;
+  } | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
 
-/* ──────────── Main Page ──────────── */
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-export default function Page() {
+  const handleScan = useCallback(() => {
+    setIsScanning(true);
+    setTimeout(() => {
+      setScanResult(simulateVerdict(scanInput));
+      setIsScanning(false);
+    }, 400);
+  }, [scanInput]);
+
+  const vs = scanResult ? VERDICT_STYLES[scanResult.verdict] : null;
+
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: STYLES }} />
-      <NavBar />
+      {/* ─── Global Styles & Animations ─── */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
 
-      <main style={{ background: "var(--bg)" }}>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; background: #080c12; }
+        body { background: #080c12; color: #e2e8f0; font-family: 'DM Sans', 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 
-        {/* ═══════════════════════════════════════
-            SECTION 1 — HERO
-        ═══════════════════════════════════════ */}
-        <section
-          id="hero"
-          className="hero-radial grid-bg"
-          style={{ paddingTop: "130px", paddingBottom: "100px", position: "relative", overflow: "hidden" }}
-        >
-          {/* Ambient orbs */}
-          <div style={{
-            position: "absolute", top: "10%", left: "5%",
-            width: 400, height: 400, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(0,168,232,.07) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }} />
-          <div style={{
-            position: "absolute", bottom: "5%", right: "8%",
-            width: 300, height: 300, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(201,162,39,.05) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }} />
+        ::selection { background: rgba(251,191,36,0.22); color: #f8fafc; }
 
-          <div className="max-w-6xl mx-auto px-6">
-            <div
-              style={{
-                display: "grid", gridTemplateColumns: "1fr 1fr",
-                gap: "4rem", alignItems: "center",
-              }}
-            >
-              {/* Left column */}
-              <div>
-                {/* Live status */}
-                <div className="anim-fadeup flex items-center gap-3 mb-6">
-                  <div className="live-dot" />
-                  <span
-                    style={{
-                      fontFamily: "JetBrains Mono", fontSize: ".68rem",
-                      color: "#4ade80", letterSpacing: ".15em",
-                    }}
-                  >
-                    CORE SERVICES OPERATIONAL
-                  </span>
-                </div>
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.35; transform: scale(0.85); }
+        }
+        @keyframes fade-up {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -300% center; }
+          100% { background-position: 300% center; }
+        }
+        @keyframes scan-beam {
+          0%, 100% { top: -2px; }
+          100% { top: calc(100% + 2px); }
+        }
+        .animate-fade-up {
+          animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .animate-fade-up-d1 { animation-delay: 0.08s; }
+        .animate-fade-up-d2 { animation-delay: 0.16s; }
+        .animate-fade-up-d3 { animation-delay: 0.24s; }
+        .animate-fade-up-d4 { animation-delay: 0.32s; }
 
-                {/* Headline */}
-                <h1
-                  className="anim-fadeup d1"
-                  style={{
-                    fontFamily: "Syne, sans-serif", fontWeight: 800,
-                    fontSize: "clamp(2.4rem, 4vw, 3.4rem)",
-                    lineHeight: 1.1, color: "var(--text)", marginBottom: "1rem",
-                  }}
-                >
-                  TEOS{" "}
-                  <span className="gold-shimmer">Sentinel</span>
-                  <br />Shield
-                </h1>
+        .shimmer-gold {
+          background: linear-gradient(90deg, #fbbf24, #fcd34d, #fbbf24, #f59e0b);
+          background-size: 300% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: shimmer 4s linear infinite;
+        }
 
-                {/* Subheadline */}
-                <p
-                  className="anim-fadeup d2"
-                  style={{
-                    fontFamily: "Syne, sans-serif", fontWeight: 600,
-                    fontSize: "clamp(1rem, 2vw, 1.25rem)",
-                    color: "var(--cyan-b)", marginBottom: "1rem", letterSpacing: ".01em",
-                  }}
-                >
-                  Execution Control Infrastructure for Autonomous AI
-                </p>
+        .grid-bg-subtle {
+          background-image:
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+          background-size: 48px 48px;
+        }
 
-                {/* Support copy */}
-                <p
-                  className="anim-fadeup d3"
-                  style={{
-                    fontSize: ".88rem", color: "var(--muted)", lineHeight: 1.75,
-                    maxWidth: 480, marginBottom: "2rem",
-                  }}
-                >
-                  Pre-execution risk validation for AI-generated code, dependencies,
-                  and CI/CD workflows — delivered through a sovereign Telegram security gateway.
-                </p>
+        .terminal-frame {
+          background: #040810;
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 12px;
+          overflow: hidden;
+          font-family: 'DM Mono', 'JetBrains Mono', monospace;
+          box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+        }
+        .terminal-bar {
+          background: rgba(255,255,255,0.04);
+          border-bottom: 1px solid rgba(255,255,255,0.06);
+          display: flex;
+          align-items: center;
+          padding: 0.6rem 1rem;
+          gap: 0.5rem;
+        }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
 
-                {/* Flow */}
-                <div
-                  className="anim-fadeup d3 flex items-center gap-3 mb-8"
-                  style={{ fontFamily: "JetBrains Mono", fontSize: ".8rem" }}
-                >
-                  {["Generate", "Validate", "Execute"].map((step, i) => (
-                    <React.Fragment key={step}>
-                      <span
-                        style={{
-                          color: i === 1 ? "var(--gold-b)" : "var(--text)",
-                          fontWeight: i === 1 ? 700 : 400,
-                          background: i === 1 ? "rgba(201,162,39,.1)" : "rgba(255,255,255,.04)",
-                          border: `1px solid ${i === 1 ? "rgba(201,162,39,.3)" : "var(--border)"}`,
-                          borderRadius: 6, padding: "5px 14px",
-                        }}
-                      >
-                        {i === 1 ? "⬡ " : ""}{step}
-                      </span>
-                      {i < 2 && (
-                        <span className="step-arrow">→</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
+        .scan-line {
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 1.5px;
+          background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+          animation: scan-beam 2.4s ease-in-out infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
 
-                {/* CTA buttons */}
-                <div className="anim-fadeup d4 flex flex-wrap gap-3 mb-8">
-                  <a
-                    href="https://t.me/teoslinker_bot"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-gold"
-                    style={{ padding: "13px 28px", borderRadius: 9, fontSize: ".85rem", textDecoration: "none", display: "inline-block" }}
-                  >
-                    Start Free — 5 Scans
-                  </a>
-                  <a
-                    href="#how-it-works"
-                    className="btn-cyan"
-                    style={{ padding: "13px 28px", borderRadius: 9, fontSize: ".85rem", textDecoration: "none", display: "inline-block" }}
-                  >
-                    How It Works
-                  </a>
-                  <a
-                    href="#pricing"
-                    className="btn-ghost"
-                    style={{ padding: "13px 28px", borderRadius: 9, fontSize: ".85rem", textDecoration: "none", display: "inline-block" }}
-                  >
-                    View Plans
-                  </a>
-                </div>
+        .verdict-card {
+          border-left: 3px solid;
+          border-radius: 8px;
+        }
 
-                {/* Proof chips */}
-                <div className="anim-fadeup d5 flex flex-wrap gap-2 mb-6">
-                  <ProofChip label="ALLOW / WARN / BLOCK" variant="neutral" />
-                  <ProofChip label="Live Telegram Gateway" variant="live" />
-                  <ProofChip label="Dependency Audit" variant="live" />
-                  <ProofChip label="CI Security Checks" variant="live" />
-                </div>
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #080c12; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
-                {/* Enterprise proof strip */}
-                <div
-                  className="anim-fadeup d6"
-                  style={{
-                    background: "rgba(255,255,255,.02)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 10,
-                    padding: "14px 20px",
-                    display: "flex", flexWrap: "wrap", gap: "0",
-                  }}
-                >
-                  {[
-                    { label: "Deterministic Verdicts", icon: "⬡" },
-                    { label: "Supply Chain Checks",    icon: "📦" },
-                    { label: "CI Workflow Audit",      icon: "⚙️" },
-                    { label: "Telegram Security Gateway", icon: "🤖" },
-                  ].map((item, i, arr) => (
-                    <div
-                      key={item.label}
-                      style={{
-                        display: "flex", alignItems: "center", gap: 8,
-                        padding: "4px 16px",
-                        borderRight: i < arr.length - 1 ? "1px solid var(--border)" : "none",
-                        flex: "1 1 auto",
-                      }}
-                    >
-                      <span style={{ fontSize: ".85rem" }}>{item.icon}</span>
-                      <span style={{
-                        fontFamily: "JetBrains Mono", fontSize: ".68rem",
-                        color: "var(--muted)", letterSpacing: ".06em", whiteSpace: "nowrap",
-                      }}>
-                        {item.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+        @media (max-width: 768px) {
+          .hide-mobile { display: none !important; }
+        }
+      `}</style>
+
+      {/* ─── NAVIGATION ─────────────────────────────────── */}
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 px-6 flex items-center justify-between transition-all duration-300"
+        style={{
+          height: 60,
+          background: scrolled ? "rgba(8,12,18,0.94)" : "transparent",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
+          backdropFilter: scrolled ? "blur(16px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
+        }}
+      >
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #fbbf24, #d97706)" }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="#080c12" />
+              <path d="M9 12l2 2 4-4" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <span className="text-[15px] font-semibold text-slate-100 tracking-tight">
+            TEOS<span className="text-amber-400">.</span>Sentinel
+          </span>
+        </div>
+        <div className="hide-mobile flex items-center gap-8">
+          <NavLink href="#how-it-works">How It Works</NavLink>
+          <NavLink href="#features">Capabilities</NavLink>
+          <NavLink href="#pricing">Pricing</NavLink>
+          <NavLink href="#roadmap">Roadmap</NavLink>
+        </div>
+        <ButtonPrimary href={TELEGRAM_BOT} className="!py-2 !px-5 !text-[13px]">
+          Launch Bot
+        </ButtonPrimary>
+      </nav>
+
+      {/* ─── HERO ──────────────────────────────────────── */}
+      <section
+        id="hero"
+        className="relative pt-40 pb-24 px-6 overflow-hidden grid-bg-subtle"
+        style={{
+          background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(59,130,246,0.04) 0%, transparent 70%), radial-gradient(ellipse 40% 30% at 80% 60%, rgba(251,191,36,0.04) 0%, transparent 60%)",
+        }}
+      >
+        <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)" }} />
+        <div className="absolute bottom-[5%] right-[8%] w-[300px] h-[300px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(251,191,36,0.04) 0%, transparent 70%)" }} />
+
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="animate-fade-up flex items-center gap-3 mb-6">
+                <LiveDot />
+                <span className="text-[11px] font-mono text-emerald-400 tracking-[0.15em] uppercase font-medium">
+                  Core Services Operational
+                </span>
               </div>
 
-              {/* Right column — terminal */}
-              <div className="anim-fadeup d4 flex justify-center">
-                <HeroTerminal />
-              </div>
-            </div>
-          </div>
-        </section>
+              <h1 className="animate-fade-up animate-fade-up-d1 text-[clamp(36px,5vw,58px)] font-semibold leading-[1.08] tracking-[-0.025em] text-slate-50 mb-5">
+                TEOS{" "}
+                <span className="shimmer-gold">Sentinel</span>
+                <br />
+                Shield
+              </h1>
 
-        {/* ═══════════════════════════════════════
-            SECTION 2 — HOW IT WORKS
-        ═══════════════════════════════════════ */}
-        <section id="how-it-works" style={{ padding: "100px 0", borderTop: "1px solid var(--border)" }}>
-          <div className="max-w-6xl mx-auto px-6">
-            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-              <div className="section-label mb-4">HOW IT WORKS</div>
-              <h2
-                style={{
-                  fontFamily: "Syne, sans-serif", fontWeight: 800,
-                  fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)",
-                }}
-              >
-                Three Phases. Zero Assumed Trust.
-              </h2>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr auto 1fr auto 1fr",
-                gap: "1.5rem", alignItems: "center",
-              }}
-            >
-              {[
-                {
-                  num: "01", label: "Generate",
-                  desc: "AI agents and developers produce code, package manifests, or CI workflow files.",
-                  icon: "⚡",
-                  color: "var(--muted)",
-                },
-                null,
-                {
-                  num: "02", label: "Validate",
-                  desc: "TEOS Sentinel intercepts and applies deterministic risk rules across code, deps, and CI config.",
-                  icon: "⬡",
-                  color: "var(--gold-b)",
-                  featured: true,
-                },
-                null,
-                {
-                  num: "03", label: "Execute",
-                  desc: "ALLOW proceeds. WARN flags for review. BLOCK halts execution before damage occurs.",
-                  icon: "✓",
-                  color: "var(--cyan-b)",
-                },
-              ].map((step, i) => {
-                if (!step) {
-                  return (
-                    <div key={i} style={{ textAlign: "center", color: "var(--gold)", fontSize: "2rem", opacity: .5 }}>
-                      →
-                    </div>
-                  );
-                }
-                return (
-                  <div
-                    key={step.num}
-                    className={`card ${step.featured ? "tier-featured" : ""}`}
-                    style={{ borderRadius: 14, padding: "2rem 1.5rem", textAlign: "center" }}
-                  >
-                    <div
-                      style={{
-                        width: 56, height: 56, borderRadius: "50%",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        margin: "0 auto 1.2rem",
-                        background: step.featured
-                          ? "linear-gradient(135deg, rgba(201,162,39,.2), rgba(201,162,39,.05))"
-                          : "rgba(255,255,255,.03)",
-                        border: `1px solid ${step.featured ? "rgba(201,162,39,.3)" : "var(--border)"}`,
-                        fontSize: "1.4rem",
-                      }}
-                    >
-                      {step.icon}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "JetBrains Mono", fontSize: ".65rem",
-                        color: "var(--muted)", letterSpacing: ".15em", marginBottom: 6,
-                      }}
-                    >
-                      PHASE {step.num}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "Syne, sans-serif", fontWeight: 800,
-                        fontSize: "1.2rem", color: step.color, marginBottom: 10,
-                      }}
-                    >
-                      {step.label}
-                    </div>
-                    <div style={{ fontSize: ".78rem", color: "var(--muted)", lineHeight: 1.75 }}>
-                      {step.desc}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════
-            SECTION 3 — LIVE CAPABILITIES
-        ═══════════════════════════════════════ */}
-        <section
-          id="capabilities"
-          style={{ padding: "100px 0", background: "var(--bg2)", borderTop: "1px solid var(--border)" }}
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-              <div className="section-label mb-4">LIVE CAPABILITIES</div>
-              <h2
-                style={{
-                  fontFamily: "Syne, sans-serif", fontWeight: 800,
-                  fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)",
-                }}
-              >
-                Current Product Capabilities
-              </h2>
-              <p style={{ fontSize: ".88rem", color: "var(--muted)", maxWidth: 480, margin: "1rem auto 0", lineHeight: 1.75 }}>
-                Capabilities shown reflect the current live product scope.
+              <p className="animate-fade-up animate-fade-up-d2 text-[clamp(16px,2vw,19px)] font-medium text-sky-300 mb-4 tracking-tight">
+                Pre-Execution Security Guardrails for Autonomous Systems
               </p>
-            </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: "1.25rem",
-              }}
-            >
-              <CapabilityCard
-                icon="🔍"
-                title="Code Risk Scan"
-                cmd="/scan"
-                desc="Analyzes AI-generated code for dangerous patterns: eval(), shell injections, destructive commands, and obfuscated execution vectors."
-              />
-              <CapabilityCard
-                icon="📦"
-                title="Dependency Audit"
-                cmd="/deps"
-                desc="Resolves package manifests and checks for supply chain risks, malicious packages, and dependency confusion vulnerabilities."
-              />
-              <CapabilityCard
-                icon="⚙️"
-                title="CI Workflow Audit"
-                cmd="PRO"
-                desc="Inspects CI workflow files for privilege escalation, secret exposure, insecure runners, and deployment pipeline risks. Available on Pro tier."
-              />
-              <CapabilityCard
-                icon="🪙"
-                title="Persistent Credits"
-                cmd="Automatic"
-                desc="Scan credits persist across sessions. Purchase once, use continuously. Server-side state managed by a hardened activation service."
-              />
-              <CapabilityCard
-                icon="🤖"
-                title="Telegram Security Gateway"
-                cmd="@teoslinker_bot"
-                desc="A purpose-built Telegram bot serving as the primary security interface. Instant scan access with no app installs required."
-              />
-              <CapabilityCard
-                icon="🛡"
-                title="Sovereign Runtime Stack"
-                cmd="PM2 + Local Sovereign Infra"
-                desc="PM2-managed persistent services on sovereign-first infrastructure. No serverless cold starts. Designed for continuously available execution control."
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════
-            SECTION 4 — VERDICT EXAMPLES
-        ═══════════════════════════════════════ */}
-        <section
-          id="verdicts"
-          style={{ padding: "100px 0", borderTop: "1px solid var(--border)" }}
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-              <div className="section-label mb-4">VERDICT ENGINE</div>
-              <h2
-                style={{
-                  fontFamily: "Syne, sans-serif", fontWeight: 800,
-                  fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)",
-                }}
-              >
-                Three Verdicts. No Ambiguity.
-              </h2>
-              <p style={{ fontSize: ".88rem", color: "var(--muted)", maxWidth: 500, margin: "1rem auto 0", lineHeight: 1.75 }}>
-                Every scan produces a deterministic verdict. ALLOW, WARN, or BLOCK — with structured reasoning your agents can act on.
+              <p className="animate-fade-up animate-fade-up-d3 text-[15px] text-slate-400 leading-relaxed max-w-[480px] mb-7">
+                Rule-driven pre-execution validation for AI-generated code, dependencies, and CI/CD workflows — delivered through a Telegram access layer with structured ALLOW / WARN / BLOCK verdicts.
               </p>
-            </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))", gap: "1.25rem" }}>
-              <VerdictCard
-                verdict="ALLOW"
-                code={`import hashlib\ndata = b"hello world"\nhashlib.sha256(data).hexdigest()`}
-                reason="Standard cryptographic operation. No I/O, no execution."
-                risk="NONE — cleared for execution"
-              />
-              <VerdictCard
-                verdict="WARN"
-                code={`import subprocess\nresult = subprocess.run(\n  ["ls", "-la"], capture_output=True\n)`}
-                reason="Subprocess call detected. Scoped to directory listing."
-                risk="LOW — review before automation"
-              />
-              <VerdictCard
-                verdict="BLOCK"
-                code={`eval(require("child_process")\n  .exec("rm -rf /"))`}
-                reason="Shell injection via eval + exec combination."
-                risk="CRITICAL — execution halted"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════
-            SECTION 4B — TRUSTED FOR
-        ═══════════════════════════════════════ */}
-        <section
-          style={{
-            padding: "0 0 80px",
-            borderBottom: "1px solid var(--border)",
-          }}
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <div
-              style={{
-                background: "var(--card2)",
-                border: "1px solid var(--border)",
-                borderRadius: 16,
-                padding: "2.5rem 3rem",
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                gap: "2rem",
-                justifyContent: "space-between",
-              }}
-            >
-              <div>
-                <div className="section-label mb-3">TRUSTED FOR</div>
-                <div
-                  style={{
-                    fontFamily: "Syne, sans-serif", fontWeight: 800,
-                    fontSize: "1.1rem", color: "var(--text)",
-                  }}
-                >
-                  Built for every layer of the autonomous AI stack
-                </div>
+              <div className="animate-fade-up animate-fade-up-d3 flex items-center gap-2.5 mb-8 text-sm">
+                <span className="text-slate-300 bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-2 font-medium">
+                  Generate
+                </span>
+                <span className="text-amber-500 text-lg opacity-60">→</span>
+                <span className="text-amber-300 bg-amber-500/[0.08] border border-amber-500/25 rounded-lg px-4 py-2 font-bold flex items-center gap-1">
+                  <Icon name="hexagon" className="text-amber-400" />
+                  Validate
+                </span>
+                <span className="text-amber-500 text-lg opacity-60">→</span>
+                <span className="text-slate-300 bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 py-2 font-medium">
+                  Execute
+                </span>
               </div>
-              <div
-                style={{
-                  display: "flex", flexWrap: "wrap", gap: "1rem",
-                }}
-              >
+
+              <div className="animate-fade-up animate-fade-up-d4 flex flex-wrap gap-3 mb-8">
+                <ButtonPrimary href={TELEGRAM_BOT}>
+                  Start Free — 5 Scans
+                </ButtonPrimary>
+                <ButtonGhost href="#how-it-works">
+                  How It Works
+                </ButtonGhost>
+                <ButtonGhost href="#pricing">
+                  View Plans
+                </ButtonGhost>
+              </div>
+
+              <div className="animate-fade-up animate-fade-up-d4 flex flex-wrap gap-2 mb-6">
                 {[
-                  { label: "AI Agents",                icon: "🤖" },
-                  { label: "Developer Workflows",      icon: "⚡" },
-                  { label: "CI/CD Security Gates",     icon: "⚙️" },
-                  { label: "Autonomous Code Execution", icon: "🔒" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
+                  { label: "ALLOW / WARN / BLOCK", dot: false },
+                  { label: "Dependency Audit", dot: true },
+                  { label: "CI Security Checks", dot: true },
+                ].map((pill, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.08em] uppercase px-3 py-1.5 rounded-full border"
                     style={{
-                      display: "flex", alignItems: "center", gap: 10,
-                      background: "rgba(255,255,255,.03)",
-                      border: "1px solid var(--border2)",
-                      borderRadius: 9, padding: "10px 18px",
+                      background: "rgba(59,130,246,0.06)",
+                      color: "#93c5fd",
+                      borderColor: "rgba(59,130,246,0.2)",
                     }}
                   >
-                    <span style={{ fontSize: "1rem" }}>{item.icon}</span>
-                    <span
-                      style={{
-                        fontFamily: "Syne, sans-serif", fontWeight: 600,
-                        fontSize: ".82rem", color: "var(--text)",
-                      }}
-                    >
-                      {item.label}
+                    {pill.dot && <LiveDot size={6} />}
+                    {pill.label}
+                  </span>
+                ))}
+              </div>
+
+              <div className="animate-fade-up animate-fade-up-d4 flex flex-wrap gap-0 rounded-xl border border-white/[0.06] bg-white/[0.01] overflow-hidden">
+                {[
+                  { icon: "hexagon", text: "Rule-Driven Verdicts" },
+                  { icon: "box", text: "Supply Chain Checks" },
+                  { icon: "gear", text: "CI Workflow Audit" },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 px-4 py-2.5 text-[11px] text-slate-500 font-mono tracking-wide border-r border-white/[0.05] last:border-r-0 flex-1 justify-center min-w-[120px]"
+                  >
+                    <Icon name={item.icon} className="text-slate-400" />
+                    <span className="whitespace-nowrap">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="animate-fade-up animate-fade-up-d3 flex justify-center lg:justify-end hide-mobile">
+              <div className="terminal-frame w-full max-w-[420px] relative">
+                <div className="terminal-bar">
+                  <div className="terminal-dot" style={{ background: "#ff5f57" }} />
+                  <div className="terminal-dot" style={{ background: "#febc2e" }} />
+                  <div className="terminal-dot" style={{ background: "#28c840" }} />
+                  <span className="ml-3 text-[11px] text-slate-500 font-mono">teos-sentinel — live</span>
+                  <LiveDot size={7} />
+                </div>
+                <div className="relative p-5 min-h-[260px] text-[12px] font-mono">
+                  <div className="scan-line" />
+                  <div className="text-slate-500 mb-2">$ /scan</div>
+                  <div className="text-slate-600 mb-1"><span className="text-slate-500">INPUT</span></div>
+                  <div className="bg-black/30 border border-white/[0.06] rounded-md p-3 mb-4 text-red-400/80 break-all">
+                    rm -rf /
+                  </div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-[11px] font-bold tracking-widest px-3 py-1 rounded-md"
+                      style={{ background: "rgba(239,68,68,0.1)", color: "#f87171", border: "1px solid rgba(239,68,68,0.25)" }}>
+                      ✕ BLOCK
                     </span>
                   </div>
-                ))}
+                  <div className="space-y-1.5 text-[11px]">
+                    <div><span className="text-slate-500">RULE </span><span className="text-slate-300">R01.DESTRUCTIVE_SHELL</span></div>
+                    <div><span className="text-slate-500">RISK </span><span className="text-red-400">CRITICAL — execution halted</span></div>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* Enterprise category strip */}
-            <div
-              style={{
-                marginTop: "1.25rem",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                flexWrap: "wrap", gap: "0",
-                background: "rgba(255,255,255,.015)",
-                border: "1px solid var(--border)",
-                borderRadius: 10, padding: "14px 28px",
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "JetBrains Mono", fontSize: ".68rem",
-                  color: "var(--muted)", letterSpacing: ".14em", marginRight: 16,
-                  textTransform: "uppercase",
-                }}
-              >
-                Built for
-              </span>
-              {[
-                "AI Agents",
-                "Secure DevOps",
-                "Autonomous Pipelines",
-                "Sovereign Infrastructure",
-              ].map((item, i, arr) => (
-                <span key={item} style={{ display: "flex", alignItems: "center" }}>
-                  <span
-                    style={{
-                      fontFamily: "Syne, sans-serif", fontWeight: 600,
-                      fontSize: ".78rem", color: "var(--text)",
-                    }}
-                  >
-                    {item}
-                  </span>
-                  {i < arr.length - 1 && (
-                    <span style={{ margin: "0 12px", color: "var(--dim)", fontSize: ".7rem" }}>•</span>
-                  )}
-                </span>
-              ))}
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══════════════════════════════════════
-            SECTION 5 — PRICING
-        ═══════════════════════════════════════ */}
-        <section
-          id="pricing"
-          style={{ padding: "100px 0", background: "var(--bg2)", borderTop: "1px solid var(--border)" }}
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-              <div className="section-label mb-4">PRICING</div>
-              <h2
-                style={{
-                  fontFamily: "Syne, sans-serif", fontWeight: 800,
-                  fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)",
-                }}
-              >
-                Start Free. Scale When Ready.
-              </h2>
-              <p style={{ fontSize: ".88rem", color: "var(--muted)", maxWidth: 440, margin: "1rem auto 0", lineHeight: 1.75 }}>
-                No trial periods. No credit card required for free tier. Credits persist across sessions.
-              </p>
+      {/* ─── PROOF STRIP ───────────────────────────────── */}
+      <section className="px-6 pb-20 max-w-6xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          {[
+            { label: "Telegram Bot Live", dot: true },
+            { label: "25 Rule Checks", dot: false },
+            { label: "Dependency Scanner", dot: false },
+            { label: "CI/CD Scanner", dot: false },
+            { label: "37 Tests Passing", dot: true },
+            { label: "Engine v2 Stable", dot: true },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/[0.07] bg-white/[0.02] text-[12px] text-slate-400 whitespace-nowrap"
+            >
+              {item.dot && <LiveDot size={6} />}
+              {item.label}
+            </div>
+          ))}
+        </div>
+      </section>
 
-              {/* Category positioning */}
+      {/* ─── HOW IT WORKS ──────────────────────────────── */}
+      <section id="how-it-works" className="px-6 py-24 border-t border-white/[0.05]">
+        <div className="max-w-5xl mx-auto text-center">
+          <SectionLabel>How It Works</SectionLabel>
+          <h2 className="text-[clamp(28px,4vw,42px)] font-semibold tracking-[-0.02em] text-slate-50 mb-16">
+            Three Phases. Zero Assumed Trust.
+          </h2>
+
+          <div className="grid md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-center">
+            <Card>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-white/[0.03] border border-white/[0.06]">
+                <Icon name="lightning" className="text-slate-300" />
+              </div>
+              <div className="text-[10px] font-mono text-slate-500 tracking-[0.15em] mb-1.5">PHASE 01</div>
+              <div className="text-lg font-semibold text-slate-300 mb-2">Generate</div>
+              <div className="text-[13px] text-slate-500 leading-relaxed">
+                AI agents and developers produce code, package manifests, or CI workflow files.
+              </div>
+            </Card>
+
+            <div className="text-amber-500 text-2xl opacity-40 text-center hidden md:block">→</div>
+
+            <Card featured>
               <div
-                style={{
-                  display: "inline-flex", flexDirection: "column", alignItems: "center",
-                  gap: 4, marginTop: "2rem",
-                  padding: "16px 32px",
-                  background: "rgba(201,162,39,.04)",
-                  border: "1px solid rgba(201,162,39,.18)",
-                  borderRadius: 12,
-                }}
+                className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.05))", border: "1px solid rgba(251,191,36,0.3)" }}
               >
-                {["Beyond scanning.", "Beyond linting.", "Execution Control Infrastructure."].map((line, i) => (
-                  <span
-                    key={line}
-                    style={{
-                      fontFamily: "Syne, sans-serif",
-                      fontWeight: i === 2 ? 800 : 400,
-                      fontSize: i === 2 ? "1.05rem" : ".88rem",
-                      color: i === 2 ? "var(--gold-b)" : "var(--muted)",
-                      letterSpacing: i === 2 ? ".02em" : "normal",
-                    }}
-                  >
-                    {line}
-                  </span>
-                ))}
+                <Icon name="hexagon" className="text-amber-400" />
               </div>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-                gap: "1.25rem", alignItems: "start",
-              }}
-            >
-              <PricingCard
-                tier="Free"
-                price="$0"
-                scans="5 scans"
-                features={[
-                  "Code risk scan (/scan)",
-                  "Telegram bot access",
-                  "ALLOW / WARN / BLOCK verdicts",
-                  "Structured risk output",
-                ]}
-                cta="Start Free"
-                href="https://t.me/teoslinker_bot"
-              />
-              <PricingCard
-                tier="Starter"
-                price="$9"
-                scans="50 scans / month"
-                features={[
-                  "Code risk scan (/scan)",
-                  "Persistent credit balance",
-                  "Full scan history",
-                  "Audit log access",
-                ]}
-                cta="Get Starter"
-                href="https://dodo.pe/tts"
-              />
-              <PricingCard
-                tier="Builder"
-                price="$49"
-                scans="500 scans / month"
-                features={[
-                  "Code risk scan (/scan)",
-                  "Dependency audit (/deps)",
-                  "500 persistent credits",
-                  "Priority support",
-                ]}
-                cta="Get Builder"
-                href="https://dodo.pe/tts2"
-                featured
-              />
-              <PricingCard
-                tier="Pro"
-                price="$99"
-                scans="1,000 scans / month"
-                features={[
-                  "Code + Dependency scans",
-                  "CI Workflow Audit (Pro rollout)",
-                  "1,000 persistent credits",
-                  "Full scan suite access",
-                ]}
-                cta="Get Pro"
-                href="https://dodo.pe/teos-pro"
-              />
-            </div>
-
-            {/* Enterprise note */}
-            <div
-              style={{
-                marginTop: "2rem",
-                background: "var(--card)", border: "1px solid var(--border)",
-                borderRadius: 12, padding: "1.5rem 2rem",
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                flexWrap: "wrap", gap: "1rem",
-              }}
-            >
-              <div>
-                <div style={{ fontFamily: "Syne,sans-serif", fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
-                  Enterprise & Custom Deployments
-                </div>
-                <div style={{ fontSize: ".78rem", color: "var(--muted)" }}>
-                  Private deployment, custom rule engines, institutional contracts. Contact directly.
-                </div>
+              <div className="text-[10px] font-mono text-slate-500 tracking-[0.15em] mb-1.5">PHASE 02</div>
+              <div className="text-lg font-semibold text-amber-300 mb-2">Validate</div>
+              <div className="text-[13px] text-slate-500 leading-relaxed">
+                TEOS Sentinel intercepts and applies rule-driven risk checks across code, deps, and CI config.
               </div>
-              <a
-                href="mailto:ayman@teosegypt.com?subject=TEOS Sentinel Enterprise"
-                className="btn-ghost"
-                style={{ padding: "10px 24px", borderRadius: 8, fontSize: ".8rem", textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}
-              >
-                Contact Sales →
-              </a>
-            </div>
+            </Card>
+
+            <div className="text-amber-500 text-2xl opacity-40 text-center hidden md:block">→</div>
+
+            <Card>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-white/[0.03] border border-white/[0.06]">
+                <Icon name="check" className="text-slate-300" />
+              </div>
+              <div className="text-[10px] font-mono text-slate-500 tracking-[0.15em] mb-1.5">PHASE 03</div>
+              <div className="text-lg font-semibold text-sky-300 mb-2">Execute</div>
+              <div className="text-[13px] text-slate-500 leading-relaxed">
+                ALLOW proceeds. WARN flags for review. BLOCK halts execution before damage occurs.
+              </div>
+            </Card>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══════════════════════════════════════
-            SECTION 6 — WHY TEOS
-        ═══════════════════════════════════════ */}
-        <section
-          id="why-teos"
-          style={{ padding: "100px 0", borderTop: "1px solid var(--border)" }}
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-              <div className="section-label mb-4">WHY TEOS</div>
-              <h2
-                style={{
-                  fontFamily: "Syne, sans-serif", fontWeight: 800,
-                  fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)",
-                }}
-              >
-                Engineered for Execution Control
-              </h2>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
-              <WhyCard
-                icon="⬡"
-                title="Deterministic Rules Engine"
-                desc="No probabilistic black boxes. Risk verdicts are computed against explicit, auditable rule sets. Every BLOCK has a traceable reason."
-              />
-              <WhyCard
-                icon="🔒"
-                title="Execution Risk Controls"
-                desc="Intercepts code before it reaches your runtime. Designed for AI pipelines where generated code executes autonomously at scale."
-              />
-              <WhyCard
-                icon="📦"
-                title="Supply Chain Checks"
-                desc="Dependency manifests analyzed for package-level risks including typosquatting, malicious publications, and version-pinning issues."
-              />
-              <WhyCard
-                icon="🤖"
-                title="Agent Runtime Protection"
-                desc="Built specifically for autonomous AI systems. When agents generate and execute code in the same loop, Sentinel is the circuit breaker."
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════
-            SECTION 7 — FOUNDER / SOVEREIGN
-        ═══════════════════════════════════════ */}
-        <section
-          style={{
-            padding: "80px 0", borderTop: "1px solid var(--border)",
-            background: "var(--bg2)",
-          }}
-        >
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <div
-              style={{
-                width: 64, height: 64, borderRadius: "50%",
-                background: "linear-gradient(135deg, rgba(201,162,39,.2), rgba(0,168,232,.1))",
-                border: "1px solid rgba(201,162,39,.3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                margin: "0 auto 1.5rem", fontSize: "1.8rem",
-              }}
-            >
-              🛡
-            </div>
-            <div className="section-label mb-4">BUILT BY</div>
-            <h2
-              style={{
-                fontFamily: "Syne, sans-serif", fontWeight: 800,
-                fontSize: "clamp(1.4rem, 2.5vw, 2rem)", color: "var(--text)", marginBottom: "1rem",
-              }}
-            >
-              Elmahrosa International
+      {/* ─── FEATURES ──────────────────────────────────── */}
+      <section id="features" className="px-6 py-24 border-t border-white/[0.05] bg-white/[0.01]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <SectionLabel>Live Capabilities</SectionLabel>
+            <h2 className="text-[clamp(26px,4vw,38px)] font-semibold tracking-[-0.02em] text-slate-50 mb-4">
+              Current Product Capabilities
             </h2>
-            <p
-              style={{
-                fontFamily: "Syne, sans-serif", fontWeight: 600,
-                fontSize: "1rem", color: "var(--cyan-b)", marginBottom: "1.2rem",
-              }}
-            >
-              Building Execution Control Infrastructure for Autonomous Systems
+            <p className="text-[15px] text-slate-500 max-w-[480px] mx-auto leading-relaxed">
+              Capabilities shown reflect the current live product scope.
             </p>
-            <p
-              style={{
-                fontSize: ".85rem", color: "var(--muted)", lineHeight: 1.85,
-                maxWidth: 560, margin: "0 auto 2rem",
-              }}
-            >
-              Founded in Alexandria, Egypt. Building security infrastructure for the next generation
-              of autonomous AI systems — from agent-native validation engines to institutional
-              deployment-grade security tooling.
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              {
+                icon: "magnifier",
+                title: "Code Risk Scan",
+                badge: "/scan",
+                badgeStyle: "live",
+                body: "Detects destructive shell commands, eval/exec abuse, command injection, subprocess misuse, chmod issues, secret leakage, and base64 execution patterns.",
+              },
+              {
+                icon: "box",
+                title: "Dependency Audit",
+                badge: "/deps",
+                badgeStyle: "live",
+                body: "Resolves package manifests and checks for supply chain risks, malicious packages, and dependency confusion vulnerabilities before installation.",
+              },
+              {
+                icon: "gear",
+                title: "CI Workflow Audit",
+                badge: "PRO",
+                badgeStyle: "pro",
+                body: "Inspects CI workflow files for privilege escalation, secret exposure, insecure runners, and deployment pipeline risks. Available on Pro tier.",
+              },
+              {
+                icon: "coin",
+                title: "Persistent Credits",
+                badge: "Automatic",
+                badgeStyle: "live",
+                body: "Scan credits persist across sessions. Purchase once, use continuously. Server-side state managed by a hardened activation service.",
+              },
+              {
+                icon: "messaging",
+                title: "Telegram Gateway",
+                badge: "@teoslinker_bot",
+                badgeStyle: "live",
+                body: "A purpose-built Telegram bot serving as the primary interface. Instant scan access with no app installs required.",
+              },
+              {
+                icon: "shield",
+                title: "Sovereign Runtime",
+                badge: "Persistent Runtime",
+                badgeStyle: "live",
+                body: "PM2-managed persistent services on sovereign-first infrastructure. No serverless cold starts. Designed for continuously available execution control.",
+              },
+            ].map((feature, i) => (
+              <Card key={i}>
+                <div className="flex items-start justify-between mb-3">
+                  <Icon name={feature.icon} className="text-slate-400" />
+                  <span
+                    className={`text-[10px] font-semibold tracking-wide px-2.5 py-1 rounded-md ${
+                      feature.badgeStyle === "pro"
+                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                        : "bg-sky-500/8 text-sky-400 border border-sky-500/15"
+                    }`}
+                  >
+                    {feature.badge}
+                  </span>
+                </div>
+                <h3 className="text-[15px] font-semibold text-slate-200 mb-2.5">{feature.title}</h3>
+                <p className="text-[13px] text-slate-500 leading-relaxed">{feature.body}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── VERDICT ENGINE ────────────────────────────── */}
+      <section id="verdicts" className="px-6 py-24 border-t border-white/[0.05]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <SectionLabel>Verdict Engine</SectionLabel>
+            <h2 className="text-[clamp(26px,4vw,38px)] font-semibold tracking-[-0.02em] text-slate-50 mb-4">
+              Three Verdicts. No Ambiguity.
+            </h2>
+            <p className="text-[15px] text-slate-500 max-w-[500px] mx-auto leading-relaxed">
+              Every scan produces a rule-driven verdict. ALLOW, WARN, or BLOCK — with structured reasoning your agents can act on.
             </p>
-            <div className="flex justify-center flex-wrap gap-4">
-              {[
-                { label: "Telegram Community", href: "https://t.me/Elmahrosapi" },
-                { label: "GitHub", href: "https://github.com/Elmahrosa/teos-sentinel-shield" },
-                { label: "Contact", href: "mailto:ayman@teosegypt.com" },
-              ].map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost"
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {/* ALLOW */}
+            <div className="verdict-card p-5 rounded-xl bg-white/[0.01] border border-white/[0.06]" style={{ borderLeftColor: "#22c55e" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="terminal-dot" style={{ background: "#ff5f57" }} />
+                <div className="terminal-dot" style={{ background: "#febc2e" }} />
+                <div className="terminal-dot" style={{ background: "#28c840" }} />
+                <span className="ml-2 text-[10px] text-slate-500 font-mono">/scan</span>
+              </div>
+              <div className="text-[10px] text-slate-500 mb-1 font-mono">INPUT</div>
+              <div className="bg-black/30 border border-white/[0.05] rounded-md p-3 mb-4 text-[11px] font-mono text-slate-500 break-all leading-relaxed">
+                import hashlib{"\n"}data = b"hello world"{"\n"}hashlib.sha256(data).hexdigest()
+              </div>
+              <span className="inline-block text-[11px] font-bold font-mono tracking-widest px-3 py-1 rounded-md mb-3"
+                style={{ background: "rgba(34,197,94,0.08)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.2)" }}>
+                ✓ ALLOW
+              </span>
+              <div className="text-[11px] font-mono space-y-1.5">
+                <div><span className="text-slate-500">REASON </span><span className="text-slate-300">Standard cryptographic operation. No I/O, no execution.</span></div>
+                <div><span className="text-slate-500">RISK </span><span className="text-emerald-400">NONE — cleared for execution</span></div>
+              </div>
+            </div>
+
+            {/* WARN */}
+            <div className="verdict-card p-5 rounded-xl bg-white/[0.01] border border-white/[0.06]" style={{ borderLeftColor: "#f59e0b" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="terminal-dot" style={{ background: "#ff5f57" }} />
+                <div className="terminal-dot" style={{ background: "#febc2e" }} />
+                <div className="terminal-dot" style={{ background: "#28c840" }} />
+                <span className="ml-2 text-[10px] text-slate-500 font-mono">/scan</span>
+              </div>
+              <div className="text-[10px] text-slate-500 mb-1 font-mono">INPUT</div>
+              <div className="bg-black/30 border border-white/[0.05] rounded-md p-3 mb-4 text-[11px] font-mono text-slate-500 break-all leading-relaxed">
+                import subprocess{"\n"}result = subprocess.run([&quot;ls&quot;, &quot;-la&quot;], capture_output=True)
+              </div>
+              <span className="inline-block text-[11px] font-bold font-mono tracking-widest px-3 py-1 rounded-md mb-3"
+                style={{ background: "rgba(245,158,11,0.08)", color: "#fbbf24", border: "1px solid rgba(245,158,11,0.2)" }}>
+                ⚠ WARN
+              </span>
+              <div className="text-[11px] font-mono space-y-1.5">
+                <div><span className="text-slate-500">REASON </span><span className="text-slate-300">Subprocess call detected. Scoped to directory listing.</span></div>
+                <div><span className="text-slate-500">RISK </span><span className="text-amber-400">LOW — review before automation</span></div>
+              </div>
+            </div>
+
+            {/* BLOCK */}
+            <div className="verdict-card p-5 rounded-xl bg-white/[0.01] border border-white/[0.06]" style={{ borderLeftColor: "#ef4444" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="terminal-dot" style={{ background: "#ff5f57" }} />
+                <div className="terminal-dot" style={{ background: "#febc2e" }} />
+                <div className="terminal-dot" style={{ background: "#28c840" }} />
+                <span className="ml-2 text-[10px] text-slate-500 font-mono">/scan</span>
+              </div>
+              <div className="text-[10px] text-slate-500 mb-1 font-mono">INPUT</div>
+              <div className="bg-black/30 border border-white/[0.05] rounded-md p-3 mb-4 text-[11px] font-mono text-red-400/70 break-all leading-relaxed">
+                eval(require(&quot;child_process&quot;).exec(&quot;rm -rf /&quot;))
+              </div>
+              <span className="inline-block text-[11px] font-bold font-mono tracking-widest px-3 py-1 rounded-md mb-3"
+                style={{ background: "rgba(239,68,68,0.08)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)" }}>
+                ✕ BLOCK
+              </span>
+              <div className="text-[11px] font-mono space-y-1.5">
+                <div><span className="text-slate-500">REASON </span><span className="text-slate-300">Shell injection via eval + exec combination.</span></div>
+                <div><span className="text-slate-500">RISK </span><span className="text-red-400">CRITICAL — execution halted</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── INTERACTIVE SCAN DEMO ─────────────────────── */}
+      <section className="px-6 py-24 border-t border-white/[0.05] bg-white/[0.01]">
+        <div className="max-w-2xl mx-auto text-center">
+          <SectionLabel>Interactive Preview</SectionLabel>
+          <h2 className="text-[clamp(24px,4vw,34px)] font-semibold tracking-[-0.02em] text-slate-50 mb-3">
+            Try the Rule Engine
+          </h2>
+          <p className="text-[14px] text-slate-500 mb-10">
+            Preview simulation for demonstration only. Production verdicts are generated by the live MCP risk engine.
+          </p>
+
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.01] p-6 text-left">
+            <label className="text-[11px] text-slate-500 font-mono block mb-2.5">
+              INPUT — Enter a shell command or code snippet
+            </label>
+            <input
+              type="text"
+              value={scanInput}
+              onChange={(e) => { setScanInput(e.target.value); setScanResult(null); }}
+              onKeyDown={(e) => { if (e.key === "Enter") handleScan(); }}
+              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-4 py-3 text-[13px] font-mono text-slate-200 outline-none transition-colors focus:border-amber-500/40 placeholder:text-slate-600 mb-4"
+              placeholder="e.g. rm -rf / or curl | bash"
+            />
+            <button
+              onClick={handleScan}
+              disabled={isScanning}
+              className="w-full bg-amber-400 hover:bg-amber-500 disabled:opacity-50 text-[#080c12] font-semibold rounded-lg py-3 text-[14px] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(251,191,36,0.3)] cursor-pointer disabled:cursor-not-allowed"
+            >
+              {isScanning ? "Scanning..." : "Run Scan"}
+            </button>
+
+            {scanResult && vs && (
+              <div
+                className="mt-5 p-5 rounded-xl transition-all duration-300"
+                style={{ background: vs.bg, border: `1px solid ${vs.border}` }}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl font-bold font-mono" style={{ color: vs.color }}>
+                    {vs.glyph}
+                  </span>
+                  <span className="text-2xl font-bold font-mono tracking-widest" style={{ color: vs.color }}>
+                    {scanResult.verdict}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-[12px] font-mono">
+                  <div>
+                    <div className="text-slate-500 mb-1">RULE</div>
+                    <div className="text-slate-300">{scanResult.rule}</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-500 mb-1">RISK SCORE</div>
+                    <div className="text-slate-300">{scanResult.score}/100</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PRICING ───────────────────────────────────── */}
+      <section id="pricing" className="px-6 py-24 border-t border-white/[0.05]">
+        <div className="max-w-6xl mx-auto text-center">
+          <SectionLabel>Pricing</SectionLabel>
+          <h2 className="text-[clamp(26px,4vw,38px)] font-semibold tracking-[-0.02em] text-slate-50 mb-3">
+            Start Free. Scale When Ready.
+          </h2>
+          <p className="text-[15px] text-slate-500 max-w-[440px] mx-auto mb-4 leading-relaxed">
+            No trial periods. No credit card required for free tier. Credits persist across sessions.
+          </p>
+          <p className="text-[12px] text-slate-600 max-w-[560px] mx-auto mb-12 leading-relaxed">
+            Digital access. Scan credits activate after payment. Payments are non‑refundable once access is delivered.
+          </p>
+
+          <div className="grid md:grid-cols-5 gap-3 items-start">
+            <PriceCard
+              name="Free"
+              price="$0"
+              period="forever"
+              scanLimit="5 scans"
+              features={["Code risk scan (/scan)", "Telegram bot access", "ALLOW / WARN / BLOCK verdicts", "Structured risk output"]}
+              href={TELEGRAM_BOT}
+            />
+            <PriceCard
+              name="Starter"
+              price="$9"
+              period="/month"
+              scanLimit="50 scans/month"
+              features={["Code risk scan (/scan)", "Persistent credit balance", "Full scan history", "Audit log access"]}
+              href={UPGRADE_LINK}
+            />
+            <PriceCard
+              name="Builder"
+              price="$49"
+              period="/month"
+              scanLimit="500 scans/month"
+              featured
+              features={["Code risk scan (/scan)", "Dependency audit (/deps)", "500 persistent credits", "Priority support"]}
+              href={UPGRADE_LINK}
+            />
+            <PriceCard
+              name="Pro"
+              price="$99"
+              period="/month"
+              scanLimit="1,000 scans/month"
+              features={["Code + Dependency scans", "CI Workflow Audit", "1,000 persistent credits", "Team/security workflow use", "Audit logs"]}
+              href={UPGRADE_LINK}
+            />
+            <PriceCard
+              name="Enterprise"
+              price="Custom"
+              period="contact us"
+              scanLimit="Unlimited"
+              features={["Self-hosted deployment", "Custom onboarding", "Audit logging", "Dedicated support", "Deployment support"]}
+              href={CONTACT_EMAIL}
+              isExternal={false}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── ROADMAP ───────────────────────────────────── */}
+      <section id="roadmap" className="px-6 py-24 border-t border-white/[0.05] bg-white/[0.01]">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-16">
+            <SectionLabel>Roadmap</SectionLabel>
+            <h2 className="text-[clamp(24px,4vw,34px)] font-semibold tracking-[-0.02em] text-slate-50 mb-3">
+              What's Coming in v2.1
+            </h2>
+            <p className="text-[14px] text-slate-500">
+              Current development priorities as of May 2026.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.07] bg-white/[0.01] py-3 px-6">
+            {[
+              { label: "AST precision improvements", status: "In Progress" },
+              { label: "OSV vulnerability lookup integration", status: "Planned" },
+              { label: "GitHub CI integrations", status: "Planned" },
+              { label: "Enterprise onboarding flow", status: "Planned" },
+              { label: "VPS / self-host hardening guide", status: "Planned" },
+              { label: "First 20-user acquisition sprint", status: "Active" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3 py-3 border-b border-white/[0.04] last:border-b-0">
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
                   style={{
-                    padding: "9px 22px", borderRadius: 8,
-                    fontSize: ".78rem", textDecoration: "none", display: "inline-block",
+                    background: item.status === "In Progress" || item.status === "Active" ? "#fbbf24" : "#334155",
                   }}
+                />
+                <span className="text-[14px] text-slate-300 flex-1">{item.label}</span>
+                <span
+                  className={`text-[10px] font-mono tracking-wider flex-shrink-0 ${
+                    item.status === "In Progress" || item.status === "Active" ? "text-amber-400" : "text-slate-600"
+                  }`}
                 >
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════
-            SECTION 8 — FINAL CTA
-        ═══════════════════════════════════════ */}
-        <section
-          style={{
-            padding: "120px 24px",
-            background: `
-              radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,162,39,.08) 0%, transparent 70%),
-              radial-gradient(ellipse 40% 30% at 50% 100%, rgba(0,168,232,.05) 0%, transparent 60%),
-              var(--bg)
-            `,
-            borderTop: "1px solid var(--border)",
-            textAlign: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* Grid overlay */}
-          <div
-            className="grid-bg"
-            style={{
-              position: "absolute", inset: 0, opacity: .4, pointerEvents: "none",
-            }}
-          />
-
-          <div style={{ position: "relative", maxWidth: 680, margin: "0 auto" }}>
-            <div className="section-label mb-6">GET STARTED</div>
-            <h2
-              style={{
-                fontFamily: "Syne, sans-serif", fontWeight: 800,
-                fontSize: "clamp(2rem, 4vw, 3.2rem)",
-                lineHeight: 1.1, color: "var(--text)", marginBottom: "1rem",
-              }}
-            >
-              Execution Control Infrastructure<br />
-              <span className="gold-shimmer">for Autonomous AI</span>
-            </h2>
-            <p
-              style={{
-                fontSize: ".9rem", color: "var(--muted)", lineHeight: 1.8,
-                maxWidth: 480, margin: "0 auto 2.5rem",
-              }}
-            >
-              Start validating AI-generated code today. Five free scans.
-              No account required — open the bot and run{" "}
-              <span style={{ color: "var(--cyan-b)", fontWeight: 600 }}>/scan</span>.
-            </p>
-
-            <div className="flex justify-center flex-wrap gap-4 mb-6">
-              <a
-                href="https://t.me/teoslinker_bot"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gold"
-                style={{
-                  padding: "15px 36px", borderRadius: 10,
-                  fontSize: ".92rem", textDecoration: "none", display: "inline-block",
-                }}
-              >
-                Start with 5 Free Scans →
-              </a>
-              <a
-                href="#pricing"
-                className="btn-ghost"
-                style={{
-                  padding: "15px 36px", borderRadius: 10,
-                  fontSize: ".92rem", textDecoration: "none", display: "inline-block",
-                }}
-              >
-                View Plans
-              </a>
-            </div>
-
-            {/* Live system status */}
-            <div
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                background: "rgba(34,197,94,.07)", border: "1px solid rgba(34,197,94,.2)",
-                borderRadius: 999, padding: "6px 16px",
-              }}
-            >
-              <div className="live-dot" />
-              <span style={{ fontFamily: "JetBrains Mono", fontSize: ".65rem", color: "#4ade80", letterSpacing: ".12em" }}>
-                /scan · /deps · CREDITS · ACTIVATION — CORE SERVICES OPERATIONAL
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════
-            FOOTER
-        ═══════════════════════════════════════ */}
-        <footer
-          style={{
-            borderTop: "1px solid var(--border)",
-            padding: "2.5rem 1.5rem",
-            background: "var(--bg2)",
-          }}
-        >
-          <div
-            className="max-w-6xl mx-auto"
-            style={{
-              display: "flex", alignItems: "center",
-              justifyContent: "space-between", flexWrap: "wrap", gap: "1rem",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div
-                style={{
-                  width: 26, height: 26,
-                  background: "linear-gradient(135deg,var(--gold),var(--gold-b))",
-                  borderRadius: 5, display: "flex", alignItems: "center", justifyContent: "center",
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="#040810" />
-                  <path d="M9 12l2 2 4-4" stroke="#c9a227" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                  {item.status}
+                </span>
               </div>
-              <span style={{ fontFamily: "Syne,sans-serif", fontWeight: 700, fontSize: ".85rem", color: "var(--muted)" }}>
-                TEOS SENTINEL SHIELD
-              </span>
-            </div>
-
-            <div style={{ display: "flex", gap: "2rem", fontFamily: "JetBrains Mono", fontSize: ".72rem", color: "var(--muted)" }}>
-              {[
-                { label: "Bot", href: "https://t.me/teoslinker_bot" },
-                { label: "Community", href: "https://t.me/Elmahrosapi" },
-                { label: "GitHub", href: "https://github.com/Elmahrosa/teos-sentinel-shield" },
-                { label: "Contact", href: "mailto:ayman@teosegypt.com" },
-              ].map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "var(--muted)", textDecoration: "none", transition: "color .2s" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
-                >
-                  {l.label}
-                </a>
-              ))}
-            </div>
-
-            <div style={{ fontFamily: "JetBrains Mono", fontSize: ".68rem", color: "var(--dim)" }}>
-              © 2026 Elmahrosa International · Alexandria, Egypt
-            </div>
+            ))}
           </div>
-        </footer>
-      </main>
+        </div>
+      </section>
+
+      {/* ─── BUILT BY ──────────────────────────────────── */}
+      <section className="px-6 py-20 border-t border-white/[0.05]">
+        <div className="max-w-2xl mx-auto text-center">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+            style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.15), rgba(59,130,246,0.08))", border: "1px solid rgba(251,191,36,0.25)" }}
+          >
+            <Icon name="shield" className="text-amber-400 text-2xl" />
+          </div>
+          <SectionLabel>Built By</SectionLabel>
+          <h2 className="text-2xl font-semibold text-slate-100 mb-2">Elmahrosa International</h2>
+          <p className="text-sky-300 font-medium mb-4">Building Execution Control Infrastructure for Autonomous Systems</p>
+          <p className="text-[14px] text-slate-500 leading-relaxed max-w-[520px] mx-auto mb-8">
+            Founded in Alexandria, Egypt. Building security infrastructure for the next generation of autonomous AI systems — from agent-native validation engines to deployment‑ready security tooling.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <ButtonGhost href={COMMUNITY} isExternal>Telegram Community</ButtonGhost>
+            <ButtonGhost href={GITHUB_REPO} isExternal>GitHub</ButtonGhost>
+            <ButtonGhost href={CONTACT_EMAIL} isExternal={false}>Contact</ButtonGhost>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FINAL CTA ─────────────────────────────────── */}
+      <section
+        className="px-6 py-28 text-center relative overflow-hidden"
+        style={{
+          background: "radial-gradient(ellipse 60% 40% at 50% 0%, rgba(251,191,36,0.06) 0%, transparent 70%), radial-gradient(ellipse 40% 25% at 50% 100%, rgba(59,130,246,0.04) 0%, transparent 60%), #080c12",
+        }}
+      >
+        <div className="absolute inset-0 grid-bg-subtle opacity-30 pointer-events-none" />
+        <div className="relative max-w-[600px] mx-auto">
+          <SectionLabel>Get Started</SectionLabel>
+          <h2 className="text-[clamp(28px,5vw,48px)] font-semibold tracking-[-0.025em] text-slate-50 leading-[1.1] mb-5">
+            Pre‑Execution Guardrails<br />
+            <span className="shimmer-gold">for Autonomous Systems</span>
+          </h2>
+          <p className="text-[15px] text-slate-400 leading-relaxed max-w-[440px] mx-auto mb-8">
+            Start validating AI-generated code today. Five free scans. Open the bot and run{" "}
+            <span className="text-sky-300 font-semibold font-mono">/scan</span> in seconds.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            <ButtonPrimary href={TELEGRAM_BOT}>
+              Start with 5 Free Scans →
+            </ButtonPrimary>
+            <ButtonGhost href="#pricing">
+              View Plans
+            </ButtonGhost>
+          </div>
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/[0.04]">
+            <LiveDot />
+            <span className="text-[10px] font-mono text-emerald-400 tracking-[0.1em] uppercase font-medium">
+              /scan · /deps · CREDITS — Core Services Operational
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ────────────────────────────────────── */}
+      <footer className="px-6 py-8 border-t border-white/[0.05] bg-white/[0.01]">
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0"
+              style={{ background: "linear-gradient(135deg, #fbbf24, #d97706)" }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="#080c12" />
+                <path d="M9 12l2 2 4-4" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <span className="text-[13px] text-slate-500 font-medium">
+              TEOS Sentinel Shield · Elmahrosa International · Alexandria, EG
+            </span>
+          </div>
+          <div className="flex gap-6 text-[12px]">
+            <a href={TELEGRAM_BOT} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-amber-400 transition-colors no-underline">Bot</a>
+            <a href={COMMUNITY} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-amber-400 transition-colors no-underline">Community</a>
+            <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-amber-400 transition-colors no-underline">GitHub</a>
+            <a href={CONTACT_EMAIL} className="text-slate-500 hover:text-amber-400 transition-colors no-underline">Contact</a>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
