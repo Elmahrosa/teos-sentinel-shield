@@ -21,7 +21,7 @@ interface VerdictStyle {
 }
 
 // ─── Inline SVG icon provider ────────────────────────────────
-const iconPaths: Record<string, JSX.Element> = {
+const iconPaths: Record<string, React.ReactNode> = {
   hexagon: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2L21 7v10l-9 5-9-5V7z" />
