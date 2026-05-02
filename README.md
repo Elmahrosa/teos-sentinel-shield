@@ -10,100 +10,183 @@
 
 ---
 
-TEOS Sentinel Shield is an **execution control layer** for autonomous systems.
+## Overview
 
-It validates:
+TEOS Sentinel Shield is an **execution control layer for autonomous systems**.
 
-- AI-generated code  
-- Software dependencies  
-- CI/CD workflows  
+It analyzes and validates AI-generated:
 
-before execution, returning deterministic:
+* Code
+* Dependencies
+* CI/CD workflows
 
-- ✅ ALLOW  
-- ⚠️ WARN  
-- 🚫 BLOCK
+before execution, producing deterministic policy decisions:
 
-policy verdicts.
+* ✅ **ALLOW**
+* ⚠️ **WARN**
+* 🚫 **BLOCK**
 
-**Not a scanner.**  
-**Not a code linter.**  
-**An execution control layer.**
+Each decision is explainable and rule-driven.
 
 ---
 
-## The Missing Layer in AI Infrastructure
+## Problem
 
-Most systems follow:
+Modern AI systems increasingly generate executable output.
+
+But most workflows still follow:
 
 ```text
 Generate → Execute
 ```
 
-TEOS inserts the missing control plane:
+This creates direct risk exposure in:
+
+* CI pipelines
+* AI agents
+* automation systems
+* developer tooling
+
+There is no enforcement layer before execution.
+
+---
+
+## Solution
+
+TEOS introduces a missing control plane:
 
 ```text
 Generate → Validate → Execute
 ```
 
-Pre-execution interception for autonomous code.
+It acts as a **pre-execution enforcement layer** for autonomous code systems.
+
+---
+
+## Core Capabilities
+
+### 🔍 Code Risk Engine
+
+Deterministic rule-based analysis of generated code.
+
+Detects:
+
+* destructive shell commands
+* unsafe execution patterns
+* eval / dynamic execution abuse
+* privilege escalation attempts
+
+---
+
+### 📦 Dependency Security Layer
+
+Analyzes package-level risk signals:
+
+* suspicious dependencies
+* unsafe versions
+* injection-prone libraries
+* supply-chain risk patterns
+
+---
+
+### ⚙ CI/CD Security Guardrails
+
+Scans workflows for:
+
+* secret exposure risks
+* unsafe CI permissions
+* destructive pipeline commands
+* unauthorized deployment steps
+
+---
+
+### 🤖 Telegram Security Gateway
+
+Operational interface for real-time scanning:
+
+* `/scan`
+* `/deps`
+* `/ci`
+* `/status`
+
+Used for live execution validation workflows.
+
+---
+
+## System Architecture
+
+```text
+AI Agent / LLM
+      ↓
+Telegram / API Gateway
+      ↓
+TEOS Policy Engine
+      ↓
+Rule-Based Risk Analysis
+      ↓
+Deterministic Verdict Engine
+      ↓
+ALLOW / WARN / BLOCK
+```
+
+---
+
+## Key Properties
+
+* Deterministic rule execution
+* Explainable verdicts
+* Pre-execution interception
+* CI/CD native integration
+* Agent-safe validation layer
 
 ---
 
 ## Trusted For
 
-- AI Agents  
-- Developer Workflows  
-- CI/CD Security Gates  
-- Autonomous Code Execution
-
----
-
-## Core Runtime Modules
-
-### 🔍 Code Risk Engine
-Deterministic risk validation for generated code.
-
-### 📦 Dependency Audit
-Supply-chain and package risk analysis.
-
-### ⚙ CI/CD Security Audit
-Workflow privilege and pipeline risk checks.
-
-### 🤖 Telegram Security Gateway
-Live operational interface for runtime validation.
-
----
-
-## Architecture
-
-```text
-AI Agent / LLM
-      ↓
-TEOS Sentinel Shield
-      ↓
-Policy Engine
-      ↓
-Runtime Execution
-```
+* AI agent execution pipelines
+* DevSecOps workflows
+* autonomous code generation systems
+* CI/CD enforcement layers
+* internal developer platforms
 
 ---
 
 ## Pricing
 
-Starter — $9  
-Builder — $49  
-Pro — $99  
-Enterprise — Custom
+**Starter** — $9 / month
+**Builder** — $49 / month
+**Pro** — $99 / month
+**Enterprise** — Custom deployment
 
-Free tier includes 5 scans.
+Free tier includes **5 scans**.
+
+---
+
+## Integration Model
+
+* REST API (`/analyze`, `/ci`, `/scan-dependencies`)
+* Telegram gateway
+* CI/CD plugin pattern
+* MCP-compatible architecture
 
 ---
 
 ## Positioning
 
-Execution Control Infrastructure for Autonomous AI.
+TEOS Sentinel Shield is:
 
-Not “AI firewall.”
+> **Execution Control Infrastructure for Autonomous AI**
 
-A new category.
+Not a scanner.
+Not a linter.
+Not an AI firewall.
+
+It is a **pre-execution control layer for autonomous systems.**
+
+---
+
+## License
+
+TESL License — Enterprise Secure License Model
+
+---
