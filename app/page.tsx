@@ -655,7 +655,6 @@ export default function SentinelShieldLanding() {
         </div>
       </section>
 
-
       <hr className="divider" />
 
       {/* --- DEMO VIDEO --- */}
@@ -801,7 +800,7 @@ export default function SentinelShieldLanding() {
             </h2>
           </div>
           <p style={{ textAlign: "center", fontSize: 15, color: "#4a6070", marginBottom: 48 }}>
-            10 free scans/day for 14 days. No credit card required. Upgrade via Telegram.
+            5 free scans. No credit card required. Upgrade via Telegram.
           </p>
 
           <div className="pricing-grid">
@@ -813,7 +812,7 @@ export default function SentinelShieldLanding() {
                 <div className="price-period">forever</div>
               </div>
               <div className="price-features">
-                {["10 scans/day · 14 days", "Telegram access", "Code risk scan"].map((f, i) => (
+                {["5 scans total", "Telegram access", "Code risk scan"].map((f, i) => (
                   <div key={i} className="price-feat">
                     <span className="feat-check">&#10003;</span>{f}
                   </div>
@@ -1015,7 +1014,7 @@ export default function SentinelShieldLanding() {
             }}
           >
             <h2 style={{ fontSize: "clamp(26px,4vw,36px)", fontWeight: 600, letterSpacing: "-0.016em", color: "#f0f4f8", marginBottom: 16 }}>
-              10 free scans/day for 14 days
+              Start with 5 free scans
             </h2>
             <p style={{ fontSize: 15, color: "#4a6070", lineHeight: 1.7, marginBottom: 36 }}>
               No account setup. No credit card. Start in Telegram in under 60 seconds.
