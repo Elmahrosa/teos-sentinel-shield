@@ -1,4 +1,14 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true
+  "version": 2,
+  "builds": [
+    { "src": "server/api.js", "use": "@vercel/node" },
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/scan", "dest": "server/api.js" },
+    { "src": "/audit", "dest": "public/sentinel.html" },
+    { "src": "/rules.json", "dest": "public/rules.json" },
+    { "src": "/test-cases.json", "dest": "public/test-cases.json" },
+    { "src": "/", "dest": "server/api.js" }
+  ]
 }
