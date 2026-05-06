@@ -1,1 +1,0 @@
-{"name": "core-engine", "version": "1.0.0", "scripts": {"start:core": "node index.js"}}
