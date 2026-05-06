@@ -1,0 +1,11 @@
+{
+  "scan_id": "scan_847223",
+  "timestamp": "2026-05-06T14:22:10Z",
+  "risk_score": 0.91,
+  "decision": "BLOCK",
+  "rules_triggered": [
+    "R01.DESTRUCTIVE_SHELL",
+    "R03.SECRET_EXPOSURE"
+  ],
+  "source": "telegram_bot"
+}
