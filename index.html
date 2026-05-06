@@ -28,13 +28,6 @@
     --muted: rgba(240,237,232,0.45);
     --mono: 'Space Mono', monospace;
     --sans: 'Syne', sans-serif;
-    /* ── EGYPTIAN GOLD ── */
-    --gold: #d4a843;
-    --gold-bright: #f0c55a;
-    --gold-dim: #8a6a1f;
-    --gold-glow: rgba(212,168,67,0.15);
-    --lapis: #1e4d8c;
-    --lapis-bright: #2e6bbf;
   }
 
   html { scroll-behavior: smooth; }
@@ -1357,193 +1350,13 @@
     .compare-section { overflow-x: auto; }
     .compare-table { min-width: 600px; }
   }
-
-  /* ══════════════════════════════════════
-     EGYPTIAN GOLD SYSTEM
-     Walk Like An Egyptian 𓂀
-     ══════════════════════════════════════ */
-
-  /* Gold accent on logo ankh */
-  .nav-logo .ankh { color: var(--gold); }
-
-  /* Egyptian corner ornaments */
-  .egy-corner {
-    position: absolute; width: 28px; height: 28px;
-    border-color: var(--gold-dim); border-style: solid; opacity: 0.5;
-    pointer-events: none;
-  }
-  .egy-corner.tl { top:16px; left:16px; border-width:2px 0 0 2px; }
-  .egy-corner.tr { top:16px; right:16px; border-width:2px 2px 0 0; }
-  .egy-corner.bl { bottom:16px; left:16px; border-width:0 0 2px 2px; }
-  .egy-corner.br { bottom:16px; right:16px; border-width:0 2px 2px 0; }
-
-  /* Gold divider line */
-  .egy-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-dim), var(--lapis), var(--gold-dim), transparent);
-    margin: 0;
-    opacity: 0.6;
-  }
-
-  /* Nav gold bottom line */
-  nav { position: relative; }
-  nav::after {
-    content: '';
-    position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
-    opacity: 0.5;
-  }
-
-  /* Hero badge gold glow */
-  .hero-badge {
-    box-shadow: 0 0 20px rgba(212,168,67,0.08);
-  }
-
-  /* Gold stat numbers */
-  .hero-stat-num { color: var(--gold) !important; }
-
-  /* Gold on section eyebrows alternating */
-  .section-eyebrow.gold { color: var(--gold); }
-
-  /* Egyptian hero bg rays */
-  .hero { position: relative; }
-  .hero-rays {
-    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
-    width: 800px; height: 800px; pointer-events: none; z-index: 0;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg, rgba(212,168,67,0.025) 4deg, transparent 8deg,
-      transparent 28deg, rgba(212,168,67,0.025) 32deg, transparent 36deg,
-      transparent 56deg, rgba(212,168,67,0.025) 60deg, transparent 64deg,
-      transparent 84deg, rgba(212,168,67,0.025) 88deg, transparent 92deg,
-      transparent 112deg, rgba(212,168,67,0.025) 116deg, transparent 120deg,
-      transparent 140deg, rgba(212,168,67,0.025) 144deg, transparent 148deg,
-      transparent 168deg, rgba(212,168,67,0.025) 172deg, transparent 176deg,
-      transparent 196deg, rgba(212,168,67,0.025) 200deg, transparent 204deg,
-      transparent 224deg, rgba(212,168,67,0.025) 228deg, transparent 232deg,
-      transparent 252deg, rgba(212,168,67,0.025) 256deg, transparent 260deg,
-      transparent 280deg, rgba(212,168,67,0.025) 284deg, transparent 288deg,
-      transparent 308deg, rgba(212,168,67,0.025) 312deg, transparent 316deg,
-      transparent 336deg, rgba(212,168,67,0.025) 340deg, transparent 344deg
-    );
-    animation: pharaoh-rays 80s linear infinite;
-  }
-  @keyframes pharaoh-rays { to { transform: translateX(-50%) rotate(360deg); } }
-
-  /* Gold verdict/layer highlight */
-  .layer-sentinel { border-color: rgba(212,168,67,0.4) !important; }
-  .layer-sentinel::after { color: var(--gold) !important; }
-
-  /* Gold pricing featured top border */
-  .pricing-card.featured { border-top-color: var(--gold) !important; }
-  .pricing-badge { background: var(--gold) !important; color: #000 !important; }
-  .pricing-cta.red { background: var(--gold) !important; border-color: var(--gold) !important; color: #000 !important; font-weight: 700; }
-  .pricing-cta.red:hover { background: var(--gold-bright) !important; }
-
-  /* Gold CTA primary */
-  .btn-primary { background: var(--gold) !important; color: #000 !important; }
-  .btn-primary:hover { background: var(--gold-bright) !important; }
-
-  /* Nav CTA gold */
-  .nav-cta { background: var(--gold) !important; color: #000 !important; font-weight: 700 !important; }
-  .nav-cta:hover { background: var(--gold-bright) !important; }
-
-  /* Gold ticker block */
-  .tick-block { color: var(--red); }
-  .tick-allow { color: var(--green); }
-  .tick-warn { color: var(--gold); }
-
-  /* Gold compare highlight */
-  .compare-table td.hl { border-left: 2px solid var(--gold-dim); }
-  .compare-table th.hl { color: var(--gold); border-bottom: 2px solid var(--gold-dim); }
-
-  /* ── LANGUAGE SWITCHER ── */
-  .lang-wrap { position: relative; display: flex; align-items: center; }
-  .lang-btn {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(212,168,67,0.08);
-    border: 1px solid rgba(212,168,67,0.25);
-    color: var(--gold); cursor: pointer;
-    font-family: var(--mono); font-size: 10px;
-    letter-spacing: 0.1em; padding: 6px 12px;
-    transition: all 0.2s; white-space: nowrap;
-  }
-  .lang-btn:hover { background: rgba(212,168,67,0.15); border-color: var(--gold); }
-  .lang-arrow { font-size: 8px; opacity: 0.5; transition: transform 0.2s; }
-  .lang-btn.open .lang-arrow { transform: rotate(180deg); }
-
-  .lang-dropdown {
-    position: absolute; top: calc(100% + 6px); right: 0;
-    background: #111113; border: 1px solid rgba(212,168,67,0.25);
-    border-top: 2px solid var(--gold-dim);
-    min-width: 170px; display: none; z-index: 400;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.7);
-  }
-  .lang-dropdown.open { display: block; animation: dropIn 0.15s ease; }
-  @keyframes dropIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
-
-  .lang-opt {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px; cursor: pointer;
-    font-family: var(--mono); font-size: 11px; color: var(--muted);
-    transition: background 0.15s; border: none;
-    background: transparent; width: 100%; text-align: left;
-  }
-  .lang-opt:hover { background: rgba(212,168,67,0.06); color: var(--white); }
-  .lang-opt.active { color: var(--gold); }
-  .lang-opt .lo-native { font-size: 10px; color: rgba(240,237,232,0.25); margin-left: auto; }
-
-  /* Translate progress bar */
-  .t-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 9999; display: none; background: rgba(0,0,0,0.2); }
-  .t-bar-fill { height: 100%; background: linear-gradient(90deg, var(--lapis), var(--gold)); width: 0%; transition: width 0.3s ease; }
-  .t-toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: #18181c; border: 1px solid rgba(212,168,67,0.25);
-    border-left: 3px solid var(--gold-dim); padding: 10px 18px;
-    font-family: var(--mono); font-size: 11px; color: var(--muted);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6); display: none; z-index: 9999;
-    white-space: nowrap; align-items: center; gap: 8px;
-  }
-  .t-toast.show { display: flex; animation: toastIn 0.2s ease; }
-  @keyframes toastIn {
-    from{opacity:0;transform:translateX(-50%) translateY(8px)}
-    to{opacity:1;transform:translateX(-50%) translateY(0)}
-  }
-
-  /* RTL support */
-  [dir="rtl"] .hero h1, [dir="rtl"] .hero-sub, [dir="rtl"] .hero-infra-tag,
-  [dir="rtl"] .section-title, [dir="rtl"] .section-sub,
-  [dir="rtl"] .step-desc, [dir="rtl"] .gap-card p,
-  [dir="rtl"] .trust-card p, [dir="rtl"] .govt-card p,
-  [dir="rtl"] .footer-brand p { direction: rtl; text-align: right; }
-  [dir="rtl"] nav { flex-direction: row-reverse; }
-  [dir="rtl"] .nav-links { flex-direction: row-reverse; }
-
-  /* Gold glow on enterprise box */
-  .enterprise-box { border-left: 3px solid var(--gold-dim); }
-
-  /* Gold footer brand */
-  .nav-logo { transition: color 0.2s; }
-
-  /* Sovereign badge */
-  .sovereign-strip {
-    background: linear-gradient(90deg, transparent, rgba(212,168,67,0.06), transparent);
-    border-top: 1px solid rgba(212,168,67,0.1);
-    border-bottom: 1px solid rgba(212,168,67,0.1);
-    padding: 8px 0; text-align: center;
-    font-family: var(--mono); font-size: 10px;
-    color: var(--gold-dim); letter-spacing: 0.2em; text-transform: uppercase;
-  }
-
 </style>
 </head>
 <body>
-<div class="t-bar" id="tBar"><div class="t-bar-fill" id="tFill"></div></div>
-<div class="t-toast" id="tToast"><span id="tFlag">𓂀</span><span id="tMsg">Translating...</span></div>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo"><span class="ankh">𓂀</span> <span>TEOS</span> Sentinel</a>
+  <a href="#" class="nav-logo">𓂀 <span>TEOS</span> Sentinel</a>
   <div class="nav-status">ENGINE v2.0 ONLINE</div>
   <ul class="nav-links">
     <li><a href="#video-demo">Demo</a></li>
@@ -1551,41 +1364,12 @@
     <li><a href="#stack">Stack</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank">GitHub</a></li>
-    <li>
-      <div class="lang-wrap" id="langWrap">
-        <button class="lang-btn" id="langBtn" onclick="toggleLang(event)">
-          <span id="curFlag">🌐</span>
-          <span id="curLbl">EN</span>
-          <span class="lang-arrow">▼</span>
-        </button>
-        <div class="lang-dropdown" id="langDD">
-          <button class="lang-opt active" onclick="switchLang('en','🇺🇸','EN',false)" id="opt-en">
-            🇺🇸 English <span class="lo-native">English</span>
-          </button>
-          <button class="lang-opt" onclick="switchLang('ar','🇸🇦','AR',true)" id="opt-ar">
-            🇸🇦 Arabic <span class="lo-native">العربية</span>
-          </button>
-          <button class="lang-opt" onclick="switchLang('id','🇮🇩','ID',false)" id="opt-id">
-            🇮🇩 Indonesian <span class="lo-native">Bahasa</span>
-          </button>
-        </div>
-      </div>
-    </li>
-    <li><a href="https://t.me/teoslinker_bot" class="nav-cta">𓂀 Free Scan →</a></li>
+    <li><a href="https://t.me/teoslinker_bot" class="nav-cta">Free Scan →</a></li>
   </ul>
 </nav>
 
-<div class="sovereign-strip">
-  𓂀 &nbsp; Engine v2 Stable · Alexandria, Egypt · 75+ Nations · Law governs execution &nbsp; 𓂀
-</div>
-
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-rays"></div>
-  <div class="egy-corner tl"></div>
-  <div class="egy-corner tr"></div>
-  <div class="egy-corner bl"></div>
-  <div class="egy-corner br"></div>
   <div class="hero-inner">
     <div class="hero-badge">Runtime Security Infrastructure · Engine v2.0</div>
 
@@ -1680,7 +1464,6 @@
   </div>
 </section>
 
-<div class="egy-divider"></div>
 <!-- PROBLEM -->
 <section class="problem-section">
   <div class="container">
@@ -1728,7 +1511,6 @@
   </div>
 </section>
 
-<div class="egy-divider"></div>
 <!-- SOLUTION -->
 <section class="solution-section">
   <div class="container">
@@ -2015,7 +1797,6 @@
   </div>
 </section>
 
-<div class="egy-divider"></div>
 <!-- COMPARE -->
 <section class="compare-section">
   <div class="container">
@@ -2193,13 +1974,16 @@
       <div>
         <h4>🏢 Enterprise / Government Pilot</h4>
         <p>Dedicated deployment · Custom policy engine · Audit logs · MENA sovereign architecture · ICBC alignment · Self-hosted · Egypt / UAE / Saudi pilots open now</p>
+        <p style="margin-top:8px; font-family:var(--mono); font-size:11px; color:var(--muted);">Response within 24h · NDA available · Custom SLA negotiable</p>
       </div>
-      <a href="mailto:ayman@teosegypt.com" class="btn-primary">Request Pilot ($5K–$50K) →</a>
+      <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
+        <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sovereign%20Security%20Stack&body=Hello%20Ayman%2C%0A%0AI%20am%20interested%20in%20an%20enterprise%20pilot%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0AUse%20case%3A%20%0ATeam%20size%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards" class="btn-primary">📧 Request Pilot ($5K–$50K) →</a>
+        <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Demo%20Request%20%E2%80%94%20TEOS%20Sentinel&body=Hello%2C%0A%0AI%20would%20like%20to%20schedule%20a%20demo%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0APreferred%20time%3A%20" class="btn-ghost" style="text-align:center; font-size:12px; padding:10px 20px;">🗓 Schedule Demo →</a>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="egy-divider"></div>
 <!-- GOVT -->
 <section class="govt-section">
   <div class="container">
@@ -2230,7 +2014,6 @@
   </div>
 </section>
 
-<div class="egy-divider"></div>
 <!-- FINAL CTA -->
 <section class="final-cta">
   <div class="container">
@@ -2248,7 +2031,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="#" class="nav-logo"><span class="ankh">𓂀</span> <span>TEOS</span> Sentinel</a>
+      <a href="#" class="nav-logo">𓂀 <span>TEOS</span> Sentinel</a>
       <p>
         Execution Control Infrastructure for Autonomous AI.<br>
         Built in Alexandria, Egypt by Elmahrosa International.<br><br>
@@ -2287,157 +2070,5 @@
   </div>
 </footer>
 
-
-<script>
-// ══ SCROLL REVEAL ══
-const revObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.style.opacity = '1';
-      e.target.style.transform = 'translateY(0)';
-      revObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.07 });
-
-document.querySelectorAll('.for-card,.trust-card,.stack-card,.govt-card,.pricing-card,.flow-step,.gap-card').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(24px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-  revObs.observe(el);
-});
-
-// ══ LANG SWITCHER ══
-function toggleLang(e) {
-  e.stopPropagation();
-  document.getElementById('langBtn').classList.toggle('open');
-  document.getElementById('langDD').classList.toggle('open');
-}
-function closeLang() {
-  document.getElementById('langBtn').classList.remove('open');
-  document.getElementById('langDD').classList.remove('open');
-}
-document.addEventListener('click', e => {
-  const w = document.getElementById('langWrap');
-  if (w && !w.contains(e.target)) closeLang();
-});
-
-// ══ AUTO TRANSLATE ══
-let curLang = 'en';
-let originals = new Map();
-let cache = {};
-const SKIP = ['.terminal-body','.scan-ticker','code','pre','script','style','.video-embed-wrap','.ticker-track'];
-const BUILT_IN = {
-  ar: {
-    'Demo':'عرض','Architecture':'البنية','Stack':'الحزمة','Pricing':'الأسعار','GitHub':'GitHub',
-    'Free Scan →':'مسح مجاني →','𓂀 Free Scan →':'𓂀 مسح مجاني →',
-    'ENGINE v2.0 ONLINE':'المحرك v2.0 — متصل',
-    'Runtime Security Infrastructure · Engine v2.0':'بنية أمان وقت التشغيل · المحرك v2.0',
-    'Security infrastructure':'بنية أمنية','for AI-generated':'للكود','code.':'المُولَّد بالذكاء الاصطناعي.',
-    'Start Free Scan →':'ابدأ المسح المجاني →',
-    'Get Started →':'ابدأ الآن →','Get Protected →':'احصل على الحماية →','Go Pro →':'انتقل إلى Pro →',
-    'Request Pilot ($5K–$50K) →':'طلب تجريبي ($5K–$50K) →',
-  },
-  id: {
-    'Demo':'Demo','Architecture':'Arsitektur','Stack':'Stack','Pricing':'Harga','GitHub':'GitHub',
-    'Free Scan →':'Scan Gratis →','𓂀 Free Scan →':'𓂀 Scan Gratis →',
-    'ENGINE v2.0 ONLINE':'MESIN v2.0 ONLINE',
-    'Start Free Scan →':'Mulai Scan Gratis →',
-    'Get Started →':'Mulai Sekarang →','Get Protected →':'Dapatkan Perlindungan →','Go Pro →':'Tingkatkan ke Pro →',
-    'Request Pilot ($5K–$50K) →':'Minta Pilot ($5K–$50K) →',
-  }
-};
-
-function skipNode(node) {
-  let el = node.parentElement;
-  while (el) {
-    for (const s of SKIP) { try { if (el.matches(s)) return true; } catch(e) {} }
-    el = el.parentElement;
-  }
-  return false;
-}
-
-function textNodes(root) {
-  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-    acceptNode(n) {
-      const t = n.textContent.trim();
-      if (!t || t.length < 2) return NodeFilter.FILTER_REJECT;
-      if (skipNode(n)) return NodeFilter.FILTER_REJECT;
-      return NodeFilter.FILTER_ACCEPT;
-    }
-  });
-  const r = []; let n;
-  while ((n = w.nextNode())) r.push(n);
-  return r;
-}
-
-function storeOrig() {
-  textNodes(document.body).forEach((n, i) => { n._tk = 'n' + i; originals.set('n' + i, n.textContent); });
-}
-
-function bar(pct) {
-  const b = document.getElementById('tBar'), f = document.getElementById('tFill');
-  b.style.display = 'block'; f.style.width = pct + '%';
-  if (pct >= 100) setTimeout(() => { b.style.display = 'none'; f.style.width = '0%'; }, 500);
-}
-
-function toast(flag, msg) {
-  const t = document.getElementById('tToast');
-  document.getElementById('tFlag').textContent = flag;
-  document.getElementById('tMsg').textContent = msg;
-  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-async function gTranslate(texts, lang) {
-  const res = []; const bs = 15;
-  for (let i = 0; i < texts.length; i += bs) {
-    const batch = texts.slice(i, i + bs);
-    try {
-      const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=' + lang + '&dt=t&q=' + encodeURIComponent(batch.join('\n|||\n'));
-      const d = await (await fetch(url)).json();
-      const combined = d[0].map(s => s[0]).join('');
-      combined.split('|||').map(s => s.trim()).forEach((p, idx) => res.push(p || batch[idx]));
-    } catch(e) { batch.forEach(t => res.push(t)); }
-    bar(Math.min(88, Math.round(((i + bs) / texts.length) * 88)));
-    await new Promise(r => setTimeout(r, 80));
-  }
-  return res;
-}
-
-async function switchLang(lang, flag, label, rtl) {
-  if (lang === curLang) { closeLang(); return; }
-  document.getElementById('curFlag').textContent = flag;
-  document.getElementById('curLbl').textContent = label;
-  document.querySelectorAll('.lang-opt').forEach(o => o.classList.remove('active'));
-  document.getElementById('opt-' + lang).classList.add('active');
-  document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr');
-  closeLang();
-
-  if (lang === 'en') {
-    textNodes(document.body).forEach(n => { if (n._tk && originals.has(n._tk)) n.textContent = originals.get(n._tk); });
-    curLang = 'en'; toast('🇺🇸', 'Switched to English'); return;
-  }
-
-  bar(10); toast(flag, lang === 'ar' ? 'جاري الترجمة...' : 'Menerjemahkan...');
-  const nodes = textNodes(document.body);
-  const bi = BUILT_IN[lang] || {};
-  const need = [], idx = [];
-  nodes.forEach((n, i) => {
-    const orig = originals.get(n._tk) || n.textContent;
-    if (bi[orig.trim()]) n.textContent = bi[orig.trim()];
-    else if (orig.trim().length > 3) { need.push(orig); idx.push(i); }
-  });
-  bar(30);
-  if (need.length) {
-    const ck = need.join('|||') + '__' + lang;
-    const tr = cache[ck] || (cache[ck] = await gTranslate(need, lang));
-    idx.forEach((ni, i) => { if (tr[i]) nodes[ni].textContent = tr[i]; });
-  }
-  bar(100); curLang = lang;
-  toast(flag, lang === 'ar' ? 'تمت الترجمة ✓' : 'Diterjemahkan ✓');
-}
-
-window.addEventListener('load', () => setTimeout(storeOrig, 600));
-</script>
 </body>
 </html>
