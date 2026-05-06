@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sentinel Rules Spec</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; background:#0b0f19; color:#fff; padding:40px; line-height:1.6;}
+h1,h2 { color:#00ffd1; }
+code, pre { background:#111; padding:10px; display:block; border-radius:8px;}
+table { border-collapse: collapse; width:100%; margin:20px 0;}
+td, th { border:1px solid #333; padding:10px;}
+</style>
+</head>
+<body>
+
+<h1>Sentinel Detection Rules (Public Specification)</h1>
+
+<p>TEOS Sentinel uses a deterministic rule engine. Every verdict is explainable and traceable to a rule ID.</p>
+
+<p>
+Current public release:<br>
+• 25 rules<br>
+• 37 tests<br>
+• Deterministic scoring
+</p>
+
+<h2>Risk Levels</h2>
+<table>
+<tr><th>Score</th><th>Verdict</th></tr>
+<tr><td>0–30</td><td>SAFE</td></tr>
+<tr><td>31–70</td><td>WARN</td></tr>
+<tr><td>71–100</td><td>BLOCK</td></tr>
+</table>
+
+<h2>Example Rules</h2>
+
+<h3>R01 — DESTRUCTIVE SHELL</h3>
+<pre>
+rm -rf /
+rm -rf *
+mkfs.ext4
+:(){ :|:& };:
+</pre>
+
+<h3>R02 — DATABASE DESTRUCTION</h3>
+<pre>
+DROP DATABASE
+TRUNCATE TABLE
+DELETE FROM users
+</pre>
+
+<h3>R03 — SECRET EXPOSURE</h3>
+<pre>
+AWS_SECRET_ACCESS_KEY=
+PRIVATE_KEY=
+api_key=
+</pre>
+
+<h3>R04 — CHILD PROCESS EXECUTION</h3>
+<pre>
+child_process.exec
+os.system(
+subprocess.run(
+</pre>
+
+<h3>R05 — CURL PIPE EXECUTION</h3>
+<pre>
+curl | bash
+wget | sh
+</pre>
+
+<h2>Verdict Example</h2>
+
+<pre>{
+  "risk_score": 0.98,
+  "decision": "BLOCK",
+  "triggered_rules": [
+    "R01.DESTRUCTIVE_SHELL",
+    "R04.CHILD_PROCESS_EXEC"
+  ]
+}</pre>
+
+</body>
+</html>
