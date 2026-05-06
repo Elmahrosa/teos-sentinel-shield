@@ -83,3 +83,20 @@ wget | sh
 
 </body>
 </html>
+
+<h2>Rule Structure (Deterministic Format)</h2>
+
+<pre>{
+  "id": "R01",
+  "name": "DESTRUCTIVE_SHELL",
+  "pattern": "rm -rf /",
+  "severity": 95,
+  "category": "command_injection",
+  "action": "block"
+}</pre>
+
+<p>
+All Sentinel decisions are derived from structured rules like the above.
+Each triggered rule contributes to the final risk score.
+</p>
+
