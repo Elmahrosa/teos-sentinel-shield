@@ -1,11 +1,4 @@
-// app/page.tsx
-// TEOS Sentinel Shield — Egyptian Sovereign Landing Page
-// Next.js App Router — CLIENT COMPONENT (useEffect DOM takeover)
-// Egyptian color system: Lapis · Gold · Carnelian · Alabaster · Kohl
-
-'use client'
-
-const HTML = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
@@ -835,7 +828,7 @@ footer::before {
         </div>
       </div>
     </li>
-    <li><a href="https://t.me/teoslinker_bot" class="nav-cta" target="_blank" rel="noopener noreferrer">Try Free →</a></li>
+    <li><a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="nav-cta">Try Free →</a></li>
   </ul>
 </nav>
 
@@ -876,7 +869,7 @@ footer::before {
   </p>
 
   <div class="hero-ctas">
-    <a href="https://t.me/teoslinker_bot" class="btn-primary">𓂀 Scan Your First Command →</a>
+    <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-primary">𓂀 Scan Your First Command →</a>
     <a href="#video-demo" class="btn-secondary">Watch Demo ↓</a>
   </div>
   <p class="hero-micro">5 free scans · no signup · no credit card · Telegram instant</p>
@@ -919,18 +912,13 @@ footer::before {
     <h2 class="section-title reveal">See TEOS block a real threat<br><span class="gold">in under 2 seconds.</span></h2>
     <p class="section-sub reveal">Open Telegram. Paste a dangerous command. Get BLOCK verdict before execution. Zero config. Zero signup.</p>
 
-    <div class="video-wrapper reveal">
-      <!--
-        VIDEO SETUP:
-        1. Copy your MP4 into /public/demo.mp4 in your Next.js project root
-        2. The <video> tag below will serve it automatically
-        To swap to YouTube/Loom embed instead, replace the <video> tag with:
-          <iframe width="100%" style="aspect-ratio:16/9" src="https://www.youtube.com/embed/YOUR_ID" frameborder="0" allowfullscreen></iframe>
-      -->
-      <video controls preload="metadata" style="width:100%;display:block;background:var(--kohl-mid)">
-        <source src="/demo.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
+    <div class="video-wrapper reveal" style="display:flex;flex-direction:column;align-items:center;background:var(--kohl-mid);">
+      <iframe
+        style="width:100%;max-width:380px;aspect-ratio:9/16;display:block;border:none;margin:0 auto;"
+        src="https://www.youtube.com/embed/1lI52t5SHbs?autoplay=0&rel=0&modestbranding=1&loop=1&playlist=1lI52t5SHbs"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
       <div class="video-timeline">
         <div class="vt-step">
           <div class="vt-time">0:00 – 0:15</div>
@@ -1340,7 +1328,7 @@ footer::before {
         <div class="ent-h">🏢 Enterprise / Government Pilot</div>
         <p class="ent-p">Dedicated deployment · Custom policy engine · Audit logs · MENA sovereign architecture · ICBC alignment · Self-hosted · Egypt / UAE / Saudi pilots open now</p>
       </div>
-      <a href="mailto:ayman@teosegypt.com" class="btn-ent">Request Pilot ($5K–$50K) →</a>
+      <a href="mailto:ayman@teosegypt.com" target="_blank" class="btn-ent">Request Pilot ($5K–$50K) →</a>
     </div>
   </div>
 </div>
@@ -1376,7 +1364,7 @@ footer::before {
   <div class="section-wrap" style="padding-top:0;padding-bottom:0;">
     <div class="section-label reveal">2026 Roadmap</div>
     <h2 class="section-title reveal">What's <span class="gold">next.</span></h2>
-    <p class="section-sub reveal">Attending Consensus HK 2026 + Miami 2026. <a href="mailto:ayman@teosegypt.com" style="color:var(--gold);text-decoration:none;">Book a meeting →</a></p>
+    <p class="section-sub reveal">Attending Consensus HK 2026 + Miami 2026. <a href="mailto:ayman@teosegypt.com" target="_blank" style="color:var(--gold);text-decoration:none;">Book a meeting →</a></p>
     <div class="roadmap-grid reveal">
       <div class="rm-card live">
         <div class="rm-q live-q"><span class="rm-dot"></span>Live Now</div>
@@ -1409,8 +1397,8 @@ footer::before {
   <h2>Start free.<br><span class="gold">Block the first threat</span><br>in 60 seconds.</h2>
   <p>Open Telegram. Message @teoslinker_bot. Paste your first command. Get your verdict. No account. No credit card.</p>
   <div class="final-btns">
-    <a href="https://t.me/teoslinker_bot" class="btn-primary">𓂀 Open @teoslinker_bot →</a>
-    <a href="mailto:ayman@teosegypt.com" class="btn-secondary">Enterprise / Gov inquiry →</a>
+    <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-primary">𓂀 Open @teoslinker_bot →</a>
+    <a href="mailto:ayman@teosegypt.com" target="_blank" class="btn-secondary">Enterprise / Gov inquiry →</a>
   </div>
 </section>
 
@@ -1420,12 +1408,12 @@ footer::before {
     <div>
       <div class="foot-brand-name">𓂀 TEOS Sentinel Shield</div>
       <p class="foot-brand-desc">Execution Control Infrastructure for Autonomous AI.<br>Built in Alexandria, Egypt by Elmahrosa International.<br>Law governs execution. Humans govern systems. AI serves authority.</p>
-      <a href="mailto:ayman@teosegypt.com" class="foot-contact">ayman@teosegypt.com</a>
+      <a href="mailto:ayman@teosegypt.com" target="_blank" class="foot-contact">ayman@teosegypt.com</a>
     </div>
     <div class="foot-col">
       <h5>Product</h5>
       <ul>
-        <li><a href="https://t.me/teoslinker_bot">Telegram Bot</a></li>
+        <li><a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer">Telegram Bot</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="https://github.com/Elmahrosa/teos-sentinel-shield">GitHub</a></li>
@@ -1443,9 +1431,9 @@ footer::before {
     <div class="foot-col">
       <h5>Government</h5>
       <ul>
-        <li><a href="mailto:ayman@teosegypt.com">Egypt Pilot (ITIDA)</a></li>
-        <li><a href="mailto:ayman@teosegypt.com">UAE Pilot (AI Office)</a></li>
-        <li><a href="mailto:ayman@teosegypt.com">Saudi Pilot (SDAIA)</a></li>
+        <li><a href="mailto:ayman@teosegypt.com" target="_blank">Egypt Pilot (ITIDA)</a></li>
+        <li><a href="mailto:ayman@teosegypt.com" target="_blank">UAE Pilot (AI Office)</a></li>
+        <li><a href="mailto:ayman@teosegypt.com" target="_blank">Saudi Pilot (SDAIA)</a></li>
         <li><a href="https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution">ICBC Constitution</a></li>
       </ul>
     </div>
@@ -1634,26 +1622,4 @@ async function switchLang(lang, flag, label, rtl) {
 window.addEventListener('load', () => setTimeout(storeOrig, 600));
 </script>
 </body>
-</html>`;
-
-export default function Page() {
-  return (
-    <iframe
-      srcDoc={HTML}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        border: 'none',
-        margin: 0,
-        padding: 0,
-        overflow: 'hidden',
-        zIndex: 9999,
-        background: '#05040a',
-      }}
-      title="TEOS Sentinel Shield"
-    />
-  );
-}
+</html>
