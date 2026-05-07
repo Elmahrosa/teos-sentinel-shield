@@ -21,6 +21,7 @@
   "author": "TEOS Sovereign",
   "license": "MIT",
   "dependencies": {
+    "@upstash/redis": "^1.38.0",
     "express": "^5.2.1",
     "ws": "^8.20.0"
   }
