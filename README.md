@@ -263,4 +263,14 @@ Connect to `ws://your-railway-url:3000` to receive:
 
 ## License
 
-MIT — TEOS Sovereign
+**TESL v2.0** (TEOS Sovereign License) — governed by the ICBC Constitution.
+
+Not MIT. Not Apache. This is a sovereign license designed for government, institutional, and constitution-bound deployment.
+
+- Permitted: Use by governments, regulators, approved institutions
+- Required: Audit manifests in all deployments
+- Prohibited: Unauthorized forking or re-licensing
+
+[ICBC Constitution](https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution/blob/main/CONSTITUTION.md) · [TESL v2.0](https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution/blob/main/LICENSE-TESL.md)
+
+© 2026 Elmahrosa International
