@@ -1,4 +1,8 @@
-const { app, RULES, runEngine, loadEvents } = require('../server/api');
+const api          = require('../server/api');
+const app          = api;
+const RULES        = api.RULES;
+const runEngine    = api.runEngine;
+const loadEvents   = api.loadEvents;
 const WebSocket = require('ws');
 const http      = require('http');
 const path      = require('path');
