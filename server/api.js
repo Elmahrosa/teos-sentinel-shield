@@ -439,8 +439,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'internal_error', reqId: req.id });
 });
 
-// ── EXPORT (Vercel serverless) ──────────────────────────────
-module.exports = { app, RULES, runEngine, loadEvents };
+// ── EXPORT (Vercel serverless + Railway) ──────────────────────
+// Vercel needs `app` as the default export. Railway ws-server
+// destructures { app, RULES, runEngine, loadEvents }.
+module.exports         = app;
+module.exports.RULES   = RULES;
+module.exports.runEngine = runEngine;
+module.exports.loadEvents = loadEvents;
 
 // ── START (local dev / Railway) ─────────────────────────────
 if (require.main === module) {
