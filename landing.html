@@ -736,9 +736,10 @@
     background: var(--surface);
     padding: 28px;
     transition: border-color 0.2s;
+    cursor: pointer;
   }
 
-  .stack-card:hover { border-color: var(--border2); }
+  .stack-card:hover { border-color: var(--red); }
 
   .stack-card-head {
     display: flex;
@@ -909,9 +910,10 @@
     background: var(--surface);
     padding: 24px;
     transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
   }
 
-  .for-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .for-card:hover { border-color: var(--red); transform: translateY(-2px); }
 
   .for-icon { font-size: 24px; margin-bottom: 14px; }
 
@@ -955,9 +957,10 @@
     font-size: 13px;
     font-weight: 700;
     transition: border-color 0.2s;
+    cursor: pointer;
   }
 
-  .integration-card:hover { border-color: var(--border2); }
+  .integration-card:hover { border-color: var(--red); }
 
   .int-icon { font-size: 18px; }
   .int-status { margin-left: auto; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
@@ -1028,7 +1031,11 @@
     border-radius: 4px;
     background: var(--surface);
     padding: 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
   }
+
+  .trust-card:hover { border-color: var(--red); transform: translateY(-2px); }
 
   .trust-icon { font-size: 20px; margin-bottom: 14px; }
 
@@ -1312,7 +1319,11 @@
     border-radius: 4px;
     background: var(--surface);
     padding: 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
   }
+
+  .govt-card:hover { border-color: var(--red); transform: translateY(-2px); }
 
   .govt-flag { font-size: 24px; margin-bottom: 10px; }
 
@@ -1617,42 +1628,42 @@
     </p>
 
     <div class="stack-grid">
-      <div class="stack-card">
+      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Risk Engine Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20the%20TEOS%20Sentinel%20Risk%20Engine%20into%20our%20stack.%0A%0AUse%20case%3A%20%0ALanguage%2Fframework%3A%20%0AExpected%20volume%3A%20%0A%0ABest%20regards'">
         <div class="stack-card-head">
           <h4>Risk Engine Core</h4>
           <span class="stack-tag">LIVE</span>
         </div>
         <p>25 named rules (R01–R25). Deterministic ALLOW / WARN / BLOCK decisions. Wiper, injection, secret, supply chain, and CI/CD threat categories. 37 tests passing.</p>
       </div>
-      <div class="stack-card">
+      <div class="stack-card" onclick="window.open('https://t.me/teoslinker_bot','_blank')">
         <div class="stack-card-head">
           <h4>Telegram Gateway</h4>
           <span class="stack-tag">LIVE</span>
         </div>
         <p>@teoslinker_bot — zero-config entry point. /scan, /deps, /ci, /status, /upgrade, /credits commands. Works in 60 seconds from first message. No SDK required.</p>
       </div>
-      <div class="stack-card">
+      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=API Gateway Access — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20API%20access%20to%20TEOS%20Sentinel.%0A%0AUse%20case%3A%20%0AIntegration%20type%3A%20%0A%0ABest%20regards'">
         <div class="stack-card-head">
           <h4>API Gateway</h4>
           <span class="stack-tag">LIVE</span>
         </div>
         <p>REST API for direct integration. Structured JSON verdicts with rule ID, score, and explanation. Agent-native output format for autonomous workflow integration.</p>
       </div>
-      <div class="stack-card">
+      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Compliance Audit — TEOS Sentinel&body=Hello%2C%0A%0AWe%20need%20the%20compliance%20audit%20layer%20for%20our%20organization.%0A%0AOrganization%3A%20%0ACompliance%20framework%3A%20%0A%0ABest%20regards'">
         <div class="stack-card-head">
           <h4>Compliance Audit Layer</h4>
           <span class="stack-tag">LIVE</span>
         </div>
         <p>Every decision logged. Per-user credit tracking. Full audit trail for enterprise compliance, ICBC constitutional alignment, and government procurement requirements.</p>
       </div>
-      <div class="stack-card">
+      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Sovereign Deployment — TEOS Sentinel&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20sovereign%20deployment%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0ARegion%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
         <div class="stack-card-head">
           <h4>Sovereign Deployment</h4>
           <span class="stack-tag">ENTERPRISE</span>
         </div>
         <p>Self-hosted dedicated instance. Custom threat policy engine. MENA-sovereign architecture. SLA guarantee. Egypt, UAE, Saudi pilots open now.</p>
       </div>
-      <div class="stack-card">
+      <div class="stack-card" onclick="window.open('https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution','_blank')">
         <div class="stack-card-head">
           <h4>ICBC Constitutional Alignment</h4>
           <span class="stack-tag">v2.0</span>
@@ -1732,22 +1743,22 @@
     <h2 class="section-title">Built for teams running<br>AI at production scale.</h2>
 
     <div class="for-grid">
-      <div class="for-card">
+      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=AI Agent Security — TEOS Sentinel Pilot Request&body=Hello%2C%0A%0AI%20build%20AI%20agents%20and%20want%20to%20integrate%20TEOS%20Sentinel%20for%20pre-execution%20security.%0A%0AProject%20name%3A%20%0AAgent%20type%3A%20%0AMonthly%20actions%3A%20%0A%0ABest%20regards'">
         <div class="for-icon">🤖</div>
         <h4>AI Agent Builders</h4>
         <p>Add a pre-execution firewall to your agent pipeline. Sentinel returns structured verdicts your agent can act on without human review.</p>
       </div>
-      <div class="for-card">
+      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=DevOps Security Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20TEOS%20Sentinel%20into%20our%20CI%2FCD%20pipeline.%0A%0ATeam%3A%20%0ACurrent%20CI%2FCD%3A%20%0ADeployment%20frequency%3A%20%0A%0ABest%20regards'">
         <div class="for-icon">🔧</div>
         <h4>DevOps & Platform Engineers</h4>
         <p>Integrate into CI/CD pipelines. Block dangerous GitHub Actions YAML, Dockerfiles, and privileged container configs before they ship.</p>
       </div>
-      <div class="for-card">
+      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=SaaS AI Security — TEOS Sentinel Integration&body=Hello%2C%0A%0AI%20run%20a%20SaaS%20and%20want%20to%20add%20AI%20execution%20safety%20via%20TEOS%20Sentinel.%0A%0AProduct%3A%20%0AUsers%3A%20%0ATech%20stack%3A%20%0A%0ABest%20regards'">
         <div class="for-icon">🚀</div>
         <h4>SaaS Founders</h4>
         <p>Add AI execution safety to your product in 60 seconds via Telegram bot or API. No backend changes. No SDK integration required.</p>
       </div>
-      <div class="for-card">
+      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Enterprise Pilot — TEOS Sentinel&body=Hello%2C%0A%0AWe%20are%20interested%20in%20an%20enterprise%20pilot%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0AUse%20case%3A%20%0ATeam%20size%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
         <div class="for-icon">🏛️</div>
         <h4>Enterprises & Governments</h4>
         <p>Sovereign deployment. Custom policy engine. ICBC constitutional alignment. MENA-sovereign architecture with SLA guarantee and full audit trail.</p>
@@ -1763,32 +1774,32 @@
     <h2 class="section-title">Plugs into your<br>existing stack.</h2>
 
     <div class="integrations-grid">
-      <div class="integration-card">
+      <div class="integration-card" onclick="window.open('https://t.me/teoslinker_bot','_blank')">
         <span class="int-icon">💬</span>
         Telegram Bot
         <span class="int-status int-live">● LIVE</span>
       </div>
-      <div class="integration-card">
+      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=API Access Request — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20API%20access%20to%20TEOS%20Sentinel%20for%20integration.%0A%0AUse%20case%3A%20%0AExpected%20volume%3A%20%0A%0ABest%20regards'">
         <span class="int-icon">⚙️</span>
         REST API / SDK
         <span class="int-status int-live">● LIVE</span>
       </div>
-      <div class="integration-card">
+      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=GitHub Actions Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20TEOS%20Sentinel%20with%20GitHub%20Actions.%0A%0ARepo%20URL%3A%20%0APipeline%20type%3A%20%0A%0ABest%20regards'">
         <span class="int-icon">🐙</span>
         GitHub Actions
         <span class="int-status int-live">● LIVE</span>
       </div>
-      <div class="integration-card">
+      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=GitLab CI Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20TEOS%20Sentinel%20with%20GitLab%20CI.%0A%0AGroup%20URL%3A%20%0APipeline%20type%3A%20%0A%0ABest%20regards'">
         <span class="int-icon">🦊</span>
         GitLab CI
         <span class="int-status int-live">● LIVE</span>
       </div>
-      <div class="integration-card">
+      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Autonomous Agent Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20build%20autonomous%20agents%20and%20need%20TEOS%20Sentinel%20integration.%0A%0AAgent%20framework%3A%20%0AUse%20case%3A%20%0A%0ABest%20regards'">
         <span class="int-icon">🤖</span>
         Autonomous Agents
         <span class="int-status int-live">● LIVE</span>
       </div>
-      <div class="integration-card">
+      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=CLI Tool Interest — TEOS Sentinel&body=Hello%2C%0A%0AI%27m%20interested%20in%20the%20TEOS%20Sentinel%20CLI%20tool.%0A%0A%0ABest%20regards'">
         <span class="int-icon">💻</span>
         CLI Tool
         <span class="int-status" style="color:var(--amber)">SOON</span>
@@ -1876,32 +1887,32 @@
     <h2 class="section-title">Security-first architecture.<br>Open source. Auditable.</h2>
 
     <div class="trust-grid">
-      <div class="trust-card">
+      <div class="trust-card" onclick="window.open('https://github.com/Elmahrosa/teos-sovereign-security-stack','_blank')">
         <div class="trust-icon">⭐</div>
         <h4>Open Source Stack</h4>
         <p>Full security stack open on GitHub. Audit the rules, inspect the engine, verify the decisions. No black boxes in security infrastructure.</p>
       </div>
-      <div class="trust-card">
+      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Compliance Audit Trail — TEOS Sentinel&body=Hello%2C%0A%0AWe%20need%20information%20about%20the%20compliance%20audit%20trail%20feature.%0A%0AOrganization%3A%20%0ACompliance%20requirement%3A%20%0A%0ABest%20regards'">
         <div class="trust-icon">📋</div>
         <h4>Compliance Audit Trail</h4>
         <p>Every scan decision logged with timestamp, rule ID, score, and verdict. Full audit history for enterprise compliance and government procurement.</p>
       </div>
-      <div class="trust-card">
+      <div class="trust-card" onclick="window.open('https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution','_blank')">
         <div class="trust-icon">🏛️</div>
         <h4>ICBC Constitutional Alignment</h4>
         <p>Aligned with the TEOS International Civic Blockchain Constitution. Sovereign-grade governance framework for MENA and GCC deployments.</p>
       </div>
-      <div class="trust-card">
+      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Deterministic Engine Details — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20details%20about%20the%20deterministic%20engine%20(25%20rules%2C%2037%20tests).%0A%0AUse%20case%3A%20%0A%0ABest%20regards'">
         <div class="trust-icon">🔬</div>
         <h4>Deterministic Engine</h4>
         <p>25 named rules. 37 tests passing. No probabilistic AI guessing — deterministic policy enforcement you can rely on in production.</p>
       </div>
-      <div class="trust-card">
+      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=About TEOS — Elmahrosa International&body=Hello%20Ayman%2C%0A%0AI%27d%20like%20to%20know%20more%20about%20TEOS%20and%20Elmahrosa%20International.%0A%0A%0ABest%20regards'">
         <div class="trust-icon">🌍</div>
         <h4>Built in Alexandria, Egypt</h4>
         <p>Elmahrosa International. Sovereign-first architecture designed for MENA contexts — data sovereignty, regulatory alignment, government accountability.</p>
       </div>
-      <div class="trust-card">
+      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Consensus 2026 Meeting — TEOS Sentinel&body=Hello%20Ayman%2C%0A%0AI%27d%20like%20to%20connect%20at%20Consensus%202026%20about%20TEOS%20Sentinel.%0A%0AEvent%3A%20%0AOrganization%3A%20%0A%0ABest%20regards'">
         <div class="trust-icon">📡</div>
         <h4>Engine v2 Production Stable</h4>
         <p>3 PM2 services online. 75+ nations community. Attending Consensus HK 2026 + Miami 2026. Institutional pilots open in Egypt, UAE, Saudi Arabia.</p>
@@ -1992,19 +2003,19 @@
     <p class="section-sub">Egypt, UAE, and Saudi Arabia are actively investing in AI execution control. TEOS is the enforcement layer they are missing.</p>
 
     <div class="govt-grid">
-      <div class="govt-card">
+      <div class="govt-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=EGYPT Pilot Request — TEOS Sentinel (MCIT/ITIDA/TIEC)&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20TEOS%20Sentinel%20pilot%20for%20Egypt.%0A%0AOrganization%3A%20%0AContact%3A%20%0AUse%20case%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
         <div class="govt-flag">🇪🇬</div>
         <h4>MCIT · ITIDA · TIEC</h4>
         <div class="govt-range">$5K – $25K pilot range</div>
         <p>Ministry of Communications owns Egypt's AI strategy 2025–2030. ITIDA manages national tech growth. Sentinel positions as the pre-execution enforcement layer for Egypt's AI ecosystem.</p>
       </div>
-      <div class="govt-card">
+      <div class="govt-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=UAE Pilot Request — TEOS Sentinel (AI Office/G42/TDRA)&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20TEOS%20Sentinel%20pilot%20for%20UAE.%0A%0AOrganization%3A%20%0AContact%3A%20%0AUse%20case%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
         <div class="govt-flag">🇦🇪</div>
         <h4>UAE AI Office · G42 · TDRA</h4>
         <div class="govt-range">$10K – $50K pilot range</div>
         <p>UAE AI Office sets national AI adoption strategy. G42 operates at infrastructure scale. TDRA governs digital compliance. Policy enforcement layer is exactly their mandate.</p>
       </div>
-      <div class="govt-card">
+      <div class="govt-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=SAUDI Pilot Request — TEOS Sentinel (SDAIA/NEOM/STC)&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20TEOS%20Sentinel%20pilot%20for%20Saudi%20Arabia.%0A%0AOrganization%3A%20%0AContact%3A%20%0AUse%20case%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
         <div class="govt-flag">🇸🇦</div>
         <h4>SDAIA · NEOM · STC</h4>
         <div class="govt-range">$25K – $200K pilot range</div>
