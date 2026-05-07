@@ -5,11 +5,15 @@
     { "src": "public/**/*", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/scan", "dest": "server/api.js" },
-    { "src": "/audit", "dest": "public/sentinel.html" },
-    { "src": "/rules.json", "dest": "public/rules.json" },
-    { "src": "/test-cases.json", "dest": "public/test-cases.json" },
-    { "src": "/audit-example.json", "dest": "public/audit-example.json" },
-    { "src": "/", "dest": "server/api.js" }
+    { "src": "/scan",           "dest": "server/api.js" },
+    { "src": "/stats",          "dest": "server/api.js" },
+    { "src": "/events",         "dest": "server/api.js" },
+    { "src": "/audit",          "dest": "server/api.js" },
+    { "src": "/health",         "dest": "server/api.js" },
+    { "src": "/rules\\.json",    "dest": "public/rules.json" },
+    { "src": "/test-cases\\.json","dest": "public/test-cases.json" },
+    { "src": "/audit-example\\.json","dest": "public/audit-example.json" },
+    { "src": "/",               "dest": "public/index.html" },
+    { "src": "/(.*)",           "dest": "public/$1" }
   ]
 }
