@@ -1,0 +1,6 @@
+.vercel
+node_modules/
+data/events.json
+.env
+.env.local
+*.log

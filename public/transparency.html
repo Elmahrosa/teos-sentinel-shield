@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEOS Sentinel — Transparency Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#020509;--bg2:#060d16;--bg3:#0a1520;--panel:#0c1926;--panel2:#102030;
+  --border:rgba(0,200,255,0.06);--border2:rgba(0,200,255,0.14);--border3:rgba(0,200,255,0.28);
+  --cyan:#00c8ff;--green:#00ff88;--red:#ff3d57;--amber:#ffb020;--purple:#9d6fff;--white:#c8dfe8;
+  --muted:rgba(200,223,232,0.45);--muted2:rgba(200,223,232,0.2);
+  --mono:'JetBrains Mono','Courier New',monospace;--sans:'Inter',sans-serif;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:var(--sans);font-size:13px}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.006) 2px,rgba(0,200,255,0.006) 4px);pointer-events:none;z-index:9999}
+
+#topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;gap:16px}
+.topbar-logo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:0.06em;text-decoration:none}
+.topbar-logo span{width:24px;height:24px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.topbar-sep{width:1px;height:20px;background:var(--border2)}
+.topbar-title{font-size:13px;font-weight:600;letter-spacing:-0.01em}
+.topbar-title small{color:var(--muted);font-weight:400;font-size:11px;margin-left:8px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-time{font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:0.06em}
+
+/* HERO */
+.hero{padding:48px 20px 32px;max-width:900px;margin:0 auto;text-align:center}
+.hero h1{font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.hero p{font-family:var(--mono);font-size:13px;color:var(--muted);line-height:1.8;max-width:640px;margin:0 auto}
+.hero-badges{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.hero-badge{font-family:var(--mono);font-size:10px;padding:4px 12px;border-radius:16px;border:1px solid var(--border2);color:var(--muted);letter-spacing:0.04em}
+.hero-badge.cyan{color:var(--cyan);border-color:var(--border3);background:rgba(0,200,255,0.06)}
+.hero-badge.green{color:var(--green);border-color:rgba(0,255,136,0.2);background:rgba(0,255,136,0.06)}
+
+/* SECTIONS */
+.section{max-width:900px;margin:0 auto;padding:32px 20px}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.section h2{font-size:22px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px}
+.section>p{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:24px}
+
+/* SCHEMA TABLE */
+.schema-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-bottom:16px}
+.schema-table th{text-align:left;padding:8px 12px;background:var(--panel2);color:var(--muted2);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border2);font-weight:600}
+.schema-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.schema-table tr:hover td{background:var(--panel)}
+.schema-table .field-name{color:var(--cyan)}
+.schema-table .field-type{color:var(--amber)}
+.schema-table .field-desc{color:var(--muted)}
+
+/* CODE BLOCK */
+.code-block{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:16px 20px;font-family:var(--mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--white);margin-bottom:20px;position:relative}
+.code-block-label{position:absolute;top:8px;right:12px;font-size:9px;color:var(--muted2);letter-spacing:0.08em;text-transform:uppercase}
+
+/* API CARDS */
+.api-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:24px}
+.api-card{border:1px solid var(--border);border-radius:6px;padding:18px;background:var(--panel);transition:border-color 0.15s}
+.api-card:hover{border-color:var(--border3)}
+.api-card-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.api-method{font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:0.04em}
+.method-post{background:rgba(0,200,255,0.12);color:var(--cyan)}
+.method-get{background:rgba(0,255,136,0.1);color:var(--green)}
+.api-path{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--white)}
+.api-card p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7}
+
+/* RULE CARDS */
+.rule-list{display:flex;flex-direction:column;gap:2px}
+.rule-row{display:grid;grid-template-columns:60px 180px 80px 1fr;gap:12px;align-items:center;padding:10px 14px;border-radius:4px;background:var(--panel);border:1px solid transparent;transition:all 0.12s}
+.rule-row:hover{border-color:var(--border2)}
+.rule-row-id{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:0.04em}
+.rule-row-name{font-family:var(--mono);font-size:11px;color:var(--white);font-weight:500}
+.rule-row-sev{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:10px;text-align:center;letter-spacing:0.06em;text-transform:uppercase}
+.sev-critical{background:rgba(255,61,87,0.08);color:var(--red);border:1px solid rgba(255,61,87,0.2)}
+.sev-high{background:rgba(255,176,32,0.08);color:var(--amber);border:1px solid rgba(255,176,32,0.2)}
+.sev-medium{background:rgba(0,200,255,0.08);color:var(--cyan);border:1px solid rgba(0,200,255,0.2)}
+.rule-row-desc{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:32px 20px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);margin-top:40px}
+footer a{color:var(--cyan);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);max-width:900px;margin:0 auto}
+
+/* RESPONSIVE */
+@media(max-width:700px){.rule-row{grid-template-columns:1fr;gap:4px;padding:12px}.api-grid{grid-template-columns:1fr}.hero h1{font-size:24px}}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <a href="index.html" class="topbar-logo"><span>&#9901;</span>TEOS</a>
+  <div class="topbar-sep"></div>
+  <div class="topbar-title">Transparency Hub<small>Public Audit &amp; Compliance</small></div>
+  <div class="topbar-right">
+    <div class="topbar-time" id="nav-time">--:--:--</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Execution Control Infrastructure<br>for <em>Autonomous Systems</em></h1>
+  <p>Every decision logged. Every rule inspectable. Every verdict reproducible. TEOS Sentinel is a deterministic, auditable governance engine — not a black box.</p>
+  <div class="hero-badges">
+    <span class="hero-badge cyan">25 Deterministic Rules</span>
+    <span class="hero-badge green">BLOCK / WARN / ALLOW</span>
+    <span class="hero-badge">Publicly Auditable</span>
+    <span class="hero-badge">JSON Schema</span>
+    <span class="hero-badge">No ML Black Box</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ENGINE OVERVIEW -->
+<div class="section">
+  <div class="section-label">01 / Engine Architecture</div>
+  <h2>Deterministic Rule Engine v2.0</h2>
+  <p>TEOS Sentinel uses a purely deterministic regex-based rule engine. No ML inference. No probabilistic verdicts. Every rule is a named, versioned, publicly inspectable pattern with explicit severity and scoring. The same input will always produce the same output — guaranteeing reproducibility for audit and compliance.</p>
+
+  <div class="code-block">
+    <span class="code-block-label">Engine Flow</span>INPUT: command string
+  &darr;
+SCAN: 25 named rules (regex patterns)
+  &darr;
+SCORE: highest-severity match wins (0-100)
+  &darr;
+VERDICT: BLOCK (>=80) | WARN (40-79) | ALLOW (0-39)
+  &darr;
+OUTPUT: { verdict, score, rule, severity, reasons, timestamp }
+  &darr;
+PERSIST: appended to events.json (rotating, max 500)</div>
+
+  <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;margin-top:32px">All 25 Rules</h3>
+  <div class="rule-list" id="rule-list"></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- API ENDPOINTS -->
+<div class="section">
+  <div class="section-label">02 / Public API</div>
+  <h2>Machine-Readable Endpoints</h2>
+  <p>All endpoints return JSON. CORS enabled for cross-origin access. No authentication required for read endpoints.</p>
+
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-post">POST</span><span class="api-path">/scan</span></div>
+      <p>Submit a command or code snippet. Returns deterministic verdict with rule match, score, and reasoning. Body: <code>{ "command": "..." }</code></p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/stats</span></div>
+      <p>Aggregated scan counters: total, blocked, warned, allowed, block rate, top triggered rules.</p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/events</span></div>
+      <p>Paginated event log. Query params: <code>?page=1&limit=100&verdict=block</code>. Returns recent scan events with full verdict details.</p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/audit</span></div>
+      <p>Compliance export. Last 200 events reversed. Includes engine version, rule count, and generation timestamp.</p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/health</span></div>
+      <p>Engine health check. Returns status, engine version, rule count, uptime, and current time.</p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/rules.json</span></div>
+      <p>Static machine-readable rule definitions. 25 rules with regex patterns, severity levels, scores, and categories.</p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/test-cases.json</span></div>
+      <p>37 attack simulation test cases with expected verdicts. Use to validate engine correctness.</p>
+    </div>
+    <div class="api-card">
+      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/audit-example.json</span></div>
+      <p>Sample audit log entries showing the schema, field descriptions, and example records.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- VERDICT SCHEMA -->
+<div class="section">
+  <div class="section-label">03 / Verdict Schema</div>
+  <h2>Scan Response Format</h2>
+  <p>Every <code>POST /scan</code> response follows this deterministic schema. Fields are guaranteed present for valid input.</p>
+
+  <table class="schema-table">
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="field-name">verdict</td><td class="field-type">string</td><td class="field-desc">"BLOCK" | "WARN" | "ALLOW" | "ERROR"</td></tr>
+      <tr><td class="field-name">score</td><td class="field-type">number</td><td class="field-desc">Risk score 0-100. Higher = more dangerous.</td></tr>
+      <tr><td class="field-name">rule</td><td class="field-type">string</td><td class="field-desc">Matched rule identifier. Format: "R{id}.{NAME}" e.g. "R01.DESTRUCTIVE_SHELL"</td></tr>
+      <tr><td class="field-name">ruleId</td><td class="field-type">string</td><td class="field-desc">Short rule ID: "R01" through "R25", or "R00" for clean.</td></tr>
+      <tr><td class="field-name">severity</td><td class="field-type">string</td><td class="field-desc">"critical" | "high" | "medium" | "none"</td></tr>
+      <tr><td class="field-name">reasons</td><td class="field-type">string[]</td><td class="field-desc">Human-readable explanations for the verdict.</td></tr>
+      <tr><td class="field-name">command</td><td class="field-type">string</td><td class="field-desc">The original input command (echoed back).</td></tr>
+      <tr><td class="field-name">timestamp</td><td class="field-type">string</td><td class="field-desc">ISO 8601 timestamp of the scan. UTC.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-block">
+    <span class="code-block-label">Example Response</span>{
+  "verdict": "BLOCK",
+  "score": 100,
+  "rule": "R01.DESTRUCTIVE_SHELL",
+  "ruleId": "R01",
+  "severity": "critical",
+  "reasons": [
+    "rm -rf permanently destroys all filesystem data",
+    "Wiper malware signature detected"
+  ],
+  "command": "rm -rf /",
+  "timestamp": "2026-05-07T03:14:22.000Z"
+}</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COMPLIANCE -->
+<div class="section">
+  <div class="section-label">04 / Compliance &amp; Governance</div>
+  <h2>Auditability Guarantees</h2>
+  <p>TEOS Sentinel is designed for environments that require provable, deterministic security decisions. Key compliance properties:</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:16px">
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Deterministic</h4><p>Same input always produces the same output. No randomness. No model drift. Fully reproducible for auditors.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 25 rules, 37 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Event Persisted</h4><p>Every scan decision is logged with timestamp, rule, score, and verdict. Rotating store capped at 500 entries.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Export Ready</h4><p>Audit logs exportable as CSV or JSON. Compatible with SIEM ingestion and compliance review workflows.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">No ML Dependency</h4><p>Zero ML inference. No training data, no model weights, no probabilistic outputs. Pure pattern matching.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Versioned Engine</h4><p>Engine version reported in every endpoint. Rule updates are additive — existing patterns are never silently changed.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BUG BOUNTY -->
+<div class="section" style="max-width:700px">
+  <div class="section-label">05 / Bug Bounty</div>
+  <h2>Circumvent a Rule, Claim a Reward</h2>
+  <p>Found a bypass? We reward responsible disclosure. If you can craft a command that matches a threat pattern but gets an ALLOW verdict, report it.</p>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;margin-bottom:20px">
+    <div class="api-card" style="flex:1;min-width:180px;text-align:center">
+      <div style="font-size:24px;font-weight:700;color:var(--red);margin-bottom:4px">$500</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.06em;text-transform:uppercase">Critical Bypass</div>
+    </div>
+    <div class="api-card" style="flex:1;min-width:180px;text-align:center">
+      <div style="font-size:24px;font-weight:700;color:var(--amber);margin-bottom:4px">$100-250</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.06em;text-transform:uppercase">Rule Evasion</div>
+    </div>
+    <div class="api-card" style="flex:1;min-width:180px;text-align:center">
+      <div style="font-size:24px;font-weight:700;color:var(--green);margin-bottom:4px">$50</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.06em;text-transform:uppercase">False Positive</div>
+    </div>
+  </div>
+
+  <a href="mailto:ayman@teosegypt.com?subject=Bug%20Bounty%20Report%20%E2%80%94%20TEOS%20Sentinel" class="btn btn-cyan" style="display:inline-flex">&#128231; Report a Bypass &rarr;</a>
+</div>
+
+<footer>
+  TEOS Sentinel Shield v2.0 &middot; Execution Control Infrastructure for Autonomous Systems<br>
+  <a href="index.html">Command Center</a> &middot;
+  <a href="dashboard.html">SOC Dashboard</a> &middot;
+  <a href="replay.html">Forensic Replay</a> &middot;
+  <a href="./rules.json">rules.json</a> &middot;
+  <a href="./test-cases.json">test-cases.json</a>
+</footer>
+
+<script>
+const RULES_DATA=[
+  {id:'R01',name:'DESTRUCTIVE_SHELL',sev:'critical',score:100,desc:'Wiper commands: rm -rf, deltree, format'},
+  {id:'R02',name:'CHMOD_ESCALATION',sev:'critical',score:90,desc:'chmod 777 on sensitive system files'},
+  {id:'R03',name:'CURL_EXEC_CHAIN',sev:'critical',score:95,desc:'curl/wget piped to shell execution'},
+  {id:'R04',name:'SECRET_ECHO',sev:'critical',score:90,desc:'Echoing secret environment variables'},
+  {id:'R05',name:'ENV_EXFIL',sev:'critical',score:95,desc:'Sending environment secrets to external host'},
+  {id:'R06',name:'FORK_BOMB',sev:'critical',score:100,desc:'Fork bomb denial-of-service pattern'},
+  {id:'R07',name:'BASE64_EXEC',sev:'high',score:88,desc:'Base64-encoded payload executed via eval'},
+  {id:'R08',name:'REVERSE_SHELL',sev:'critical',score:100,desc:'Netcat / bash reverse shell connection'},
+  {id:'R09',name:'SQL_DESTRUCTION',sev:'high',score:85,desc:'DROP TABLE, DROP DATABASE, TRUNCATE'},
+  {id:'R10',name:'SQL_INJECTION',sev:'high',score:75,desc:'Classic SQL injection patterns'},
+  {id:'R11',name:'PATH_TRAVERSAL',sev:'high',score:78,desc:'Directory traversal in file access'},
+  {id:'R12',name:'COMMAND_INJECTION',sev:'critical',score:92,desc:'OS command injection via user input'},
+  {id:'R13',name:'PRIVILEGE_ESCALATION',sev:'critical',score:90,desc:'sudo su / SUID abuse'},
+  {id:'R14',name:'MALICIOUS_PACKAGE',sev:'high',score:85,desc:'Known malicious npm package versions'},
+  {id:'R15',name:'TYPOSQUAT_PACKAGE',sev:'high',score:70,desc:'Typosquatted package names'},
+  {id:'R16',name:'UNSAFE_PERMISSIONS',sev:'medium',score:65,desc:'GitHub Actions write-all permissions'},
+  {id:'R17',name:'CURL_BASH_CI',sev:'critical',score:95,desc:'curl|bash in CI/CD pipeline steps'},
+  {id:'R18',name:'PRIVILEGED_CONTAINER',sev:'high',score:80,desc:'Docker --privileged flag in CI'},
+  {id:'R19',name:'HARDCODED_SECRET',sev:'critical',score:92,desc:'Hardcoded secrets in source code'},
+  {id:'R20',name:'PROMPT_INJECTION',sev:'high',score:80,desc:'LLM prompt injection attempts'},
+  {id:'R21',name:'SSRF_ATTEMPT',sev:'high',score:82,desc:'SSRF targeting internal IP ranges'},
+  {id:'R22',name:'XXE_INJECTION',sev:'high',score:80,desc:'XML External Entity injection'},
+  {id:'R23',name:'CRYPTO_MINER',sev:'critical',score:95,desc:'Cryptomining binary or pool connection'},
+  {id:'R24',name:'DATA_EXFIL_CURL',sev:'high',score:88,desc:'Exfiltrating system files via curl'},
+  {id:'R25',name:'CI_SECRETS_DUMP',sev:'critical',score:90,desc:'CI secrets or full env dump'},
+];
+
+document.getElementById('rule-list').innerHTML=RULES_DATA.map(r=>
+  '<div class="rule-row"><span class="rule-row-id">'+r.id+'</span><span class="rule-row-name">'+r.name.replace(/_/g,' ')+'</span><span class="rule-row-sev sev-'+r.sev+'">'+r.sev+' ('+r.score+')</span><span class="rule-row-desc">'+r.desc+'</span></div>'
+).join('');
+
+function tickClock(){document.getElementById('nav-time').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})}
+setInterval(tickClock,1000);tickClock();
+</script>
+</body>
+</html>

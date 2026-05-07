@@ -1,11 +1,54 @@
 {
-  "scan_id": "scan_847223",
-  "timestamp": "2026-05-06T14:22:10Z",
-  "risk_score": 0.91,
-  "decision": "BLOCK",
-  "rules_triggered": [
-    "R01.DESTRUCTIVE_SHELL",
-    "R03.SECRET_EXPOSURE"
-  ],
-  "source": "telegram_bot"
+  "description": "Sample audit log showing TEOS Sentinel verdict records",
+  "engine": "TEOS Sentinel v2.0",
+  "schema": {
+    "id":        "unix timestamp (unique event ID)",
+    "verdict":   "BLOCK | WARN | ALLOW",
+    "score":     "0-100 integer risk score",
+    "rule":      "RXX.RULE_NAME - matched rule identifier",
+    "ruleId":    "RXX - short rule ID",
+    "severity":  "critical | high | medium | none",
+    "reasons":   "array of human-readable explanation strings",
+    "command":   "the input command that was scanned",
+    "type":      "shell | sql | ci | deps | code",
+    "timestamp": "ISO 8601 UTC timestamp"
+  },
+  "sampleEvents": [
+    {
+      "id": 1746614400001,
+      "verdict": "BLOCK",
+      "score": 100,
+      "rule": "R01.DESTRUCTIVE_SHELL",
+      "ruleId": "R01",
+      "severity": "critical",
+      "reasons": ["rm -rf permanently destroys all filesystem data", "Wiper malware signature detected"],
+      "command": "rm -rf /",
+      "type": "shell",
+      "timestamp": "2026-05-07T12:00:00.001Z"
+    },
+    {
+      "id": 1746614400002,
+      "verdict": "WARN",
+      "score": 75,
+      "rule": "R10.SQL_INJECTION",
+      "ruleId": "R10",
+      "severity": "high",
+      "reasons": ["Classic SQL injection pattern detected"],
+      "command": "' OR 1=1 --",
+      "type": "sql",
+      "timestamp": "2026-05-07T12:01:00.002Z"
+    },
+    {
+      "id": 1746614400003,
+      "verdict": "ALLOW",
+      "score": 0,
+      "rule": "R00.CLEAN",
+      "ruleId": "R00",
+      "severity": "none",
+      "reasons": ["No threat patterns detected across 25 rules", "Safe to execute"],
+      "command": "console.log('hello')",
+      "type": "code",
+      "timestamp": "2026-05-07T12:02:00.003Z"
+    }
+  ]
 }
