@@ -1,6 +1,7 @@
 /*
   TEOS Sentinel v2.0 — Hardened API Engine
   Deployment: Vercel serverless (primary) + Railway (via ws-server)
+  Data store: Upstash Redis (serverless) or in-memory fallback
 
   Hardening layers:
     1. Structured JSON logging with request IDs
@@ -21,12 +22,27 @@ const app     = express();
 // ── CONFIG ──────────────────────────────────────────────────
 const PORT            = process.env.PORT || 3000;
 const MAX_EVENTS      = parseInt(process.env.MAX_EVENTS)        || 500;
-const RATE_LIMIT_WIN  = parseInt(process.env.RATE_LIMIT_WIN)    || 60;   // seconds
-const RATE_LIMIT_MAX  = parseInt(process.env.RATE_LIMIT_MAX)    || 120;  // requests per window
+const RATE_LIMIT_WIN  = parseInt(process.env.RATE_LIMIT_WIN)    || 60;
+const RATE_LIMIT_MAX  = parseInt(process.env.RATE_LIMIT_MAX)    || 120;
 const MAX_PAYLOAD_KB  = parseInt(process.env.MAX_PAYLOAD_KB)    || 64;
 const NODE_ENV        = process.env.NODE_ENV                    || 'development';
-const DATA_FILE       = path.join(__dirname, '..', 'data', 'events.json');
 const BOOT_TIME       = Date.now();
+const REDIS_KEY       = 'teos:sentinel:events';
+
+// ── REDIS (Upstash) — shared store across bot + API + WS ────
+let redis = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    const { Redis } = require('@upstash/redis');
+    redis = new Redis({
+      url:   process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+    console.log('[teos] Upstash Redis connected');
+  }
+} catch (e) {
+  console.warn('[teos] Redis init failed, falling back to memory:', e.message);
+}
 
 // ── STRUCTURED LOGGER ───────────────────────────────────────
 function log(level, msg, meta = {}) {
@@ -73,7 +89,7 @@ app.use((req, res, next) => {
   req.id   = req.headers['x-request-id'] || crypto.randomUUID().slice(0, 16);
   req._t0  = process.hrtime.bigint();
   res.on('finish', () => {
-    const elapsed = Number(process.hrtime.bigint() - req._t0) / 1e6; // ms
+    const elapsed = Number(process.hrtime.bigint() - req._t0) / 1e6;
     log('info', `${req.method} ${req.path}`, {
       reqId:    req.id,
       status:   res.statusCode,
@@ -120,7 +136,7 @@ function rateLimiter(req, res, next) {
 
 app.use(rateLimiter);
 
-// ── RATE LIMIT CLEANUP (every 5 minutes) ────────────────────
+// Rate limit cleanup
 setInterval(() => {
   const now = Math.floor(Date.now() / 1000);
   for (const [key, entry] of rateStore) {
@@ -128,31 +144,42 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-// ── DATA STORE (Vercel serverless + local) ──────────────────
-// Vercel serverless filesystem is read-only (except /tmp).
-// Use in-memory store as primary, disk as optional cache.
-const isVercel  = process.env.VERCEL === '1';
-const STORE_DIR = isVercel ? '/tmp' : path.join(__dirname, '..', 'data');
-const STORE_FILE = path.join(STORE_DIR, 'events.json');
+// ── DATA STORE (Redis primary, memory fallback) ─────────────
 let memStore = [];
 
-function loadEvents() {
-  try {
-    if (memStore.length) return memStore;
-    if (fs.existsSync(STORE_FILE)) {
-      memStore = JSON.parse(fs.readFileSync(STORE_FILE, 'utf8'));
-      return memStore;
+async function loadEvents() {
+  if (redis) {
+    try {
+      const raw = await redis.lrange(REDIS_KEY, 0, MAX_EVENTS - 1);
+      return raw.map(e => typeof e === 'string' ? JSON.parse(e) : e);
+    } catch (e) {
+      log('warn', 'Redis read failed, using memory fallback', { error: e.message });
     }
-  } catch (_) {}
+  }
   return memStore;
 }
 
-function saveEvents(events) {
+async function saveEvent(event) {
+  if (redis) {
+    try {
+      await redis.lpush(REDIS_KEY, JSON.stringify(event));
+      await redis.ltrim(REDIS_KEY, 0, MAX_EVENTS - 1);
+      return;
+    } catch (e) {
+      log('warn', 'Redis write failed, using memory fallback', { error: e.message });
+    }
+  }
+  memStore.unshift(event);
+  if (memStore.length > MAX_EVENTS) memStore = memStore.slice(0, MAX_EVENTS);
+}
+
+// Backward-compatible sync wrappers for existing route code
+function loadEventsSync() {
+  return memStore;
+}
+
+function saveEventsSync(events) {
   memStore = events.slice(-MAX_EVENTS);
-  try {
-    if (!fs.existsSync(STORE_DIR)) fs.mkdirSync(STORE_DIR, { recursive: true });
-    fs.writeFileSync(STORE_FILE, JSON.stringify(memStore, null, 2));
-  } catch (_) { /* serverless: disk write fails silently, memory works */ }
   return memStore;
 }
 
@@ -308,17 +335,28 @@ function runEngine(command) {
 // ── ROUTES ──────────────────────────────────────────────────
 
 // GET /health
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
   const uptime = process.uptime();
+  let eventCount = 0;
+  try {
+    if (redis) {
+      eventCount = await redis.llen(REDIS_KEY);
+    } else {
+      eventCount = memStore.length;
+    }
+  } catch (_) {}
+
   res.json({
-    status:   'online',
-    engine:   'v2.0',
-    rules:    RULES.length,
-    uptime:   Math.round(uptime),
+    status:      'online',
+    engine:      'v2.0',
+    rules:       RULES.length,
+    uptime:      Math.round(uptime),
     uptimeHuman: uptime > 3600 ? Math.floor(uptime/3600)+'h' : Math.floor(uptime/60)+'m',
-    env:      NODE_ENV,
-    time:     new Date().toISOString(),
-    version:  '2.0.0',
+    env:         NODE_ENV,
+    time:        new Date().toISOString(),
+    version:     '2.0.0',
+    store:       redis ? 'redis' : 'memory',
+    eventsCount: eventCount,
   });
 });
 
@@ -334,7 +372,7 @@ app.get('/', (req, res) => {
 });
 
 // POST /scan
-app.post('/scan', (req, res) => {
+app.post('/scan', async (req, res) => {
   const body = req.body;
   if (!body || typeof body !== 'object') {
     return res.status(400).json({ error: 'invalid_request', message: 'JSON body required' });
@@ -354,12 +392,10 @@ app.post('/scan', (req, res) => {
   result.type  = type;
   result.reqId = req.id;
 
-  // Persist event
-  const events = loadEvents();
-  events.push({ id: Date.now(), ...result });
-  saveEvents(events);
+  // Persist to Redis (or memory)
+  await saveEvent({ id: Date.now(), ...result });
 
-  // Broadcast via event emitter if ws-server is hosting us
+  // Broadcast via event emitter if ws-server is hosting
   if (typeof global.emitScanEvent === 'function') {
     global.emitScanEvent(result);
   }
@@ -368,8 +404,8 @@ app.post('/scan', (req, res) => {
 });
 
 // GET /stats
-app.get('/stats', (req, res) => {
-  const events  = loadEvents();
+app.get('/stats', async (req, res) => {
+  const events  = await loadEvents();
   const total   = events.length;
   const blocked = events.filter(e => e.verdict === 'BLOCK').length;
   const warned  = events.filter(e => e.verdict === 'WARN').length;
@@ -398,8 +434,8 @@ app.get('/stats', (req, res) => {
 });
 
 // GET /events
-app.get('/events', (req, res) => {
-  const events = loadEvents();
+app.get('/events', async (req, res) => {
+  const events = await loadEvents();
   const page   = Math.max(1, parseInt(req.query.page)  || 1);
   const limit  = Math.min(500, Math.max(1, parseInt(req.query.limit) || 100));
   const verdict = req.query.verdict;
@@ -417,8 +453,8 @@ app.get('/events', (req, res) => {
 });
 
 // GET /audit
-app.get('/audit', (req, res) => {
-  const events = loadEvents();
+app.get('/audit', async (req, res) => {
+  const events = await loadEvents();
   res.json({
     generated:   new Date().toISOString(),
     engine:      'TEOS Sentinel v2.0',
@@ -444,16 +480,16 @@ app.use((err, req, res, next) => {
 });
 
 // ── EXPORT (Vercel serverless + Railway) ──────────────────────
-// Vercel needs `app` as the default export. Railway ws-server
-// destructures { app, RULES, runEngine, loadEvents }.
 module.exports         = app;
 module.exports.RULES   = RULES;
 module.exports.runEngine = runEngine;
-module.exports.loadEvents = loadEvents;
+module.exports.loadEvents = loadEventsSync;
+module.exports.saveEvent = saveEvent;
+module.exports.redis = redis;
 
 // ── START (local dev / Railway) ─────────────────────────────
 if (require.main === module) {
   app.listen(PORT, () => {
-    log('info', 'TEOS Sentinel Engine v2.0 started', { port: PORT, env: NODE_ENV });
+    log('info', 'TEOS Sentinel Engine v2.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory' });
   });
 }

@@ -2,26 +2,18 @@ const api          = require('../server/api');
 const app          = api;
 const RULES        = api.RULES;
 const runEngine    = api.runEngine;
-const loadEvents   = api.loadEvents;
-const WebSocket = require('ws');
-const http      = require('http');
-const path      = require('path');
-const fs        = require('fs');
+const loadEventsFn = api.loadEvents; // async
+const WebSocket    = require('ws');
+const http         = require('http');
+const path         = require('path');
+const fs           = require('fs');
 
 /*
   TEOS Sentinel — Unified Server (Railway / Fly.io / Local)
-  
-  Combines Express API + WebSocket telemetry + static file serving
-  into a single process. Designed for Railway one-click deploy.
+  Express API + WebSocket telemetry + static file serving in one process.
 
-  Endpoints:
-    POST /scan          run risk engine, return verdict
-    GET  /stats         aggregated counters
-    GET  /events        paginated event log
-    GET  /audit         compliance export
-    GET  /health        engine + WS status
-    WS   /               live event stream
-    GET  /               static index.html
+  Reads events from Redis via api.loadEvents() — shared store with
+  REST API and Telegram bot.
 */
 
 // ── CONFIG ──────────────────────────────────────────────────
@@ -54,7 +46,6 @@ function serveStatic(req, res) {
   const ext      = path.extname(fullPath).toLowerCase();
   const mime     = MIME_TYPES[ext] || 'application/octet-stream';
 
-  // Security: prevent directory traversal
   if (!fullPath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403);
     res.end('Forbidden');
@@ -63,7 +54,6 @@ function serveStatic(req, res) {
 
   fs.readFile(fullPath, (err, data) => {
     if (err) {
-      // Try serving index.html for SPA routes
       if (filePath !== '/index.html') {
         fs.readFile(path.join(PUBLIC_DIR, 'index.html'), (err2, html) => {
           if (err2) { res.writeHead(404); res.end('Not found'); return; }
@@ -76,33 +66,24 @@ function serveStatic(req, res) {
       res.end('Not found');
       return;
     }
-
     const cacheControl = NODE_ENV === 'production' ? 'public, max-age=3600' : 'no-cache';
-    res.writeHead(200, {
-      'Content-Type': mime,
-      'Cache-Control': cacheControl,
-    });
+    res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': cacheControl });
     res.end(data);
   });
 }
 
 // ── HTTP SERVER ─────────────────────────────────────────────
 const server = http.createServer((req, res) => {
-  // Let Express handle API routes
   if (req.url.startsWith('/scan') || req.url.startsWith('/stats') ||
       req.url.startsWith('/events') || req.url.startsWith('/audit') ||
       req.url.startsWith('/health')) {
     app(req, res);
     return;
   }
-
-  // Root API info
   if (req.url === '/' && req.method === 'GET' && req.headers.accept?.includes('json')) {
     app(req, res);
     return;
   }
-
-  // Static files
   serveStatic(req, res);
 });
 
@@ -112,19 +93,18 @@ let lastEventCount = 0;
 let peers          = new Map();
 let totalConns     = 0;
 let totalDisc      = 0;
-let bootTime       = Date.now();
 
 // Global hook: Express scans notify WS server
 global.emitScanEvent = function(result) {
   if (peers.size === 0) return;
   const payload = JSON.stringify({
-    type:    'scan',
-    verdict: result.verdict.toLowerCase(),
-    score:   result.score,
-    rule:    result.rule,
-    ruleId:  result.ruleId,
-    severity:result.severity,
-    command: result.command,
+    type:      'scan',
+    verdict:   result.verdict.toLowerCase(),
+    score:     result.score,
+    rule:      result.rule,
+    ruleId:    result.ruleId,
+    severity:  result.severity,
+    command:   result.command,
     timestamp: result.timestamp,
   });
   for (const ws of peers.keys()) {
@@ -153,23 +133,24 @@ wss.on('connection', (ws, req) => {
   });
   ws.on('close', () => { peers.delete(ws); totalDisc++; });
 
-  // Send snapshot
-  try {
-    const events = loadEvents();
+  // Send snapshot from Redis
+  loadEventsFn().then(events => {
     lastEventCount = events.length;
-    ws.send(JSON.stringify({
-      type:      'snapshot',
-      count:     events.length,
-      events:    events.slice(-50),
-      serverTime: new Date().toISOString(),
-    }));
-  } catch (_) {}
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type:       'snapshot',
+        count:      events.length,
+        events:     events.slice(-50),
+        serverTime: new Date().toISOString(),
+      }));
+    }
+  }).catch(() => {});
 });
 
-// ── POLLING ─────────────────────────────────────────────────
+// ── POLLING (syncs with Redis via shared loadEvents) ────────
 async function pollEvents() {
   try {
-    const events = loadEvents();
+    const events = await loadEventsFn();
     if (events.length > lastEventCount) {
       const newCount = events.length - lastEventCount;
       lastEventCount = events.length;
@@ -197,11 +178,8 @@ function heartbeatCheck() {
   }
 }
 
-setInterval(pollEvents,    WS_POLL_MS);
+setInterval(pollEvents,     WS_POLL_MS);
 setInterval(heartbeatCheck, WS_HEARTBEAT);
-
-// ── ENHANCED /health (includes WS stats) ────────────────────
-const origHealth = server; // just intercept via the Express app
 
 // ── START ───────────────────────────────────────────────────
 server.listen(PORT, '0.0.0.0', () => {
