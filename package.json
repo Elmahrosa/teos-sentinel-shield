@@ -1,19 +1,27 @@
 {
-  "name": "teoslinker-bot",
+  "name": "teos-sentinel-shield",
   "version": "2.0.0",
-  "description": "TEOS Sovereign Sentinel — AI Execution Firewall",
-  "main": "bot.cjs",
+  "description": "Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware",
+  "main": "ws-server/index.js",
   "scripts": {
-    "start": "node bot.cjs",
-    "dev": "node bot.cjs"
+    "start": "node ws-server/index.js",
+    "dev": "node server/api.js",
+    "dev:ws": "node ws-server/index.js",
+    "test:engine": "node test/engine-test.js",
+    "vercel": "node server/api.js"
   },
+  "keywords": [
+    "ai-security",
+    "runtime-enforcement",
+    "deterministic-engine",
+    "execution-governance",
+    "audit-compliance",
+    "sentinel-shield"
+  ],
+  "author": "TEOS Sovereign",
+  "license": "MIT",
   "dependencies": {
-    "telegraf": "^4.15.0",
-    "express": "^4.18.2",
-    "better-sqlite3": "^9.4.0",
-    "dotenv": "^16.4.5"
-  },
-  "engines": {
-    "node": "20.x"
+    "express": "^5.2.1",
+    "ws": "^8.20.0"
   }
 }

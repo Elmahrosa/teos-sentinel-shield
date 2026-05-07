@@ -1,0 +1,382 @@
+{
+  "version": "1.0.0",
+  "engine": "TEOS Sentinel",
+  "total_rules": 32,
+  "categories": [
+    "command_injection",
+    "prompt_injection",
+    "data_exfiltration",
+    "privilege_escalation",
+    "tool_misuse",
+    "execution_abuse"
+  ],
+  "rules": [
+
+    {
+      "id": "R001",
+      "name": "DESTRUCTIVE_SHELL_RM_ROOT",
+      "category": "command_injection",
+      "pattern": "rm -rf /",
+      "match_type": "string",
+      "severity": 100,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["filesystem", "critical"]
+    },
+    {
+      "id": "R002",
+      "name": "DESTRUCTIVE_WILDCARD_DELETE",
+      "category": "command_injection",
+      "pattern": "rm -rf *",
+      "match_type": "string",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["filesystem"]
+    },
+    {
+      "id": "R003",
+      "name": "FORMAT_FILESYSTEM",
+      "category": "command_injection",
+      "pattern": "mkfs",
+      "match_type": "keyword",
+      "severity": 90,
+      "weight": 0.9,
+      "action": "block",
+      "tags": ["filesystem"]
+    },
+    {
+      "id": "R004",
+      "name": "FORK_BOMB",
+      "category": "execution_abuse",
+      "pattern": ":(){ :|:& };:",
+      "match_type": "string",
+      "severity": 100,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["dos"]
+    },
+
+    {
+      "id": "R005",
+      "name": "DROP_DATABASE",
+      "category": "command_injection",
+      "pattern": "DROP DATABASE",
+      "match_type": "keyword",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["database"]
+    },
+    {
+      "id": "R006",
+      "name": "TRUNCATE_TABLE",
+      "category": "command_injection",
+      "pattern": "TRUNCATE TABLE",
+      "match_type": "keyword",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "block",
+      "tags": ["database"]
+    },
+    {
+      "id": "R007",
+      "name": "DELETE_ALL_RECORDS",
+      "category": "command_injection",
+      "pattern": "DELETE FROM",
+      "match_type": "keyword",
+      "severity": 80,
+      "weight": 0.8,
+      "action": "warn",
+      "tags": ["database"]
+    },
+
+    {
+      "id": "R008",
+      "name": "AWS_SECRET_EXPOSURE",
+      "category": "data_exfiltration",
+      "pattern": "AWS_SECRET_ACCESS_KEY",
+      "match_type": "keyword",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["secrets"]
+    },
+    {
+      "id": "R009",
+      "name": "PRIVATE_KEY_EXPOSURE",
+      "category": "data_exfiltration",
+      "pattern": "PRIVATE_KEY",
+      "match_type": "keyword",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["secrets"]
+    },
+    {
+      "id": "R010",
+      "name": "GENERIC_API_KEY_EXPOSURE",
+      "category": "data_exfiltration",
+      "pattern": "api_key=",
+      "match_type": "string",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "block",
+      "tags": ["secrets"]
+    },
+
+    {
+      "id": "R011",
+      "name": "CHILD_PROCESS_EXEC",
+      "category": "tool_misuse",
+      "pattern": "child_process.exec",
+      "match_type": "string",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "warn",
+      "tags": ["runtime"]
+    },
+    {
+      "id": "R012",
+      "name": "OS_SYSTEM_CALL",
+      "category": "tool_misuse",
+      "pattern": "os.system(",
+      "match_type": "string",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "warn",
+      "tags": ["runtime"]
+    },
+    {
+      "id": "R013",
+      "name": "SUBPROCESS_EXECUTION",
+      "category": "tool_misuse",
+      "pattern": "subprocess.run(",
+      "match_type": "string",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "warn",
+      "tags": ["runtime"]
+    },
+
+    {
+      "id": "R014",
+      "name": "CURL_PIPE_BASH",
+      "category": "command_injection",
+      "pattern": "curl | bash",
+      "match_type": "string",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["remote_exec"]
+    },
+    {
+      "id": "R015",
+      "name": "WGET_PIPE_SHELL",
+      "category": "command_injection",
+      "pattern": "wget | sh",
+      "match_type": "string",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["remote_exec"]
+    },
+
+    {
+      "id": "R016",
+      "name": "PROMPT_INJECTION_IGNORE",
+      "category": "prompt_injection",
+      "pattern": "ignore previous instructions",
+      "match_type": "string",
+      "severity": 75,
+      "weight": 0.8,
+      "action": "warn",
+      "tags": ["llm"]
+    },
+    {
+      "id": "R017",
+      "name": "PROMPT_ROLE_OVERRIDE",
+      "category": "prompt_injection",
+      "pattern": "you are now",
+      "match_type": "keyword",
+      "severity": 70,
+      "weight": 0.7,
+      "action": "warn",
+      "tags": ["llm"]
+    },
+
+    {
+      "id": "R018",
+      "name": "PRIV_ESCALATION_ADMIN",
+      "category": "privilege_escalation",
+      "pattern": "grant admin access",
+      "match_type": "string",
+      "severity": 90,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["auth"]
+    },
+    {
+      "id": "R019",
+      "name": "AUTH_BYPASS",
+      "category": "privilege_escalation",
+      "pattern": "bypass authentication",
+      "match_type": "string",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["auth"]
+    },
+
+    {
+      "id": "R020",
+      "name": "DATA_EXFIL_REQUEST",
+      "category": "data_exfiltration",
+      "pattern": "send all data",
+      "match_type": "keyword",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "block",
+      "tags": ["exfiltration"]
+    },
+    {
+      "id": "R021",
+      "name": "DUMP_DATABASE",
+      "category": "data_exfiltration",
+      "pattern": "dump database",
+      "match_type": "keyword",
+      "severity": 90,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["database"]
+    },
+
+    {
+      "id": "R022",
+      "name": "INFINITE_LOOP_PATTERN",
+      "category": "execution_abuse",
+      "pattern": "while(true)",
+      "match_type": "string",
+      "severity": 75,
+      "weight": 0.8,
+      "action": "warn",
+      "tags": ["loop"]
+    },
+    {
+      "id": "R023",
+      "name": "RECURSIVE_SELF_CALL",
+      "category": "execution_abuse",
+      "pattern": "function call itself",
+      "match_type": "keyword",
+      "severity": 70,
+      "weight": 0.7,
+      "action": "warn",
+      "tags": ["loop"]
+    },
+
+    {
+      "id": "R024",
+      "name": "SHELL_EXEC_EVAL",
+      "category": "tool_misuse",
+      "pattern": "eval(",
+      "match_type": "string",
+      "severity": 80,
+      "weight": 0.8,
+      "action": "warn",
+      "tags": ["runtime"]
+    },
+    {
+      "id": "R025",
+      "name": "BASE64_EXECUTION",
+      "category": "tool_misuse",
+      "pattern": "base64 --decode",
+      "match_type": "keyword",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "warn",
+      "tags": ["obfuscation"]
+    },
+
+    {
+      "id": "R026",
+      "name": "NETWORK_EXFIL_HTTP",
+      "category": "data_exfiltration",
+      "pattern": "http://",
+      "match_type": "keyword",
+      "severity": 60,
+      "weight": 0.6,
+      "action": "warn",
+      "tags": ["network"]
+    },
+    {
+      "id": "R027",
+      "name": "NETWORK_EXFIL_HTTPS",
+      "category": "data_exfiltration",
+      "pattern": "https://",
+      "match_type": "keyword",
+      "severity": 60,
+      "weight": 0.6,
+      "action": "warn",
+      "tags": ["network"]
+    },
+
+    {
+      "id": "R028",
+      "name": "SSH_KEY_ACCESS",
+      "category": "data_exfiltration",
+      "pattern": "id_rsa",
+      "match_type": "keyword",
+      "severity": 90,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["ssh"]
+    },
+    {
+      "id": "R029",
+      "name": "ENV_FILE_ACCESS",
+      "category": "data_exfiltration",
+      "pattern": ".env",
+      "match_type": "keyword",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "block",
+      "tags": ["config"]
+    },
+
+    {
+      "id": "R030",
+      "name": "DOCKER_SOCKET_ACCESS",
+      "category": "privilege_escalation",
+      "pattern": "/var/run/docker.sock",
+      "match_type": "string",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["container"]
+    },
+    {
+      "id": "R031",
+      "name": "K8S_SECRET_ACCESS",
+      "category": "privilege_escalation",
+      "pattern": "kubeconfig",
+      "match_type": "keyword",
+      "severity": 95,
+      "weight": 1.0,
+      "action": "block",
+      "tags": ["kubernetes"]
+    },
+
+    {
+      "id": "R032",
+      "name": "SUDO_EXECUTION",
+      "category": "privilege_escalation",
+      "pattern": "sudo ",
+      "match_type": "keyword",
+      "severity": 85,
+      "weight": 0.9,
+      "action": "warn",
+      "tags": ["system"]
+    }
+
+  ]
+}
