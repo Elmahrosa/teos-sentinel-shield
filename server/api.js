@@ -128,28 +128,32 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-// ── DATA STORE ──────────────────────────────────────────────
+// ── DATA STORE (Vercel serverless + local) ──────────────────
+// Vercel serverless filesystem is read-only (except /tmp).
+// Use in-memory store as primary, disk as optional cache.
+const isVercel  = process.env.VERCEL === '1';
+const STORE_DIR = isVercel ? '/tmp' : path.join(__dirname, '..', 'data');
+const STORE_FILE = path.join(STORE_DIR, 'events.json');
+let memStore = [];
+
 function loadEvents() {
   try {
-    if (!fs.existsSync(DATA_FILE)) return [];
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-  } catch (e) {
-    log('error', 'Failed to load events store', { error: e.message });
-    return [];
-  }
+    if (memStore.length) return memStore;
+    if (fs.existsSync(STORE_FILE)) {
+      memStore = JSON.parse(fs.readFileSync(STORE_FILE, 'utf8'));
+      return memStore;
+    }
+  } catch (_) {}
+  return memStore;
 }
 
 function saveEvents(events) {
+  memStore = events.slice(-MAX_EVENTS);
   try {
-    const dir = path.dirname(DATA_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const trimmed = events.slice(-MAX_EVENTS);
-    fs.writeFileSync(DATA_FILE, JSON.stringify(trimmed, null, 2));
-    return trimmed;
-  } catch (e) {
-    log('error', 'Failed to save events store', { error: e.message });
-    return events;
-  }
+    if (!fs.existsSync(STORE_DIR)) fs.mkdirSync(STORE_DIR, { recursive: true });
+    fs.writeFileSync(STORE_FILE, JSON.stringify(memStore, null, 2));
+  } catch (_) { /* serverless: disk write fails silently, memory works */ }
+  return memStore;
 }
 
 // ── RISK ENGINE (25 deterministic rules) ────────────────────
@@ -439,8 +443,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'internal_error', reqId: req.id });
 });
 
-// ── EXPORT (Vercel serverless) ──────────────────────────────
-module.exports = { app, RULES, runEngine, loadEvents };
+// ── EXPORT (Vercel serverless + Railway) ──────────────────────
+// Vercel needs `app` as the default export. Railway ws-server
+// destructures { app, RULES, runEngine, loadEvents }.
+module.exports         = app;
+module.exports.RULES   = RULES;
+module.exports.runEngine = runEngine;
+module.exports.loadEvents = loadEvents;
 
 // ── START (local dev / Railway) ─────────────────────────────
 if (require.main === module) {
