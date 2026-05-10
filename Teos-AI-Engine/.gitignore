@@ -1,0 +1,9 @@
+node_modules/
+.env
+prisma/dev.db
+
+.next/
+.vercel
+.env*.local
+_backup_before_auth_fix/
+.env.backup
