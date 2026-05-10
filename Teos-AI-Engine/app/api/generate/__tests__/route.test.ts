@@ -1,20 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { POST } from "../route";
 
-const mockPrisma = {
-  user: {
-    findUnique: vi.fn(),
-    update: vi.fn(),
+const { mockPrisma, mockSession } = vi.hoisted(() => ({
+  mockPrisma: {
+    user: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+    },
+    post: {
+      create: vi.fn(),
+    },
+    $transaction: vi.fn(),
   },
-  post: {
-    create: vi.fn(),
+  mockSession: {
+    getSessionEmail: vi.fn(),
   },
-  $transaction: vi.fn(),
-};
-
-const mockSession = {
-  getSessionEmail: vi.fn(),
-};
+}));
 
 vi.mock("@/lib/db", () => ({
   prisma: mockPrisma,
@@ -23,6 +23,8 @@ vi.mock("@/lib/db", () => ({
 vi.mock("@/lib/session", () => ({
   getSessionEmail: mockSession.getSessionEmail,
 }));
+
+const { POST } = await import("../route");
 
 function createMockRequest(body: Record<string, unknown>, ip = "127.0.0.1") {
   return {
@@ -211,8 +213,6 @@ describe("POST /api/generate", () => {
     await POST(req);
 
     expect(mockPrisma.$transaction).toHaveBeenCalled();
-    const txCall = mockPrisma.$transaction.mock.calls[0][0];
-    const updateCall = txCall.find((c: any) => c?.type === "user" || true);
     expect(mockPrisma.user.update).toHaveBeenCalledWith({
       where: { id: "user-1" },
       data: { postsUsed: 11 },

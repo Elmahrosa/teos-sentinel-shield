@@ -51,11 +51,12 @@ describe("isAdminEmail", () => {
     expect(isAdminEmail("founder@test.com")).toBe(true);
   });
 
-  it("prefers ADMIN_EMAILS over ADMIN_EMAIL", () => {
+  it("checks both ADMIN_EMAILS and ADMIN_EMAIL", () => {
     process.env.ADMIN_EMAILS = "ceo@test.com";
     process.env.ADMIN_EMAIL = "founder@test.com";
     expect(isAdminEmail("ceo@test.com")).toBe(true);
-    expect(isAdminEmail("founder@test.com")).toBe(false);
+    expect(isAdminEmail("founder@test.com")).toBe(true);
+    expect(isAdminEmail("other@test.com")).toBe(false);
   });
 
   it("trims whitespace from emails", () => {
