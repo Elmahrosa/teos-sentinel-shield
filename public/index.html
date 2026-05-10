@@ -1289,7 +1289,7 @@ body::after {
       <div class="content-header" style="padding:20px 28px 0;">
         <div>
           <h1>Command Center</h1>
-          <p id="last-updated">Connecting to engine at localhost:3000 &hellip;</p>
+          <p id="last-updated">Connecting to engine &hellip;</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-ghost" onclick="exportCSV()">&#8595; Export CSV</button>
@@ -1581,8 +1581,8 @@ body::after {
 <div id="toast"></div>
 
 <script>
-const API_BASE = '';
-const WS_URL   = 'ws://localhost:3000';
+const API_BASE = 'https://teos-sentinel-shield.vercel.app';
+const WS_URL   = 'wss://teos-sentinel-shield.vercel.app';
 
 let allEvents   = [];
 let feedFilter  = 'all';
