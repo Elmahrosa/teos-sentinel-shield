@@ -1844,7 +1844,20 @@ function setScanType(btn) {
   scanType = btn.dataset.type;
 }
 
-function setScanTypeFromRule(id) { /* placeholder */ }
+function showEventDetail(id) {
+  var e = allEvents.find(function(ev) { return (ev.id || 0) === id; });
+  if (!e) return;
+  var t = new Date(e.timestamp).toLocaleString('en-GB', { hour12: false });
+  var cmd = (e.cmd || e.command || '—').slice(0, 120);
+  toast('[' + e.verdict.toUpperCase() + '] ' + cmd + ' | score:' + e.score + ' rule:' + (e.ruleId || e.rule || '—') + ' @ ' + t, 5000);
+}
+
+function setScanTypeFromRule(id) {
+  var btn = document.querySelector('.scan-type-btn[data-type="code"]');
+  if (btn) setScanType(btn);
+  var input = document.getElementById('scan-input');
+  if (input) input.focus();
+}
 
 function loadExample(type) {
   document.getElementById('scan-input').value = EXAMPLES[type] || '';
