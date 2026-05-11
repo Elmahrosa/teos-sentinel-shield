@@ -1,0 +1,8 @@
+Contact: mailto:security@teos-sentinel.io
+Expires: 2027-05-08T00:00:00Z
+Preferred-Languages: en, ar
+Canonical: https://teos-landing-seven.vercel.app/security.txt
+Policy: https://teos-landing-seven.vercel.app/responsible-disclosure
+Hiring: https://teos-sentinel.io/careers
+Encryption: https://teos-landing-seven.vercel.app/pgp-key.txt
+Acknowledgments: https://teos-landing-seven.vercel.app/security/hall-of-fame

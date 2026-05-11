@@ -1,2085 +1,1644 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="TEOS Sentinel is the missing infrastructure layer between AI-generated code and real-world execution. Runtime security middleware. AI execution firewall. Policy enforcement.">
-<meta property="og:title" content="TEOS Sentinel — Security Infrastructure for AI Execution">
-<meta property="og:description" content="The missing infrastructure layer between AI-generated code and real-world execution. Generate → Validate → Execute.">
-<title>TEOS Sentinel — Security Infrastructure for AI Execution</title>
+<title>TEOS Sentinel Shield — AI Execution Firewall</title>
+<meta name="description" content="Pre-execution security for autonomous AI agents. BLOCK threats before execution. Built in Alexandria, Egypt. 25 rules. 37 tests passing.">
+<meta property="og:title" content="TEOS Sentinel Shield — AI Execution Firewall">
+<meta property="og:description" content="Your AI agent runs anything. We decide what executes.">
+<meta property="og:image" content="/opengraph-image.png">
+<meta property="og:url" content="https://teos-landing-seven.vercel.app">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://teos-landing-seven.vercel.app">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --black: #0a0a0a;
-    --surface: #111113;
-    --surface2: #18181c;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --red: #e63333;
-    --red-dim: rgba(230,51,51,0.12);
-    --amber: #e6a020;
-    --amber-dim: rgba(230,160,32,0.12);
-    --green: #22c55e;
-    --green-dim: rgba(34,197,94,0.1);
-    --white: #f0ede8;
-    --muted: rgba(240,237,232,0.45);
-    --mono: 'Space Mono', monospace;
-    --sans: 'Syne', sans-serif;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 48px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .nav-logo {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--white);
-    text-decoration: none;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .nav-logo span {
-    color: var(--red);
-  }
-
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--green);
-  }
-
-  .nav-status::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.04em;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--white); }
-
-  .nav-cta {
-    background: var(--red);
-    color: #fff !important;
-    padding: 7px 16px;
-    border-radius: 3px;
-    font-weight: 700 !important;
-  }
-
-  /* ── SECTIONS ── */
-  section { position: relative; z-index: 1; }
-
-  .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 48px;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 100px 0 80px;
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .hero-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 48px;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--red);
-    border: 1px solid rgba(230,51,51,0.3);
-    background: var(--red-dim);
-    padding: 5px 12px;
-    border-radius: 2px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-  }
-
-  .hero-badge::before {
-    content: '▸';
-  }
-
-  .hero h1 {
-    font-size: clamp(42px, 5.5vw, 76px);
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    max-width: 820px;
-    margin-bottom: 28px;
-  }
-
-  .hero h1 em {
-    font-style: normal;
-    color: var(--red);
-  }
-
-  .hero-sub {
-    font-size: 19px;
-    color: var(--muted);
-    max-width: 620px;
-    line-height: 1.65;
-    margin-bottom: 16px;
-  }
-
-  .hero-infra-tag {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--amber);
-    margin-bottom: 44px;
-    letter-spacing: 0.04em;
-  }
-
-  .hero-ctas {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 60px;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--red);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    padding: 14px 28px;
-    border-radius: 3px;
-    text-decoration: none;
-    letter-spacing: 0.04em;
-    transition: background 0.2s, transform 0.1s;
-  }
-
-  .btn-primary:hover { background: #c92a2a; transform: translateY(-1px); }
-
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    color: var(--white);
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 14px 28px;
-    border-radius: 3px;
-    border: 1px solid var(--border2);
-    text-decoration: none;
-    letter-spacing: 0.04em;
-    transition: border-color 0.2s, background 0.2s;
-  }
-
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
-
-  .hero-stats {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-
-  .hero-stat {
-    font-family: var(--mono);
-  }
-
-  .hero-stat-num {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--white);
-    display: block;
-  }
-
-  .hero-stat-label {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  /* scan ticker */
-  .scan-ticker {
-    margin-top: 60px;
-    padding: 16px 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-    position: relative;
-  }
-
-  .scan-ticker::before,
-  .scan-ticker::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 60px;
-    z-index: 2;
-  }
-
-  .scan-ticker::before { left: 0; background: linear-gradient(to right, var(--black), transparent); }
-  .scan-ticker::after { right: 0; background: linear-gradient(to left, var(--black), transparent); }
-
-  .ticker-track {
-    display: flex;
-    gap: 0;
-    animation: ticker 30s linear infinite;
-    width: max-content;
-  }
-
-  @keyframes ticker {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  .ticker-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 32px;
-    font-family: var(--mono);
-    font-size: 12px;
-    white-space: nowrap;
-    border-right: 1px solid var(--border);
-  }
-
-  .tick-block { color: var(--red); }
-  .tick-warn { color: var(--amber); }
-  .tick-allow { color: var(--green); }
-
-  /* ── VIDEO SECTION ── */
-  .video-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 16px;
-  }
-
-  .section-title {
-    font-size: clamp(28px, 3.5vw, 48px);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 20px;
-  }
-
-  .section-sub {
-    color: var(--muted);
-    font-size: 17px;
-    max-width: 560px;
-    line-height: 1.65;
-    margin-bottom: 48px;
-  }
-
-  .video-frame {
-    position: relative;
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    overflow: hidden;
-    background: var(--surface);
-    max-width: 760px;
-  }
-
-  .video-chrome {
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .chrome-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-  }
-
-  .video-embed-wrap {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%;
-    background: #000;
-  }
-
-  .video-embed-wrap iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-
-  .video-caption {
-    padding: 16px 20px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .video-caption::before {
-    content: '▶';
-    color: var(--red);
-  }
-
-  /* ── PROBLEM SECTION ── */
-  .problem-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, transparent, rgba(230,51,51,0.03) 50%, transparent);
-  }
-
-  .gap-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    margin-top: 48px;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .gap-card {
-    background: var(--surface);
-    padding: 28px 32px;
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .gap-card:nth-child(2n) { border-right: none; }
-  .gap-card:nth-child(3), .gap-card:nth-child(4) { border-bottom: none; }
-
-  .gap-card-icon {
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
-
-  .gap-card h4 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-  }
-
-  .gap-card p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .gap-card code {
-    display: block;
-    margin-top: 10px;
-    background: rgba(230,51,51,0.08);
-    border: 1px solid rgba(230,51,51,0.2);
-    padding: 8px 12px;
-    border-radius: 3px;
-    font-size: 12px;
-    color: var(--red);
-    letter-spacing: 0.02em;
-  }
-
-  .ai-execution-gap {
-    margin-top: 48px;
-    padding: 40px;
-    border: 1px solid rgba(230,51,51,0.25);
-    border-radius: 4px;
-    background: var(--red-dim);
-    display: flex;
-    align-items: flex-start;
-    gap: 28px;
-  }
-
-  .gap-icon {
-    font-size: 36px;
-    flex-shrink: 0;
-  }
-
-  .gap-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 8px;
-  }
-
-  .ai-execution-gap h3 {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 10px;
-  }
-
-  .ai-execution-gap p {
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.65;
-    max-width: 560px;
-  }
-
-  /* ── SOLUTION ── */
-  .solution-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .layer-diagram {
-    margin-top: 56px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    max-width: 680px;
-  }
-
-  .layer-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .layer-block {
-    flex: 1;
-    padding: 18px 24px;
-    border-radius: 3px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .layer-top {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-  }
-
-  .layer-sentinel {
-    background: var(--red-dim);
-    border: 2px solid rgba(230,51,51,0.5);
-    color: var(--white);
-    font-size: 15px;
-    padding: 24px 28px;
-    position: relative;
-  }
-
-  .layer-sentinel::after {
-    content: 'SECURITY LAYER';
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 10px;
-    color: var(--red);
-    letter-spacing: 0.1em;
-  }
-
-  .layer-bottom {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-  }
-
-  .layer-arrow {
-    font-family: var(--mono);
-    font-size: 18px;
-    color: var(--muted);
-    text-align: center;
-    width: 100%;
-    padding: 4px 0;
-  }
-
-  .layer-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    text-align: right;
-    white-space: nowrap;
-    min-width: 160px;
-    letter-spacing: 0.02em;
-  }
-
-  .solution-quote {
-    margin-top: 56px;
-    padding: 32px 36px;
-    border-left: 3px solid var(--red);
-    background: var(--surface);
-  }
-
-  .solution-quote p {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: -0.02em;
-    margin-bottom: 8px;
-  }
-
-  .solution-quote span {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* ── HOW IT WORKS ── */
-  .how-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, var(--black), var(--surface) 50%, var(--black));
-  }
-
-  .flow-steps {
-    margin-top: 56px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-
-  .flow-step {
-    background: var(--surface2);
-    padding: 32px 28px;
-    border: 1px solid var(--border);
-    position: relative;
-  }
-
-  .flow-step:not(:last-child)::after {
-    content: '→';
-    position: absolute;
-    right: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: var(--mono);
-    font-size: 16px;
-    color: var(--muted);
-    z-index: 2;
-    background: var(--surface2);
-    padding: 2px 4px;
-  }
-
-  .step-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 12px;
-  }
-
-  .step-title {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: -0.01em;
-  }
-
-  .step-desc {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .verdict-badges {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-  }
-
-  .v-badge {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 2px;
-  }
-
-  .v-block { background: var(--red-dim); color: var(--red); border: 1px solid rgba(230,51,51,0.3); }
-  .v-warn  { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(230,160,32,0.3); }
-  .v-allow { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
-
-  /* full flow row */
-  .full-flow {
-    margin-top: 48px;
-    padding: 28px;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    background: var(--surface);
-    font-family: var(--mono);
-    font-size: 13px;
-    overflow-x: auto;
-  }
-
-  .full-flow-inner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: max-content;
-  }
-
-  .flow-node {
-    padding: 8px 14px;
-    border-radius: 3px;
-    border: 1px solid var(--border2);
-    background: var(--surface2);
-    color: var(--white);
-    font-size: 12px;
-  }
-
-  .flow-node.red { border-color: rgba(230,51,51,0.4); background: var(--red-dim); color: var(--white); }
-
-  .flow-arr { color: var(--muted); }
-
-  /* ── STACK SECTION ── */
-  .stack-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .stack-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 48px;
-  }
-
-  .stack-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--surface);
-    padding: 28px;
-    transition: border-color 0.2s;
-    cursor: pointer;
-  }
-
-  .stack-card:hover { border-color: var(--red); }
-
-  .stack-card-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-
-  .stack-card h4 {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-
-  .stack-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 2px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  .stack-card p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .github-banner {
-    margin-top: 40px;
-    padding: 28px 32px;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  .github-banner-left h4 {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-
-  .github-banner-left p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* ── DEMO ── */
-  .demo-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .demo-terminal {
-    margin-top: 48px;
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    overflow: hidden;
-    max-width: 780px;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-  }
-
-  .terminal-chrome {
-    background: #1a1a1c;
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .t-red { background: #e63333; }
-  .t-yellow { background: #e6a020; }
-  .t-green { background: #22c55e; }
-
-  .terminal-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    margin-left: 8px;
-  }
-
-  .terminal-body {
-    background: #0e0e10;
-    padding: 28px;
-  }
-
-  .t-line {
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.8;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 2px;
-  }
-
-  .t-prompt { color: var(--red); flex-shrink: 0; }
-  .t-cmd { color: var(--white); }
-  .t-comment { color: rgba(240,237,232,0.3); font-style: italic; }
-  .t-output { padding-left: 20px; display: block; }
-
-  .verdict-block {
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: 4px;
-    border: 1px solid rgba(230,51,51,0.3);
-    background: rgba(230,51,51,0.06);
-  }
-
-  .verdict-block.warn {
-    border-color: rgba(230,160,32,0.3);
-    background: rgba(230,160,32,0.06);
-  }
-
-  .verdict-block.allow {
-    border-color: rgba(34,197,94,0.25);
-    background: rgba(34,197,94,0.05);
-  }
-
-  .verdict-head {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-
-  .verdict-row {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.9;
-  }
-
-  .verdict-row span {
-    color: var(--white);
-    display: inline-block;
-    min-width: 80px;
-  }
-
-  /* ── WHO IT'S FOR ── */
-  .for-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .for-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-top: 48px;
-  }
-
-  .for-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--surface);
-    padding: 24px;
-    transition: border-color 0.2s, transform 0.2s;
-    cursor: pointer;
-  }
-
-  .for-card:hover { border-color: var(--red); transform: translateY(-2px); }
-
-  .for-icon { font-size: 24px; margin-bottom: 14px; }
-
-  .for-card h4 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-  }
-
-  .for-card p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  /* ── INTEGRATIONS ── */
-  .integrations-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
-
-  .integrations-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-top: 48px;
-  }
-
-  .integration-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--black);
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    transition: border-color 0.2s;
-    cursor: pointer;
-  }
-
-  .integration-card:hover { border-color: var(--red); }
-
-  .int-icon { font-size: 18px; }
-  .int-status { margin-left: auto; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
-  .int-live { color: var(--green); }
-
-  /* ── COMPARE ── */
-  .compare-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .compare-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 48px;
-    font-family: var(--mono);
-    font-size: 13px;
-  }
-
-  .compare-table th {
-    text-align: left;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border2);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .compare-table th:first-child { color: var(--white); font-size: 13px; letter-spacing: 0; text-transform: none; }
-  .compare-table th.hl { color: var(--white); }
-
-  .compare-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    color: var(--muted);
-    vertical-align: middle;
-  }
-
-  .compare-table td:first-child { color: var(--white); }
-
-  .compare-table tr:last-child td { border-bottom: none; }
-
-  .compare-table td.hl {
-    background: rgba(230,51,51,0.05);
-    color: var(--white);
-  }
-
-  .ck { color: var(--green); }
-  .cx { color: rgba(240,237,232,0.2); }
-  .cp { color: var(--amber); }
-
-  /* ── TRUST ── */
-  .trust-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .trust-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-top: 48px;
-  }
-
-  .trust-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--surface);
-    padding: 24px;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-
-  .trust-card:hover { border-color: var(--red); transform: translateY(-2px); }
-
-  .trust-icon { font-size: 20px; margin-bottom: 14px; }
-
-  .trust-card h4 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .trust-card p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .trust-links {
-    margin-top: 48px;
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    font-family: var(--mono);
-    font-size: 13px;
-  }
-
-  .trust-links a {
-    color: var(--muted);
-    text-decoration: none;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 2px;
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  .trust-links a:hover { color: var(--white); border-color: var(--white); }
-
-  /* ── PRICING ── */
-  .pricing-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, var(--black), var(--surface) 50%, var(--black));
-  }
-
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    margin-top: 48px;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .pricing-card {
-    background: var(--surface);
-    padding: 32px 28px;
-    border-right: 1px solid var(--border);
-    position: relative;
-  }
-
-  .pricing-card:last-child { border-right: none; }
-
-  .pricing-card.featured {
-    background: var(--surface2);
-    border-top: 2px solid var(--red);
-  }
-
-  .pricing-badge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-family: var(--mono);
-    font-size: 10px;
-    background: var(--red);
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 2px;
-    letter-spacing: 0.06em;
-  }
-
-  .pricing-tier {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .pricing-price {
-    font-size: 40px;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .pricing-period {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
-
-  .pricing-features {
-    list-style: none;
-    margin-bottom: 28px;
-  }
-
-  .pricing-features li {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .pricing-features li::before { content: '→'; color: var(--red); }
-
-  .pricing-cta {
-    display: block;
-    text-align: center;
-    padding: 12px;
-    border-radius: 3px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-    border: 1px solid var(--border2);
-    color: var(--white);
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .pricing-cta:hover { background: rgba(255,255,255,0.06); }
-  .pricing-cta.red { background: var(--red); border-color: var(--red); }
-  .pricing-cta.red:hover { background: #c92a2a; }
-
-  .enterprise-box {
-    margin-top: 24px;
-    padding: 28px 32px;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  .enterprise-box h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-  .enterprise-box p { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
-  /* ── FINAL CTA ── */
-  .final-cta {
-    padding: 120px 0;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .final-cta::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(230,51,51,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .final-cta h2 {
-    font-size: clamp(32px, 4vw, 56px);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .final-cta p {
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 14px;
-    margin-bottom: 40px;
-    position: relative;
-  }
-
-  .final-cta-btns {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-    position: relative;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    padding: 56px 48px;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 48px;
-  }
-
-  .footer-brand p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.8;
-    margin-top: 14px;
-    max-width: 280px;
-  }
-
-  .footer-col h5 {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-
-  .footer-col a {
-    display: block;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    margin-bottom: 10px;
-    transition: color 0.2s;
-  }
-
-  .footer-col a:hover { color: var(--white); }
-
-  .footer-bottom {
-    max-width: 1100px;
-    margin: 40px auto 0;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .red-text { color: var(--red); }
-  .amber-text { color: var(--amber); }
-  .green-text { color: var(--green); }
-  .muted { color: var(--muted); }
-
-  /* ── GOVT ── */
-  .govt-section {
-    padding: 96px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .govt-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-top: 48px;
-  }
-
-  .govt-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--surface);
-    padding: 24px;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-
-  .govt-card:hover { border-color: var(--red); transform: translateY(-2px); }
-
-  .govt-flag { font-size: 24px; margin-bottom: 10px; }
-
-  .govt-card h4 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .govt-range {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--amber);
-    margin-bottom: 12px;
-  }
-
-  .govt-card p {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  /* responsive */
-  @media (max-width: 900px) {
-    nav { padding: 0 20px; }
-    .nav-links { display: none; }
-    .hero-inner, .container { padding: 0 24px; }
-    .hero { padding: 60px 0 48px; }
-    .gap-grid, .for-grid, .integrations-grid, .trust-grid, .pricing-grid, .govt-grid, .stack-grid { grid-template-columns: 1fr; }
-    .flow-steps { grid-template-columns: 1fr; }
-    .flow-step:not(:last-child)::after { display: none; }
-    .footer-inner { grid-template-columns: 1fr 1fr; }
-    footer { padding: 40px 24px; }
-    .compare-section { overflow-x: auto; }
-    .compare-table { min-width: 600px; }
-  }
+/* ═══════════════════════════════════════════════
+   EGYPTIAN SOVEREIGN COLOR SYSTEM
+   Lapis · Gold · Carnelian · Alabaster · Kohl
+   ═══════════════════════════════════════════════ */
+:root {
+  --kohl:            #05040a;
+  --kohl-mid:        #09080f;
+  --kohl-surface:    #0e0c16;
+  --kohl-raised:     #131020;
+  --border-1:        #1a1628;
+  --border-2:        #251f3a;
+  --border-3:        #32294d;
+  --gold:            #d4a843;
+  --gold-bright:     #f0c55a;
+  --gold-dim:        #8a6a1f;
+  --gold-deep:       #5c4610;
+  --gold-glow:       rgba(212,168,67,0.15);
+  --gold-trace:      rgba(212,168,67,0.06);
+  --lapis:           #1e4d8c;
+  --lapis-bright:    #2e6bbf;
+  --lapis-dim:       #122d54;
+  --carnelian:       #c0391b;
+  --carnelian-bright:#e8502a;
+  --turquoise:       #00b899;
+  --turquoise-bright:#00d4b0;
+  --amber:           #d4750a;
+  --amber-bright:    #f09020;
+  --alabaster:       #ede8d8;
+  --alabaster-dim:   #9e9680;
+  --alabaster-faint: #3d3928;
+  --font-display:    'Cinzel', 'Times New Roman', serif;
+  --font-mono:       'JetBrains Mono', monospace;
+  --font-serif:      'Fraunces', Georgia, serif;
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--kohl);
+  color: var(--alabaster);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 120% 60% at 50% 0%, rgba(212,168,67,0.07) 0%, transparent 60%),
+    linear-gradient(rgba(212,168,67,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,168,67,0.018) 1px, transparent 1px),
+    linear-gradient(rgba(30,77,140,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,77,140,0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 60px 60px, 60px 60px, 180px 180px, 180px 180px;
+}
+
+.egy-corner {
+  position: absolute; width: 32px; height: 32px;
+  border-color: var(--gold-dim); border-style: solid; opacity: 0.4;
+}
+.egy-corner.tl { top:16px; left:16px; border-width:2px 0 0 2px; }
+.egy-corner.tr { top:16px; right:16px; border-width:2px 2px 0 0; }
+.egy-corner.bl { bottom:16px; left:16px; border-width:0 0 2px 2px; }
+.egy-corner.br { bottom:16px; right:16px; border-width:0 2px 2px 0; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:200;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 16px 56px;
+  background: rgba(5,4,10,0.95);
+  border-bottom: 1px solid var(--border-1);
+  backdrop-filter: blur(20px);
+}
+nav::after {
+  content: '';
+  position: absolute; bottom:-1px; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), var(--lapis-dim), var(--gold-dim), transparent);
+}
+.nav-brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.brand-ankh {
+  width:36px; height:36px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+  box-shadow: 0 0 20px rgba(212,168,67,0.3);
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-weight:700; font-size:15px;
+  letter-spacing:0.15em; color:var(--gold); text-transform:uppercase;
+}
+.nav-links { display:flex; align-items:center; gap:32px; list-style:none; }
+.nav-links a {
+  color:var(--alabaster-dim); text-decoration:none;
+  font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+  font-family:var(--font-display); transition:color 0.2s;
+}
+.nav-links a:hover { color:var(--gold); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%) !important;
+  color: var(--kohl) !important; padding:8px 20px !important; font-weight:700 !important;
+  font-family:var(--font-display) !important; letter-spacing:0.08em !important;
+  border-radius:1px !important; font-size:11px !important;
+  box-shadow:0 0 20px rgba(212,168,67,0.2) !important; transition:all 0.2s !important;
+}
+.nav-cta:hover {
+  background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%) !important;
+  box-shadow:0 0 30px rgba(212,168,67,0.4) !important; transform:translateY(-1px) !important;
+}
+
+/* ── LANG SWITCHER ── */
+.lang-switcher { position:relative; display:flex; align-items:center; }
+.lang-btn {
+  display:flex; align-items:center; gap:7px;
+  background:rgba(212,168,67,0.06); border:1px solid var(--border-3);
+  color:var(--alabaster-dim); cursor:pointer; font-family:var(--font-display);
+  font-size:10px; letter-spacing:0.1em; padding:6px 12px; border-radius:1px; transition:all 0.2s;
+}
+.lang-btn:hover { border-color:var(--gold-dim); color:var(--gold); }
+.lang-btn .lang-arrow { font-size:8px; opacity:0.4; transition:transform 0.2s; }
+.lang-btn.open .lang-arrow { transform:rotate(180deg); }
+.lang-dropdown {
+  position:absolute; top:calc(100% + 6px); right:0;
+  background:var(--kohl-surface); border:1px solid var(--border-2);
+  border-top:2px solid var(--gold-dim); min-width:175px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.7); display:none; z-index:300;
+}
+.lang-dropdown.open { display:block; animation:dropIn 0.15s ease; }
+@keyframes dropIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+.lang-option {
+  display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer;
+  font-family:var(--font-display); font-size:11px; color:var(--alabaster-dim);
+  transition:background 0.15s; border:none; background:transparent;
+  width:100%; text-align:left; letter-spacing:0.06em;
+}
+.lang-option:hover { background:var(--kohl-raised); color:var(--alabaster); }
+.lang-option.active { color:var(--gold); background:rgba(212,168,67,0.06); }
+.lang-option .lo-flag { font-size:16px; }
+.lang-option .lo-native { font-size:10px; color:var(--alabaster-faint); margin-left:auto; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  position:fixed; top:69px; left:0; right:0; z-index:199;
+  background:rgba(0,184,153,0.05); border-bottom:1px solid rgba(0,184,153,0.1);
+  display:flex; align-items:center; justify-content:center;
+  gap:28px; padding:7px 24px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; color:var(--alabaster-dim);
+}
+.status-item { display:flex; align-items:center; gap:6px; }
+.status-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--turquoise); box-shadow:0 0 6px var(--turquoise);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* ── TRANSLATE BAR + TOAST ── */
+.translate-bar {
+  position:fixed; top:0; left:0; right:0; z-index:9999;
+  height:2px; background:var(--border-1); display:none;
+}
+.translate-bar-fill {
+  height:100%; background:linear-gradient(90deg, var(--lapis), var(--gold));
+  width:0%; transition:width 0.3s ease;
+}
+.translate-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:var(--kohl-surface); border:1px solid var(--border-2);
+  border-left:3px solid var(--gold-dim); padding:10px 18px;
+  font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim);
+  box-shadow:0 8px 40px rgba(0,0,0,0.6); display:none; z-index:9999;
+  white-space:nowrap; align-items:center; gap:8px;
+}
+.translate-toast.show { display:flex; animation:toastIn 0.2s ease; }
+@keyframes toastIn {
+  from{opacity:0;transform:translateX(-50%) translateY(8px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+/* ── HERO ── */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:180px 64px 120px; text-align:center; overflow:hidden;
+}
+.hero-sun {
+  position:absolute; top:-100px; left:50%; transform:translateX(-50%);
+  width:600px; height:600px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(ellipse, rgba(212,168,67,0.12) 0%, rgba(30,77,140,0.06) 40%, transparent 70%);
+}
+.hero-rays {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:900px; height:900px; pointer-events:none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg, rgba(212,168,67,0.02) 5deg, transparent 10deg,
+    transparent 30deg, rgba(212,168,67,0.02) 35deg, transparent 40deg,
+    transparent 60deg, rgba(212,168,67,0.02) 65deg, transparent 70deg,
+    transparent 90deg, rgba(212,168,67,0.02) 95deg, transparent 100deg,
+    transparent 120deg, rgba(212,168,67,0.02) 125deg, transparent 130deg,
+    transparent 150deg, rgba(212,168,67,0.02) 155deg, transparent 160deg,
+    transparent 180deg, rgba(212,168,67,0.02) 185deg, transparent 190deg,
+    transparent 210deg, rgba(212,168,67,0.02) 215deg, transparent 220deg,
+    transparent 240deg, rgba(212,168,67,0.02) 245deg, transparent 250deg,
+    transparent 270deg, rgba(212,168,67,0.02) 275deg, transparent 280deg,
+    transparent 300deg, rgba(212,168,67,0.02) 305deg, transparent 310deg,
+    transparent 330deg, rgba(212,168,67,0.02) 335deg, transparent 340deg
+  );
+  animation:rotate-rays 60s linear infinite;
+}
+@keyframes rotate-rays { to { transform:translateX(-50%) rotate(360deg); } }
+.sovereignty-badge {
+  display:inline-flex; align-items:center; gap:10px;
+  border:1px solid var(--gold-dim); background:rgba(212,168,67,0.06);
+  padding:7px 20px; border-radius:1px; font-family:var(--font-display);
+  font-size:10px; color:var(--gold); letter-spacing:0.18em; text-transform:uppercase;
+  margin-bottom:40px; animation:fadeUp 0.6s ease both; position:relative; z-index:1;
+}
+.hero h1 {
+  font-family:var(--font-display); font-weight:900;
+  font-size:clamp(40px,6.5vw,88px); line-height:1.05; letter-spacing:0.03em;
+  max-width:900px; margin-bottom:28px; animation:fadeUp 0.7s ease 0.1s both;
+  position:relative; z-index:1; text-transform:uppercase;
+}
+.hero h1 .gold { color:var(--gold); }
+.hero h1 .strike {
+  color:var(--alabaster-dim); text-decoration:line-through;
+  text-decoration-color:var(--carnelian); text-decoration-thickness:3px;
+}
+.hero-divider {
+  width:180px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), var(--lapis-bright), var(--gold), transparent);
+  margin:0 auto 28px; animation:fadeUp 0.7s ease 0.15s both; position:relative; z-index:1;
+}
+.hero-sub {
+  font-family:var(--font-mono); font-size:14px; color:var(--alabaster-dim);
+  max-width:580px; line-height:1.9; margin-bottom:48px;
+  animation:fadeUp 0.7s ease 0.2s both; position:relative; z-index:1;
+}
+.hero-sub strong { color:var(--alabaster); }
+.hero-ctas {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center;
+  animation:fadeUp 0.7s ease 0.28s both; margin-bottom:14px; position:relative; z-index:1;
+}
+.btn-primary {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+  color:var(--kohl); text-decoration:none; font-family:var(--font-display);
+  font-weight:700; font-size:13px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:15px 36px; border-radius:1px; transition:all 0.25s; position:relative; overflow:hidden;
+  box-shadow:0 0 30px rgba(212,168,67,0.25), 0 4px 20px rgba(0,0,0,0.5);
+}
+.btn-primary::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform:translateX(-100%); transition:transform 0.5s;
+}
+.btn-primary:hover::before { transform:translateX(100%); }
+.btn-primary:hover {
+  background:linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+  transform:translateY(-2px);
+  box-shadow:0 0 50px rgba(212,168,67,0.4), 0 8px 30px rgba(0,0,0,0.6);
+}
+.btn-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border-3); color:var(--alabaster-dim); text-decoration:none;
+  font-family:var(--font-display); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:15px 28px; border-radius:1px; transition:all 0.2s;
+}
+.btn-secondary:hover { border-color:var(--gold-dim); color:var(--gold); }
+.hero-micro {
+  font-size:10px; color:var(--alabaster-faint); letter-spacing:0.1em; text-transform:uppercase;
+  animation:fadeUp 0.7s ease 0.36s both; position:relative; z-index:1;
+}
+
+/* ── TRUST STRIP ── */
+.trust-strip {
+  display:flex; align-items:center; margin-top:72px; padding-top:40px;
+  border-top:1px solid var(--border-1); animation:fadeUp 0.7s ease 0.44s both;
+  position:relative; z-index:1; flex-wrap:wrap; justify-content:center;
+}
+.trust-item {
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-display); font-size:11px; color:var(--alabaster-dim);
+  letter-spacing:0.06em; text-transform:uppercase; padding:0 36px;
+  border-right:1px solid var(--border-1);
+}
+.trust-item:last-child { border-right:none; }
+.trust-num {
+  font-size:28px; font-weight:900; color:var(--gold);
+  font-family:var(--font-display); letter-spacing:-0.02em; line-height:1;
+}
+
+/* ── THREAT TICKER ── */
+.threat-ticker {
+  background:rgba(192,57,27,0.04);
+  border-top:1px solid rgba(192,57,27,0.08);
+  border-bottom:1px solid rgba(192,57,27,0.08);
+  padding:14px 0; overflow:hidden; position:relative; z-index:1;
+}
+.ticker-inner {
+  display:flex; gap:80px;
+  animation:ticker 35s linear infinite; white-space:nowrap;
+}
+.ticker-inner:hover { animation-play-state:paused; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.tick-item {
+  font-family:var(--font-mono); font-size:11px; color:var(--alabaster-faint);
+  display:flex; align-items:center; gap:12px; letter-spacing:0.05em;
+}
+.tick-block { color:var(--carnelian-bright); font-weight:700; }
+.tick-allow { color:var(--turquoise); font-weight:700; }
+.tick-warn  { color:var(--amber-bright); font-weight:700; }
+
+/* ── SHARED SECTION ── */
+.section-wrap { padding:110px 64px; max-width:1300px; margin:0 auto; position:relative; }
+.section-label {
+  font-family:var(--font-display); font-size:9px; letter-spacing:0.25em;
+  text-transform:uppercase; color:var(--gold-dim); margin-bottom:16px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-label::before {
+  content:''; width:24px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-dim));
+}
+.section-title {
+  font-family:var(--font-display); font-weight:900;
+  font-size:clamp(26px,3.5vw,50px); letter-spacing:0.04em; line-height:1.1;
+  text-transform:uppercase; margin-bottom:14px;
+}
+.section-sub {
+  font-family:var(--font-mono); font-size:13px; color:var(--alabaster-dim);
+  max-width:540px; line-height:1.8; margin-bottom:60px;
+}
+
+/* ── VIDEO ── */
+.video-wrapper {
+  width:100%; overflow:hidden; border:1px solid var(--gold-dim);
+  box-shadow:0 0 80px rgba(212,168,67,0.1), 0 0 0 1px var(--border-1); position:relative;
+}
+.video-wrapper video {
+  width:100%; display:block;
+  background:var(--kohl-mid);
+}
+.video-timeline {
+  display:flex; background:var(--kohl-surface); border-top:1px solid var(--border-1);
+}
+.vt-step { flex:1; padding:14px 18px; border-right:1px solid var(--border-1); }
+.vt-step:last-child { border-right:none; }
+.vt-time {
+  font-family:var(--font-mono); font-size:9px; color:var(--gold-dim);
+  letter-spacing:0.1em; margin-bottom:3px;
+}
+.vt-label { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); }
+.vt-code {
+  font-family:var(--font-mono); font-size:10px; color:var(--turquoise);
+  background:rgba(0,184,153,0.08); padding:1px 6px; border-radius:2px;
+}
+
+/* ── TERMINALS ── */
+.terminals { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.term {
+  background:var(--kohl-surface); border:1px solid var(--border-2); overflow:hidden;
+  transition:all 0.25s;
+}
+.term:hover { border-color:var(--border-3); transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,0.5); }
+.term-bar {
+  display:flex; align-items:center; gap:6px; padding:10px 14px;
+  border-bottom:1px solid var(--border-1); background:rgba(255,255,255,0.015);
+}
+.td { width:9px; height:9px; border-radius:50%; }
+.td-r { background:#c0392b; } .td-y { background:#d4a017; } .td-g { background:#27ae60; }
+.term-tag {
+  margin-left:auto; font-family:var(--font-display);
+  font-size:9px; color:var(--alabaster-faint); letter-spacing:0.1em; text-transform:uppercase;
+}
+.term-body { padding:18px; font-family:var(--font-mono); font-size:11px; line-height:2; }
+.tp  { color:var(--gold); }
+.tc  { color:var(--alabaster); }
+.tmt { color:var(--alabaster-faint); }
+.tbl { color:var(--carnelian-bright); font-weight:700; font-size:12px; }
+.twn { color:var(--amber-bright); font-weight:700; font-size:12px; }
+.tok { color:var(--turquoise-bright); font-weight:700; font-size:12px; }
+.tsc { color:var(--alabaster-faint); font-size:10px; }
+.tr  { color:var(--alabaster-faint); font-size:10px; padding-left:12px; }
+.term-verdict {
+  padding:12px 18px; border-top:1px solid var(--border-1);
+  display:flex; align-items:center; gap:10px;
+}
+.verdict-pill {
+  font-family:var(--font-display); font-size:9px; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:1px;
+}
+.v-block { background:rgba(192,57,27,0.15); color:var(--carnelian-bright); border:1px solid rgba(192,57,27,0.3); }
+.v-warn  { background:rgba(212,117,10,0.15); color:var(--amber-bright); border:1px solid rgba(212,117,10,0.3); }
+.v-allow { background:rgba(0,184,153,0.12); color:var(--turquoise-bright); border:1px solid rgba(0,184,153,0.25); }
+.verdict-rule { font-family:var(--font-mono); font-size:10px; color:var(--alabaster-faint); letter-spacing:0.05em; }
+
+/* ── ENGINE STATS ── */
+.engine-stats-section {
+  background:var(--kohl-mid); border-top:1px solid var(--border-1);
+  border-bottom:1px solid var(--border-1); padding:0;
+}
+.engine-stats-inner {
+  max-width:1300px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-left:1px solid var(--border-1);
+}
+.estat {
+  padding:52px 36px; text-align:center; border-right:1px solid var(--border-1);
+  position:relative; transition:background 0.2s;
+}
+.estat:hover { background:var(--kohl-surface); }
+.estat::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  opacity:0; transition:opacity 0.2s;
+}
+.estat:hover::after { opacity:1; }
+.estat-num {
+  font-family:var(--font-display); font-weight:900; font-size:54px;
+  color:var(--gold); letter-spacing:-0.01em; line-height:1; margin-bottom:8px;
+  text-shadow:0 0 40px rgba(212,168,67,0.3);
+}
+.estat-label { font-family:var(--font-display); font-size:9px; color:var(--alabaster-faint); letter-spacing:0.15em; text-transform:uppercase; }
+.estat-sub { font-family:var(--font-mono); font-size:10px; color:var(--alabaster-faint); margin-top:4px; }
+
+/* ── FEATURES ── */
+.features-bg {
+  background:var(--kohl-mid); border-top:1px solid var(--border-1);
+  border-bottom:1px solid var(--border-1); padding:110px 0;
+}
+.features-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--border-1); border:1px solid var(--border-1); margin-top:60px;
+}
+.feat {
+  background:var(--kohl-mid); padding:40px; transition:background 0.2s; position:relative;
+}
+.feat:hover { background:var(--kohl-raised); }
+.feat::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  opacity:0; transition:opacity 0.2s;
+}
+.feat:hover::before { opacity:1; }
+.feat-icon {
+  width:50px; height:50px; border:1px solid var(--border-2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; margin-bottom:20px; background:rgba(212,168,67,0.05);
+}
+.feat-cmd { font-family:var(--font-mono); font-size:12px; color:var(--turquoise); letter-spacing:0.06em; margin-bottom:10px; }
+.feat-title {
+  font-family:var(--font-display); font-weight:700; font-size:17px; margin-bottom:10px;
+  letter-spacing:0.04em; text-transform:uppercase; color:var(--alabaster);
+}
+.feat-desc { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); line-height:1.8; }
+.feat-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:16px; }
+.ftag {
+  font-family:var(--font-mono); font-size:9px; letter-spacing:0.06em;
+  padding:2px 8px; border:1px solid var(--border-2); color:var(--alabaster-faint);
+}
+
+/* ── HOW IT WORKS ── */
+.flow-steps {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:0; margin-top:60px; position:relative;
+}
+.flow-steps::before {
+  content:''; position:absolute; top:27px; left:12%; right:12%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-dim), var(--lapis-dim), var(--gold-dim), transparent);
+  opacity:0.5;
+}
+.flow-step { padding:0 24px; }
+.step-n {
+  width:54px; height:54px; border:1px solid var(--gold-dim);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:900; font-size:20px;
+  color:var(--gold); margin-bottom:24px; background:var(--kohl);
+  position:relative; z-index:1; transition:all 0.2s; letter-spacing:0.05em;
+}
+.flow-step:hover .step-n {
+  background:rgba(212,168,67,0.1); border-color:var(--gold);
+  box-shadow:0 0 20px rgba(212,168,67,0.2);
+}
+.step-ti {
+  font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:10px;
+  letter-spacing:0.06em; text-transform:uppercase; color:var(--alabaster);
+}
+.step-desc { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); line-height:1.7; }
+
+/* ── COMPARE TABLE ── */
+.compare-table { width:100%; border-collapse:collapse; margin-top:60px; }
+.compare-table th {
+  padding:14px 22px; text-align:left; font-family:var(--font-display); font-size:10px;
+  font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  border-bottom:1px solid var(--border-2); color:var(--alabaster-dim);
+}
+.compare-table th.ours { color:var(--gold); background:rgba(212,168,67,0.04); }
+.compare-table td {
+  padding:14px 22px; font-size:11px; border-bottom:1px solid var(--border-1);
+  color:var(--alabaster-dim); font-family:var(--font-mono);
+}
+.compare-table td.ours { background:rgba(212,168,67,0.025); }
+.compare-table tr:hover td { background:rgba(255,255,255,0.012); }
+.compare-table tr:hover td.ours { background:rgba(212,168,67,0.05); }
+.cy { color:var(--turquoise-bright); } .cn { color:var(--alabaster-faint); } .cp { color:var(--amber-bright); }
+
+/* ── GOVERNMENT ── */
+.gov-tabs { display:flex; margin-bottom:40px; border:1px solid var(--border-2); }
+.gov-tab {
+  flex:1; padding:12px 20px; text-align:center; font-family:var(--font-display);
+  font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--alabaster-dim); cursor:pointer; border:none; background:transparent;
+  border-right:1px solid var(--border-2); transition:all 0.2s;
+}
+.gov-tab:last-child { border-right:none; }
+.gov-tab.active { color:var(--gold); background:rgba(212,168,67,0.06); border-bottom:2px solid var(--gold-dim); }
+.gov-tab:hover:not(.active) { color:var(--alabaster); background:rgba(255,255,255,0.02); }
+.gov-panel { display:none; }
+.gov-panel.active { display:block; }
+.gov-target {
+  display:flex; gap:24px; padding:24px; border:1px solid var(--border-2);
+  margin-bottom:10px; background:var(--kohl-surface); transition:all 0.2s;
+  position:relative; overflow:hidden;
+}
+.gov-target::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; }
+.gov-target.t1::before { background:var(--gold); }
+.gov-target.t2::before { background:var(--lapis); }
+.gov-target:hover { background:var(--kohl-raised); border-color:var(--border-3); }
+.gov-copy { flex:1; }
+.gt-tier {
+  font-family:var(--font-display); font-size:8px; letter-spacing:0.15em;
+  text-transform:uppercase; margin-bottom:4px;
+}
+.t1 .gt-tier { color:var(--gold-dim); }
+.t2 .gt-tier { color:var(--lapis-bright); }
+.gt-name {
+  font-family:var(--font-display); font-weight:700; font-size:15px;
+  color:var(--alabaster); letter-spacing:0.06em; margin-bottom:6px; text-transform:uppercase;
+}
+.gt-angle { font-family:var(--font-mono); font-size:11px; color:var(--gold); font-style:italic; margin-bottom:8px; }
+.gt-desc { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); line-height:1.7; }
+.gt-deal {
+  flex-shrink:0; font-family:var(--font-display); font-size:11px; color:var(--turquoise);
+  letter-spacing:0.06em; text-align:right; white-space:nowrap; padding-left:24px;
+}
+.outreach-box {
+  border:1px solid var(--border-2); border-left:3px solid var(--gold-dim);
+  padding:24px 28px; background:rgba(212,168,67,0.03); margin-top:28px;
+}
+.ob-title {
+  font-family:var(--font-display); font-size:9px; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--gold-dim); margin-bottom:14px;
+}
+.ob-script {
+  font-family:var(--font-mono); font-size:12px; color:var(--alabaster-dim);
+  line-height:2; border-left:2px solid var(--border-2); padding-left:18px;
+}
+.ob-script strong { color:var(--alabaster); }
+.ob-script .danger { color:var(--carnelian-bright); }
+.ob-script .safe   { color:var(--gold); }
+
+/* ── PRICING ── */
+.pricing-bg {
+  background:var(--kohl-mid); border-top:1px solid var(--border-1);
+  border-bottom:1px solid var(--border-1); padding:110px 0;
+}
+.pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:60px; }
+.plan {
+  background:var(--kohl-surface); border:1px solid var(--border-2);
+  padding:40px; position:relative; transition:all 0.2s;
+}
+.plan:hover { border-color:var(--border-3); transform:translateY(-4px); }
+.plan.pop { border-color:var(--gold-dim); background:rgba(212,168,67,0.025); }
+.plan.pop:hover { border-color:var(--gold); }
+.pop-badge {
+  position:absolute; top:-11px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color:var(--kohl); font-family:var(--font-display); font-size:9px;
+  font-weight:700; letter-spacing:0.15em; padding:4px 14px; white-space:nowrap;
+}
+.plan-name { font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px; color:var(--alabaster); }
+.plan-price { display:flex; align-items:baseline; gap:4px; margin-bottom:6px; }
+.price-n {
+  font-family:var(--font-display); font-weight:900; font-size:50px; color:var(--gold);
+  letter-spacing:-0.02em; text-shadow:0 0 30px rgba(212,168,67,0.25);
+}
+.price-p { font-size:13px; color:var(--alabaster-faint); font-family:var(--font-mono); }
+.plan-tag {
+  font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim);
+  margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--border-1);
+}
+.plan-feats { list-style:none; margin-bottom:28px; }
+.plan-feats li {
+  font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim);
+  padding:7px 0; display:flex; align-items:center; gap:10px;
+}
+.plan-feats li::before { content:'𓂀'; color:var(--gold-dim); font-size:12px; flex-shrink:0; }
+.btn-plan {
+  display:block; text-align:center; padding:12px 24px;
+  font-family:var(--font-display); font-weight:700; font-size:12px;
+  letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; transition:all 0.2s;
+}
+.btn-gold {
+  background:linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color:var(--kohl); box-shadow:0 0 20px rgba(212,168,67,0.2);
+}
+.btn-gold:hover { box-shadow:0 0 35px rgba(212,168,67,0.4); transform:translateY(-1px); }
+.btn-out { border:1px solid var(--border-2); color:var(--alabaster-dim); }
+.btn-out:hover { border-color:var(--gold-dim); color:var(--gold); }
+.enterprise-row {
+  margin-top:36px; border:1px solid var(--border-2); border-left:3px solid var(--gold-dim);
+  padding:26px 32px; display:flex; align-items:center; justify-content:space-between;
+  gap:24px; background:rgba(212,168,67,0.02);
+}
+.ent-h { font-family:var(--font-display); font-weight:700; font-size:16px; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase; }
+.ent-p { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); line-height:1.6; }
+.btn-ent {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--gold-dim); color:var(--gold); text-decoration:none;
+  padding:10px 22px; font-family:var(--font-display); font-weight:700; font-size:11px;
+  letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; transition:all 0.2s;
+}
+.btn-ent:hover { background:rgba(212,168,67,0.08); border-color:var(--gold); box-shadow:0 0 20px rgba(212,168,67,0.15); }
+
+/* ── SOVEREIGN ── */
+.sovereign-section {
+  padding:110px 64px; max-width:1300px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+}
+.sovereign-copy h2 {
+  font-family:var(--font-display); font-weight:900; font-size:clamp(26px,3.5vw,46px);
+  letter-spacing:0.04em; line-height:1.1; text-transform:uppercase;
+  margin-bottom:20px; color:var(--alabaster);
+}
+.sovereign-copy h2 .gold { color:var(--gold); }
+.sovereign-copy p { font-family:var(--font-mono); font-size:12px; color:var(--alabaster-dim); line-height:1.9; margin-bottom:16px; }
+.sovereign-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:28px; }
+.spill {
+  font-family:var(--font-display); font-size:9px; letter-spacing:0.1em;
+  padding:5px 12px; border:1px solid var(--border-2); color:var(--alabaster-faint);
+  text-transform:uppercase; transition:all 0.2s; cursor:default;
+}
+.spill:hover { border-color:var(--gold-dim); color:var(--gold); }
+.sov-metrics { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.smet {
+  background:var(--kohl-surface); border:1px solid var(--border-2);
+  padding:26px; transition:all 0.2s;
+}
+.smet:hover { border-color:var(--border-3); }
+.smet-n {
+  font-family:var(--font-display); font-weight:900; font-size:34px; color:var(--gold);
+  letter-spacing:-0.02em; margin-bottom:5px; text-shadow:0 0 20px rgba(212,168,67,0.2);
+}
+.smet-l { font-family:var(--font-display); font-size:9px; color:var(--alabaster-faint); letter-spacing:0.12em; text-transform:uppercase; }
+
+/* ── ROADMAP ── */
+.roadmap-bg { background:var(--kohl-mid); border-top:1px solid var(--border-1); padding:110px 0; }
+.roadmap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:60px; }
+.rm-card {
+  border:1px solid var(--border-2); padding:26px; position:relative;
+  overflow:hidden; transition:all 0.2s; background:var(--kohl-mid);
+}
+.rm-card:hover { border-color:var(--border-3); transform:translateY(-2px); }
+.rm-card.live { border-color:rgba(0,184,153,0.3); background:rgba(0,184,153,0.03); }
+.rm-card.live::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--turquoise), transparent);
+}
+.rm-q { font-family:var(--font-display); font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--alabaster-faint); margin-bottom:12px; }
+.rm-q.live-q { color:var(--turquoise); display:flex; align-items:center; gap:6px; }
+.rm-dot {
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--turquoise); box-shadow:0 0 6px var(--turquoise); animation:pulse 2s infinite;
+}
+.rm-title { font-family:var(--font-display); font-weight:700; font-size:13px; margin-bottom:8px; letter-spacing:0.04em; text-transform:uppercase; color:var(--alabaster); }
+.rm-desc { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); line-height:1.7; }
+
+/* ── FINAL CTA ── */
+.final-cta {
+  padding:160px 64px; text-align:center; position:relative; overflow:hidden;
+}
+.final-cta::before {
+  content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:900px; height:700px;
+  background:radial-gradient(ellipse, rgba(212,168,67,0.08) 0%, rgba(30,77,140,0.04) 40%, transparent 70%);
+  pointer-events:none;
+}
+.final-cta h2 {
+  font-family:var(--font-display); font-weight:900; font-size:clamp(32px,5vw,68px);
+  letter-spacing:0.05em; line-height:1.1; text-transform:uppercase;
+  margin-bottom:20px; position:relative; color:var(--alabaster);
+}
+.final-cta h2 .gold { color:var(--gold); }
+.final-cta p { font-family:var(--font-mono); font-size:13px; color:var(--alabaster-dim); max-width:480px; margin:0 auto 44px; line-height:1.9; position:relative; }
+.final-btns { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; position:relative; }
+
+/* ── FOOTER ── */
+footer { border-top:1px solid var(--border-1); background:var(--kohl-mid); }
+footer::before {
+  content:''; display:block; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-dim), var(--lapis-dim), var(--gold-dim), transparent);
+}
+.footer-inner {
+  max-width:1300px; margin:0 auto; padding:64px 64px 44px;
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:44px;
+}
+.foot-brand-name { font-family:var(--font-display); font-weight:700; font-size:14px; letter-spacing:0.1em; color:var(--gold); margin-bottom:14px; text-transform:uppercase; }
+.foot-brand-desc { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); line-height:1.8; margin-bottom:16px; }
+.foot-contact {
+  font-family:var(--font-mono); font-size:11px; color:var(--gold-dim);
+  text-decoration:none; border-bottom:1px solid var(--gold-dim); padding-bottom:1px; transition:color 0.2s;
+}
+.foot-contact:hover { color:var(--gold); }
+.foot-col h5 { font-family:var(--font-display); font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:var(--alabaster-faint); margin-bottom:18px; }
+.foot-col ul { list-style:none; }
+.foot-col li { margin-bottom:10px; }
+.foot-col a { font-family:var(--font-mono); font-size:11px; color:var(--alabaster-dim); text-decoration:none; transition:color 0.2s; }
+.foot-col a:hover { color:var(--gold); }
+.footer-bottom {
+  max-width:1300px; margin:0 auto; padding:20px 64px;
+  border-top:1px solid var(--border-1);
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--font-display); font-size:10px; color:var(--alabaster-faint);
+  letter-spacing:0.08em; text-transform:uppercase; flex-wrap:wrap; gap:10px;
+}
+
+/* ── ANIMATIONS ── */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── RTL ── */
+[dir="rtl"] .nav-links { flex-direction:row-reverse; }
+[dir="rtl"] .hero h1,[dir="rtl"] .hero-sub,[dir="rtl"] .section-title,
+[dir="rtl"] .section-sub,[dir="rtl"] .feat-desc,[dir="rtl"] .step-desc,
+[dir="rtl"] .rm-desc,[dir="rtl"] .gt-desc { direction:rtl; text-align:right; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--kohl); }
+::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:2px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  nav { padding:16px 28px; }
+  .hero,.section-wrap,.sovereign-section,.final-cta { padding-left:28px; padding-right:28px; }
+  .terminals { grid-template-columns:1fr; }
+  .flow-steps { grid-template-columns:1fr 1fr; gap:40px; }
+  .flow-steps::before { display:none; }
+  .features-grid { grid-template-columns:1fr 1fr; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .sovereign-section { grid-template-columns:1fr; gap:40px; }
+  .roadmap-grid { grid-template-columns:1fr 1fr; }
+  .engine-stats-inner { grid-template-columns:1fr 1fr; }
+  .footer-inner { grid-template-columns:1fr 1fr; }
+  .enterprise-row { flex-direction:column; align-items:flex-start; }
+}
+@media(max-width:640px){
+  .nav-links { display:none; }
+  .features-grid,.roadmap-grid { grid-template-columns:1fr; }
+  .video-timeline { flex-direction:column; }
+  .footer-inner { grid-template-columns:1fr; }
+  .footer-bottom { flex-direction:column; }
+  .trust-strip { gap:0; }
+  .trust-item {
+    border-right:none; border-bottom:1px solid var(--border-1);
+    width:100%; justify-content:center; padding:16px;
+  }
+}
 </style>
 </head>
 <body>
 
+<!-- TRANSLATE PROGRESS BAR -->
+<div class="translate-bar" id="translateBar"><div class="translate-bar-fill" id="translateFill"></div></div>
+<div class="translate-toast" id="translateToast">
+  <span id="toastFlag">𓂀</span>
+  <span id="toastMsg">Translating...</span>
+</div>
+
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">𓂀 <span>TEOS</span> Sentinel</a>
-  <div class="nav-status">ENGINE v2.0 ONLINE</div>
+  <a href="#" class="nav-brand">
+    <div class="brand-ankh">𓂀</div>
+    <span class="brand-name">TEOS Sentinel</span>
+  </a>
   <ul class="nav-links">
-    <li><a href="#video-demo">Demo</a></li>
-    <li><a href="#how">Architecture</a></li>
-    <li><a href="#stack">Stack</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#compare">Compare</a></li>
+    <li><a href="#government">Government</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank">GitHub</a></li>
-    <li><a href="https://t.me/teoslinker_bot" class="nav-cta">Free Scan →</a></li>
+    <li>
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-btn" id="langBtn" onclick="toggleLangMenu(event)">
+          <span id="currentFlag">🌐</span>
+          <span id="currentLangLabel">EN</span>
+          <span class="lang-arrow">▼</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <button class="lang-option active" onclick="switchLang('en','🇺🇸','EN',false)" id="opt-en">
+            <span class="lo-flag">🇺🇸</span><span>English</span><span class="lo-native">English</span>
+          </button>
+          <button class="lang-option" onclick="switchLang('ar','🇸🇦','AR',true)" id="opt-ar">
+            <span class="lo-flag">🇸🇦</span><span>Arabic</span><span class="lo-native">العربية</span>
+          </button>
+          <button class="lang-option" onclick="switchLang('id','🇮🇩','ID',false)" id="opt-id">
+            <span class="lo-flag">🇮🇩</span><span>Indonesian</span><span class="lo-native">Bahasa Indonesia</span>
+          </button>
+        </div>
+      </div>
+    </li>
+    <li><a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="nav-cta">Try Free →</a></li>
   </ul>
 </nav>
 
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-item"><div class="status-dot"></div> MCP Engine v2.4 — Online</div>
+  <div class="status-item"><div class="status-dot"></div> Telegram Bot — Online</div>
+  <div class="status-item"><div class="status-dot"></div> 25 Named Rules Active</div>
+  <div class="status-item"><div class="status-dot"></div> 37 Tests Passing</div>
+</div>
+
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-inner">
-    <div class="hero-badge">Runtime Security Infrastructure · Engine v2.0</div>
+  <div class="hero-sun"></div>
+  <div class="hero-rays"></div>
+  <div class="egy-corner tl"></div>
+  <div class="egy-corner tr"></div>
+  <div class="egy-corner bl"></div>
+  <div class="egy-corner br"></div>
 
-    <h1>Security infrastructure<br>for <em>AI-generated</em> code.</h1>
+  <div class="sovereignty-badge">
+    <div class="status-dot"></div>
+    Engine v2.4 Stable · Alexandria, Egypt · 75+ Nations
+  </div>
 
-    <p class="hero-sub">
-      TEOS Sentinel is the missing infrastructure layer between AI-generated code and real-world execution. It analyzes commands before they run and blocks dangerous actions in real time.
-    </p>
+  <h1>
+    Your AI agent runs<br>
+    <span class="strike">anything.</span><br>
+    <span class="gold">We decide what executes.</span>
+  </h1>
 
-    <p class="hero-infra-tag">
-      Think: Cloudflare for traffic. Sentry for errors. Stripe for payments.<br>
-      TEOS Sentinel → for AI execution safety.
-    </p>
+  <div class="hero-divider"></div>
 
-    <div class="hero-ctas">
-      <a href="https://t.me/teoslinker_bot" target="_blank" class="btn-primary">𓂀 Start Free Scan →</a>
-      <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank" class="btn-ghost">⭐ View GitHub Stack</a>
-      <a href="#video-demo" class="btn-ghost">▶ Watch Demo</a>
-    </div>
+  <p class="hero-sub">
+    <strong>TEOS Sentinel Shield</strong> intercepts AI-generated commands,<br>
+    scripts, and pipelines — and blocks threats <strong>before execution</strong>.<br>
+    Not after the breach. Before.
+  </p>
 
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="hero-stat-num">25</span>
-        <span class="hero-stat-label">Named Rules Active</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">37</span>
-        <span class="hero-stat-label">Tests Passing</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num red-text">v2.0</span>
-        <span class="hero-stat-label">Engine Stable</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">75+</span>
-        <span class="hero-stat-label">Nations</span>
-      </div>
-    </div>
+  <div class="hero-ctas">
+    <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-primary">𓂀 Scan Your First Command →</a>
+    <a href="#video-demo" class="btn-secondary">Watch Demo ↓</a>
+  </div>
+  <p class="hero-micro">5 free scans · no signup · no credit card · Telegram instant</p>
 
-    <!-- scan ticker -->
-    <div class="scan-ticker">
-      <div class="ticker-track">
-        <span class="ticker-item tick-block">🛑 BLOCKED · rm -rf / · R01 · 100/100</span>
-        <span class="ticker-item tick-warn">⚠️ WARNED · DROP TABLE users; · R09 · 75/100</span>
-        <span class="ticker-item tick-allow">✅ ALLOWED · console.log("hello") · R00 · 0/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · curl malware.sh | bash · R03 · 95/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · eval(atob("...")) · R07 · 88/100</span>
-        <span class="ticker-item tick-warn">⚠️ WARNED · event-stream@3.3.6 · R14 · 70/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · chmod 777 /etc/passwd · R02 · 90/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · DROP DATABASE prod; · R09 · 100/100</span>
-        <!-- duplicate for seamless loop -->
-        <span class="ticker-item tick-block">🛑 BLOCKED · rm -rf / · R01 · 100/100</span>
-        <span class="ticker-item tick-warn">⚠️ WARNED · DROP TABLE users; · R09 · 75/100</span>
-        <span class="ticker-item tick-allow">✅ ALLOWED · console.log("hello") · R00 · 0/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · curl malware.sh | bash · R03 · 95/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · eval(atob("...")) · R07 · 88/100</span>
-        <span class="ticker-item tick-warn">⚠️ WARNED · event-stream@3.3.6 · R14 · 70/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · chmod 777 /etc/passwd · R02 · 90/100</span>
-        <span class="ticker-item tick-block">🛑 BLOCKED · DROP DATABASE prod; · R09 · 100/100</span>
+  <div class="trust-strip">
+    <div class="trust-item"><span class="trust-num" data-target="25">25</span>&nbsp;Named Rules</div>
+    <div class="trust-item"><span class="trust-num" data-target="37">37</span>&nbsp;Tests Passing</div>
+    <div class="trust-item"><span class="trust-num" data-target="75">75</span>+&nbsp;Nations</div>
+    <div class="trust-item"><span class="trust-num" data-target="528">528</span>&nbsp;Community</div>
+  </div>
+</section>
+
+<!-- THREAT TICKER -->
+<div class="threat-ticker">
+  <div class="ticker-inner">
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>rm -rf / · R01.DESTRUCTIVE_SHELL · 100/100</span></span>
+    <span class="tick-item"><span class="tick-warn">⚠️ WARNED</span><span>DROP TABLE users; · R09.SQL_INJECTION · 75/100</span></span>
+    <span class="tick-item"><span class="tick-allow">✅ ALLOWED</span><span>console.log("hello") · R00.CLEAN · 0/100</span></span>
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>curl http://malware.sh | bash · R03.CURL_EXEC · 95/100</span></span>
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>eval(atob("...")) · R07.BASE64_EXEC · 88/100</span></span>
+    <span class="tick-item"><span class="tick-warn">⚠️ WARNED</span><span>event-stream@3.3.6 · R14.MALICIOUS_PKG · 70/100</span></span>
+    <span class="tick-item"><span class="tick-allow">✅ ALLOWED</span><span>npm install lodash · R00.CLEAN · 0/100</span></span>
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>chmod 777 /etc/passwd · R02.CHMOD_ESC · 90/100</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>rm -rf / · R01.DESTRUCTIVE_SHELL · 100/100</span></span>
+    <span class="tick-item"><span class="tick-warn">⚠️ WARNED</span><span>DROP TABLE users; · R09.SQL_INJECTION · 75/100</span></span>
+    <span class="tick-item"><span class="tick-allow">✅ ALLOWED</span><span>console.log("hello") · R00.CLEAN · 0/100</span></span>
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>curl http://malware.sh | bash · R03.CURL_EXEC · 95/100</span></span>
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>eval(atob("...")) · R07.BASE64_EXEC · 88/100</span></span>
+    <span class="tick-item"><span class="tick-warn">⚠️ WARNED</span><span>event-stream@3.3.6 · R14.MALICIOUS_PKG · 70/100</span></span>
+    <span class="tick-item"><span class="tick-allow">✅ ALLOWED</span><span>npm install lodash · R00.CLEAN · 0/100</span></span>
+    <span class="tick-item"><span class="tick-block">🛑 BLOCKED</span><span>chmod 777 /etc/passwd · R02.CHMOD_ESC · 90/100</span></span>
+  </div>
+</div>
+
+<!-- VIDEO DEMO -->
+<section id="video-demo">
+  <div class="section-wrap">
+    <div class="section-label reveal">Live Demo</div>
+    <h2 class="section-title reveal">See TEOS block a real threat<br><span class="gold">in under 2 seconds.</span></h2>
+    <p class="section-sub reveal">Open Telegram. Paste a dangerous command. Get BLOCK verdict before execution. Zero config. Zero signup.</p>
+
+    <div class="video-wrapper reveal" style="display:flex;flex-direction:column;align-items:center;background:var(--kohl-mid);">
+      <iframe
+        style="width:100%;max-width:380px;aspect-ratio:9/16;display:block;border:none;margin:0 auto;"
+        src="https://www.youtube.com/embed/1lI52t5SHbs?autoplay=0&rel=0&modestbranding=1&loop=1&playlist=1lI52t5SHbs"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+      <div class="video-timeline">
+        <div class="vt-step">
+          <div class="vt-time">0:00 – 0:15</div>
+          <div class="vt-label">Open <span class="vt-code">@teoslinker_bot</span></div>
+        </div>
+        <div class="vt-step">
+          <div class="vt-time">0:15 – 0:35</div>
+          <div class="vt-label">Send <span class="vt-code">/scan rm -rf /</span> → BLOCK</div>
+        </div>
+        <div class="vt-step">
+          <div class="vt-time">0:35 – 0:50</div>
+          <div class="vt-label">Send <span class="vt-code">/scan console.log("ok")</span> → ALLOW</div>
+        </div>
+        <div class="vt-step">
+          <div class="vt-time">0:50 – 1:00</div>
+          <div class="vt-label">Show <span class="vt-code">/status</span> + credits</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- VIDEO -->
-<section class="video-section" id="video-demo">
-  <div class="container">
-    <p class="section-eyebrow">Live Demo</p>
-    <h2 class="section-title">See Sentinel block<br>dangerous execution in real time.</h2>
-    <p class="section-sub">Real runtime scan using the Sentinel risk engine. Open the bot, paste a dangerous command, get a BLOCK verdict before execution — zero config, zero signup.</p>
-
-    <div class="video-frame">
-      <div class="video-chrome">
-        <div class="chrome-dot" style="background:#e63333"></div>
-        <div class="chrome-dot" style="background:#e6a020"></div>
-        <div class="chrome-dot" style="background:#22c55e"></div>
-        <span style="margin-left:8px;">TEOS Sentinel — Runtime Demo</span>
-        <span style="margin-left:auto; color:var(--green)">● LIVE ENGINE</span>
+<!-- LIVE TERMINALS -->
+<section id="demo">
+  <div class="section-wrap">
+    <div class="section-label reveal">Live Verdicts</div>
+    <h2 class="section-title reveal">Three commands.<br><span class="gold">Three verdicts. Instant.</span></h2>
+    <p class="section-sub reveal">Every scan returns a risk score, a rule ID, and a human-readable explanation. No dashboards. No config.</p>
+    <div class="terminals reveal">
+      <div class="term">
+        <div class="term-bar">
+          <div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div>
+          <span class="term-tag">Threat Blocked</span>
+        </div>
+        <div class="term-body">
+          <div><span class="tp">›</span> <span class="tc">/scan rm -rf /</span></div>
+          <div class="tmt">analyzing command...</div>
+          <div>&nbsp;</div>
+          <div class="tbl">🛑 BLOCK — 100/100</div>
+          <div class="tsc">Rule: R01.DESTRUCTIVE_SHELL</div>
+          <div class="tr">↳ rm -rf permanently deletes all files.</div>
+          <div class="tr">↳ Wiper malware signature detected.</div>
+          <div class="tr">↳ Execution prevented.</div>
+          <div>&nbsp;</div>
+          <div class="tmt">Credit not consumed.</div>
+        </div>
+        <div class="term-verdict">
+          <span class="verdict-pill v-block">BLOCK</span>
+          <span class="verdict-rule">R01 · score 100</span>
+        </div>
       </div>
-      <div class="video-embed-wrap">
-        <iframe
-          src="https://www.youtube.com/embed/1lI52t5SHbs"
-          title="TEOS Sentinel Shield — Real Execution Demo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
+      <div class="term">
+        <div class="term-bar">
+          <div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div>
+          <span class="term-tag">Warn Raised</span>
+        </div>
+        <div class="term-body">
+          <div><span class="tp">›</span> <span class="tc">/scan DROP TABLE users;</span></div>
+          <div class="tmt">analyzing command...</div>
+          <div>&nbsp;</div>
+          <div class="twn">⚠️ WARN — 75/100</div>
+          <div class="tsc">Rule: R09.SQL_INJECTION</div>
+          <div class="tr">↳ DROP TABLE destroys database tables.</div>
+          <div class="tr">↳ SQL injection risk detected.</div>
+          <div class="tr">↳ Human review recommended.</div>
+          <div>&nbsp;</div>
+          <div class="tmt">Credits left: 997</div>
+        </div>
+        <div class="term-verdict">
+          <span class="verdict-pill v-warn">WARN</span>
+          <span class="verdict-rule">R09 · score 75</span>
+        </div>
       </div>
-      <div class="video-caption">
-        Real runtime scan using the Sentinel risk engine · Engine v2.0 Production Stable
+      <div class="term">
+        <div class="term-bar">
+          <div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div>
+          <span class="term-tag">Allow Passed</span>
+        </div>
+        <div class="term-body">
+          <div><span class="tp">›</span> <span class="tc">/scan console.log("hello")</span></div>
+          <div class="tmt">analyzing command...</div>
+          <div>&nbsp;</div>
+          <div class="tok">✅ ALLOW — 0/100</div>
+          <div class="tsc">Rule: R00.CLEAN</div>
+          <div class="tr">↳ No destructive patterns detected.</div>
+          <div class="tr">↳ No injection vectors identified.</div>
+          <div class="tr">↳ Safe to execute.</div>
+          <div>&nbsp;</div>
+          <div class="tmt">Credits left: 996</div>
+        </div>
+        <div class="term-verdict">
+          <span class="verdict-pill v-allow">ALLOW</span>
+          <span class="verdict-rule">R00 · score 0</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROBLEM -->
-<section class="problem-section">
-  <div class="container">
-    <p class="section-eyebrow">The New Attack Surface</p>
-    <h2 class="section-title">AI can now execute.<br>Nothing protects it.</h2>
-    <p class="section-sub">
-      The threat model changed. AI agents, CI/CD pipelines, and autonomous workflows now run shell commands, deploy infrastructure, access secrets, and modify databases — without any security enforcement layer.
-    </p>
-
-    <div class="gap-grid">
-      <div class="gap-card">
-        <div class="gap-card-icon">💀</div>
-        <h4>Destructive Shell Commands</h4>
-        <p>AI agents can generate and execute wiper-pattern commands with zero friction. One bad prompt, one missing guardrail.</p>
-        <code>rm -rf /</code>
-      </div>
-      <div class="gap-card">
-        <div class="gap-card-icon">🗃️</div>
-        <h4>Database Destruction</h4>
-        <p>SQL injection and DROP commands generated by LLMs pass through pipelines undetected until it's too late.</p>
-        <code>DROP DATABASE production;</code>
-      </div>
-      <div class="gap-card">
-        <div class="gap-card-icon">🔑</div>
-        <h4>Secret Exposure</h4>
-        <p>API keys, tokens, and environment variables leak through AI-generated code, CI/CD logs, and agent outputs.</p>
-        <code>echo $AWS_SECRET_KEY</code>
-      </div>
-      <div class="gap-card">
-        <div class="gap-card-icon">⚠️</div>
-        <h4>Dangerous CI Scripts</h4>
-        <p>write-all permissions, curl|bash execution chains, and privileged containers deployed via AI-generated pipelines.</p>
-        <code>curl https://malware.sh | bash</code>
-      </div>
+<!-- ENGINE STATS -->
+<div class="engine-stats-section">
+  <div class="engine-stats-inner">
+    <div class="estat">
+      <div class="estat-num" data-target="25">25</div>
+      <div class="estat-label">Named Rules</div>
+      <div class="estat-sub">R01 – R25 active</div>
     </div>
-
-    <div class="ai-execution-gap">
-      <div class="gap-icon">⚡</div>
-      <div>
-        <div class="gap-label">The Core Problem</div>
-        <h3>The AI Execution Gap</h3>
-        <p>There is currently no security layer between AI code generation and real-world execution. Every AI agent, every CI/CD pipeline, every autonomous workflow runs in a gap where generation and execution are joined without enforcement. One bad prompt can destroy production. This is the AI Execution Gap — and Sentinel closes it.</p>
-      </div>
+    <div class="estat">
+      <div class="estat-num" data-target="37">37</div>
+      <div class="estat-label">Tests Passing</div>
+      <div class="estat-sub">Engine v2.4 stable</div>
+    </div>
+    <div class="estat">
+      <div class="estat-num" data-target="3">3</div>
+      <div class="estat-label">Services Online</div>
+      <div class="estat-sub">MCP · Bot · Activation</div>
+    </div>
+    <div class="estat">
+      <div class="estat-num">v2.4</div>
+      <div class="estat-label">Engine Version</div>
+      <div class="estat-sub">Production stable</div>
     </div>
   </div>
-</section>
-
-<!-- SOLUTION -->
-<section class="solution-section">
-  <div class="container">
-    <p class="section-eyebrow">The Infrastructure Layer</p>
-    <h2 class="section-title">Sentinel sits between<br>generation and execution.</h2>
-    <p class="section-sub">
-      Like a reverse proxy for execution. Sentinel intercepts every command before it reaches production systems, enforces policy, and returns a structured verdict your agent can act on immediately.
-    </p>
-
-    <div class="layer-diagram">
-      <div class="layer-row">
-        <div class="layer-block layer-top">🤖 AI Agent / Developer / CI Pipeline</div>
-        <div class="layer-label muted">↑ generates commands</div>
-      </div>
-      <div class="layer-arrow">↓</div>
-      <div class="layer-row">
-        <div class="layer-block layer-sentinel">𓂀 TEOS Sentinel — Risk Engine</div>
-      </div>
-      <div class="layer-arrow">↓</div>
-      <div class="layer-row">
-        <div class="layer-block layer-bottom">🏭 Production Systems · Databases · Infrastructure</div>
-        <div class="layer-label muted">↓ only approved executions reach here</div>
-      </div>
-    </div>
-
-    <div class="solution-quote">
-      <p>Nothing runs until Sentinel approves it.</p>
-      <span>Runtime security middleware · Policy enforcement layer · Compliance audit trail</span>
-    </div>
-  </div>
-</section>
+</div>
 
 <!-- HOW IT WORKS -->
-<section class="how-section" id="how">
-  <div class="container">
-    <p class="section-eyebrow">Architecture</p>
-    <h2 class="section-title">Generate → Validate → Execute</h2>
-    <p class="section-sub">A deterministic checkpoint inserted between AI generation and runtime. Every command. Every time. No exceptions.</p>
-
-    <div class="flow-steps">
+<section id="how">
+  <div class="section-wrap">
+    <div class="section-label reveal">Architecture</div>
+    <h2 class="section-title reveal">Generate → Validate → <span class="gold">Execute</span></h2>
+    <p class="section-sub reveal">TEOS inserts a deterministic checkpoint between AI generation and runtime. Every command. Every time. No exceptions.</p>
+    <div class="flow-steps reveal">
       <div class="flow-step">
-        <div class="step-num">STEP 01</div>
-        <div class="step-title">Code Generated</div>
-        <p class="step-desc">AI agent, developer, or CI pipeline generates a command — shell script, SQL, CI/CD YAML, or npm manifest.</p>
+        <div class="step-n">01</div>
+        <div class="step-ti">Send Command</div>
+        <p class="step-desc">Paste any code, shell command, dependency list, or CI/CD step into Telegram. No account. No SDK. No backend changes required.</p>
       </div>
       <div class="flow-step">
-        <div class="step-num">STEP 02</div>
-        <div class="step-title">Sent to Sentinel</div>
-        <p class="step-desc">Command routed to Sentinel via Telegram bot or API gateway. Zero config. No SDK changes required.</p>
+        <div class="step-n">02</div>
+        <div class="step-ti">Engine Analyzes</div>
+        <p class="step-desc">25 named rules scan against wiper patterns, eval/exec abuse, injection vectors, secret exposure, known malicious packages, and unsafe CI permissions.</p>
       </div>
       <div class="flow-step">
-        <div class="step-num">STEP 03</div>
-        <div class="step-title">Risk Engine Analyzes</div>
-        <p class="step-desc">25 named rules scan for wiper patterns, eval/exec abuse, injection vectors, secret exposure, malicious packages, and unsafe CI permissions.</p>
+        <div class="step-n">03</div>
+        <div class="step-ti">Verdict Returned</div>
+        <p class="step-desc">BLOCK, WARN, or ALLOW — with a rule ID, risk score 0–100, and full human-readable explanation. Structured output your agent can act on immediately.</p>
       </div>
       <div class="flow-step">
-        <div class="step-num">STEP 04</div>
-        <div class="step-title">Verdict Returned</div>
-        <p class="step-desc">Structured decision returned with rule ID, risk score 0–100, and human-readable explanation.</p>
-        <div class="verdict-badges">
-          <span class="v-badge v-block">🛑 BLOCK</span>
-          <span class="v-badge v-warn">⚠️ WARN</span>
-          <span class="v-badge v-allow">✅ ALLOW</span>
-        </div>
-      </div>
-      <div class="flow-step">
-        <div class="step-num">STEP 05</div>
-        <div class="step-title">Execution Decision</div>
-        <p class="step-desc">Execution allowed or stopped. Blocked threats cost zero credits. Agent receives structured output to act on immediately.</p>
-      </div>
-      <div class="flow-step">
-        <div class="step-num">STEP 06</div>
-        <div class="step-title">Audit Logged</div>
-        <p class="step-desc">Every decision recorded. Full audit trail for enterprise compliance, government reporting, and sovereign deployments.</p>
-      </div>
-    </div>
-
-    <!-- full flow -->
-    <div class="full-flow">
-      <div class="full-flow-inner">
-        <div class="flow-node">AI / Dev / CI</div>
-        <span class="flow-arr">→</span>
-        <div class="flow-node">Telegram Bot · API Gateway</div>
-        <span class="flow-arr">→</span>
-        <div class="flow-node red">𓂀 Sentinel Risk Engine</div>
-        <span class="flow-arr">→</span>
-        <div class="flow-node">BLOCK · WARN · ALLOW</div>
-        <span class="flow-arr">→</span>
-        <div class="flow-node">Execution or Abort</div>
-        <span class="flow-arr">→</span>
-        <div class="flow-node">Audit Logs · Compliance</div>
+        <div class="step-n">04</div>
+        <div class="step-ti">Audit Logged</div>
+        <p class="step-desc">Every decision recorded. Credits consumed only on clean passes — blocked threats cost nothing. Full audit trail for enterprise and government compliance.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SOVEREIGN SECURITY STACK -->
-<section class="stack-section" id="stack">
-  <div class="container">
-    <p class="section-eyebrow">Part of the Sovereign Security Stack</p>
-    <h2 class="section-title">Open source.<br>Production infrastructure.</h2>
-    <p class="section-sub">
-      The full TEOS Sovereign Security Stack is open on GitHub — governance, risk engine, activation layer, and integrations. Sentinel is the enforcement core.
-    </p>
-
-    <div class="stack-grid">
-      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Risk Engine Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20the%20TEOS%20Sentinel%20Risk%20Engine%20into%20our%20stack.%0A%0AUse%20case%3A%20%0ALanguage%2Fframework%3A%20%0AExpected%20volume%3A%20%0A%0ABest%20regards'">
-        <div class="stack-card-head">
-          <h4>Risk Engine Core</h4>
-          <span class="stack-tag">LIVE</span>
-        </div>
-        <p>25 named rules (R01–R25). Deterministic ALLOW / WARN / BLOCK decisions. Wiper, injection, secret, supply chain, and CI/CD threat categories. 37 tests passing.</p>
+<!-- FEATURES -->
+<div class="features-bg" id="features">
+  <div class="section-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="section-label reveal">Scan Engines</div>
+    <h2 class="section-title reveal">Three engines.<br><span class="gold">One interface.</span></h2>
+    <p class="section-sub reveal">All via @teoslinker_bot on Telegram. Zero dashboards. Zero config. Instant verdicts.</p>
+    <div class="features-grid reveal">
+      <div class="feat">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-cmd">/scan &lt;code&gt;</div>
+        <div class="feat-title">Pre-Execution Code Scan</div>
+        <p class="feat-desc">Analyzes shell commands, scripts, and code against 10+ threat categories: wiper patterns, eval/exec abuse, command injection, chmod escalation, secret leakage, base64 execution chains.</p>
+        <div class="feat-tags"><span class="ftag">rm -rf</span><span class="ftag">eval()</span><span class="ftag">curl|bash</span><span class="ftag">DROP TABLE</span><span class="ftag">chmod 777</span></div>
       </div>
-      <div class="stack-card" onclick="window.open('https://t.me/teoslinker_bot','_blank')">
-        <div class="stack-card-head">
-          <h4>Telegram Gateway</h4>
-          <span class="stack-tag">LIVE</span>
-        </div>
-        <p>@teoslinker_bot — zero-config entry point. /scan, /deps, /ci, /status, /upgrade, /credits commands. Works in 60 seconds from first message. No SDK required.</p>
+      <div class="feat">
+        <div class="feat-icon">📦</div>
+        <div class="feat-cmd">/deps &lt;package.json&gt;</div>
+        <div class="feat-title">Supply Chain Audit</div>
+        <p class="feat-desc">Scans npm manifests against 14+ known compromised packages — event-stream, ua-parser-js, node-ipc, and more. Pre-install. Not post-incident. Not post-breach.</p>
+        <div class="feat-tags"><span class="ftag">event-stream</span><span class="ftag">node-ipc</span><span class="ftag">ua-parser-js</span><span class="ftag">lodash CVE</span></div>
       </div>
-      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=API Gateway Access — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20API%20access%20to%20TEOS%20Sentinel.%0A%0AUse%20case%3A%20%0AIntegration%20type%3A%20%0A%0ABest%20regards'">
-        <div class="stack-card-head">
-          <h4>API Gateway</h4>
-          <span class="stack-tag">LIVE</span>
-        </div>
-        <p>REST API for direct integration. Structured JSON verdicts with rule ID, score, and explanation. Agent-native output format for autonomous workflow integration.</p>
+      <div class="feat">
+        <div class="feat-icon">⚙️</div>
+        <div class="feat-cmd">/ci &lt;pipeline&gt;</div>
+        <div class="feat-title">CI/CD Hardening</div>
+        <p class="feat-desc">Scans GitHub Actions YAML, Dockerfiles, and pipeline configs for write-all permissions, secret exposure, curl|bash execution, privileged containers, and enterprise misconfigs.</p>
+        <div class="feat-tags"><span class="ftag">write-all</span><span class="ftag">secrets</span><span class="ftag">--privileged</span><span class="ftag">curl|bash</span></div>
       </div>
-      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Compliance Audit — TEOS Sentinel&body=Hello%2C%0A%0AWe%20need%20the%20compliance%20audit%20layer%20for%20our%20organization.%0A%0AOrganization%3A%20%0ACompliance%20framework%3A%20%0A%0ABest%20regards'">
-        <div class="stack-card-head">
-          <h4>Compliance Audit Layer</h4>
-          <span class="stack-tag">LIVE</span>
-        </div>
-        <p>Every decision logged. Per-user credit tracking. Full audit trail for enterprise compliance, ICBC constitutional alignment, and government procurement requirements.</p>
+      <div class="feat">
+        <div class="feat-icon">✈️</div>
+        <div class="feat-cmd">@teoslinker_bot</div>
+        <div class="feat-title">Telegram-Native Gateway</div>
+        <p class="feat-desc">Zero-friction via Telegram. Commands: /scan, /deps, /ci, /status, /upgrade, /credits. No SDK, no account setup. Works in 60 seconds from first message.</p>
+        <div class="feat-tags"><span class="ftag">zero-signup</span><span class="ftag">5 free scans</span><span class="ftag">instant</span></div>
       </div>
-      <div class="stack-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Sovereign Deployment — TEOS Sentinel&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20sovereign%20deployment%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0ARegion%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
-        <div class="stack-card-head">
-          <h4>Sovereign Deployment</h4>
-          <span class="stack-tag">ENTERPRISE</span>
-        </div>
-        <p>Self-hosted dedicated instance. Custom threat policy engine. MENA-sovereign architecture. SLA guarantee. Egypt, UAE, Saudi pilots open now.</p>
+      <div class="feat">
+        <div class="feat-icon">📊</div>
+        <div class="feat-cmd">/status · /credits</div>
+        <div class="feat-title">Credits &amp; Audit Trail</div>
+        <p class="feat-desc">Credits tracked per user. Consumed only on clean passes — blocked threats are free. Upgrade tiers unlock higher limits. Full audit logs for compliance and government teams.</p>
+        <div class="feat-tags"><span class="ftag">per-scan</span><span class="ftag">auto credits</span><span class="ftag">audit logs</span></div>
       </div>
-      <div class="stack-card" onclick="window.open('https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution','_blank')">
-        <div class="stack-card-head">
-          <h4>ICBC Constitutional Alignment</h4>
-          <span class="stack-tag">v2.0</span>
-        </div>
-        <p>Aligned with the TEOS International Civic Blockchain Constitution. Law governs execution. Humans govern systems. AI serves authority.</p>
-      </div>
-    </div>
-
-    <div class="github-banner">
-      <div class="github-banner-left">
-        <h4>⭐ teos-sovereign-security-stack</h4>
-        <p>Open source security infrastructure · github.com/Elmahrosa/teos-sovereign-security-stack</p>
-      </div>
-      <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank" class="btn-ghost">View Full Stack →</a>
-    </div>
-  </div>
-</section>
-
-<!-- DEMO TERMINAL -->
-<section class="demo-section" id="demo">
-  <div class="container">
-    <p class="section-eyebrow">Live Scan Output</p>
-    <h2 class="section-title">Three commands.<br>Three verdicts. Instant.</h2>
-    <p class="section-sub">Every scan returns a risk score, rule ID, and human-readable explanation. Structured output your agent can act on immediately.</p>
-
-    <div class="demo-terminal">
-      <div class="terminal-chrome">
-        <div class="t-dot t-red"></div>
-        <div class="t-dot t-yellow"></div>
-        <div class="t-dot t-green"></div>
-        <span class="terminal-title">@teoslinker_bot · TEOS Sentinel v2.0 · Engine Online</span>
-      </div>
-      <div class="terminal-body">
-
-        <div class="t-line"><span class="t-prompt">›</span><span class="t-cmd">/scan rm -rf /</span></div>
-        <div class="t-line"><span class="t-output" style="color:var(--muted);">analyzing command...</span></div>
-
-        <div class="verdict-block" style="margin:16px 0;">
-          <div class="verdict-head red-text">🛑 BLOCK — Risk Score: 100/100</div>
-          <div class="verdict-row"><span>Rule:</span> R01.DESTRUCTIVE_SHELL</div>
-          <div class="verdict-row"><span>Reason 1:</span> rm -rf permanently deletes all filesystem data.</div>
-          <div class="verdict-row"><span>Reason 2:</span> Wiper malware signature detected.</div>
-          <div class="verdict-row"><span>Action:</span> Execution prevented. Credit not consumed.</div>
-        </div>
-
-        <div class="t-line" style="margin-top:20px;"><span class="t-prompt">›</span><span class="t-cmd">/scan DROP TABLE users;</span></div>
-        <div class="t-line"><span class="t-output" style="color:var(--muted);">analyzing command...</span></div>
-
-        <div class="verdict-block warn" style="margin:16px 0;">
-          <div class="verdict-head amber-text">⚠️ WARN — Risk Score: 75/100</div>
-          <div class="verdict-row"><span>Rule:</span> R09.SQL_INJECTION</div>
-          <div class="verdict-row"><span>Reason 1:</span> DROP TABLE destroys database tables permanently.</div>
-          <div class="verdict-row"><span>Reason 2:</span> SQL injection vector detected.</div>
-          <div class="verdict-row"><span>Action:</span> Human review recommended. Credits left: 997</div>
-        </div>
-
-        <div class="t-line" style="margin-top:20px;"><span class="t-prompt">›</span><span class="t-cmd">/scan console.log("hello world")</span></div>
-        <div class="t-line"><span class="t-output" style="color:var(--muted);">analyzing command...</span></div>
-
-        <div class="verdict-block allow" style="margin:16px 0;">
-          <div class="verdict-head green-text">✅ ALLOW — Risk Score: 0/100</div>
-          <div class="verdict-row"><span>Rule:</span> R00.CLEAN</div>
-          <div class="verdict-row"><span>Reason 1:</span> No destructive patterns detected.</div>
-          <div class="verdict-row"><span>Reason 2:</span> No injection vectors identified.</div>
-          <div class="verdict-row"><span>Action:</span> Safe to execute. Credits left: 996</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHO IT'S FOR -->
-<section class="for-section">
-  <div class="container">
-    <p class="section-eyebrow">Target Users</p>
-    <h2 class="section-title">Built for teams running<br>AI at production scale.</h2>
-
-    <div class="for-grid">
-      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=AI Agent Security — TEOS Sentinel Pilot Request&body=Hello%2C%0A%0AI%20build%20AI%20agents%20and%20want%20to%20integrate%20TEOS%20Sentinel%20for%20pre-execution%20security.%0A%0AProject%20name%3A%20%0AAgent%20type%3A%20%0AMonthly%20actions%3A%20%0A%0ABest%20regards'">
-        <div class="for-icon">🤖</div>
-        <h4>AI Agent Builders</h4>
-        <p>Add a pre-execution firewall to your agent pipeline. Sentinel returns structured verdicts your agent can act on without human review.</p>
-      </div>
-      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=DevOps Security Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20TEOS%20Sentinel%20into%20our%20CI%2FCD%20pipeline.%0A%0ATeam%3A%20%0ACurrent%20CI%2FCD%3A%20%0ADeployment%20frequency%3A%20%0A%0ABest%20regards'">
-        <div class="for-icon">🔧</div>
-        <h4>DevOps & Platform Engineers</h4>
-        <p>Integrate into CI/CD pipelines. Block dangerous GitHub Actions YAML, Dockerfiles, and privileged container configs before they ship.</p>
-      </div>
-      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=SaaS AI Security — TEOS Sentinel Integration&body=Hello%2C%0A%0AI%20run%20a%20SaaS%20and%20want%20to%20add%20AI%20execution%20safety%20via%20TEOS%20Sentinel.%0A%0AProduct%3A%20%0AUsers%3A%20%0ATech%20stack%3A%20%0A%0ABest%20regards'">
-        <div class="for-icon">🚀</div>
-        <h4>SaaS Founders</h4>
-        <p>Add AI execution safety to your product in 60 seconds via Telegram bot or API. No backend changes. No SDK integration required.</p>
-      </div>
-      <div class="for-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Enterprise Pilot — TEOS Sentinel&body=Hello%2C%0A%0AWe%20are%20interested%20in%20an%20enterprise%20pilot%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0AUse%20case%3A%20%0ATeam%20size%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
-        <div class="for-icon">🏛️</div>
-        <h4>Enterprises & Governments</h4>
-        <p>Sovereign deployment. Custom policy engine. ICBC constitutional alignment. MENA-sovereign architecture with SLA guarantee and full audit trail.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- INTEGRATIONS -->
-<section class="integrations-section">
-  <div class="container">
-    <p class="section-eyebrow">Integrations</p>
-    <h2 class="section-title">Plugs into your<br>existing stack.</h2>
-
-    <div class="integrations-grid">
-      <div class="integration-card" onclick="window.open('https://t.me/teoslinker_bot','_blank')">
-        <span class="int-icon">💬</span>
-        Telegram Bot
-        <span class="int-status int-live">● LIVE</span>
-      </div>
-      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=API Access Request — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20API%20access%20to%20TEOS%20Sentinel%20for%20integration.%0A%0AUse%20case%3A%20%0AExpected%20volume%3A%20%0A%0ABest%20regards'">
-        <span class="int-icon">⚙️</span>
-        REST API / SDK
-        <span class="int-status int-live">● LIVE</span>
-      </div>
-      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=GitHub Actions Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20TEOS%20Sentinel%20with%20GitHub%20Actions.%0A%0ARepo%20URL%3A%20%0APipeline%20type%3A%20%0A%0ABest%20regards'">
-        <span class="int-icon">🐙</span>
-        GitHub Actions
-        <span class="int-status int-live">● LIVE</span>
-      </div>
-      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=GitLab CI Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20to%20integrate%20TEOS%20Sentinel%20with%20GitLab%20CI.%0A%0AGroup%20URL%3A%20%0APipeline%20type%3A%20%0A%0ABest%20regards'">
-        <span class="int-icon">🦊</span>
-        GitLab CI
-        <span class="int-status int-live">● LIVE</span>
-      </div>
-      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Autonomous Agent Integration — TEOS Sentinel&body=Hello%2C%0A%0AI%20build%20autonomous%20agents%20and%20need%20TEOS%20Sentinel%20integration.%0A%0AAgent%20framework%3A%20%0AUse%20case%3A%20%0A%0ABest%20regards'">
-        <span class="int-icon">🤖</span>
-        Autonomous Agents
-        <span class="int-status int-live">● LIVE</span>
-      </div>
-      <div class="integration-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=CLI Tool Interest — TEOS Sentinel&body=Hello%2C%0A%0AI%27m%20interested%20in%20the%20TEOS%20Sentinel%20CLI%20tool.%0A%0A%0ABest%20regards'">
-        <span class="int-icon">💻</span>
-        CLI Tool
-        <span class="int-status" style="color:var(--amber)">SOON</span>
+      <div class="feat">
+        <div class="feat-icon">🏛️</div>
+        <div class="feat-cmd">Sovereign Deployment</div>
+        <div class="feat-title">Enterprise / Government</div>
+        <p class="feat-desc">Dedicated instance for governments and regulated industries. Custom threat policy engine, ICBC constitutional alignment, MENA-sovereign architecture, SLA guarantee.</p>
+        <div class="feat-tags"><span class="ftag">self-hosted</span><span class="ftag">custom rules</span><span class="ftag">ICBC aligned</span><span class="ftag">SLA</span></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- COMPARE -->
-<section class="compare-section">
-  <div class="container">
-    <p class="section-eyebrow">Competitive Edge</p>
-    <h2 class="section-title">The only pre-execution<br>enforcement layer.</h2>
-    <p class="section-sub">GitGuardian, Snyk, Checkmarx — all scan post-commit. Sentinel blocks before your agent runs the command. Different threat model entirely.</p>
-
-    <table class="compare-table">
+<section id="compare">
+  <div class="section-wrap">
+    <div class="section-label reveal">Competitive Edge</div>
+    <h2 class="section-title reveal">The only <span class="gold">pre-execution</span> layer.</h2>
+    <p class="section-sub reveal">GitGuardian, Snyk, Checkmarx — all scan post-commit. TEOS blocks before your agent runs the command. Different threat model entirely.</p>
+    <table class="compare-table reveal">
       <thead>
         <tr>
           <th>Capability</th>
-          <th class="hl">𓂀 TEOS Sentinel</th>
+          <th class="ours">𓂀 TEOS Sentinel</th>
           <th>GitGuardian</th>
           <th>Snyk</th>
           <th>Checkmarx</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Pre-execution blocking</td>
-          <td class="hl"><span class="ck">✓ Yes</span></td>
-          <td><span class="cx">✗ Post-commit</span></td>
-          <td><span class="cx">✗ Post-commit</span></td>
-          <td><span class="cx">✗</span></td>
-        </tr>
-        <tr>
-          <td>AI agent native design</td>
-          <td class="hl"><span class="ck">✓ Yes</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-        </tr>
-        <tr>
-          <td>Zero-config entry (Telegram)</td>
-          <td class="hl"><span class="ck">✓ Yes</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-        </tr>
-        <tr>
-          <td>Shell command scanning</td>
-          <td class="hl"><span class="ck">✓ R01–R08</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cp">⚠ Limited</span></td>
-        </tr>
-        <tr>
-          <td>Supply chain audit</td>
-          <td class="hl"><span class="ck">✓ Builder+</span></td>
-          <td><span class="ck">✓</span></td>
-          <td><span class="ck">✓</span></td>
-          <td><span class="ck">✓</span></td>
-        </tr>
-        <tr>
-          <td>MENA sovereign focus</td>
-          <td class="hl"><span class="ck">✓ Yes</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cx">✗</span></td>
-        </tr>
-        <tr>
-          <td>Free tier (no signup)</td>
-          <td class="hl"><span class="ck">✓ 5 free scans</span></td>
-          <td><span class="cx">✗</span></td>
-          <td><span class="cp">⚠ Limited</span></td>
-          <td><span class="cx">✗ Enterprise</span></td>
-        </tr>
+        <tr><td>Pre-execution blocking</td><td class="ours"><span class="cy">✅ Yes</span></td><td><span class="cn">❌ Post-commit</span></td><td><span class="cn">❌ Post-commit</span></td><td><span class="cn">❌</span></td></tr>
+        <tr><td>Telegram-native UX</td><td class="ours"><span class="cy">✅ Yes</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td></tr>
+        <tr><td>Free tier (no signup)</td><td class="ours"><span class="cy">✅ 5 free scans</span></td><td><span class="cn">❌</span></td><td><span class="cp">⚠️ Limited</span></td><td><span class="cn">❌ Enterprise</span></td></tr>
+        <tr><td>Shell command scanning</td><td class="ours"><span class="cy">✅ R01–R08</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td><td><span class="cp">⚠️ Limited</span></td></tr>
+        <tr><td>Dependency CVE audit</td><td class="ours"><span class="cy">✅ Builder+</span></td><td><span class="cy">✅</span></td><td><span class="cy">✅</span></td><td><span class="cy">✅</span></td></tr>
+        <tr><td>CI/CD pipeline scan</td><td class="ours"><span class="cy">✅ Yes</span></td><td><span class="cp">⚠️ Partial</span></td><td><span class="cp">⚠️ Partial</span></td><td><span class="cy">✅</span></td></tr>
+        <tr><td>MENA sovereign focus</td><td class="ours"><span class="cy">✅ Yes</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td></tr>
+        <tr><td>AI agent native design</td><td class="ours"><span class="cy">✅ Yes</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td><td><span class="cn">❌</span></td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- TRUST -->
-<section class="trust-section">
-  <div class="container">
-    <p class="section-eyebrow">Trust & Credibility</p>
-    <h2 class="section-title">Security-first architecture.<br>Open source. Auditable.</h2>
+<!-- GOVERNMENT -->
+<div class="features-bg" id="government">
+  <div class="section-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="section-label reveal">Government Pipeline</div>
+    <h2 class="section-title reveal">MENA is buying<br><span class="gold">AI governance.</span></h2>
+    <p class="section-sub reveal">Egypt, UAE, and Saudi Arabia are actively investing in AI execution control. TEOS is the enforcement layer they are missing.</p>
 
-    <div class="trust-grid">
-      <div class="trust-card" onclick="window.open('https://github.com/Elmahrosa/teos-sovereign-security-stack','_blank')">
-        <div class="trust-icon">⭐</div>
-        <h4>Open Source Stack</h4>
-        <p>Full security stack open on GitHub. Audit the rules, inspect the engine, verify the decisions. No black boxes in security infrastructure.</p>
+    <div class="gov-tabs reveal">
+      <button class="gov-tab active" onclick="setGov(this,'eg')">🇪🇬 Egypt — Start Here</button>
+      <button class="gov-tab" onclick="setGov(this,'ae')">🇦🇪 UAE — Fast Track</button>
+      <button class="gov-tab" onclick="setGov(this,'sa')">🇸🇦 Saudi — Big Contracts</button>
+    </div>
+
+    <div id="gov-eg" class="gov-panel active reveal">
+      <div class="gov-target t1">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 1 — Direct Buyer</div>
+          <div class="gt-name">ITIDA</div>
+          <div class="gt-angle">"Execution control layer for Egypt's AI ecosystem"</div>
+          <p class="gt-desc">Core ICT + startup + AI ecosystem driver. Manages national tech growth and digital economy programs. Actively supports AI adoption across startup pipelines and DevSecOps training.</p>
+        </div>
+        <div class="gt-deal">Pilot<br>$5K–$10K</div>
       </div>
-      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Compliance Audit Trail — TEOS Sentinel&body=Hello%2C%0A%0AWe%20need%20information%20about%20the%20compliance%20audit%20trail%20feature.%0A%0AOrganization%3A%20%0ACompliance%20requirement%3A%20%0A%0ABest%20regards'">
-        <div class="trust-icon">📋</div>
-        <h4>Compliance Audit Trail</h4>
-        <p>Every scan decision logged with timestamp, rule ID, score, and verdict. Full audit history for enterprise compliance and government procurement.</p>
+      <div class="gov-target t1">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 1 — Direct Buyer</div>
+          <div class="gt-name">MCIT</div>
+          <div class="gt-angle">"Pre-execution enforcement layer for national AI systems"</div>
+          <p class="gt-desc">Ministry of Communications and IT. Owns Egypt's AI strategy 2025–2030. Controls digital transformation programs. Infrastructure, governance, and real-world AI systems are their mandate.</p>
+        </div>
+        <div class="gt-deal">Strategic<br>$10K–$25K</div>
       </div>
-      <div class="trust-card" onclick="window.open('https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution','_blank')">
-        <div class="trust-icon">🏛️</div>
-        <h4>ICBC Constitutional Alignment</h4>
-        <p>Aligned with the TEOS International Civic Blockchain Constitution. Sovereign-grade governance framework for MENA and GCC deployments.</p>
-      </div>
-      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Deterministic Engine Details — TEOS Sentinel&body=Hello%2C%0A%0AI%20want%20details%20about%20the%20deterministic%20engine%20(25%20rules%2C%2037%20tests).%0A%0AUse%20case%3A%20%0A%0ABest%20regards'">
-        <div class="trust-icon">🔬</div>
-        <h4>Deterministic Engine</h4>
-        <p>25 named rules. 37 tests passing. No probabilistic AI guessing — deterministic policy enforcement you can rely on in production.</p>
-      </div>
-      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=About TEOS — Elmahrosa International&body=Hello%20Ayman%2C%0A%0AI%27d%20like%20to%20know%20more%20about%20TEOS%20and%20Elmahrosa%20International.%0A%0A%0ABest%20regards'">
-        <div class="trust-icon">🌍</div>
-        <h4>Built in Alexandria, Egypt</h4>
-        <p>Elmahrosa International. Sovereign-first architecture designed for MENA contexts — data sovereignty, regulatory alignment, government accountability.</p>
-      </div>
-      <div class="trust-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=Consensus 2026 Meeting — TEOS Sentinel&body=Hello%20Ayman%2C%0A%0AI%27d%20like%20to%20connect%20at%20Consensus%202026%20about%20TEOS%20Sentinel.%0A%0AEvent%3A%20%0AOrganization%3A%20%0A%0ABest%20regards'">
-        <div class="trust-icon">📡</div>
-        <h4>Engine v2 Production Stable</h4>
-        <p>3 PM2 services online. 75+ nations community. Attending Consensus HK 2026 + Miami 2026. Institutional pilots open in Egypt, UAE, Saudi Arabia.</p>
+      <div class="gov-target t2">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 2 — Entry via Pilot</div>
+          <div class="gt-name">TIEC + Smart Cities</div>
+          <div class="gt-angle">"AI execution control for smart city systems"</div>
+          <p class="gt-desc">Technology Innovation &amp; Entrepreneurship Center (under ITIDA) for startup integration. Administrative Capital for Urban Development — smart city AI systems. Easiest first deal. Start here.</p>
+        </div>
+        <div class="gt-deal">Entry<br>$3K–$8K</div>
       </div>
     </div>
 
-    <div class="trust-links">
-      <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank">⭐ GitHub Repository</a>
-      <a href="mailto:ayman@teosegypt.com">📧 ayman@teosegypt.com</a>
-      <a href="https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution" target="_blank">📜 ICBC Constitution</a>
-      <a href="mailto:ayman@teosegypt.com">Privacy Policy</a>
-      <a href="mailto:ayman@teosegypt.com">Terms of Service</a>
+    <div id="gov-ae" class="gov-panel reveal">
+      <div class="gov-target t1">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 1 — Highest Priority</div>
+          <div class="gt-name">UAE AI Office</div>
+          <div class="gt-angle">"Policy enforcement layer for AI execution"</div>
+          <p class="gt-desc">National AI leadership. Sets strategy and adoption across all government entities. Policy enforcement layer for AI execution is exactly their mandate. Direct institutional buyer.</p>
+        </div>
+        <div class="gt-deal">Pilot<br>$10K–$25K</div>
+      </div>
+      <div class="gov-target t1">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 1 — Partner Route</div>
+          <div class="gt-name">G42 + Injazat</div>
+          <div class="gt-angle">"Infrastructure layer integration"</div>
+          <p class="gt-desc">G42: national-scale AI infrastructure with direct government relationships. Injazat: government + enterprise digital transformation. Both operate at the infrastructure layer — your category.</p>
+        </div>
+        <div class="gt-deal">Partnership<br>$15K–$50K</div>
+      </div>
+      <div class="gov-target t2">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 1 — Regulatory</div>
+          <div class="gt-name">TDRA</div>
+          <div class="gt-angle">"AI execution compliance layer"</div>
+          <p class="gt-desc">Telecommunications and Digital Government Regulatory Authority. Digital government + compliance regulation. Execution control and compliance audit trail are core to their regulatory remit.</p>
+        </div>
+        <div class="gt-deal">Regulatory<br>$8K–$20K</div>
+      </div>
+    </div>
+
+    <div id="gov-sa" class="gov-panel reveal">
+      <div class="gov-target t1">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 1 — Critical Target</div>
+          <div class="gt-name">SDAIA</div>
+          <div class="gt-angle">"Execution enforcement for AI governance"</div>
+          <p class="gt-desc">Saudi Data and Artificial Intelligence Authority. Central AI + data authority. Controls AI strategy and data governance. Core pillars of Vision 2030. Direct match to your product category.</p>
+        </div>
+        <div class="gt-deal">Major Pilot<br>$25K–$50K+</div>
+      </div>
+      <div class="gov-target t1">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 2 — Perfect Fit</div>
+          <div class="gt-name">NEOM</div>
+          <div class="gt-angle">"Kill-switch for autonomous environments"</div>
+          <p class="gt-desc">AI-native city. Autonomous systems everywhere. Every autonomous decision needs a kill-switch before execution. NEOM is the single best product-market fit for TEOS in the world.</p>
+        </div>
+        <div class="gt-deal">Enterprise<br>$50K–$200K</div>
+      </div>
+      <div class="gov-target t2">
+        <div class="gov-copy">
+          <div class="gt-tier">Tier 2 — Enterprise Entry</div>
+          <div class="gt-name">STC / STC Solutions</div>
+          <div class="gt-angle">"Enterprise AI execution control"</div>
+          <p class="gt-desc">Saudi Telecom Company. Smart cities, enterprise AI, major government contracts. Established procurement channel. Enterprise entry → government expansion route.</p>
+        </div>
+        <div class="gt-deal">Entry<br>$10K–$30K</div>
+      </div>
+    </div>
+
+    <div class="outreach-box reveal">
+      <div class="ob-title">// Exact Outreach Language — Use This</div>
+      <div class="ob-script">
+        We provide a <strong>pre-execution enforcement layer</strong> for AI systems.<br>
+        It ensures unsafe commands are <span class="danger">blocked before execution</span> — enabling compliance, control, and auditability across AI workflows.<br>
+        We are onboarding a limited number of <span class="safe">government pilots in MENA.</span><br><br>
+        <span style="color:var(--alabaster-faint);">Never say: bot / scanner / SaaS. Always say: execution control layer / sovereign AI infrastructure.</span>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
 <!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <div class="container">
-    <p class="section-eyebrow">Pricing</p>
-    <h2 class="section-title">Start free.<br>Scale when you're ready.</h2>
-    <p class="section-sub">Instant activation. Credits auto-applied. Full rule ID and explanation on every verdict.</p>
-
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <div class="pricing-tier">Starter</div>
-        <div class="pricing-price">$9</div>
-        <div class="pricing-period">/month · hobbyists & testing</div>
-        <ul class="pricing-features">
-          <li>50 protected actions/month</li>
+<div class="pricing-bg" id="pricing">
+  <div class="section-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="section-label reveal">Plans</div>
+    <h2 class="section-title reveal">Stay protected.<br><span class="gold">Choose your level.</span></h2>
+    <p class="section-sub reveal">Dodo Payments checkout. Credits auto-applied. Cancel anytime. Full rule ID + explanation on every verdict.</p>
+    <div class="pricing-grid reveal">
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><span class="price-n">$29</span><span class="price-p">/month</span></div>
+        <p class="plan-tag">5,000 scans/month · 30 RPM</p>
+        <ul class="plan-feats">
           <li>Code threat scanning (/scan)</li>
-          <li>Full verdict + rule ID</li>
-          <li>Community support</li>
-          <li>7-day money-back</li>
+          <li>Dependency audits (/deps)</li>
+          <li>CI/CD pipeline checks (/ci)</li>
+          <li>Full verdict + rule ID + risk score</li>
+          <li>Telegram bot + API access</li>
         </ul>
-        <a href="https://dodo.pe/tts" target="_blank" class="pricing-cta">Get Started →</a>
+        <a href="https://dodo.pe/iba2piggql" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Subscribe →</a>
       </div>
-      <div class="pricing-card featured">
-        <div class="pricing-badge">POPULAR</div>
-        <div class="pricing-tier">Builder</div>
-        <div class="pricing-price">$39</div>
-        <div class="pricing-period">/month · indie devs & startups</div>
-        <ul class="pricing-features">
-          <li>400 protected actions/month</li>
-          <li>Code + Dependency scanning</li>
-          <li>CI/CD pipeline audit</li>
-          <li>Priority analysis queue</li>
-          <li>Full verdict + explanations</li>
-          <li>7-day money-back</li>
+      <div class="plan pop">
+        <div class="pop-badge">⭐ Most Popular</div>
+        <div class="plan-name">Team</div>
+        <div class="plan-price"><span class="price-n">$149</span><span class="price-p">/month</span></div>
+        <p class="plan-tag">50,000 scans/month · 150 RPM</p>
+        <ul class="plan-feats">
+          <li>Everything in Starter</li>
+          <li>Unlimited custom rules</li>
+          <li>3 seat API keys</li>
+          <li>Priority queue</li>
+          <li>Email + Slack support</li>
         </ul>
-        <a href="https://dodo.pe/tts2" target="_blank" class="pricing-cta red">Get Protected →</a>
+        <a href="https://dodo.pe/mz3a54cb2s" target="_blank" rel="noopener noreferrer" class="btn-plan btn-gold">Subscribe →</a>
       </div>
-      <div class="pricing-card">
-        <div class="pricing-tier">Pro</div>
-        <div class="pricing-price">$99</div>
-        <div class="pricing-period">/month · teams & production agents</div>
-        <ul class="pricing-features">
-          <li>1,000 protected actions/month</li>
-          <li>All scanning engines</li>
-          <li>Advanced threat detection</li>
-          <li>SLA support + early access</li>
-          <li>Custom policy rules</li>
-          <li>Full audit logs</li>
+      <div class="plan">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price"><span class="price-n">$499</span><span class="price-p">/month</span></div>
+        <p class="plan-tag">Unlimited scans · 600 RPM</p>
+        <ul class="plan-feats">
+          <li>Everything in Team</li>
+          <li>Unlimited API keys</li>
+          <li>99% uptime SLA</li>
+          <li>&lt;4h support response</li>
+          <li>Dedicated Slack channel</li>
         </ul>
-        <a href="https://dodo.pe/teos-pro" target="_blank" class="pricing-cta">Go Pro →</a>
+        <a href="https://dodo.pe/xn38jipi66d" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Subscribe →</a>
       </div>
     </div>
-
-    <div class="enterprise-box">
+    <div class="enterprise-row reveal">
       <div>
-        <h4>🌎 Global Enterprise / AI Company Inquiry</h4>
-        <p>Custom deployment · Dedicated risk engine instance · RBAC authentication · Kafka/Redis event bus · SOC 2 style logging · White-label available · NDA on request · SLA guarantee</p>
+        <div class="ent-h">🏛️ Sovereign — Air-Gapped Government Tier</div>
+        <p class="ent-p">Unlimited scans · Unlimited RPM · 99.95% SLA · On-prem deployment · No external network calls · Offline rule packs · Source escrow · ICBC aligned · $25K/yr base + $10K/site</p>
       </div>
-      <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
-        <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel%20(%245K%E2%80%93%24200K)&body=Hello%20Ayman%2C%0A%0AI%20am%20interested%20in%20an%20enterprise%20pilot%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0AUse%20case%3A%20%0ATeam%20size%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards" class="btn-primary">📧 Request Enterprise Pilot ($5K–$200K) →</a>
-        <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Demo%20Request%20%E2%80%94%20TEOS%20Sentinel&body=Hello%2C%0A%0AI%20would%20like%20to%20schedule%20a%20demo%20of%20TEOS%20Sentinel.%0A%0AOrganization%3A%20%0APreferred%20time%3A%20%0ATimezone%3A%20%0A%0ABest%20regards" class="btn-ghost" style="text-align:center; font-size:12px; padding:10px 20px;">📅 Schedule Enterprise Demo →</a>
-        <a href="mailto:ayman@teosegypt.com?subject=NDA%20Request%20%E2%80%94%20TEOS%20Sentinel%20Enterprise&body=Hello%20Ayman%2C%0A%0AI%20would%20like%20to%20request%20an%20NDA%20before%20discussing%20TEOS%20Sentinel%20enterprise%20details.%0A%0AOrganization%3A%20%0AContact%20Name%3A%20%0AEmail%3A%20%0A%0ABest%20regards" class="btn-ghost" style="text-align:center; font-size:12px; padding:10px 20px;">🔒 Request NDA First →</a>
+      <a href="https://dodo.pe/uft6rqarbel" target="_blank" class="btn-ent">Subscribe $25K/yr →</a>
+    </div>
+  </div>
+</div>
+
+<!-- SOVEREIGN -->
+<div class="sovereign-section">
+  <div class="sovereign-copy reveal">
+    <div class="section-label">Built Different</div>
+    <h2>From <span class="gold">Alexandria.</span><br>For sovereign AI.</h2>
+    <p>TEOS Sentinel is not built for Silicon Valley's threat model. It is built for autonomous AI systems operating in MENA and GCC contexts — where data sovereignty, regulatory alignment, and government accountability are non-negotiable.</p>
+    <p>Aligned with the TEOS International Civic Blockchain Constitution (ICBC). Attending Consensus Hong Kong 2026 and Consensus Miami 2026.</p>
+    <p style="color:var(--alabaster);">Law governs execution. Humans govern systems. AI serves authority.</p>
+    <div class="sovereign-pills">
+      <span class="spill">MENA Sovereign Architecture</span>
+      <span class="spill">ICBC Constitutional Alignment</span>
+      <span class="spill">Elmahrosa International</span>
+      <span class="spill">Alexandria, Egypt</span>
+      <span class="spill">75+ Nations</span>
+      <span class="spill">Consensus HK 2026</span>
+      <span class="spill">Consensus Miami 2026</span>
+    </div>
+  </div>
+  <div class="sov-metrics reveal">
+    <div class="smet"><div class="smet-n">75+</div><div class="smet-l">Nations in community</div></div>
+    <div class="smet"><div class="smet-n">528</div><div class="smet-l">Community members</div></div>
+    <div class="smet"><div class="smet-n">3</div><div class="smet-l">Active scan engines</div></div>
+    <div class="smet"><div class="smet-n">v2.4</div><div class="smet-l">Engine stable</div></div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="roadmap-bg" id="roadmap">
+  <div class="section-wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="section-label reveal">2026 Roadmap</div>
+    <h2 class="section-title reveal">What's <span class="gold">next.</span></h2>
+    <p class="section-sub reveal">Attending Consensus HK 2026 + Miami 2026. <a href="mailto:ayman@teosegypt.com" target="_blank" style="color:var(--gold);text-decoration:none;">Book a meeting →</a></p>
+    <div class="roadmap-grid reveal">
+      <div class="rm-card live">
+        <div class="rm-q live-q"><span class="rm-dot"></span>Live Now</div>
+        <div class="rm-title">Engine v2.4 + Telegram Bot</div>
+        <p class="rm-desc">25 named rules. 37 tests passing. /scan, /deps, /ci — all live. Engine v2.4 production stable. 3 PM2 services online.</p>
+      </div>
+      <div class="rm-card">
+        <div class="rm-q">Q2 2026</div>
+        <div class="rm-title">Government Pilots — Egypt + UAE</div>
+        <p class="rm-desc">ITIDA, MCIT, UAE AI Office pilots. First institutional contracts. Sovereign deployment package.</p>
+      </div>
+      <div class="rm-card">
+        <div class="rm-q">Q3 2026</div>
+        <div class="rm-title">Policy Engine UI + GitHub App</div>
+        <p class="rm-desc">Enterprise self-service. Custom threat rules per org. Auto-scan on push. BLOCK alerts in Telegram.</p>
+      </div>
+      <div class="rm-card">
+        <div class="rm-q">Q4 2026</div>
+        <div class="rm-title">Saudi — SDAIA + NEOM</div>
+        <p class="rm-desc">Full sovereign deployment. NEOM autonomous systems integration. SDAIA compliance audit trail.</p>
       </div>
     </div>
   </div>
-</section>
-
-<!-- GOVT -->
-<section class="govt-section">
-  <div class="container">
-    <p class="section-eyebrow">Government Pipeline</p>
-    <h2 class="section-title">MENA is buying<br>AI governance now.</h2>
-    <p class="section-sub">Egypt, UAE, and Saudi Arabia are actively investing in AI execution control. TEOS is the enforcement layer they are missing.</p>
-
-    <div class="govt-grid">
-      <div class="govt-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=EGYPT Pilot Request — TEOS Sentinel (MCIT/ITIDA/TIEC)&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20TEOS%20Sentinel%20pilot%20for%20Egypt.%0A%0AOrganization%3A%20%0AContact%3A%20%0AUse%20case%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
-        <div class="govt-flag">🇪🇬</div>
-        <h4>MCIT · ITIDA · TIEC</h4>
-        <div class="govt-range">$5K – $25K pilot range</div>
-        <p>Ministry of Communications owns Egypt's AI strategy 2025–2030. ITIDA manages national tech growth. Sentinel positions as the pre-execution enforcement layer for Egypt's AI ecosystem.</p>
-      </div>
-      <div class="govt-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=UAE Pilot Request — TEOS Sentinel (AI Office/G42/TDRA)&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20TEOS%20Sentinel%20pilot%20for%20UAE.%0A%0AOrganization%3A%20%0AContact%3A%20%0AUse%20case%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
-        <div class="govt-flag">🇦🇪</div>
-        <h4>UAE AI Office · G42 · TDRA</h4>
-        <div class="govt-range">$10K – $50K pilot range</div>
-        <p>UAE AI Office sets national AI adoption strategy. G42 operates at infrastructure scale. TDRA governs digital compliance. Policy enforcement layer is exactly their mandate.</p>
-      </div>
-      <div class="govt-card" onclick="window.location.href='mailto:ayman@teosegypt.com?subject=SAUDI Pilot Request — TEOS Sentinel (SDAIA/NEOM/STC)&body=Hello%20Ayman%2C%0A%0AWe%20are%20interested%20in%20a%20TEOS%20Sentinel%20pilot%20for%20Saudi%20Arabia.%0A%0AOrganization%3A%20%0AContact%3A%20%0AUse%20case%3A%20%0APilot%20budget%3A%20%0A%0ABest%20regards'">
-        <div class="govt-flag">🇸🇦</div>
-        <h4>SDAIA · NEOM · STC</h4>
-        <div class="govt-range">$25K – $200K pilot range</div>
-        <p>SDAIA controls AI strategy for Vision 2030. NEOM — AI-native city where every autonomous decision needs a kill-switch before execution. Single best product-market fit in the world.</p>
-      </div>
-    </div>
-  </div>
-</section>
+</div>
 
 <!-- FINAL CTA -->
 <section class="final-cta">
-  <div class="container">
-    <h2>Start using Sentinel<br>in 30 seconds.</h2>
-    <p>Open Telegram · Paste any command · Get your verdict · No account. No credit card.</p>
-    <div class="final-cta-btns">
-      <a href="https://t.me/teoslinker_bot" target="_blank" class="btn-primary">𓂀 Open @teoslinker_bot →</a>
-      <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank" class="btn-ghost">⭐ View GitHub Repository</a>
-      <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Inquiry%20%E2%80%94%20TEOS%20Sentinel&body=Hello%20Ayman%2C%0A%0AI%20am%20interested%20in%20TEOS%20Sentinel%20for%20my%20organization.%0A%0AOrganization%3A%20%0AUse%20case%3A%20%0A%0ABest%20regards" class="btn-ghost">Enterprise Inquiry</a>
-    </div>
+  <div class="egy-corner tl"></div><div class="egy-corner tr"></div>
+  <div class="egy-corner bl"></div><div class="egy-corner br"></div>
+  <h2>Start free.<br><span class="gold">Block the first threat</span><br>in 60 seconds.</h2>
+  <p>Open Telegram. Message @teoslinker_bot. Paste your first command. Get your verdict. No account. No credit card.</p>
+  <div class="final-btns">
+    <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-primary">𓂀 Open @teoslinker_bot →</a>
+    <a href="mailto:ayman@teosegypt.com" target="_blank" class="btn-secondary">Enterprise / Gov inquiry →</a>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-brand">
-      <a href="#" class="nav-logo">𓂀 <span>TEOS</span> Sentinel</a>
-      <p>
-        Execution Control Infrastructure for Autonomous AI.<br>
-        Built in Alexandria, Egypt by Elmahrosa International.<br><br>
-        Law governs execution.<br>
-        Humans govern systems.<br>
-        AI serves authority.
-      </p>
+    <div>
+      <div class="foot-brand-name">𓂀 TEOS Sentinel Shield</div>
+      <p class="foot-brand-desc">Execution Control Infrastructure for Autonomous AI.<br>Built in Alexandria, Egypt by Elmahrosa International.<br>Law governs execution. Humans govern systems. AI serves authority.</p>
+      <a href="mailto:ayman@teosegypt.com" target="_blank" class="foot-contact">ayman@teosegypt.com</a>
     </div>
-    <div class="footer-col">
+    <div class="foot-col">
       <h5>Product</h5>
-      <a href="https://t.me/teoslinker_bot" target="_blank">Telegram Bot</a>
-      <a href="#how">Architecture</a>
-      <a href="#pricing">Pricing</a>
-      <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank">GitHub Stack</a>
-      <a href="https://github.com/Elmahrosa/teos-sentinel-shield" target="_blank">Sentinel Repo</a>
+      <ul>
+        <li><a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer">Telegram Bot</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="https://github.com/Elmahrosa/teos-sentinel-shield">GitHub</a></li>
+      </ul>
     </div>
-    <div class="footer-col">
+    <div class="foot-col">
       <h5>Community</h5>
-      <a href="https://t.me/Elmahrosapi" target="_blank">Elmahrosapi (75+ nations)</a>
-      <a href="https://linkedin.com/in/aymanseif" target="_blank">Founder LinkedIn</a>
-      <a href="https://x.com/king_teos" target="_blank">X / Twitter</a>
-      <a href="https://linkedin.com/company/teos-pharaoh-portal" target="_blank">Company</a>
+      <ul>
+        <li><a href="https://t.me/Elmahrosapi">Elmahrosapi (75+ nations)</a></li>
+        <li><a href="https://linkedin.com/in/aymanseif">Founder LinkedIn</a></li>
+        <li><a href="https://x.com/king_teos">X / Twitter</a></li>
+        <li><a href="https://linkedin.com/company/teos-pharaoh-portal">Company</a></li>
+      </ul>
     </div>
-    <div class="footer-col">
+    <div class="foot-col">
       <h5>Government</h5>
-      <a href="mailto:ayman@teosegypt.com">Egypt Pilot (ITIDA)</a>
-      <a href="mailto:ayman@teosegypt.com">UAE Pilot (AI Office)</a>
-      <a href="mailto:ayman@teosegypt.com">Saudi Pilot (SDAIA)</a>
-      <a href="https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution" target="_blank">ICBC Constitution</a>
-      <a href="mailto:ayman@teosegypt.com">Contact</a>
+      <ul>
+        <li><a href="mailto:ayman@teosegypt.com" target="_blank">Egypt Pilot (ITIDA)</a></li>
+        <li><a href="mailto:ayman@teosegypt.com" target="_blank">UAE Pilot (AI Office)</a></li>
+        <li><a href="mailto:ayman@teosegypt.com" target="_blank">Saudi Pilot (SDAIA)</a></li>
+        <li><a href="https://github.com/Elmahrosa/Teos-International-Civic-Blockchain-Constitution">ICBC Constitution</a></li>
+      </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Elmahrosa International · Alexandria, Egypt · Engine v2.0</span>
-    <span>25 Named Rules · 37 Tests Passing · 3 Services Online</span>
+    <span>© 2026 Elmahrosa International · Alexandria, Egypt · Engine v2.4</span>
+    <span>Law governs execution. Humans govern systems. AI serves authority.</span>
   </div>
 </footer>
 
+<script>
+// ══ SCROLL REVEAL ══
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ══ COUNTERS ══
+const cObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, target = parseInt(el.dataset.target);
+    let cur = 0; const step = target / 50;
+    const t = setInterval(() => {
+      cur += step;
+      if (cur >= target) { el.textContent = target; clearInterval(t); }
+      else { el.textContent = Math.floor(cur); }
+    }, 24);
+    cObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => cObs.observe(el));
+
+// ══ GOVERNMENT TABS ══
+function setGov(btn, country) {
+  document.querySelectorAll('.gov-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.gov-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const p = document.getElementById('gov-' + country);
+  if (p) p.classList.add('active');
+}
+
+// ══ LANGUAGE SWITCHER ══
+function toggleLangMenu(e) {
+  e.stopPropagation();
+  document.getElementById('langBtn').classList.toggle('open');
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+function closeLangMenu() {
+  document.getElementById('langBtn').classList.remove('open');
+  document.getElementById('langDropdown').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  const sw = document.getElementById('langSwitcher');
+  if (sw && !sw.contains(e.target)) closeLangMenu();
+});
+
+// ══ AUTO TRANSLATE ══
+let currentLang = 'en';
+let originals = new Map();
+let cache = {};
+const SKIP = ['.term-body','code','pre','.threat-ticker','.engine-stats-section','.video-timeline','script','style','.vt-code'];
+
+const BUILT_IN = {
+  ar: {
+    'Demo':'\u0639\u0631\u0636',
+    'Features':'\u0627\u0644\u0645\u0645\u064A\u0632\u0627\u062A',
+    'Compare':'\u0645\u0642\u0627\u0631\u0646\u0629',
+    'Government':'\u0627\u0644\u062D\u0643\u0648\u0645\u0629',
+    'Pricing':'\u0627\u0644\u0623\u0633\u0639\u0627\u0631',
+    'Try Free \u2192':'\u062C\u0631\u0628 \u0645\u062C\u0627\u0646\u0627\u064B \u2192',
+    'MCP Engine v2.4 \u2014 Online':'\u0645\u062D\u0631\u0643 MCP v2.4 \u2014 \u0645\u062A\u0635\u0644',
+    'Telegram Bot \u2014 Online':'\u0628\u0648\u062A \u062A\u064A\u0644\u064A\u063A\u0631\u0627\u0645 \u2014 \u0645\u062A\u0635\u0644',
+    '25 Named Rules Active':'\u0662\u0665 \u0642\u0627\u0639\u062F\u0629 \u0646\u0634\u0637\u0629',
+    '37 Tests Passing':'\u0663\u0667 \u0627\u062E\u062A\u0628\u0627\u0631\u0627\u064B \u0646\u0627\u062C\u062D\u064B\u0627',
+    'Generate \u2192 Validate \u2192':'\u062A\u0648\u0644\u064A\u062F \u2192 \u062A\u062D\u0642\u0642 \u2192',
+    'Three engines.':'\u062B\u0644\u0627\u062B\u0629 \u0645\u062D\u0627\u0631\u0643.',
+    'One interface.':'\u0648\u0627\u062C\u0647\u0629 \u0648\u0627\u062D\u062F\u0629.',
+    'Stay protected.':'\u0627\u0628\u0642 \u0645\u062D\u0645\u064A\u064B\u0627.',
+    'Choose your level.':'\u0627\u062E\u062A\u0631 \u0645\u0633\u062A\u0648\u0627\u0643.',
+    'Start free.':'\u0627\u0628\u062F\u0623 \u0645\u062C\u0627\u0646\u064B\u0627.',
+    'in 60 seconds.':'\u0641\u064A \u0666\u0660 \u062B\u0627\u0646\u064A\u0629.',
+    'Subscribe \u2192':'\u0627\u0634\u062A\u0631\u0643 \u2192',
+    'Get Protected \u2192':'\u0627\u062D\u0635\u0644 \u0639\u0644\u0649 \u0627\u0644\u062D\u0645\u0627\u064A\u0629 \u2192',
+    'Subscribe $25K/yr \u2192':'\u0627\u0634\u062A\u0631\u0643 \u0662\u0665\u066A \u0633\u0646\u0648\u064A\u064B\u0627 \u2192',
+    '\uD83C\uDDEA\uD83C\uDDEC Egypt \u2014 Start Here':'\uD83C\uDDEA\uD83C\uDDEC \u0645\u0635\u0631 \u2014 \u0627\u0628\u062F\u0623 \u0647\u0646\u0627',
+    '\uD83C\uDDE6\uD83C\uDDEA UAE \u2014 Fast Track':'\uD83C\uDDE6\uD83C\uDDEA \u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A \u2014 \u0627\u0644\u0645\u0633\u0627\u0631 \u0627\u0644\u0633\u0631\u064A\u0639',
+    '\uD83C\uDDF8\uD83C\uDDE6 Saudi \u2014 Big Contracts':'\uD83C\uDDF8\uD83C\uDDE6 \u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629 \u2014 \u0627\u0644\u0639\u0642\u0648\u062F \u0627\u0644\u0643\u0628\u064A\u0631\u0629',
+  },
+  id: {
+    'Demo':'Demo','Features':'Fitur','Compare':'Bandingkan','Government':'Pemerintah','Pricing':'Harga',
+    'Try Free \u2192':'Coba Gratis \u2192',
+    'MCP Engine v2.4 \u2014 Online':'Mesin MCP v2.4 \u2014 Online',
+    'Telegram Bot \u2014 Online':'Bot Telegram \u2014 Online',
+    '25 Named Rules Active':'25 Aturan Aktif',
+    '37 Tests Passing':'37 Tes Berhasil',
+    'Generate \u2192 Validate \u2192':'Hasilkan \u2192 Validasi \u2192',
+    'Three engines.':'Tiga mesin.','One interface.':'Satu antarmuka.',
+    'Stay protected.':'Tetap terlindungi.','Choose your level.':'Pilih tingkatan Anda.',
+    'Start free.':'Mulai gratis.','in 60 seconds.':'dalam 60 detik.',
+    'Subscribe \u2192':'Berlangganan \u2192',
+    'Get Protected \u2192':'Dapatkan Perlindungan \u2192',
+    'Subscribe $25K/yr \u2192':'Langganan $25K/thn \u2192',
+    '\uD83C\uDDEA\uD83C\uDDEC Egypt \u2014 Start Here':'\uD83C\uDDEA\uD83C\uDDEC Mesir \u2014 Mulai Di Sini',
+    '\uD83C\uDDE6\uD83C\uDDEA UAE \u2014 Fast Track':'\uD83C\uDDE6\uD83C\uDDEA UEA \u2014 Jalur Cepat',
+    '\uD83C\uDDF8\uD83C\uDDE6 Saudi \u2014 Big Contracts':'\uD83C\uDDF8\uD83C\uDDE6 Saudi \u2014 Kontrak Besar',
+  }
+};
+
+function skipNode(node) {
+  let el = node.parentElement;
+  while (el) {
+    for (const s of SKIP) { try { if (el.matches(s)) return true; } catch(e) {} }
+    el = el.parentElement;
+  }
+  return false;
+}
+
+function textNodes(root) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      const t = n.textContent.trim();
+      if (!t || t.length < 2) return NodeFilter.FILTER_REJECT;
+      if (skipNode(n)) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const r = []; let n;
+  while ((n = w.nextNode())) r.push(n);
+  return r;
+}
+
+function storeOrig() {
+  textNodes(document.body).forEach((n, i) => {
+    n._tk = 'n' + i; originals.set('n' + i, n.textContent);
+  });
+}
+
+function bar(pct) {
+  const b = document.getElementById('translateBar'), f = document.getElementById('translateFill');
+  b.style.display = 'block'; f.style.width = pct + '%';
+  if (pct >= 100) setTimeout(() => { b.style.display = 'none'; f.style.width = '0%'; }, 500);
+}
+
+function toast(flag, msg) {
+  const t = document.getElementById('translateToast');
+  document.getElementById('toastFlag').textContent = flag;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function gTranslate(texts, lang) {
+  const res = []; const bs = 15;
+  for (let i = 0; i < texts.length; i += bs) {
+    const batch = texts.slice(i, i + bs);
+    try {
+      const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=' + lang + '&dt=t&q=' + encodeURIComponent(batch.join('\n|||\n'));
+      const d = await (await fetch(url)).json();
+      const combined = d[0].map(s => s[0]).join('');
+      combined.split('|||').map(s => s.trim()).forEach((p, idx) => res.push(p || batch[idx]));
+    } catch (e) { batch.forEach(t => res.push(t)); }
+    bar(Math.min(88, Math.round(((i + bs) / texts.length) * 88)));
+    await new Promise(r => setTimeout(r, 80));
+  }
+  return res;
+}
+
+async function switchLang(lang, flag, label, rtl) {
+  if (lang === currentLang) { closeLangMenu(); return; }
+  document.getElementById('currentFlag').textContent = flag;
+  document.getElementById('currentLangLabel').textContent = label;
+  document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));
+  document.getElementById('opt-' + lang).classList.add('active');
+  document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr');
+  closeLangMenu();
+
+  if (lang === 'en') {
+    textNodes(document.body).forEach(n => { if (n._tk && originals.has(n._tk)) n.textContent = originals.get(n._tk); });
+    currentLang = 'en'; toast('\uD83C\uDDFA\uD83C\uDDF8', 'Switched to English'); return;
+  }
+
+  bar(10); toast(flag, lang === 'ar' ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062A\u0631\u062C\u0645\u0629...' : 'Menerjemahkan...');
+  const nodes = textNodes(document.body);
+  const bi = BUILT_IN[lang] || {};
+  const need = [], idx = [];
+  nodes.forEach((n, i) => {
+    const orig = originals.get(n._tk) || n.textContent;
+    if (bi[orig.trim()]) n.textContent = bi[orig.trim()];
+    else if (orig.trim().length > 3) { need.push(orig); idx.push(i); }
+  });
+  bar(30);
+  if (need.length) {
+    const ck = need.join('|||') + '__' + lang;
+    const tr = cache[ck] || (cache[ck] = await gTranslate(need, lang));
+    idx.forEach((ni, i) => { if (tr[i]) nodes[ni].textContent = tr[i]; });
+  }
+  bar(100); currentLang = lang;
+  toast(flag, lang === 'ar' ? '\u062A\u0645\u062A \u0627\u0644\u062A\u0631\u062C\u0645\u0629 \u2713' : 'Diterjemahkan \u2713');
+}
+
+window.addEventListener('load', () => setTimeout(storeOrig, 600));
+</script>
 </body>
 </html>

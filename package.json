@@ -1,8 +1,11 @@
 {
   "name": "teos-sentinel-shield",
-  "version": "2.0.0",
+  "version": "2.4.0",
   "description": "Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware",
   "main": "ws-server/index.js",
+  "bin": {
+    "teos": "./cli/teos.js"
+  },
   "scripts": {
     "start": "node ws-server/index.js",
     "dev": "node server/api.js",
@@ -21,7 +24,9 @@
   "author": "TEOS Sovereign",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
     "@upstash/redis": "^1.38.0",
+    "dodopayments": "^2.31.1",
     "express": "^5.2.1",
     "ws": "^8.20.0"
   }
