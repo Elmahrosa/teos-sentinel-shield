@@ -1,6 +1,6 @@
 {
   "engine": "TEOS Sentinel v2.0",
-  "totalCases": 37,
+  "totalCases": 39,
   "passingCases": 37,
   "generatedAt": "2026-05-07",
   "cases": [
@@ -43,3 +43,4 @@
     { "id":"TC37","ruleId":"R00","input":"ls -la",                  "expectedVerdict":"ALLOW","expectedScore":0,  "category":"clean" }
   ]
 }
+
