@@ -1405,7 +1405,7 @@ body::after {
     <div id="view-rules" class="view">
       <div class="content-header">
         <div>
-          <h1>Rule Engine &mdash; 25 Named Rules</h1>
+          <h1>Rule Engine &mdash; 27 Named Rules</h1>
           <p>Deterministic ALLOW / WARN / BLOCK. All rules publicly auditable at <span style="color:var(--cyan)">/rules.json</span></p>
         </div>
         <div class="header-actions">
@@ -1440,7 +1440,7 @@ body::after {
           <div class="audit-link-icon">&#129513;</div>
           <div>
             <h4>test-cases.json</h4>
-            <p>37 test cases covering all rule categories. PASS / FAIL expected verdicts and inputs.</p>
+            <p>39 test cases covering all rule categories. PASS / FAIL expected verdicts and inputs.</p>
             <div class="audit-link-url">&rarr; /test-cases.json</div>
           </div>
         </a>
@@ -1598,7 +1598,7 @@ const RULES = [
   { id:'R04', name:'SECRET_ECHO',          sev:'critical', desc:'Echoing or printing environment secrets',         pattern:'/echo\\s+\\$[A-Z_]*(KEY|TOKEN|SECRET|PASS|PWD)/i' },
   { id:'R05', name:'ENV_EXFIL',            sev:'critical', desc:'Sending environment variables to external host',  pattern:'/\\$[A-Z_]*(KEY|SECRET|TOKEN).*(curl|wget|http)/i' },
   { id:'R06', name:'FORK_BOMB',            sev:'critical', desc:'Fork bomb denial-of-service pattern',             pattern:'/(\\:\\(\\)\\{|:\\(\\)){.*:\\|:}/i' },
-  { id:'R07', name:'BASE64_EXEC',          sev:'high',     desc:'Base64-encoded payload executed with eval',       pattern:'/eval\\s*\\(\\s*atob|base64\\s+--decode.*(sh|bash|exec)/i' },
+  { id:'R07', name:'HARDCODED_SECRET',     sev:'critical', desc:'Hardcoded secrets in source code',               pattern:'/(AKIA[0-9A-Z]{16}|gh[ops]_[0-9a-zA-Z]{36}|sk-[a-zA-Z0-9]{32,}|api_key|secret_key|password)\\s*[:=]\\s*[\'"][^\'"]+[\'"]/i' },
   { id:'R08', name:'REVERSE_SHELL',        sev:'critical', desc:'Netcat / bash reverse shell connection',          pattern:'/nc\\s+(-e|--exec)|bash\\s+-i\\s+>&\\s*\\/dev\\/tcp/i' },
   { id:'R09', name:'SQL_DESTRUCTION',      sev:'high',     desc:'DROP TABLE, DROP DATABASE, TRUNCATE destructive', pattern:'/DROP\\s+(TABLE|DATABASE|SCHEMA)|TRUNCATE\\s+TABLE/i' },
   { id:'R10', name:'SQL_INJECTION',        sev:'high',     desc:'Classic SQL injection patterns in input',         pattern:'/\'\\s*(OR|AND)\\s+\\d=\\d|UNION\\s+SELECT|1=1/i' },
@@ -1609,14 +1609,16 @@ const RULES = [
   { id:'R15', name:'TYPOSQUAT_PACKAGE',    sev:'high',     desc:'Common typosquatted package names',               pattern:'/require\\s*\\(\\s*[\'"]( lodash|recat|expres|mongoos)[\'"]\\s*\\)/i' },
   { id:'R16', name:'UNSAFE_PERMISSIONS',   sev:'medium',   desc:'GitHub Actions write-all permissions block',     pattern:'/permissions:\\s*write-all/i' },
   { id:'R17', name:'CURL_BASH_CI',         sev:'critical', desc:'curl|bash in CI/CD pipeline steps',              pattern:'/run:\\s*curl.+\\|\\s*bash/i' },
-  { id:'R18', name:'PRIVILEGED_CONTAINER', sev:'high',     desc:'Docker privileged flag in CI',                   pattern:'/--privileged|securityContext:\\s*privileged:\\s*true/i' },
+  { id:'R18', name:'PRIVILEGED_CONTAINER', sev:'critical', desc:'Docker privileged flag in CI or escalation',     pattern:'/--privileged|securityContext:\\s*privileged:\\s*true/i' },
   { id:'R19', name:'HARDCODED_SECRET',     sev:'critical', desc:'Hardcoded secrets in source code',               pattern:'/(api_key|apikey|secret_key|password)\\s*=\\s*[\'"][a-z0-9]{12,}[\'"]/i' },
   { id:'R20', name:'PROMPT_INJECTION',     sev:'high',     desc:'LLM prompt injection via user-controlled input', pattern:'/ignore previous instructions|disregard your system prompt|jailbreak/i' },
-  { id:'R21', name:'SSRF_ATTEMPT',         sev:'high',     desc:'Server-side request forgery to internal hosts',  pattern:'/https?:\\/\\/(169\\.254|10\\.|192\\.168|172\\.(1[6-9]|2\\d|3[01]))/i' },
-  { id:'R22', name:'XXE_INJECTION',        sev:'high',     desc:'XML external entity injection',                  pattern:'/<!ENTITY\\s+\\w+\\s+SYSTEM/i' },
+  { id:'R21', name:'SSRF_ATTEMPT',         sev:'critical', desc:'SSRF targeting internal cloud metadata endpoints',pattern:'/https?:\\/\\/(169\\.254|10\\.|192\\.168|172\\.(1[6-9]|2\\d|3[01]))/i' },
+  { id:'R22', name:'KEY_EXFIL',            sev:'critical', desc:'SSH key or credential transfer to external host', pattern:'/cat\\s+~\\/.ssh\\/(id_rsa|id_ed25519|authorized_keys)|curl.*--data.*(id_rsa\\.pub|credentials)/i' },
   { id:'R23', name:'CRYPTO_MINER',         sev:'critical', desc:'Cryptomining binary or pool connection',         pattern:'/stratum\\+tcp|xmrig|minerd|ethminer/i' },
   { id:'R24', name:'DATA_EXFIL_CURL',      sev:'high',     desc:'Sending local files to external server',         pattern:'/curl.+(-d|--data).+\\/etc\\/(passwd|shadow|hosts)/i' },
   { id:'R25', name:'CI_SECRETS_DUMP',      sev:'critical', desc:'Printing all CI secrets or env vars',            pattern:'/printenv|env\\s*\\|\\s*grep|\\$\\{\\{\\s*secrets\\s*\\}\\}/i' },
+  { id:'R26', name:'BASE64_EXEC',          sev:'high',     desc:'Base64-encoded payload executed with eval',       pattern:'/eval\\s*\\(\\s*atob|base64\\s+--decode.*(sh|bash|exec)/i' },
+  { id:'R27', name:'XXE_INJECTION',        sev:'high',     desc:'XML external entity injection',                  pattern:'/<!ENTITY\\s+\\w+\\s+SYSTEM/i' },
 ];
 
 function updateClock() {
@@ -1667,7 +1669,7 @@ function renderKPIs() {
   document.getElementById('kpi-allowed').textContent = allowed;
   document.getElementById('kpi-rate').textContent    = rate + '%';
 
-  document.getElementById('kpi-total-d').textContent   = 'engine v2.0 &middot; 25 rules';
+  document.getElementById('kpi-total-d').textContent   = 'engine v2.0 &middot; 27 rules';
   document.getElementById('kpi-blocked-d').textContent  = blocked + ' threats stopped';
   document.getElementById('kpi-warned-d').textContent   = warned + ' need review';
   document.getElementById('kpi-allowed-d').textContent  = allowed + ' clean executions';
@@ -1706,7 +1708,7 @@ function generateDemoEvents(n) {
     { cmd: 'npm install lodash',    verdict: 'allow', score: 0,   rule: 'R00.CLEAN' },
     { cmd: 'console.log("hi")',     verdict: 'allow', score: 0,   rule: 'R00.CLEAN' },
     { cmd: 'git status',            verdict: 'allow', score: 0,   rule: 'R00.CLEAN' },
-    { cmd: 'eval(atob("cm0gLXJmL"))', verdict: 'block', score: 88, rule: 'R07.BASE64_EXEC' },
+    { cmd: 'eval(atob("cm0gLXJmL"))', verdict: 'block', score: 88, rule: 'R26.BASE64_EXEC' },
   ];
   const now = Date.now();
   return Array.from({ length: n }, (_, i) => {
