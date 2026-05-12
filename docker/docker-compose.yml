@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  teos-sentinel:
+    image: elmahrosa/teos-sentinel:latest
+    container_name: teos-sentinel
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - TEOS_MODE=production
+      # Uncomment and set for persistence:
+      # - SUPABASE_URL=
+      # - SUPABASE_SERVICE_KEY=
+      # - UPSTASH_REDIS_URL=
+      # - UPSTASH_REDIS_TOKEN=
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    volumes:
+      - teos-audit:/app/audit
+    networks:
+      - teos-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: teos-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - teos-ssl:/etc/nginx/ssl
+    depends_on:
+      teos-sentinel:
+        condition: service_healthy
+    networks:
+      - teos-net
+
+volumes:
+  teos-audit:
+  teos-ssl:
+
+networks:
+  teos-net:
+    driver: bridge
