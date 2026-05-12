@@ -124,7 +124,7 @@ export default function ArchitectureAndDemo() {
               <span className="w-[10px] h-[10px] rounded-full bg-red" aria-hidden="true" />
               <span className="w-[10px] h-[10px] rounded-full bg-amber" aria-hidden="true" />
               <span className="w-[10px] h-[10px] rounded-full bg-green" aria-hidden="true" />
-              <span className="font-mono text-[11px] text-muted ml-2 truncate">@teoslinker_bot \u00B7 TEOS Sentinel v2.4 \u00B7 Engine Online</span>
+              <span className="font-mono text-[11px] text-muted ml-2 truncate">TEOS Sentinel v2.4 \u00B7 Deterministic Engine Online</span>
             </div>
 
             <div className="bg-[#0e0e10] p-6 md:p-7">

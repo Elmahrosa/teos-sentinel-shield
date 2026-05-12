@@ -15,7 +15,7 @@ function useInView(threshold = 0.1) {
 }
 
 const INTEGRATIONS = [
-  { icon: '\u{1F400}', name: 'Telegram Bot', status: 'LIVE' },
+  { icon: '\u{1F6E1}\uFE0F', name: 'Enforcement Gateway', status: 'LIVE' },
   { icon: '\u2699\uFE0F', name: 'REST API', status: 'LIVE' },
   { icon: '\u{1F400}', name: 'CLI Tool', status: 'LIVE' },
   { icon: '\u{1F400}', name: 'GitHub Actions', status: 'BETA' },
@@ -146,17 +146,17 @@ export default function EnterpriseTrustAndFinal() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(230,51,51,0.08) 0%, transparent 70%)' }} aria-hidden="true" />
         <div className="max-w-[1100px] mx-auto px-6 lg:px-8 relative">
           <h2 className={`text-[clamp(28px,4vw,52px)] font-[800] tracking-[-0.03em] leading-[1.1] mb-5 ${section.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} transition-all duration-600`}>
-            Join the closed beta.
+            Sovereign deployment.<br />Enterprise-grade enforcement.
           </h2>
           <p className={`font-mono text-[14px] text-muted mb-10 ${section.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} transition-all duration-600 delay-100`}>
-            Open Telegram \u00B7 Paste any command \u00B7 Get your verdict \u00B7 No account. No credit card.
+            Sovereign deployment \u00B7 Air-gapped \u00B7 Full audit trail \u00B7 ICBC aligned
           </p>
           <div className={`flex gap-3 md:gap-4 justify-center flex-wrap ${section.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} transition-all duration-600 delay-200`}>
-            <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-red text-white font-mono text-[13px] font-bold px-7 py-[14px] rounded-sm no-underline hover:bg-[#c92a2a] hover:-translate-y-[1px] transition-all tracking-[0.04em] shadow-[0_4px_16px_rgba(230,51,51,0.25)]" aria-label="Open TEOS Sentinel bot on Telegram">
-              {'\u{1F6E1}\uFE0F'} Open @teoslinker_bot →
+            <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel" className="inline-flex items-center gap-2 bg-red text-white font-mono text-[13px] font-bold px-7 py-[14px] rounded-sm no-underline hover:bg-[#c92a2a] hover:-translate-y-[1px] transition-all tracking-[0.04em] shadow-[0_4px_16px_rgba(230,51,51,0.25)]" aria-label="Request government pilot">
+              {'\u{1F6E1}\uFE0F'} Request Government Pilot →
             </a>
-            <a href="https://github.com/Elmahrosa/teos-sentinel-shield" target="_blank" rel="noopener noreferrer" aria-label="View TEOS GitHub repository" className="inline-flex items-center gap-2 bg-transparent text-white font-mono text-[13px] px-6 py-[14px] rounded-sm border border-[rgba(255,255,255,0.12)] no-underline hover:border-white/30 hover:bg-white/[0.04] transition-all tracking-[0.04em]">
-              View GitHub
+            <a href="mailto:ayman@teosegypt.com?subject=Demo%20Request%20%E2%80%94%20TEOS%20Sentinel" className="inline-flex items-center gap-2 bg-transparent text-white font-mono text-[13px] px-6 py-[14px] rounded-sm border border-[rgba(255,255,255,0.12)] no-underline hover:border-white/30 hover:bg-white/[0.04] transition-all tracking-[0.04em]">
+              \u25B6 Schedule Demo
             </a>
             <a href="mailto:ayman@teosegypt.com" aria-label="Send enterprise inquiry email" className="inline-flex items-center gap-2 bg-transparent text-white font-mono text-[13px] px-6 py-[14px] rounded-sm border border-[rgba(255,255,255,0.12)] no-underline hover:border-white/30 hover:bg-white/[0.04] transition-all tracking-[0.04em]">
               Enterprise Inquiry

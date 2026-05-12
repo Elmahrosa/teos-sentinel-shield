@@ -75,8 +75,8 @@ export default function Nav() {
               {l.label}
             </a>
           ))}
-          <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" aria-label="Join closed beta on Telegram" className="font-mono text-[12px] font-bold text-white bg-red px-4 py-[7px] rounded-sm no-underline hover:bg-[#c92a2a] transition-colors tracking-[0.04em]">
-            Closed Beta \u2192
+          <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel" aria-label="Request enterprise pilot" className="font-mono text-[12px] font-bold text-white bg-red px-4 py-[7px] rounded-sm no-underline hover:bg-[#c92a2a] transition-colors tracking-[0.04em]">
+            Request Pilot \u2192
           </a>
         </div>
 
@@ -95,8 +95,8 @@ export default function Nav() {
                 {l.label}
               </a>
             ))}
-            <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" aria-label="Join closed beta on Telegram" className="font-mono text-[13px] font-bold text-center text-white bg-red px-4 py-[10px] rounded-sm no-underline mt-2">
-              Closed Beta \u2192
+            <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel" aria-label="Request enterprise pilot" className="font-mono text-[13px] font-bold text-center text-white bg-red px-4 py-[10px] rounded-sm no-underline mt-2">
+              Request Pilot \u2192
             </a>
           </div>
         </div>
