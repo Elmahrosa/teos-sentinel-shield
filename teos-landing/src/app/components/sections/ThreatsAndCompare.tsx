@@ -25,11 +25,11 @@ const THREATS = [
 const COMPARE_ROWS = [
   { cap: 'Pre-execution blocking', sentinel: '\u2713 Yes', others: ['\u2717 Post-commit', '\u2717 Post-commit', '\u2717'] },
   { cap: 'AI agent native design', sentinel: '\u2713 Yes', others: ['\u2717', '\u2717', '\u2717'] },
-  { cap: 'Zero-config entry (Telegram)', sentinel: '\u2713 Yes', others: ['\u2717', '\u2717', '\u2717'] },
+  { cap: 'Pre-execution enforcement', sentinel: '\u2713 Yes', others: ['\u2717', '\u2717', '\u2717'] },
   { cap: 'Shell command enforcement', sentinel: '\u2713 R01\u2013R08', others: ['\u2717', '\u2717', '\u26A0 Limited'] },
   { cap: 'Supply chain audit', sentinel: '\u2713 Team+', others: ['\u2713', '\u2713', '\u2713'] },
   { cap: 'Regional deployment focus', sentinel: '\u2713 Yes', others: ['\u2717', '\u2717', '\u2717'] },
-  { cap: 'Free tier (no signup)', sentinel: '\u2713 50 scans/mo', others: ['\u2717', '\u26A0 Limited', '\u2717 Enterprise'] },
+  { cap: 'Government pilot program', sentinel: '\u2713 MENA focus', others: ['\u2717', '\u2717', '\u2717 Enterprise'] },
 ];
 
 function cellColor(val: string): string {

@@ -38,7 +38,7 @@ export default function Hero() {
       <div className="max-w-[1100px] mx-auto px-6 lg:px-8">
         {/* Badge */}
         <div className={`inline-flex items-center gap-2 font-mono text-[11px] text-red border border-red/30 bg-red/10 px-3 py-[5px] rounded-sm tracking-[0.08em] uppercase mb-9 transition-all duration-500 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-          <span aria-hidden="true">\u25B8</span> Closed Beta \u00B7 Deterministic Engine v2.4 \u00B7 5 Tiers Active
+          <span aria-hidden="true">\u25B8</span> Sovereign Deployment \u00B7 Deterministic Engine v2.4 \u00B7 ICBC Aligned
         </div>
 
         {/* Headline */}
@@ -59,11 +59,11 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className={`flex gap-4 flex-wrap mb-[60px] transition-all duration-500 delay-[300ms] ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-          <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-red text-white font-mono text-[13px] font-bold px-7 py-[14px] rounded-sm no-underline hover:bg-[#c92a2a] hover:-translate-y-[1px] transition-all tracking-[0.04em] shadow-[0_4px_16px_rgba(230,51,51,0.25)]" aria-label="Request access to closed beta via Telegram">
-            {'\u{1F6E1}\uFE0F'} Request Beta Access →
+          <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel" className="inline-flex items-center gap-2 bg-red text-white font-mono text-[13px] font-bold px-7 py-[14px] rounded-sm no-underline hover:bg-[#c92a2a] hover:-translate-y-[1px] transition-all tracking-[0.04em] shadow-[0_4px_16px_rgba(230,51,51,0.25)]" aria-label="Request enterprise pilot">
+            {'\u{1F6E1}\uFE0F'} Request Government Pilot →
           </a>
-          <a href="#console" className="inline-flex items-center gap-2 bg-transparent text-white font-mono text-[13px] px-7 py-[14px] rounded-sm border border-[rgba(255,255,255,0.12)] no-underline hover:border-white/30 hover:bg-white/[0.04] transition-all tracking-[0.04em]">
-            \u25B6 Try Live Enforcement
+          <a href="mailto:ayman@teosegypt.com?subject=Demo%20Request%20%E2%80%94%20TEOS%20Sentinel" className="inline-flex items-center gap-2 bg-transparent text-white font-mono text-[13px] px-7 py-[14px] rounded-sm border border-[rgba(255,255,255,0.12)] no-underline hover:border-white/30 hover:bg-white/[0.04] transition-all tracking-[0.04em]">
+            \u25B6 Schedule Demo
           </a>
         </div>
 
@@ -71,7 +71,7 @@ export default function Hero() {
         <div className={`flex gap-8 md:gap-10 flex-wrap transition-all duration-500 delay-[400ms] ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
           {[
             { num: '25', label: 'Named Rules' },
-            { num: '25/25', label: 'Tests Passing' },
+            { num: '25/25', label: 'Tests Passing', numCls: 'text-green' },
             { num: 'v2.4', label: 'Engine Stable', numCls: 'text-red' },
             { num: '75+', label: 'Nations' },
           ].map((s, i) => (

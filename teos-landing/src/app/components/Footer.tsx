@@ -49,8 +49,8 @@ export default function Footer() {
         {/* Product */}
         <div>
           <h5 className="font-mono text-[11px] tracking-[0.1em] uppercase text-muted mb-4">Product</h5>
-          <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" aria-label="Telegram Bot" className="flex items-center gap-2 font-mono text-[12px] text-muted no-underline mb-2.5 hover:text-white transition-colors">
-            <Send className="h-3.5 w-3.5 stroke-[1.75]" /> Telegram Bot
+          <a href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel" aria-label="Government pilot inquiry" className="flex items-center gap-2 font-mono text-[12px] text-muted no-underline mb-2.5 hover:text-white transition-colors">
+            <Shield className="h-3.5 w-3.5 stroke-[1.75]" /> Government Pilot
           </a>
           <a href="#console" className="flex items-center gap-2 font-mono text-[12px] text-muted no-underline mb-2.5 hover:text-white transition-colors">
             <Shield className="h-3.5 w-3.5 stroke-[1.75]" /> Enforcement Console
