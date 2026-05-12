@@ -762,7 +762,7 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
         <tr><td>Zero-config entry (Telegram)</td><td class="ours"><span class="cy">&#x2705; Yes</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cn">&#x274C; No</span></td></tr>
         <tr><td>Shell command enforcement</td><td class="ours"><span class="cy">&#x2705; R01&ndash;R08</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cp">&#x26A0;&#xFE0F; Limited</span></td></tr>
         <tr><td>Supply chain audit</td><td class="ours"><span class="cy">&#x2705; All tiers</span></td><td><span class="cy">&#x2705; Yes</span></td><td><span class="cy">&#x2705; Yes</span></td><td><span class="cy">&#x2705; Yes</span></td></tr>
-        <tr><td>Free tier (no signup)</td><td class="ours"><span class="cy">&#x2705; 50 scans/mo</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cp">&#x26A0;&#xFE0F; Limited</span></td><td><span class="cn">&#x274C; No</span></td></tr>
+        <tr><td>Free tier (no signup)</td><td class="ours"><span class="cy">&#x2705; 5 scans/mo</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cp">&#x26A0;&#xFE0F; Limited</span></td><td><span class="cn">&#x274C; No</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -776,20 +776,33 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
     <p class="section-sub reveal">Instant activation. Credits auto-applied. Cancel anytime. Full rule ID + explanation on every verdict.</p>
     <div class="pricing-grid reveal">
       <div class="plan">
-        <div class="plan-name">&#x1F7E6; Starter</div>
-        <div class="plan-price"><span class="price-n">FREE</span></div>
-        <p class="plan-tag">50 scans/month &middot; Core rules</p>
+        <div class="plan-name">&#x1F7E6; Free</div>
+        <div class="plan-price"><span class="price-n">$0</span></div>
+        <p class="plan-tag">5 scans/month &middot; Core rules only</p>
         <ul class="plan-feats">
-          <li>50 scans/month</li>
+          <li>5 scans/month</li>
           <li>Core threat rules (R01&ndash;R10)</li>
           <li>Telegram bot access</li>
           <li>Community support</li>
         </ul>
-        <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Start Free on Telegram &rarr;</a>
+        <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Start Free &rarr;</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">&#x1F7E8; Starter</div>
+        <div class="plan-price"><span class="price-n">$9</span><span class="price-p">/month</span></div>
+        <p class="plan-tag">50 scans/month &middot; Core rules</p>
+        <ul class="plan-feats">
+          <li>50 scans/month</li>
+          <li>All 25 threat rules</li>
+          <li>Code + Dependency scanning</li>
+          <li>CI/CD pipeline audit</li>
+          <li>Email support</li>
+        </ul>
+        <a href="https://dodo.pe/tts" target="_blank" rel="noopener noreferrer" class="btn-plan btn-gold">Get Protected &rarr;</a>
       </div>
       <div class="plan pop">
         <div class="pop-badge">&#x2B50; Most Popular</div>
-        <div class="plan-name">&#x1F7E8; Builder</div>
+        <div class="plan-name">&#x1F7E5; Builder</div>
         <div class="plan-price"><span class="price-n">$39</span><span class="price-p">/month</span></div>
         <p class="plan-tag">400 scans/month &middot; All rules</p>
         <ul class="plan-feats">
@@ -803,35 +816,19 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
         <a href="https://dodo.pe/tts2" target="_blank" rel="noopener noreferrer" class="btn-plan btn-gold">Get Protected &rarr;</a>
       </div>
       <div class="plan">
-        <div class="plan-name">&#x1F7E5; Professional</div>
-        <div class="plan-price"><span class="price-n">$149</span><span class="price-p">/month</span></div>
-        <p class="plan-tag">2,000 scans/month &middot; Unlimited rules</p>
+        <div class="plan-name">&#x1F3E2; Pro</div>
+        <div class="plan-price"><span class="price-n">$99</span><span class="price-p">/month</span></div>
+        <p class="plan-tag">1,000 scans/month &middot; Includes CI/CD</p>
         <ul class="plan-feats">
-          <li>2,000 scans/month</li>
-          <li>All scanning engines</li>
+          <li>1,000 scans/month</li>
+          <li>All 25 threat rules</li>
           <li>Unlimited custom rules</li>
+          <li>CI/CD integration</li>
           <li>99% uptime SLA</li>
           <li>&lt;4h support response</li>
           <li>Full audit logs</li>
         </ul>
-        <a href="https://dodo.pe/teos-pro" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Go Professional &rarr;</a>
-      </div>
-      <div class="plan">
-        <div class="plan-name">&#x1F3E2; Enterprise</div>
-        <div class="plan-price"><span class="price-n">Custom</span></div>
-        <p class="plan-tag">Unlimited &middot; Everything included</p>
-        <ul class="plan-feats">
-          <li>Unlimited scans</li>
-          <li>Unlimited custom rules</li>
-          <li>99.95% SLA</li>
-          <li>&lt;1h support</li>
-          <li>Dedicated deployment</li>
-          <li>Custom policy engine</li>
-          <li>Full audit trail</li>
-          <li>MENA sovereign architecture</li>
-          <li>Self-hosted available</li>
-        </ul>
-        <a href="mailto:ayman@teosegypt.com" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Contact Us &rarr;</a>
+        <a href="https://dodo.pe/teos-pro" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Go Pro &rarr;</a>
       </div>
     </div>
     <p class="annual-note reveal">Save 25% with annual billing.</p>
