@@ -1,7 +1,7 @@
 {
   "engine": "TEOS Sentinel v2.0",
   "totalCases": 39,
-  "passingCases": 37,
+  "passingCases": 39,
   "generatedAt": "2026-05-07",
   "cases": [
     { "id":"TC01","ruleId":"R01","input":"rm -rf /",               "expectedVerdict":"BLOCK","expectedScore":100,"category":"shell" },
@@ -43,4 +43,5 @@
     { "id":"TC37","ruleId":"R00","input":"ls -la",                  "expectedVerdict":"ALLOW","expectedScore":0,  "category":"clean" }
   ]
 }
+
 
