@@ -2,7 +2,7 @@
   "version": "2.1.0",
   "engine": "TEOS Sentinel Shield",
   "published": "2026-05-08T00:00:00Z",
-  "total_rules": 25,
+  "total_rules": 27,
   "categories": {
     "destructive_operations": { "id": "CAT01", "description": "Commands that destroy data or disrupt systems" },
     "code_execution": { "id": "CAT02", "description": "Remote or obfuscated code execution patterns" },
@@ -408,7 +408,7 @@
     { "id": "TC040", "input": "echo hello world", "expected_verdict": "ALLOW", "expected_rule": "R00", "category": "baseline" }
   ],
   "coverage": {
-    "total_rules": 25,
+    "total_rules": 27,
     "total_test_cases": 40,
     "categories_covered": 8,
     "last_audit": "2026-05-01",
