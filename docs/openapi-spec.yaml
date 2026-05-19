@@ -712,13 +712,13 @@ x-rate-limits:
 
 x-integrations:
   - name: GitHub Actions
-    status: live
+    status: early-access
     docs: https://teos-sentinel.io/docs/github-actions
   - name: GitLab CI
-    status: live
+    status: early-access
     docs: https://teos-sentinel.io/docs/gitlab-ci
   - name: Telegram Bot
-    status: live
+    status: early-access
     docs: https://t.me/teoslinker_bot
   - name: CLI Tool
     status: coming-q2
