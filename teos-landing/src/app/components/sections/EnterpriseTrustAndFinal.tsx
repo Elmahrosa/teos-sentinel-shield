@@ -17,7 +17,7 @@ function useInView(threshold = 0.1) {
 const INTEGRATIONS = [
   { icon: '\u{1F6E1}\uFE0F', name: 'Enforcement Gateway', status: 'LIVE' },
   { icon: '\u2699\uFE0F', name: 'REST API', status: 'LIVE' },
-  { icon: '\u{1F400}', name: 'CLI Tool', status: 'LIVE' },
+  { icon: '\u{1F400}', name: 'CLI Tool', status: 'PLANNED' },
   { icon: '\u{1F400}', name: 'GitHub Actions', status: 'BETA' },
   { icon: '\u{1F400}', name: 'GitLab CI', status: 'BETA' },
   { icon: '\u{1F400}', name: 'Autonomous Agents', status: 'BETA' },
