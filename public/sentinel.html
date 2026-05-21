@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEOS Sentinel Shield — Pre-Execution AI Execution Firewall</title>
-<meta name="description" content="Stop unsafe AI actions before they execute. Deterministic pre-execution enforcement. 25 rules. 37 tests passing. Built in Alexandria, Egypt.">
+<meta name="description" content="Stop unsafe AI actions before they execute. Deterministic pre-execution enforcement. 27 rules. 39 tests passing. Built in Alexandria, Egypt.">
 <meta property="og:title" content="TEOS Sentinel Shield — AI Execution Firewall">
 <meta property="og:description" content="Stop unsafe AI actions — before they execute. Deterministic enforcement between AI generation and runtime.">
 <meta property="og:image" content="/opengraph-image.png">
@@ -438,10 +438,146 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
 ::-webkit-scrollbar-track { background:var(--kohl); }
 ::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:2px; }
 
+/* ── PRODUCT HUNT SHOWCASE ── */
+.ph-section { position:relative; padding:120px 48px; max-width:1200px; margin:0 auto; }
+.ph-section::before {
+  content:''; position:absolute; inset:auto 0 auto 0; top:50%; transform:translateY(-50%);
+  width:820px; max-width:100%; height:520px; margin:0 auto; pointer-events:none; z-index:0;
+  background:radial-gradient(closest-side, rgba(212,168,67,0.16), rgba(212,168,67,0.04) 45%, transparent 75%);
+  filter:blur(40px); left:50%; transform:translate(-50%,-50%);
+}
+.ph-head { text-align:center; max-width:760px; margin:0 auto 48px; position:relative; z-index:1; }
+.ph-eyebrow {
+  display:inline-flex; align-items:center; gap:12px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.25em;
+  text-transform:uppercase; color:var(--gold-dim); margin-bottom:18px;
+}
+.ph-eyebrow::before, .ph-eyebrow::after {
+  content:''; width:24px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-dim));
+}
+.ph-eyebrow::after { background:linear-gradient(90deg, var(--gold-dim), transparent); }
+.ph-title {
+  font-family:var(--font-display); font-weight:900;
+  font-size:clamp(28px,3.4vw,48px); line-height:1.1; letter-spacing:0.02em;
+  background:linear-gradient(180deg, #f5e6a8 0%, var(--gold) 55%, var(--gold-dim) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin-bottom:14px;
+}
+.ph-sub { font-family:var(--font-mono); font-size:14px; line-height:1.7; color:var(--alabaster-dim); max-width:580px; margin:0 auto; }
+.ph-sub strong { color:var(--alabaster); font-weight:600; }
+.ph-tagline { margin-top:10px; font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; color:var(--gold-dim); }
+
+.ph-card {
+  position:relative; z-index:1;
+  border:1px solid rgba(212,168,67,0.22);
+  background:linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
+  border-radius:16px; padding:48px;
+  box-shadow:0 10px 40px -10px rgba(0,0,0,0.7);
+  transition:border-color 0.5s, box-shadow 0.5s;
+  overflow:hidden;
+}
+.ph-card::before {
+  content:''; position:absolute; inset:-1px; border-radius:16px; pointer-events:none;
+  background:linear-gradient(135deg, rgba(212,168,67,0.35), rgba(245,215,110,0.12) 50%, transparent 75%);
+  opacity:0; filter:blur(18px); transition:opacity 0.5s; z-index:-1;
+}
+.ph-card:hover { border-color:rgba(212,168,67,0.45); box-shadow:0 20px 60px -15px rgba(212,168,67,0.25); }
+.ph-card:hover::before { opacity:1; }
+
+.ph-grid { display:grid; grid-template-columns:1fr 1.1fr; gap:40px; align-items:start; }
+
+.ph-trust { display:flex; flex-direction:column; }
+.ph-live {
+  display:inline-flex; align-items:center; gap:8px; width:fit-content;
+  padding:6px 12px; border-radius:999px;
+  border:1px solid rgba(212,168,67,0.3); background:rgba(212,168,67,0.08);
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.18em;
+  text-transform:uppercase; color:var(--gold-bright); margin-bottom:24px;
+}
+.ph-live-dot { position:relative; display:inline-flex; width:8px; height:8px; }
+.ph-live-dot::before {
+  content:''; position:absolute; inset:0; border-radius:999px;
+  background:var(--gold); opacity:0.75; animation:ph-ping 1.6s cubic-bezier(0,0,0.2,1) infinite;
+}
+.ph-live-dot::after {
+  content:''; position:absolute; inset:0; border-radius:999px; background:var(--gold);
+}
+@keyframes ph-ping { 75%,100% { transform:scale(2.2); opacity:0; } }
+
+.ph-name { font-family:var(--font-display); font-weight:900; font-size:26px; letter-spacing:0.02em; color:var(--alabaster); margin-bottom:10px; }
+.ph-blurb { font-family:var(--font-mono); font-size:13px; line-height:1.7; color:var(--alabaster-dim); margin-bottom:24px; }
+
+.ph-upvote {
+  display:inline-flex; align-items:center; justify-content:center; gap:12px;
+  background:linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+  color:var(--kohl); text-decoration:none; font-family:var(--font-display);
+  font-weight:700; font-size:13px; letter-spacing:0.12em; text-transform:uppercase;
+  padding:16px 28px; border-radius:10px;
+  box-shadow:0 8px 24px -6px rgba(212,168,67,0.5);
+  position:relative; overflow:hidden; transition:all 0.3s;
+}
+.ph-upvote::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform:translateX(-100%); transition:transform 0.6s;
+}
+.ph-upvote:hover::before { transform:translateX(100%); }
+.ph-upvote:hover {
+  transform:translateY(-2px);
+  background:linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+  box-shadow:0 14px 36px -6px rgba(212,168,67,0.7);
+  color:var(--kohl);
+}
+.ph-upvote svg { fill:currentColor; }
+.ph-upvote-hint { font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; color:var(--alabaster-faint); margin-top:8px; }
+
+.ph-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:28px; padding-top:24px; border-top:1px solid var(--border-1); }
+.ph-stat-num { font-family:var(--font-mono); font-weight:700; font-size:18px; color:var(--gold-bright); }
+.ph-stat-label { font-family:var(--font-mono); font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--alabaster-faint); margin-top:4px; }
+
+.ph-quote {
+  margin-top:28px; padding-left:16px; border-left:2px solid rgba(212,168,67,0.4);
+  font-family:var(--font-serif); font-style:italic; font-size:14px; line-height:1.65;
+  color:rgba(237,232,216,0.78);
+}
+.ph-quote cite {
+  display:block; margin-top:10px; font-family:var(--font-mono); font-style:normal;
+  font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--alabaster-faint);
+}
+
+.ph-embed-col { display:flex; flex-direction:column; }
+.ph-iframe-wrap {
+  position:relative; width:100%; overflow:hidden; border-radius:12px;
+  border:1px solid rgba(212,168,67,0.2); background:rgba(0,0,0,0.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.ph-iframe-wrap iframe { border:none; width:100%; height:405px; display:block; }
+
+.ph-secondary {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:16px; padding:13px 22px; border-radius:999px;
+  border:1px solid var(--border-2); background:rgba(255,255,255,0.02);
+  font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--alabaster-dim); text-decoration:none;
+  transition:all 0.3s;
+}
+.ph-secondary:hover { border-color:rgba(212,168,67,0.4); color:var(--gold-bright); background:rgba(212,168,67,0.06); }
+
+.ph-strip {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+  gap:8px 20px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border-1);
+  font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--alabaster-faint);
+}
+.ph-strip-dot { width:4px; height:4px; border-radius:999px; background:var(--alabaster-faint); opacity:0.5; }
+
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){
   nav { padding:14px 24px; }
-  .hero,.section-wrap,.cta-banner { padding-left:24px; padding-right:24px; }
+  .hero,.section-wrap,.cta-banner,.ph-section { padding-left:24px; padding-right:24px; }
+  .ph-card { padding:36px 28px; }
+  .ph-grid { grid-template-columns:1fr; gap:32px; }
   .features-grid { grid-template-columns:1fr 1fr; }
   .threat-grid { grid-template-columns:repeat(3,1fr); }
   .pricing-grid { grid-template-columns:1fr 1fr; }
@@ -451,6 +587,10 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
 }
 @media(max-width:768px){
   .nav-links { display:none; }
+  .ph-section { padding-top:80px; padding-bottom:80px; }
+  .ph-card { padding:28px 20px; }
+  .ph-stats { grid-template-columns:repeat(2,1fr); }
+  .ph-iframe-wrap iframe { height:380px; }
   .status-ticker { font-size:9px; gap:12px; }
   .terminals { grid-template-columns:1fr; }
   .features-grid { grid-template-columns:1fr; }
@@ -487,9 +627,9 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
   <span class="ticker-sep">&#183;</span>
   <span><span class="ticker-dot"></span>Telegram Bot &mdash; Online</span>
   <span class="ticker-sep">&#183;</span>
-  <span><span class="ticker-dot"></span>25 Named Rules Active</span>
+  <span><span class="ticker-dot"></span>27 Named Rules Active</span>
   <span class="ticker-sep">&#183;</span>
-  <span><span class="ticker-dot"></span>37 Tests Passing</span>
+  <span><span class="ticker-dot"></span>39 Tests Passing</span>
 </div>
 
 <!-- HERO -->
@@ -636,7 +776,7 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
       <div class="how-step">
         <div class="hs-icon">&#x2699;&#xFE0F;</div>
         <div class="hs-n">3</div>
-        <div class="hs-title">25 rules evaluate</div>
+        <div class="hs-title">27 rules evaluate</div>
         <p class="hs-desc">Deterministic rules scan for threats &mdash; no ML, no guessing.</p>
       </div>
       <div class="how-step">
@@ -681,7 +821,7 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
       </div>
       <div class="feat">
         <div class="feat-icon">&#x1F4CB;</div>
-        <div class="feat-title">25 Named Rules</div>
+        <div class="feat-title">27 Named Rules</div>
         <p class="feat-desc">Deterministic policy. Not ML guessing. Every verdict includes the exact rule ID that fired, with a human-readable explanation.</p>
       </div>
       <div class="feat">
@@ -762,7 +902,7 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
         <tr><td>Zero-config entry (Telegram)</td><td class="ours"><span class="cy">&#x2705; Yes</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cn">&#x274C; No</span></td></tr>
         <tr><td>Shell command enforcement</td><td class="ours"><span class="cy">&#x2705; R01&ndash;R08</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cp">&#x26A0;&#xFE0F; Limited</span></td></tr>
         <tr><td>Supply chain audit</td><td class="ours"><span class="cy">&#x2705; All tiers</span></td><td><span class="cy">&#x2705; Yes</span></td><td><span class="cy">&#x2705; Yes</span></td><td><span class="cy">&#x2705; Yes</span></td></tr>
-        <tr><td>Free tier (no signup)</td><td class="ours"><span class="cy">&#x2705; 5 scans/mo</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cp">&#x26A0;&#xFE0F; Limited</span></td><td><span class="cn">&#x274C; No</span></td></tr>
+        <tr><td>Free tier (no signup)</td><td class="ours"><span class="cy">&#x2705; 50 scans/mo</span></td><td><span class="cn">&#x274C; No</span></td><td><span class="cp">&#x26A0;&#xFE0F; Limited</span></td><td><span class="cn">&#x274C; No</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -776,33 +916,20 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
     <p class="section-sub reveal">Instant activation. Credits auto-applied. Cancel anytime. Full rule ID + explanation on every verdict.</p>
     <div class="pricing-grid reveal">
       <div class="plan">
-        <div class="plan-name">&#x1F7E6; Free</div>
-        <div class="plan-price"><span class="price-n">$0</span></div>
-        <p class="plan-tag">5 scans/month &middot; Core rules only</p>
+        <div class="plan-name">&#x1F7E6; Starter</div>
+        <div class="plan-price"><span class="price-n">FREE</span></div>
+        <p class="plan-tag">50 scans/month &middot; Core rules</p>
         <ul class="plan-feats">
-          <li>5 scans/month</li>
+          <li>50 scans/month</li>
           <li>Core threat rules (R01&ndash;R10)</li>
           <li>Telegram bot access</li>
           <li>Community support</li>
         </ul>
-        <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Start Free &rarr;</a>
-      </div>
-      <div class="plan">
-        <div class="plan-name">&#x1F7E8; Starter</div>
-        <div class="plan-price"><span class="price-n">$9</span><span class="price-p">/month</span></div>
-        <p class="plan-tag">50 scans/month &middot; Core rules</p>
-        <ul class="plan-feats">
-          <li>50 scans/month</li>
-          <li>All 25 threat rules</li>
-          <li>Code + Dependency scanning</li>
-          <li>CI/CD pipeline audit</li>
-          <li>Email support</li>
-        </ul>
-        <a href="https://dodo.pe/tts" target="_blank" rel="noopener noreferrer" class="btn-plan btn-gold">Get Protected &rarr;</a>
+        <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Start Free on Telegram &rarr;</a>
       </div>
       <div class="plan pop">
         <div class="pop-badge">&#x2B50; Most Popular</div>
-        <div class="plan-name">&#x1F7E5; Builder</div>
+        <div class="plan-name">&#x1F7E8; Builder</div>
         <div class="plan-price"><span class="price-n">$39</span><span class="price-p">/month</span></div>
         <p class="plan-tag">400 scans/month &middot; All rules</p>
         <ul class="plan-feats">
@@ -816,19 +943,35 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
         <a href="https://dodo.pe/tts2" target="_blank" rel="noopener noreferrer" class="btn-plan btn-gold">Get Protected &rarr;</a>
       </div>
       <div class="plan">
-        <div class="plan-name">&#x1F3E2; Pro</div>
-        <div class="plan-price"><span class="price-n">$99</span><span class="price-p">/month</span></div>
-        <p class="plan-tag">1,000 scans/month &middot; Includes CI/CD</p>
+        <div class="plan-name">&#x1F7E5; Professional</div>
+        <div class="plan-price"><span class="price-n">$149</span><span class="price-p">/month</span></div>
+        <p class="plan-tag">2,000 scans/month &middot; Unlimited rules</p>
         <ul class="plan-feats">
-          <li>1,000 scans/month</li>
-          <li>All 25 threat rules</li>
+          <li>2,000 scans/month</li>
+          <li>All scanning engines</li>
           <li>Unlimited custom rules</li>
-          <li>CI/CD integration</li>
           <li>99% uptime SLA</li>
           <li>&lt;4h support response</li>
           <li>Full audit logs</li>
         </ul>
-        <a href="https://dodo.pe/teos-pro" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Go Pro &rarr;</a>
+        <a href="https://dodo.pe/teos-pro" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Go Professional &rarr;</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">&#x1F3E2; Enterprise</div>
+        <div class="plan-price"><span class="price-n">Custom</span></div>
+        <p class="plan-tag">Unlimited &middot; Everything included</p>
+        <ul class="plan-feats">
+          <li>Unlimited scans</li>
+          <li>Unlimited custom rules</li>
+          <li>99.95% SLA</li>
+          <li>&lt;1h support</li>
+          <li>Dedicated deployment</li>
+          <li>Custom policy engine</li>
+          <li>Full audit trail</li>
+          <li>MENA sovereign architecture</li>
+          <li>Self-hosted available</li>
+        </ul>
+        <a href="mailto:ayman@teosegypt.com" target="_blank" rel="noopener noreferrer" class="btn-plan btn-out">Contact Us &rarr;</a>
       </div>
     </div>
     <p class="annual-note reveal">Save 25% with annual billing.</p>
@@ -863,6 +1006,76 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
     <p class="gov-footnote reveal">Government partnerships &mdash; when the time is right.</p>
   </div>
 </div>
+
+<!-- PRODUCT HUNT SHOWCASE -->
+<section id="producthunt" class="ph-section" aria-label="Featured on Product Hunt">
+  <div class="ph-head reveal">
+    <div class="ph-eyebrow">Product Hunt Launch</div>
+    <h2 class="ph-title">&#x1F680; Featured on Product Hunt</h2>
+    <p class="ph-sub">Your upvote puts a <strong>deterministic firewall</strong> in front of every AI-generated command.</p>
+    <p class="ph-tagline">ALLOW / WARN / BLOCK every AI-generated command</p>
+  </div>
+
+  <div class="ph-card reveal">
+    <div class="ph-grid">
+      <!-- Trust panel -->
+      <div class="ph-trust">
+        <div class="ph-live">
+          <span class="ph-live-dot" aria-hidden="true"></span>
+          Live on Product Hunt
+        </div>
+        <h3 class="ph-name">TEOS Sovereign Sentinel</h3>
+        <p class="ph-blurb">Pre-execution firewall for AI agents. Deterministic. 27 named rules. Every command gated before it reaches production.</p>
+
+        <a href="https://www.producthunt.com/posts/teos-sovereign-sentinel"
+           target="_blank" rel="noopener noreferrer"
+           class="ph-upvote"
+           aria-label="Upvote TEOS Sovereign Sentinel on Product Hunt">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1.2 13 9H1z"/></svg>
+          Upvote on Product Hunt
+        </a>
+        <div class="ph-upvote-hint">One click. No signup required.</div>
+
+        <div class="ph-stats">
+          <div><div class="ph-stat-num">27</div><div class="ph-stat-label">Named Rules</div></div>
+          <div><div class="ph-stat-num">39/39</div><div class="ph-stat-label">Tests Passing</div></div>
+          <div><div class="ph-stat-num">v2.4</div><div class="ph-stat-label">Engine Stable</div></div>
+          <div><div class="ph-stat-num">75+</div><div class="ph-stat-label">Nations</div></div>
+        </div>
+
+        <blockquote class="ph-quote">
+          &ldquo;Probabilistic safety scoring is a guess. We built the deterministic alternative &mdash; same input, same verdict, always.&rdquo;
+          <cite>&mdash; Ayman Seif &middot; Alexandria, Egypt</cite>
+        </blockquote>
+      </div>
+
+      <!-- Official PH embed -->
+      <div class="ph-embed-col">
+        <div class="ph-iframe-wrap">
+          <iframe
+            title="TEOS Sovereign Sentinel on Product Hunt"
+            src="https://www.producthunt.com/posts/teos-sovereign-sentinel/embed"
+            loading="lazy"
+            allowfullscreen
+            scrolling="no"
+            frameborder="0"></iframe>
+        </div>
+        <a href="https://www.producthunt.com/posts/teos-sovereign-sentinel#discussion"
+           target="_blank" rel="noopener noreferrer"
+           class="ph-secondary">
+          Join the discussion on Product Hunt <span aria-hidden="true">&rarr;</span>
+        </a>
+        <div class="ph-strip">
+          <span>Closed Beta &middot; Engine v2.4</span>
+          <span class="ph-strip-dot" aria-hidden="true"></span>
+          <span>Built in Alexandria, Egypt</span>
+          <span class="ph-strip-dot" aria-hidden="true"></span>
+          <span>Elmahrosa International</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- CTA BANNER -->
 <section class="cta-banner">
