@@ -1,6 +1,7 @@
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import Hero from './components/sections/Hero';
+import ProductHuntEmbed from './components/ProductHuntEmbed';
 import WhyNowAndGap from './components/sections/WhyNowAndGap';
 import ArchitectureAndDemo from './components/sections/ArchitectureAndDemo';
 import ArchitectureDiagram from './components/ArchitectureDiagram';
@@ -14,6 +15,7 @@ export default function Home() {
     <main className="relative z-[1]">
       <Nav />
       <Hero />
+      <ProductHuntEmbed />
       <WhyNowAndGap />
       <ArchitectureDiagram />
       <ArchitectureAndDemo />
