@@ -1,0 +1,20 @@
+name: TEOS Security Pipeline
+on: [push, pull_request]
+
+jobs:
+  security-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize Environment
+        run: npm ci
+      - name: AST CodeGuard Verification
+        run: node tools/codeguard-cli.js scan .
+      - name: Declarative Policy Check
+        run: node tools/policy-engine.js validate
+      - name: Supply Chain Dependency Audit
+        run: npm audit --audit-level=high
+      - name: Secret Detection Gate
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

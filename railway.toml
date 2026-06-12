@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "node ws-server/index.js"
+restartPolicyType = "on_failure"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+

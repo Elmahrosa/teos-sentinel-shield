@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  @font-face { font-family: 'Inter Fallback'; src: local('Arial'); font-weight: 400; }
+  @font-face { font-family: 'Inter Fallback'; src: local('Arial Bold'); font-weight: 700; }
+  @font-face { font-family: 'JetBrains Mono Fallback'; src: local('Consolas'); font-weight: 400; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: 'Inter', sans-serif;
+      font-size: 8px;
+      color: #52525B;
+    }
+  }
+
+  @page cover-page { @bottom-center { content: none; } }
+
+  body {
+    background: #09090B;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── PAGE ── */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 0;
+    position: relative;
+    page-break-after: always;
+    overflow: hidden;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 297mm;
+    background: linear-gradient(160deg, #09090B 0%, #0C0C0F 40%, #111113 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(245,197,66,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(245,197,66,0.02) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover-shield {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .cover-badge {
+    display: inline-block;
+    padding: 6px 20px;
+    border: 1px solid rgba(245,197,66,0.3);
+    border-radius: 20px;
+    color: #F5C542;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .cover-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #A1A1AA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cover-subtitle {
+    font-size: 14px;
+    color: #A1A1AA;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 48px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .cover-meta-item {
+    text-align: center;
+  }
+
+  .cover-meta-item .label {
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #52525B;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .cover-meta-item .value {
+    font-size: 11px;
+    color: #D4D4D8;
+    font-weight: 500;
+  }
+
+  .cover-grade {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .grade-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid #22C55E;
+    font-size: 32px;
+    font-weight: 800;
+    color: #22C55E;
+    margin-bottom: 8px;
+  }
+
+  .cover-grade .sub {
+    font-size: 9px;
+    color: #52525B;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 40px 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #232326;
+  }
+
+  .section-header .num {
+    font-size: 10px;
+    font-weight: 700;
+    color: #F5C542;
+    font-family: 'JetBrains Mono', monospace;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(245,197,66,0.3);
+    border-radius: 6px;
+  }
+
+  .section-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #FFFFFF;
+  }
+
+  .section-header .tag {
+    margin-left: auto;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(245,197,66,0.08);
+    color: #F5C542;
+    border: 1px solid rgba(245,197,66,0.15);
+  }
+
+  /* ── METRIC CARDS ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    background: #111113;
+    border: 1px solid #232326;
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .metric-card .label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #52525B;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .metric-card .value {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+  }
+
+  .metric-card .sub {
+    font-size: 9px;
+    color: #A1A1AA;
+    margin-top: 2px;
+  }
+
+  /* ── SEVERITY BADGES ── */
+  .sev-critical { color: #EF4444; }
+  .sev-high { color: #F97316; }
+  .sev-medium { color: #EAB308; }
+  .sev-low { color: #22C55E; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-critical { background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.2); }
+  .badge-high { background: rgba(249,115,22,0.12); color: #F97316; border: 1px solid rgba(249,115,22,0.2); }
+  .badge-medium { background: rgba(234,179,8,0.12); color: #EAB308; border: 1px solid rgba(234,179,8,0.2); }
+  .badge-low { background: rgba(34,197,94,0.1); color: #22C55E; border: 1px solid rgba(34,197,94,0.2); }
+
+  /* ── TABLE ── */
+  .vuln-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .vuln-table th {
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #52525B;
+    font-weight: 600;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #232326;
+  }
+
+  .vuln-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #18181B;
+    font-size: 9px;
+    color: #D4D4D8;
+    vertical-align: top;
+  }
+
+  .vuln-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .vuln-row-critical { border-left: 3px solid #EF4444; }
+  .vuln-row-high    { border-left: 3px solid #F97316; }
+  .vuln-row-medium  { border-left: 3px solid #EAB308; }
+  .vuln-row-low     { border-left: 3px solid #22C55E; }
+
+  .vuln-table .vuln-name {
+    font-weight: 600;
+    color: #FFFFFF;
+    font-size: 10px;
+  }
+
+  .vuln-table .vuln-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #71717A;
+  }
+
+  /* ── REMEDIATION ── */
+  .remediation-block {
+    background: #0C0C0F;
+    border: 1px solid #232326;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+    page-break-inside: avoid;
+  }
+
+  .remediation-block .finding-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .remediation-block .finding-header h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  .remediation-block .finding-header .file {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #71717A;
+    margin-left: auto;
+  }
+
+  .remediation-block .finding-header .cwe {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    color: #52525B;
+    padding: 2px 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+  }
+
+  .remediation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .remediation-item {
+    background: #111113;
+    border: 1px solid #232326;
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .remediation-item.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .remediation-item .ri-label {
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #F5C542;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .remediation-item .ri-body {
+    font-size: 9px;
+    color: #D4D4D8;
+    line-height: 1.6;
+  }
+
+  .remediation-item .ri-body.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    background: #09090B;
+    border: 1px solid #232326;
+    border-radius: 6px;
+    padding: 10px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.5;
+    color: #A1A1AA;
+  }
+
+  /* ── SCORECARD ── */
+  .scorecard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .score-item {
+    background: #111113;
+    border: 1px solid #232326;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .score-item .si-label {
+    font-size: 10px;
+    color: #D4D4D8;
+    font-weight: 500;
+  }
+
+  .score-item .si-value {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .score-bar {
+    height: 4px;
+    background: #232326;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s;
+  }
+
+  /* ── ACTION PLAN ── */
+  .action-group {
+    margin-bottom: 16px;
+  }
+
+  .action-group h4 {
+    font-size: 11px;
+    font-weight: 600;
+    color: #F5C542;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(245,197,66,0.1);
+  }
+
+  .action-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #18181B;
+  }
+
+  .action-item:last-child { border-bottom: none; }
+
+  .action-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .action-item .dot.critical { background: #EF4444; }
+  .action-item .dot.high { background: #F97316; }
+  .action-item .dot.medium { background: #EAB308; }
+  .action-item .dot.low { background: #22C55E; }
+
+  .action-item .ai-text {
+    font-size: 9px;
+    color: #D4D4D8;
+    line-height: 1.5;
+  }
+
+  .action-item .ai-text strong {
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  /* ── FOOTER ── */
+  .enterprise-footer {
+    background: #111113;
+    border-top: 1px solid #232326;
+    padding: 24px 48px;
+    text-align: center;
+  }
+
+  .enterprise-footer .brand {
+    font-size: 14px;
+    font-weight: 800;
+    color: #F5C542;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .enterprise-footer .sub {
+    font-size: 8px;
+    color: #52525B;
+    letter-spacing: 0.05em;
+  }
+
+  .enterprise-footer .links {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 7px;
+    color: #52525B;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .enterprise-footer .authenticity {
+    margin-top: 8px;
+    font-size: 7px;
+    color: #3F3F46;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media print {
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 80px;
+      font-weight: 900;
+      color: rgba(245, 197, 66, 0.04);
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+  }
+
+  /* ── CHARTS ── */
+  .chart-container {
+    background: #111113;
+    border: 1px solid #232326;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .chart-container svg {
+    max-width: 100%;
+  }
+
+  .chart-container .chart-title {
+    font-size: 9px;
+    color: #A1A1AA;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  .grade-display {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+  <div class="watermark">TEOS SOVEREIGN — CONFIDENTIAL</div>
+  <div class="page cover" style="page: cover-page;">
+    <div class="cover-shield">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M40 4L72 18V38C72 56.8 58 74 40 78C22 74 8 56.8 8 38V18L40 4Z" fill="none" stroke="#F5C542" stroke-width="2" opacity="0.8"/>
+        <path d="M40 10L64 20V36C64 50.4 53 63.6 40 66.8C27 63.6 16 50.4 16 36V20L40 10Z" fill="none" stroke="#F5C542" stroke-width="1.5" opacity="0.4"/>
+        <path d="M32 38L38 44L48 32" stroke="#F5C542" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+      </svg>
+    </div>
+    <div class="cover-badge">Sovereign Security Report</div>
+    <div class="cover-title">TEOS Sentinel<br>Security Audit</div>
+    <div class="cover-subtitle">Enterprise Runtime Security Assessment</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="label">Target</div><div class="value">__TARGET__</div></div>
+      <div class="cover-meta-item"><div class="label">Date</div><div class="value">__DATE__</div></div>
+      <div class="cover-meta-item"><div class="label">Report ID</div><div class="value">__REPORT_ID__</div></div>
+      <div class="cover-meta-item"><div class="label">Tier</div><div class="value">__TIER__</div></div>
+    </div>
+    <div class="cover-grade">
+      <div class="grade-circle" style="border-color: __GRADE_COLOR__; color: __GRADE_COLOR__;">__GRADE__</div>
+      <div class="sub">Security Score: __SCORE__/100</div>
+    </div>
+  </div>
+
+  <div class="page section">
+    <div class="section-header">
+      <span class="num">01</span>
+      <h2>Executive Summary</h2>
+      <span class="tag">Overview</span>
+    </div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Total Findings</div><div class="value" style="color:__FINDINGS_COLOR__">__TOTAL_FINDINGS__</div><div class="sub">across __ATTACK_SURFACE__ attack surfaces</div></div>
+      <div class="metric-card"><div class="label">Critical</div><div class="value" style="color:#EF4444">__CRITICAL_COUNT__</div><div class="sub">immediate action required</div></div>
+      <div class="metric-card"><div class="label">Overall Score</div><div class="value" style="color:__GRADE_COLOR__">__SCORE__/100</div><div class="sub">Grade: __GRADE__</div></div>
+    </div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">High Severity</div><div class="value" style="color:#F97316">__HIGH_COUNT__</div></div>
+      <div class="metric-card"><div class="label">Medium Severity</div><div class="value" style="color:#EAB308">__MEDIUM_COUNT__</div></div>
+      <div class="metric-card"><div class="label">Low Severity</div><div class="value" style="color:#22C55E">__LOW_COUNT__</div></div>
+    </div>
+    <div class="remediation-item full-width" style="background:#111113;border:1px solid #232326;border-radius:10px;padding:16px;margin-bottom:24px;">
+      <div class="ri-label">Executive Summary</div>
+      <div class="ri-body" style="font-size:10px;line-height:1.7;">__EXECUTIVE_SUMMARY__</div>
+    </div>
+    <div class="remediation-item full-width" style="background:#111113;border:1px solid #232326;border-radius:10px;padding:16px;">
+      <div class="ri-label">Critical Exposure</div>
+      <div class="ri-body" style="font-size:10px;font-weight:__CRIT_WEIGHT__;color:__CRIT_COLOR__;">__CRITICAL_EXPOSURE__</div>
+    </div>
+  </div>
+
+  <div class="page section">
+    <div class="section-header">
+      <span class="num">02</span>
+      <h2>Vulnerability Analysis</h2>
+      <span class="tag">Findings</span>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Severity Distribution</div>
+      <svg viewBox="0 0 400 160" style="max-width:400px;">
+        <rect x="40" y="__CRIT_BAR_Y__" width="__CRIT_BAR_W__" height="24" rx="4" fill="#EF4444" opacity="0.9"/>
+        <text x="44" y="__CRIT_TEXT_Y__" fill="white" font-size="9" font-weight="600">Critical</text>
+        <text x="__CRIT_LABEL_X__" y="__CRIT_TEXT_Y__" fill="#EF4444" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace">__CRITICAL_COUNT__</text>
+        <rect x="40" y="__HIGH_BAR_Y__" width="__HIGH_BAR_W__" height="24" rx="4" fill="#F97316" opacity="0.9"/>
+        <text x="44" y="__HIGH_TEXT_Y__" fill="white" font-size="9" font-weight="600">High</text>
+        <text x="__HIGH_LABEL_X__" y="__HIGH_TEXT_Y__" fill="#F97316" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace">__HIGH_COUNT__</text>
+        <rect x="40" y="__MED_BAR_Y__" width="__MED_BAR_W__" height="24" rx="4" fill="#EAB308" opacity="0.9"/>
+        <text x="44" y="__MED_TEXT_Y__" fill="white" font-size="9" font-weight="600">Medium</text>
+        <text x="__MED_LABEL_X__" y="__MED_TEXT_Y__" fill="#EAB308" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace">__MEDIUM_COUNT__</text>
+        <rect x="40" y="__LOW_BAR_Y__" width="__LOW_BAR_W__" height="24" rx="4" fill="#22C55E" opacity="0.9"/>
+        <text x="44" y="__LOW_TEXT_Y__" fill="white" font-size="9" font-weight="600">Low</text>
+        <text x="__LOW_LABEL_X__" y="__LOW_TEXT_Y__" fill="#22C55E" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace">__LOW_COUNT__</text>
+      </svg>
+    </div>
+    <table class="vuln-table">
+      <thead>
+        <tr><th style="width:70px">Severity</th><th>Vulnerability</th><th>Path</th><th style="width:60px">CWE</th><th style="width:50px">Conf.</th></tr>
+      </thead>
+      <tbody>
+        __VULN_ROWS__
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page section">
+    <div class="section-header">
+      <span class="num">03</span>
+      <h2>AI Remediation Engine</h2>
+      <span class="tag">Per Finding</span>
+    </div>
+    <p style="font-size:9px;color:#A1A1AA;margin-bottom:20px;line-height:1.6;">
+      For each vulnerability identified, TEOS AI provides detailed remediation guidance including technical explanation, exploitation scenarios, risk impact, fix instructions, and secure code examples.
+    </p>
+    __REMEDIATION_BLOCKS__
+  </div>
+
+  <div class="page section">
+    <div class="section-header">
+      <span class="num">04</span>
+      <h2>Security Scorecard</h2>
+      <span class="tag">Assessment</span>
+    </div>
+    <div class="grade-display">
+      <div class="grade-circle" style="width:80px;height:80px;border-width:4px;font-size:36px;border-color:__GRADE_COLOR__;color:__GRADE_COLOR__;">__GRADE__</div>
+      <div>
+        <div style="font-size:24px;font-weight:800;color:#FFFFFF;">__SCORE__/100</div>
+        <div style="font-size:9px;color:#A1A1AA;">Overall Security Score</div>
+      </div>
+    </div>
+    <div class="scorecard-grid">
+      <div class="score-item">
+        <div><div class="si-label">Dependency Security</div><div class="score-bar"><div class="score-bar-fill" style="width:__DEP_PCT__%;background:__DEP_COLOR__"></div></div></div>
+        <div class="si-value" style="color:__DEP_COLOR__">__DEP_SCORE__</div>
+      </div>
+      <div class="score-item">
+        <div><div class="si-label">API Security</div><div class="score-bar"><div class="score-bar-fill" style="width:__API_PCT__%;background:__API_COLOR__"></div></div></div>
+        <div class="si-value" style="color:__API_COLOR__">__API_SCORE__</div>
+      </div>
+      <div class="score-item">
+        <div><div class="si-label">Docker Hardening</div><div class="score-bar"><div class="score-bar-fill" style="width:__DOCKER_PCT__%;background:__DOCKER_COLOR__"></div></div></div>
+        <div class="si-value" style="color:__DOCKER_COLOR__">__DOCKER_SCORE__</div>
+      </div>
+      <div class="score-item">
+        <div><div class="si-label">Secrets Exposure</div><div class="score-bar"><div class="score-bar-fill" style="width:__SECRETS_PCT__%;background:__SECRETS_COLOR__"></div></div></div>
+        <div class="si-value" style="color:__SECRETS_COLOR__">__SECRETS_SCORE__</div>
+      </div>
+      <div class="score-item" style="grid-column:1/-1;">
+        <div><div class="si-label">Runtime Security</div><div class="score-bar"><div class="score-bar-fill" style="width:__RUNTIME_PCT__%;background:__RUNTIME_COLOR__"></div></div></div>
+        <div class="si-value" style="color:__RUNTIME_COLOR__">__RUNTIME_SCORE__</div>
+      </div>
+    </div>
+    <div class="remediation-item full-width" style="background:#111113;border:1px solid #232326;border-radius:10px;padding:16px;">
+      <div class="ri-label">Security Bonuses Applied</div>
+      <div class="ri-body" style="font-size:9px;color:#D4D4D8;">__BONUSES__</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+      <span style="font-size:8px;color:#52525B;">Grade Scale:</span>
+      <span style="font-size:8px;padding:2px 8px;border:1px solid #232326;border-radius:4px;color:#22C55E;">A+ 95-100</span>
+      <span style="font-size:8px;padding:2px 8px;border:1px solid #232326;border-radius:4px;color:#6EE7B7;">A 90-94</span>
+      <span style="font-size:8px;padding:2px 8px;border:1px solid #232326;border-radius:4px;color:#34D399;">B 80-89</span>
+      <span style="font-size:8px;padding:2px 8px;border:1px solid #232326;border-radius:4px;color:#EAB308;">C 70-79</span>
+      <span style="font-size:8px;padding:2px 8px;border:1px solid #232326;border-radius:4px;color:#F97316;">D 60-69</span>
+      <span style="font-size:8px;padding:2px 8px;border:1px solid #232326;border-radius:4px;color:#EF4444;">F &lt;60</span>
+    </div>
+  </div>
+
+  <div class="page section">
+    <div class="section-header">
+      <span class="num">05</span>
+      <h2>Action Plan</h2>
+      <span class="tag">Prioritized</span>
+    </div>
+    <p style="font-size:9px;color:#A1A1AA;margin-bottom:20px;line-height:1.6;">
+      Prioritized security improvements based on severity, exploitability, and business impact. Actions are grouped by urgency for efficient remediation.
+    </p>
+    <div class="action-group">
+      <h4>Immediate Actions (24-48 hours)</h4>
+      __IMMEDIATE_ACTIONS__
+    </div>
+    <div class="action-group">
+      <h4>Short-Term Improvements (1-2 weeks)</h4>
+      __SHORT_TERM_ACTIONS__
+    </div>
+    <div class="action-group">
+      <h4>Long-Term Hardening (1-3 months)</h4>
+      __LONG_TERM_ACTIONS__
+    </div>
+  </div>
+
+  <div class="page" style="display:flex;flex-direction:column;justify-content:space-between;">
+    <div class="section">
+      <div class="section-header">
+        <span class="num">06</span>
+        <h2>Compliance & References</h2>
+        <span class="tag">Standards</span>
+      </div>
+      <div class="remediation-item full-width" style="background:#111113;border:1px solid #232326;border-radius:10px;padding:16px;margin-bottom:16px;">
+        <div class="ri-label">OWASP Top 10 Coverage</div>
+        <div class="ri-body" style="font-size:9px;color:#D4D4D8;">__OWASP_COVERAGE__</div>
+      </div>
+      <div class="remediation-item full-width" style="background:#111113;border:1px solid #232326;border-radius:10px;padding:16px;margin-bottom:16px;">
+        <div class="ri-label">CWE References</div>
+        <div class="ri-body" style="font-size:9px;color:#D4D4D8;">__CWE_REFERENCES__</div>
+      </div>
+    </div>
+    <div class="enterprise-footer">
+      <div class="brand">TEOS SOVEREIGN</div>
+      <div class="sub">Sovereign Runtime Security Infrastructure for Autonomous Systems</div>
+      <div class="links">
+        <span>Report ID: __REPORT_ID__</span>
+        <span>Generated: __DATE__</span>
+        <span>TEOS v3.0.0</span>
+      </div>
+      <div class="authenticity">
+        This report is digitally authentic. Verify at https://teos-sentinel-shield.vercel.app/verify/__REPORT_ID__
+      </div>
+    </div>
+  </div>
+</body>
+</html>

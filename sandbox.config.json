@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "description": "TEOS Sentinel Sandbox Constraints — resource limits for code execution environments",
+  "constraints": {
+    "memory": {
+      "limit": "256mb",
+      "enforcement": "strict",
+      "action": "kill"
+    },
+    "cpu": {
+      "limit": 0.5,
+      "shares": 512,
+      "enforcement": "strict"
+    },
+    "network": {
+      "mode": "whitelist-only",
+      "outbound": false,
+      "whitelist": [
+        "api.supabase.com",
+        "teosegypt.com",
+        "dodo.pe"
+      ],
+      "dns": false
+    },
+    "filesystem": {
+      "readonly": true,
+      "writable_paths": ["/tmp"],
+      "max_disk": "100m"
+    },
+    "process": {
+      "max_procs": 4,
+      "max_open_fds": 64,
+      "allow_setuid": false,
+      "allow_setgid": false
+    },
+    "execution": {
+      "max_wall_time_ms": 30000,
+      "max_cpu_time_ms": 10000,
+      "max_stdout_bytes": 65536
+    }
+  }
+}

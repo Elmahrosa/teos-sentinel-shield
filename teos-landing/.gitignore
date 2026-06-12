@@ -1,0 +1,10 @@
+.vercel
+.next/
+node_modules/
+out/
+.turbo/
+.env
+.env.*
+!.env.example
+.env.local
+*.log
