@@ -24,7 +24,7 @@ try {
   const { validateSecrets } = require('../config.cjs');
   validateSecrets();
   } catch (e) {
-    log('warn', 'Config validation skipped', { err: e.message });
+    console.warn('[teos] Config validation skipped:', e.message);
   }
 
 printStartupBanner();
@@ -62,7 +62,7 @@ try {
     console.log('[teos] Redis connected via ioredis');
   }
 } catch (e) {
-  log('warn', 'Redis init failed, falling back to memory', { err: e.message });
+  console.warn('[teos] Redis init failed, falling back to memory:', e.message);
 }
 
 const LOG_LEVELS = { fatal: 0, error: 1, warn: 2, info: 3, debug: 4, trace: 5 };
