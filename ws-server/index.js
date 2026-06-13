@@ -129,7 +129,9 @@ wss.on('connection', (ws, req) => {
     try {
       const msg = JSON.parse(data.toString());
       if (msg.type === 'ping') ws.send(JSON.stringify({ type: 'pong', time: Date.now() }));
-    } catch (_) {}
+    } catch (e) {
+      console.error('[ERROR] ws-server/index.js:132 - WebSocket message parse failed:', e);
+    }
   });
   ws.on('close', () => { peers.delete(ws); totalDisc++; });
 
@@ -144,7 +146,9 @@ wss.on('connection', (ws, req) => {
         serverTime: new Date().toISOString(),
       }));
     }
-  }).catch(() => {});
+  }).catch((e) => {
+    console.error('[ERROR] ws-server/index.js:147 - loadEventsFn failed for WS snapshot:', e);
+  });
 });
 
 // ── POLLING (syncs with Redis via shared loadEvents) ────────
@@ -167,7 +171,9 @@ async function pollEvents() {
         }
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    console.error('[ERROR] ws-server/index.js:170 - pollEvents failed:', e);
+  }
 }
 
 function heartbeatCheck() {
