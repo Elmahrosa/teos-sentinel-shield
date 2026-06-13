@@ -139,6 +139,7 @@ async function resolveKeyTier(apiKey) {
       if (tier && TIERS[tier]) return tier;
     } catch (err) {
       log('warn', 'Redis key lookup failed', { err: err.message });
+    }
   }
   return null;
 }

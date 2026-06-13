@@ -24,6 +24,7 @@ async function resolveKeyTier(apiKey) {
       if (tier && TIERS[tier]) return tier;
     } catch (err) {
       console.warn('Redis key lookup failed:', err.message);
+    }
   }
   return null;
 }
