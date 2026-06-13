@@ -23,9 +23,9 @@ const app     = express();
 try {
   const { validateSecrets } = require('../config.cjs');
   validateSecrets();
-} catch (e) {
-  console.warn('[teos] Config validation skipped:', e.message);
-}
+  } catch (e) {
+    log('warn', 'Config validation skipped', { err: e.message });
+  }
 
 printStartupBanner();
 
@@ -62,7 +62,7 @@ try {
     console.log('[teos] Redis connected via ioredis');
   }
 } catch (e) {
-  console.warn('[teos] Redis init failed, falling back to memory:', e.message);
+  log('warn', 'Redis init failed, falling back to memory', { err: e.message });
 }
 
 const LOG_LEVELS = { fatal: 0, error: 1, warn: 2, info: 3, debug: 4, trace: 5 };
@@ -109,7 +109,7 @@ app.use(express.urlencoded({ extended: false, limit: MAX_PAYLOAD_KB + 'kb' }));
 app.use(requestContext({ logFn: (e) => log('info', `${e.method} ${e.path}`, e) }));
 
 app.use((req, res, next) => {
-  const allowed = process.env.CORS_ORIGIN || '*';
+  const allowed = process.env.CORS_ORIGIN || 'http://localhost:3000';
   res.setHeader('Access-Control-Allow-Origin',  allowed);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Request-ID,X-API-Key');
@@ -120,7 +120,7 @@ app.use((req, res, next) => {
 
 const VALID_KEYS = process.env.TEOS_API_KEYS
   ? process.env.TEOS_API_KEYS.split(',').map(k => k.trim())
-  : (NODE_ENV === 'development' ? ['REMOVED_DEV_KEY'] : []);
+  : [];
 
 const KEY_TIER_MAP = {};
 VALID_KEYS.forEach(k => {
@@ -137,7 +137,8 @@ async function resolveKeyTier(apiKey) {
     try {
       const tier = await redis.get(`${API_KEY_PREFIX}${apiKey}`);
       if (tier && TIERS[tier]) return tier;
-    } catch {}
+    } catch (err) {
+      log('warn', 'Redis key lookup failed', { err: err.message });
   }
   return null;
 }
@@ -149,11 +150,11 @@ async function apiKeyAuth(req, res, next) {
   if (req.path === '/ready') return next();
   if (req.path === '/') return next();
 
-  const apiKey = req.headers['x-api-key'] || req.query.apiKey;
+  const apiKey = req.headers['x-api-key'];
   if (!apiKey) {
     return res.status(401).json({
       error: 'missing_api_key',
-      message: 'Provide X-API-Key header or ?apiKey= query parameter.',
+      message: 'Provide X-API-Key header.',
     });
   }
 

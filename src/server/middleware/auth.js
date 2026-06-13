@@ -3,7 +3,7 @@ const { redis } = require('../../services/cache');
 
 const VALID_KEYS = process.env.TEOS_API_KEYS
   ? process.env.TEOS_API_KEYS.split(',').map(k => k.trim())
-  : (process.env.NODE_ENV === 'development' ? ['REMOVED_DEV_KEY'] : []);
+  : [];
 
 const KEY_TIER_MAP = {};
 VALID_KEYS.forEach(k => {
@@ -22,7 +22,8 @@ async function resolveKeyTier(apiKey) {
       const tier = await redis.get(`${API_KEY_PREFIX}${apiKey}`);
       const TIERS = { free: {}, starter: {}, team: {}, enterprise: {}, sovereign: {}, founder: {} };
       if (tier && TIERS[tier]) return tier;
-    } catch {}
+    } catch (err) {
+      console.warn('Redis key lookup failed:', err.message);
   }
   return null;
 }
@@ -31,11 +32,11 @@ function apiKeyAuth(req, res, next) {
   const publicPaths = ['/stats', '/health', '/live', '/ready', '/'];
   if (publicPaths.includes(req.path)) return next();
 
-  const apiKey = req.headers['x-api-key'] || (req.query ? req.query.apiKey : null);
+  const apiKey = req.headers['x-api-key'];
   if (!apiKey) {
     return res.status(401).json({
       error: 'missing_api_key',
-      message: 'Provide X-API-Key header or ?apiKey= query parameter.',
+      message: 'Provide X-API-Key header.',
     });
   }
 
