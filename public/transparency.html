@@ -84,6 +84,19 @@ footer{border-top:1px solid var(--border);padding:32px 20px;text-align:center;fo
 footer a{color:var(--cyan);text-decoration:none}
 footer a:hover{text-decoration:underline}
 
+/* ALPHA METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:24px}
+.metric-card{border:1px solid var(--border);border-radius:6px;padding:16px;background:var(--panel);text-align:center;transition:border-color 0.15s}
+.metric-card:hover{border-color:var(--border3)}
+.metric-card .num{font-family:var(--mono);font-size:28px;font-weight:700;line-height:1.1}
+.metric-card .label{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.08em;text-transform:uppercase;margin-top:6px}
+.metric-card .trend{font-size:11px;margin-top:4px;font-family:var(--mono)}
+.trend-up{color:var(--green)}
+.trend-flat{color:var(--muted2)}
+.alpha-status{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.06em}
+.alpha-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.3}}
+
 /* DIVIDER */
 .divider{height:1px;background:var(--border);max-width:900px;margin:0 auto}
 
@@ -242,6 +255,68 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 
 <div class="divider"></div>
 
+<!-- ALPHA METRICS -->
+<div class="section">
+  <div class="section-label">00 / Alpha Metrics</div>
+  <h2>Live Adoption Data</h2>
+  <p>Real public-alpha adoption metrics. Updated manually. All numbers represent real Telegram bot interactions since alpha launch.</p>
+
+  <div class="alpha-status">
+    <span class="alpha-dot"></span>
+    <span>Alpha Phase &middot; Public since May 29, 2026</span>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.2)">
+      <div class="num" style="color:var(--cyan)">2</div>
+      <div class="label">Alpha Testers</div>
+      <div class="trend trend-up">&#9650; +2 since launch</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,255,136,0.2)">
+      <div class="num" style="color:var(--green)">23</div>
+      <div class="label">Total Scans</div>
+      <div class="trend trend-up">&#9650; +23 since launch</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.12)">
+      <div class="num" style="color:var(--amber)">0</div>
+      <div class="label">Blocked Actions</div>
+      <div class="trend trend-flat">&#9644; No threats yet</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.12)">
+      <div class="num" style="color:var(--purple)">0</div>
+      <div class="label">Review Verdicts</div>
+      <div class="trend trend-flat">&#9644; None triggered</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.2)">
+      <div class="num" style="color:var(--cyan)">2</div>
+      <div class="label">Reports Published</div>
+      <div class="trend trend-up">&#9650; +2 since launch</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.12)">
+      <div class="num" style="color:var(--muted)">0</div>
+      <div class="label">Repeat Users</div>
+      <div class="trend trend-flat">&#9644; New alpha base</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.12)">
+      <div class="num" style="color:var(--muted)">0</div>
+      <div class="label">Enterprise Conv.</div>
+      <div class="trend trend-flat">&#9644; Pre-revenue</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,200,255,0.2)">
+      <div class="num" style="color:var(--green);font-size:22px">--</div>
+      <div class="label">Block Rate</div>
+      <div class="trend trend-flat">&#9644; Insufficient data</div>
+    </div>
+  </div>
+
+  <p style="font-family:var(--mono);font-size:11px;color:var(--muted2);text-align:center;margin-top:4px">
+    <span style="color:var(--cyan)">Importance:</span> Every metric, even zero, is <strong>honest</strong>. &nbsp;
+    <span style="color:var(--cyan)">Next update:</span> Tracked in <a href="https://github.com/Elmahrosa/teos-sentinel-shield" style="color:var(--cyan)">teos-sentinel-shield</a>
+  </p>
+</div>
+
+<div class="divider"></div>
+
 <!-- BUG BOUNTY -->
 <div class="section" style="max-width:700px">
   <div class="section-label">05 / Bug Bounty</div>
@@ -270,6 +345,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
   TEOS Sentinel Shield v3.0.0 &middot; Execution Control Infrastructure for Autonomous Systems<br>
   <a href="index.html">Command Center</a> &middot;
   <a href="dashboard.html">SOC Dashboard</a> &middot;
+  <a href="transparency.html#metrics">Alpha Metrics</a> &middot;
   <a href="replay.html">Forensic Replay</a> &middot;
   <a href="./rules.json">rules.json</a> &middot;
   <a href="./test-cases.json">test-cases.json</a>
