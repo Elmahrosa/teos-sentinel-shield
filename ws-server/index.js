@@ -130,7 +130,8 @@ wss.on('connection', (ws, req) => {
       const msg = JSON.parse(data.toString());
       if (msg.type === 'ping') ws.send(JSON.stringify({ type: 'pong', time: Date.now() }));
     } catch (e) {
-      console.error('[ERROR] ws-server/index.js:132 - WebSocket message parse failed:', e);
+      const { log } = require('../server/api');
+      log('error', 'WebSocket message parse failed', { error: e.message });
     }
   });
   ws.on('close', () => { peers.delete(ws); totalDisc++; });
@@ -147,7 +148,8 @@ wss.on('connection', (ws, req) => {
       }));
     }
   }).catch((e) => {
-    console.error('[ERROR] ws-server/index.js:147 - loadEventsFn failed for WS snapshot:', e);
+    const { log } = require('../server/api');
+    log('error', 'loadEventsFn failed for WS snapshot', { error: e.message });
   });
 });
 
@@ -172,7 +174,8 @@ async function pollEvents() {
       }
     }
   } catch (e) {
-    console.error('[ERROR] ws-server/index.js:170 - pollEvents failed:', e);
+    const { log } = require('../server/api');
+    log('error', 'pollEvents failed', { error: e.message });
   }
 }
 

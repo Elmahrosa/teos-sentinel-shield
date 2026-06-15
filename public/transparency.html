@@ -172,11 +172,11 @@ PERSIST: appended to events.json (rotating, max 500)</div>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/events</span></div>
-      <p>Paginated event log. Query params: <code>?page=1&limit=100&verdict=block</code>. Returns recent scan events with full verdict details.</p>
+      <p>Recent scan events. Query param: <code>?limit=N</code> (max 500). Returns verdict, score, rule, severity, command, and timestamp.</p>
     </div>
     <div class="api-card">
-      <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/audit</span></div>
-      <p>Compliance export. Last 200 events reversed. Includes engine version, rule count, and generation timestamp.</p>
+      <div class="api-card-head"><span class="api-method method-post">POST</span><span class="api-path">/ingest</span></div>
+      <p>Ingest a scan event from external sources (bot, CI, CPN). Body: <code>{"verdict","score","reasons","command"}</code>. Public, no auth required.</p>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/health</span></div>

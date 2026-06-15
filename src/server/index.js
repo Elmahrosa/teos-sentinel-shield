@@ -22,7 +22,7 @@ printStartupBanner();
 const PORT = process.env.PORT || 3000;
 const MAX_PAYLOAD_KB = parseInt(process.env.MAX_PAYLOAD_KB) || 64;
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 
 const app = express();
 

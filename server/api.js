@@ -792,6 +792,7 @@ module.exports.loadEvents = async () => loadEventsSync();
 module.exports.saveEvent = saveEvent;
 module.exports.redis = redis;
 module.exports.loadEventsSync = loadEventsSync;
+module.exports.log = log;
 
 // ── START (local dev / Railway) ─────────────────────────────
 if (require.main === module) {

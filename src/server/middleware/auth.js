@@ -23,7 +23,7 @@ async function resolveKeyTier(apiKey) {
       const TIERS = { free: {}, starter: {}, team: {}, enterprise: {}, sovereign: {}, founder: {} };
       if (tier && TIERS[tier]) return tier;
     } catch (err) {
-      console.warn('Redis key lookup failed:', err.message);
+      log('warn', 'Redis key lookup failed', { error: err.message });
     }
   }
   return null;
