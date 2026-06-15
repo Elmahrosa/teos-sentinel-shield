@@ -1,0 +1,131 @@
+========================================================================
+  TEOS SOVEREIGN SECURITY STACK — FINAL AUDIT REPORT
+  Generated: 2026-06-15 11:55 UTC
+========================================================================
+
+  WHAT'S DONE
+  =========================================================================
+
+  Session 14 — SOC Dashboard Overhaul
+  ------------------------------------
+  [DONE] Removed ALL Supabase dependencies from dashboard.html
+  [DONE] Dashboard now polls shield API directly via /stats, /events, /health
+  [DONE] Added GET /events endpoint to both server modules (api.js + routes/)
+  [DONE] Mock data generator as fallback when API offline (200 seed events)
+  [DONE] Auto-polling: /stats every 10s, /events every 15s, /health every 30s
+  [DONE] Auth bypass for /events (public endpoint like /stats, /health)
+  [DONE] Dashboard served as static file via ws-server (public/dashboard.html)
+  [DONE] gitignore fix: BUILD_REPORT.md, CI_CD_LOG.md (risk engine)
+  [DONE] .env.example: GROQ_API_KEY + ANTHROPIC_API_KEY stubs added
+  [DONE] Railway auto-deploy verified (commit 2d9d443 live)
+
+  Session 13 — Claims Audit + Alpha Report (June 14)
+  ------------------------------------
+  [DONE] Stripped 18 MAIOS Framework references from docs
+  [DONE] Removed fabricated "#5 critical risk" ranking claims
+  [DONE] Removed fabricated "50% increase in user adoption" claim
+  [DONE] Removed "world's first" superlatives
+  [DONE] Created CLOSED_ALPHA_REPORT.md — honest alpha retrospective
+  [DONE] Alpha Metrics Dashboard on transparency.html
+
+  Session 12 — Security Hardening (June 13)
+  ------------------------------------
+  [DONE] Dodo webhook secret removed from CLAUDE.md docs
+  [DONE] CORS_ORIGIN default changed from * to http://localhost:3000
+  [DONE] Query param apiKey removed
+  [DONE] REMOVED_DEV_KEY dev fallback removed
+  [DONE] Silent catch{} blocks now log via logger.warn()
+  [DONE] UniqueIPs Set prunes at 10K
+  [DONE] Pino redact includes DODO_WEBHOOK_SECRET, all auth tokens
+  [DONE] Non-root teos user + HEALTHCHECK in Dockerfile
+
+  Core Infrastructure
+  ------------------------------------
+  [DONE] Railway-only deployment (no Vercel, no local Docker production)
+  [DONE] 103 rules (64 core + 29 Solana + 10 EVM), 348 tests, Engine v3.0.0
+  [DONE] CI/CD pipeline: build → test → audit → sentinel → secret-scan → deploy → notify
+  [DONE] EVM Scanner: 10 rules, 38 tests
+  [DONE] Heuristic Suspicion Engine: 7 signal families, 77 regex patterns
+  [DONE] REVIEW verdict (ALLOW/WARN/REVIEW/BLOCK layered decision)
+  [DONE] All port bindings 127.0.0.1 (not 0.0.0.0)
+
+========================================================================
+  WHAT'S ONLINE
+  =========================================================================
+
+  Service             URL                                              Status
+  ------------------------------------------------------------------------
+  Bot                 teoslinker-bot-production.up.railway.app          OK
+  Risk Engine         agent-code-risk-mcp-production-b97d.up.railway.app OK
+  Activation          activation-service-production-4228.up.railway.app OK
+  Shield (API+WS)     teos-sentinel-shield-production-ef7a.up.railway.app OK
+
+  Endpoint Health (All Green):
+  ------------------------------------------------------------------------
+  Shield /stats       {total:142, blocked:19, warned:31, allowed:92}   OK
+  Shield /events      {total:142, limit:3, events:[...]}               OK
+  Shield /health      {status:"online", engine:"v3.0.0"}               OK
+  Bot /health         {status:"ok", engine:"3.0.0"}                    OK
+  Risk Engine /health {status:"ok", engine:"3.0.0", rules:64, tests:348} OK
+  Activation /health  {status:"ok", version:"3.1.0"}                   OK
+
+  Dashboard:
+  ------------------------------------------------------------------------
+  SOC Dashboard       /dashboard.html on shield                        LIVE
+  Supabase status     Supabase Offline (API mode)                      EXPECTED
+  Data mode           REST polling + mock fallback                     WORKING
+
+  Recent Deployments:
+  ------------------------------------------------------------------------
+  Shield              2d9d443  SOC dashboard: remove Supabase           LIVE
+  Risk Engine         d1b8d4c  gitignore: ignore BUILD_REPORT.md       LIVE
+  Bot                 Latest via Railway auto-deploy                    LIVE
+  Activation          Latest via Railway auto-deploy                    LIVE
+
+========================================================================
+  OPEN ISSUES
+  =========================================================================
+
+  Non-blocking:
+  ------------------------------------------------------------------------
+  1. Supabase offline — dashboard uses API + mock fallback instead
+  2. 3 Dependabot alerts on risk-engine (1 high, 1 moderate, 1 low)
+  3. 1 moderate Dependabot on shield
+  4. Seed event data is synthetic (2024 timestamps) — real scans needed
+  5. Redis disabled on Railway shield (memory store fallback)
+  6. No real attack traffic in alpha (zero detections to measure)
+
+========================================================================
+  WHAT'S NEXT
+  =========================================================================
+
+  Phase 2 — Coverage Expansion
+  ------------------------------------------------------------------------
+  [ ] Advanced Solana rules (flash loans, oracle manipulation, CPI depth)
+  [ ] Advanced EVM rules (ERC-20 semantics, signature replay, pre-0.8)
+  [ ] Encoded payload detection (multi-layer base64, hex, mixed encoding)
+  [ ] Multi-stage attack chain detection
+
+  Phase 3 — Enterprise Governance
+  ------------------------------------------------------------------------
+  [ ] Cryptographic audit chain (append-only, signed)
+  [ ] Multi-party approval workflows
+  [ ] Policy-as-code (custom rule definitions)
+  [ ] Integration API for CI/CD systems
+
+  Phase 4 — Enterprise Deploy
+  ------------------------------------------------------------------------
+  [ ] SSO/SAML authentication
+  [ ] RBAC with team management
+  [ ] On-prem deployment (air-gapped)
+  [ ] Audit log export (SIEM-compatible)
+
+  Immediate
+  ------------------------------------------------------------------------
+  [ ] Implement scripts/sentinel.js and scripts/secret-scan.js for CI
+  [ ] Run Dodo Payments test-purchase end-to-end
+  [ ] Tester program onboarding (first 10 buyers, 500 bonus credits)
+  [ ] Bug bounty / adversarial validation (zero real attacks to measure)
+  [ ] Real scan data to replace seed events (bot → shield integration)
+
+========================================================================

@@ -26,7 +26,6 @@
   "dependencies": {
     "@babel/parser": "^7.29.7",
     "@babel/traverse": "^7.29.7",
-    "@supabase/supabase-js": "^2.49.1",
     "dodopayments": "^2.31.1",
     "express": "^5.2.1",
     "helmet": "^8.2.0",

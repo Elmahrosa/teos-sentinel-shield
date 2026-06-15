@@ -611,14 +611,6 @@ app.get('/ready', (req, res) => {
   res.status(200).json({ status: 'ready' });
 });
 
-// GET /api/config — returns Supabase credentials for dashboard
-app.get('/api/config', (req, res) => {
-  res.json({
-    supabaseUrl:    process.env.SUPABASE_URL || null,
-    supabaseAnonKey: process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || null,
-  });
-});
-
 // GET /health
 app.get('/health', async (req, res) => {
   res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');

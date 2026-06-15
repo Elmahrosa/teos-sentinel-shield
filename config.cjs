@@ -15,7 +15,7 @@ function validateSecrets() {
     errors.push("REDIS_URL — Redis required for event store and rate limiting");
   }
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    errors.push("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY — Postgres required for persistent audit logs");
+    // Supabase is optional — dashboard uses REST API /events instead
   }
   if (!process.env.TEOS_API_KEYS) {
     errors.push("TEOS_API_KEYS — at least one API key required for authentication");
