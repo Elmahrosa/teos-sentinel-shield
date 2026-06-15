@@ -41,8 +41,8 @@ const RULES_DB = [
   { id:'R25', name:'CI_SECRETS_DUMP', sev:'critical', score:90, test:'${{ secrets.GITHUB_TOKEN }}', cat:'CI/CD' },
 ];
 
-const API_BASE = 'https://teos-sentinel-shield.vercel.app';
-const DEMO_API_KEY = 'REMOVED_DEV_KEY';
+const API_BASE = process.env.NEXT_PUBLIC_SHIELD_API_URL || '';
+const DEMO_API_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || '';
 
 const GITHUB_ACTION = `name: TEOS Sentinel Security Scan
 on:
