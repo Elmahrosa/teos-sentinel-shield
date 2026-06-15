@@ -149,6 +149,7 @@ async function apiKeyAuth(req, res, next) {
   if (req.path === '/health') return next();
   if (req.path === '/live') return next();
   if (req.path === '/ready') return next();
+  if (req.path === '/events') return next();
   if (req.path === '/') return next();
 
   const apiKey = req.headers['x-api-key'];
