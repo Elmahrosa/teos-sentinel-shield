@@ -2211,10 +2211,57 @@ function downloadPDF() {
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Elmahrosa International · Alexandria, Egypt · Engine v3.0.0</span>
-    <span>103 Detection Rules · 348 Tests Passing · 6 Services Online</span>
+    <span>&copy; 2026 Elmahrosa International &middot; Alexandria, Egypt &middot; Engine v3.0.0</span>
+    <span>103 Detection Rules &middot; 348 Tests Passing &middot; 6 Services Online</span>
   </div>
 </footer>
+
+<div class="desktop-bar">
+  <div class="desktop-bar-inner">
+    <span class="desktop-icon">&#x1F5A5;</span>
+    <span class="desktop-text"><strong>TEOS Sentinel Desktop</strong> &mdash; Native SOC monitor with system tray, health polling, and native BLOCK notifications.</span>
+    <code class="desktop-code">cd desktop &amp;&amp; npm start</code>
+    <span class="desktop-plat">Windows / macOS / Linux</span>
+    <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack/tree/main/desktop" target="_blank" rel="noopener noreferrer" class="desktop-link">Source &rarr;</a>
+  </div>
+</div>
+
+<style>
+.desktop-bar {
+  background: rgba(0,200,255,0.05);
+  border-top: 1px solid rgba(0,200,255,0.12);
+  padding: 16px 24px;
+  text-align: center;
+  font-size: 14px;
+}
+.desktop-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.desktop-icon { font-size: 20px; }
+.desktop-text { color: var(--alabaster); opacity: 0.85; }
+.desktop-code {
+  background: rgba(0,200,255,0.1);
+  color: var(--cyan);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+}
+.desktop-plat { color: var(--alabaster); opacity: 0.5; font-size: 12px; }
+.desktop-link {
+  color: var(--cyan);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+.desktop-link:hover { text-decoration: underline; }
+</style>
 
 </body>
 </html>
