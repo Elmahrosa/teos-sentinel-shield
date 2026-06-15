@@ -2216,51 +2216,157 @@ function downloadPDF() {
   </div>
 </footer>
 
-<div class="desktop-bar">
-  <div class="desktop-bar-inner">
-    <span class="desktop-icon">&#x1F5A5;</span>
-    <span class="desktop-text"><strong>TEOS Sentinel Desktop</strong> &mdash; Native SOC monitor with system tray, health polling, and native BLOCK notifications.</span>
-    <code class="desktop-code">cd desktop &amp;&amp; npm start</code>
-    <span class="desktop-plat">Windows / macOS / Linux</span>
-    <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack/tree/main/desktop" target="_blank" rel="noopener noreferrer" class="desktop-link">Source &rarr;</a>
+<div class="tools-strip">
+  <div class="tools-strip-inner">
+    <div class="tools-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span class="tools-label">CLI</span>
+      <code class="tools-cmd">node teos.js scan &lt;file&gt;</code>
+    </div>
+    <div class="tools-divider"></div>
+    <div class="tools-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="tools-label">Desktop (Beta)</span>
+      <code class="tools-cmd">cd desktop &amp;&amp; npm start</code>
+    </div>
+    <div class="tools-divider"></div>
+    <div class="tools-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span class="tools-label">Extensions</span>
+      <code class="tools-cmd">extensions/browser &amp; extensions/vscode</code>
+    </div>
   </div>
 </div>
 
+<section class="faq-section">
+  <div class="faq-inner">
+    <h2 class="faq-heading">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <details class="faq-item"><summary>What does TEOS scan for?</summary><p>103 detection rules across 3 layers: 64 core rules (secrets, injections, malware, crypto miners, data exfiltration), 29 Solana rules (program security, account validation, authority checks), and 10 EVM rules (reentrancy, flash loans, access control, oracle manipulation).</p></details>
+      <details class="faq-item"><summary>How do I scan code from the terminal?</summary><p>Install the CLI (<code>node teos.js scan &lt;file&gt;</code>) or pipe code directly (<code>cat script.sh | node teos.js scan</code>). Results include verdict (ALLOW/WARN/REVIEW/BLOCK), risk score (0-100), and per-rule findings.</p></details>
+      <details class="faq-item"><summary>Is there a desktop app?</summary><p>Yes — Extensions Desktop (Beta) is an Electron app with system tray monitoring, background health polling, and native OS notifications for BLOCK verdicts. Run <code>cd desktop &amp;&amp; npm start</code> to launch.</p></details>
+      <details class="faq-item"><summary>Can I scan GitHub PRs automatically?</summary><p>The browser extension injects a "TEOS Scan" button on GitHub file views. The VS Code extension adds editor context menu commands. Both send code to the TEOS risk engine and display results inline.</p></details>
+      <details class="faq-item"><summary>What does a BLOCK verdict mean?</summary><p>BLOCK means the code matched a critical rule (e.g., hardcoded secret, crypto miner, data exfiltration) with high confidence. The engine uses both deterministic rules and heuristic suspicion scoring to reach this verdict.</p></details>
+      <details class="faq-item"><summary>Is my code sent to an external API?</summary><p>Yes — the CLI, desktop app, and extensions send code to <code>agent-code-risk-mcp-production-b97d.up.railway.app</code> for scanning. No code is stored after scanning. Self-hosted deployments are available on the Enterprise plan.</p></details>
+      <details class="faq-item"><summary>How is TEOS different from a linter?</summary><p>Linters check syntax and style. TEOS checks security, supply-chain risk, blockchain program safety, and prompt injection — things a linter cannot detect. The engine includes the REVIEW verdict for cases requiring human judgment.</p></details>
+    </div>
+  </div>
+</section>
+
 <style>
-.desktop-bar {
-  background: rgba(0,200,255,0.05);
-  border-top: 1px solid rgba(0,200,255,0.12);
-  padding: 16px 24px;
-  text-align: center;
-  font-size: 14px;
+/* ── TOOLS STRIP (opencode-style) ── */
+.tools-strip {
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
 }
-.desktop-bar-inner {
+.tools-strip-inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 0;
   max-width: 960px;
   margin: 0 auto;
 }
-.desktop-icon { font-size: 20px; }
-.desktop-text { color: var(--alabaster); opacity: 0.85; }
-.desktop-code {
-  background: rgba(0,200,255,0.1);
-  color: var(--cyan);
-  padding: 4px 10px;
+.tools-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px;
+  color: var(--muted);
+}
+.tools-item svg { opacity: 0.5; flex-shrink: 0; }
+.tools-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.03em;
+}
+.tools-cmd {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.04);
+  padding: 2px 8px;
   border-radius: 4px;
-  font-family: 'Fira Code', monospace;
-  font-size: 13px;
+  white-space: nowrap;
 }
-.desktop-plat { color: var(--alabaster); opacity: 0.5; font-size: 12px; }
-.desktop-link {
-  color: var(--cyan);
-  text-decoration: none;
+.tools-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+/* ── FAQ SECTION ── */
+.faq-section {
+  background: var(--surface);
+  padding: 64px 24px;
+  border-top: 1px solid var(--border);
+}
+.faq-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.faq-heading {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.faq-list { display: flex; flex-direction: column; gap: 4px; }
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  background: var(--surface2);
+}
+.faq-item:hover { border-color: var(--border2); }
+.faq-item summary {
+  font-family: var(--mono);
+  font-size: 13px;
   font-weight: 600;
-  font-size: 13px;
+  color: var(--white);
+  padding: 14px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+  user-select: none;
 }
-.desktop-link:hover { text-decoration: underline; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before {
+  content: '+';
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--muted);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.faq-item[open] summary::before { content: '\2212'; }
+.faq-item p {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  padding: 0 18px 16px 44px;
+}
+.faq-item p code {
+  background: rgba(255,255,255,0.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
 </style>
 
 </body>
