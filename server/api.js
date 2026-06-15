@@ -150,6 +150,7 @@ async function apiKeyAuth(req, res, next) {
   if (req.path === '/live') return next();
   if (req.path === '/ready') return next();
   if (req.path === '/events') return next();
+  if (req.path === '/ingest') return next();
   if (req.path === '/') return next();
 
   const apiKey = req.headers['x-api-key'];
@@ -716,6 +717,27 @@ app.get('/events', async (req, res) => {
     })),
     generated: new Date().toISOString(),
   });
+});
+
+// POST /ingest — receive scan result from bot (no re-scan)
+app.post('/ingest', async (req, res) => {
+  const { verdict, score, reasons, ruleIds, riskLevel, command, source } = req.body || {};
+  if (!verdict) {
+    return res.status(400).json({ error: 'missing_verdict', message: 'Provide a verdict' });
+  }
+  const event = {
+    id: Date.now(),
+    timestamp: new Date().toISOString(),
+    verdict: String(verdict).toLowerCase(),
+    score: score ?? 0,
+    reasons: Array.isArray(reasons) ? reasons : [],
+    ruleIds: Array.isArray(ruleIds) ? ruleIds : [],
+    riskLevel: riskLevel || 'info',
+    command: command || '',
+    source: source || 'bot',
+  };
+  await saveEvent(event);
+  res.json({ status: 'ok', event });
 });
 
 // GET /stats

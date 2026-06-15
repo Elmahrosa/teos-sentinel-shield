@@ -30,7 +30,7 @@ async function resolveKeyTier(apiKey) {
 }
 
 function apiKeyAuth(req, res, next) {
-  const publicPaths = ['/stats', '/health', '/live', '/ready', '/events', '/'];
+  const publicPaths = ['/stats', '/health', '/live', '/ready', '/events', '/ingest', '/'];
   if (publicPaths.includes(req.path)) return next();
 
   const apiKey = req.headers['x-api-key'];

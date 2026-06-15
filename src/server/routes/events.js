@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { loadEvents } = require('../../services/cache');
+const { loadEvents, saveEvent } = require('../../services/cache');
 
 router.get('/events', async (req, res) => {
   const events = await loadEvents();
@@ -14,6 +14,26 @@ router.get('/events', async (req, res) => {
     })),
     generated: new Date().toISOString(),
   });
+});
+
+router.post('/ingest', async (req, res) => {
+  const { verdict, score, reasons, ruleIds, riskLevel, command, source } = req.body || {};
+  if (!verdict) {
+    return res.status(400).json({ error: 'missing_verdict', message: 'Provide a verdict' });
+  }
+  const event = {
+    id: Date.now(),
+    timestamp: new Date().toISOString(),
+    verdict: String(verdict).toLowerCase(),
+    score: score ?? 0,
+    reasons: Array.isArray(reasons) ? reasons : [],
+    ruleIds: Array.isArray(ruleIds) ? ruleIds : [],
+    riskLevel: riskLevel || 'info',
+    command: command || '',
+    source: source || 'bot',
+  };
+  await saveEvent(event);
+  res.json({ status: 'ok', event });
 });
 
 module.exports = router;
