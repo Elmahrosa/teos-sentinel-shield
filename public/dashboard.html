@@ -46,18 +46,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .stat-blocked .num{color:var(--red)}
 .stat-warned .num{color:var(--amber)}
 .stat-allowed .num{color:var(--green)}
+.stat-review .num{color:var(--purple)}
 .stat-rate .num{color:var(--purple)}
 
 /* CENTER */
 #center{display:flex;flex-direction:column;overflow:hidden}
 
 /* KPI BAR */
-#kpi-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);flex-shrink:0}
+#kpi-bar{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);flex-shrink:0}
 .kpi{background:var(--bg2);padding:12px 16px;display:flex;flex-direction:column;gap:2px;position:relative}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.kpi.k-total::before{background:var(--cyan)}.kpi.k-block::before{background:var(--red)}.kpi.k-warn::before{background:var(--amber)}.kpi.k-allow::before{background:var(--green)}.kpi.k-rate::before{background:var(--purple)}
+.kpi.k-total::before{background:var(--cyan)}.kpi.k-block::before{background:var(--red)}.kpi.k-warn::before{background:var(--amber)}.kpi.k-review::before{background:var(--purple)}.kpi.k-allow::before{background:var(--green)}.kpi.k-rate::before{background:var(--purple)}
 .kpi .kpi-num{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1}
-.kpi.k-total .kpi-num{color:var(--cyan)}.kpi.k-block .kpi-num{color:var(--red)}.kpi.k-warn .kpi-num{color:var(--amber)}.kpi.k-allow .kpi-num{color:var(--green)}.kpi.k-rate .kpi-num{color:var(--purple)}
+.kpi.k-total .kpi-num{color:var(--cyan)}.kpi.k-block .kpi-num{color:var(--red)}.kpi.k-warn .kpi-num{color:var(--amber)}.kpi.k-review .kpi-num{color:var(--purple)}.kpi.k-allow .kpi-num{color:var(--green)}.kpi.k-rate .kpi-num{color:var(--purple)}
 .kpi .kpi-lbl{font-family:var(--mono);font-size:9px;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase}
 
 /* CHART AREA */
@@ -82,6 +83,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .filter-btn.active-block{border-color:rgba(255,61,87,0.4);color:var(--red);background:rgba(255,61,87,0.08)}
 .filter-btn.active-warn{border-color:rgba(255,176,32,0.4);color:var(--amber);background:rgba(255,176,32,0.08)}
 .filter-btn.active-allow{border-color:rgba(0,255,136,0.3);color:var(--green);background:rgba(0,255,136,0.08)}
+.filter-btn.active-review{border-color:rgba(157,111,255,0.4);color:var(--purple);background:rgba(157,111,255,0.08)}
 .event-count{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--muted2)}
 #event-table{flex:1;overflow-y:auto;padding:4px}
 #event-table::-webkit-scrollbar{width:3px}
@@ -90,11 +92,13 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .evt-row:hover{border-color:var(--border2);background:var(--panel)}
 .evt-row.block{border-left:2px solid var(--red);background:rgba(255,61,87,0.04)}
 .evt-row.warn{border-left:2px solid var(--amber);background:rgba(255,176,32,0.04)}
+.evt-row.review{border-left:2px solid var(--purple);background:rgba(157,111,255,0.04)}
 .evt-row.allow{border-left:2px solid var(--green);background:rgba(0,255,136,0.03)}
 .evt-time{color:var(--muted2);font-size:10px}
 .evt-verdict{font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;text-align:center;letter-spacing:0.06em}
 .v-block{background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.3)}
 .v-warn{background:rgba(255,176,32,0.1);color:var(--amber);border:1px solid rgba(255,176,32,0.3)}
+.v-review{background:rgba(157,111,255,0.1);color:var(--purple);border:1px solid rgba(157,111,255,0.3)}
 .v-allow{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2)}
 .evt-cmd{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--white)}
 .evt-rule{font-size:10px;color:var(--cyan);text-align:right}
@@ -161,6 +165,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
       <div class="stat-box stat-blocked"><div class="num" id="s-blocked">&mdash;</div><div class="label">Blocked</div></div>
       <div class="stat-box stat-warned"><div class="num" id="s-warned">&mdash;</div><div class="label">Warned</div></div>
       <div class="stat-box stat-allowed"><div class="num" id="s-allowed">&mdash;</div><div class="label">Allowed</div></div>
+      <div class="stat-box stat-review"><div class="num" id="s-review">&mdash;</div><div class="label">Review</div></div>
       <div class="stat-box stat-rate"><div class="num" id="s-rate">&mdash;%</div><div class="label">Block Rate</div></div>
     </div>
     <div class="left-section">
@@ -186,6 +191,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
       <div class="kpi k-total"><div class="kpi-num" id="k-total">&mdash;</div><div class="kpi-lbl">Total Scans</div></div>
       <div class="kpi k-block"><div class="kpi-num" id="k-blocked">&mdash;</div><div class="kpi-lbl">Blocked</div></div>
       <div class="kpi k-warn"><div class="kpi-num" id="k-warned">&mdash;</div><div class="kpi-lbl">Warned</div></div>
+      <div class="kpi k-review"><div class="kpi-num" id="k-review">&mdash;</div><div class="kpi-lbl">Review</div></div>
       <div class="kpi k-allow"><div class="kpi-num" id="k-allowed">&mdash;</div><div class="kpi-lbl">Allowed</div></div>
       <div class="kpi k-rate"><div class="kpi-num" id="k-rate">&mdash;%</div><div class="kpi-lbl">Block Rate</div></div>
     </div>
@@ -197,6 +203,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         <div class="chart-legend">
           <span><span class="legend-dot legend-b"></span>Block</span>
           <span><span class="legend-dot legend-w"></span>Warn</span>
+          <span><span class="legend-dot" style="background:var(--purple)"></span>Review</span>
           <span><span class="legend-dot legend-a"></span>Allow</span>
         </div>
       </div>
@@ -209,6 +216,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
         <button class="filter-btn active-all" id="f-all" onclick="window.setFilter('all',this)">ALL</button>
         <button class="filter-btn" id="f-block" onclick="window.setFilter('block',this)">BLOCK</button>
         <button class="filter-btn" id="f-warn" onclick="window.setFilter('warn',this)">WARN</button>
+        <button class="filter-btn" id="f-review" onclick="window.setFilter('review',this)">REVIEW</button>
         <button class="filter-btn" id="f-allow" onclick="window.setFilter('allow',this)">ALLOW</button>
         <span class="event-count" id="evt-count">0 events</span>
       </div>
@@ -304,14 +312,15 @@ const MOCK_BAD_CMDS = [
 function generateMockData(count){
   const events = [];
   for(let i=0;i<count;i++){
-    const isBlock = Math.random() < 0.35;
-    const isWarn  = !isBlock && Math.random() < 0.25;
-    const verdict = isBlock ? 'block' : isWarn ? 'warn' : 'allow';
+    const isBlock = Math.random() < 0.3;
+    const isWarn  = !isBlock && Math.random() < 0.2;
+    const isReview = !isBlock && !isWarn && Math.random() < 0.15;
+    const verdict = isBlock ? 'block' : isWarn ? 'warn' : isReview ? 'review' : 'allow';
     const ruleIdx = isBlock ? Math.floor(Math.random() * 7) : isWarn ? 7 + Math.floor(Math.random() * 3) : -1;
     const rule    = ruleIdx >= 0 ? MOCK_RULES[ruleIdx] : { id:'R00', name:'CLEAN', sev:'none' };
     const cmds    = (ruleIdx >= 0 && ruleIdx < 10) ? MOCK_BAD_CMDS : MOCK_SAFE_CMDS;
     const cmd     = cmds[Math.floor(Math.random() * cmds.length)];
-    const score   = isBlock ? 80 + Math.floor(Math.random() * 21) : isWarn ? 40 + Math.floor(Math.random() * 40) : Math.floor(Math.random() * 20);
+    const score   = isBlock ? 80 + Math.floor(Math.random() * 21) : isWarn ? 40 + Math.floor(Math.random() * 40) : isReview ? 40 + Math.floor(Math.random() * 40) : Math.floor(Math.random() * 20);
     const ts      = new Date(Date.now() - Math.floor(Math.random() * 86400000));
     events.push({
       id: Date.now() + i,
@@ -349,7 +358,7 @@ async function fetchStats(){
     const r=await fetch(API_BASE+'/stats');
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
-    statsData={total:d.total,blocked:d.blocked,warned:d.warned,allowed:d.allowed};
+    statsData={total:d.total,blocked:d.blocked,warned:d.warned,reviewed:d.reviewed||0,allowed:d.allowed};
     document.getElementById('data-mode').textContent='live';
     document.getElementById('data-mode').style.color='var(--green)';
     dataMode='live';
@@ -360,8 +369,9 @@ async function fetchStats(){
       const total=allEvents.length;
       const blocked=allEvents.filter(e=>e.verdict==='block').length;
       const warned=allEvents.filter(e=>e.verdict==='warn').length;
+      const reviewed=allEvents.filter(e=>e.verdict==='review').length;
       const allowed=allEvents.filter(e=>e.verdict==='allow').length;
-      statsData={total,blocked,warned,allowed};
+      statsData={total,blocked,warned,reviewed,allowed};
       renderKPIs();
     }
   }
@@ -390,16 +400,18 @@ async function checkHealth(){
 
 /* ── RENDER ──────────────────────────────────────────────── */
 function renderKPIs(){
-  const{total,blocked,warned,allowed}=statsData;
+  const{total,blocked,warned,reviewed,allowed}=statsData;
   const rate=total>0?((blocked/total)*100).toFixed(1):'0.0';
   document.getElementById('k-total').textContent=total;
   document.getElementById('k-blocked').textContent=blocked;
   document.getElementById('k-warned').textContent=warned;
+  document.getElementById('k-review').textContent=reviewed||0;
   document.getElementById('k-allowed').textContent=allowed;
   document.getElementById('k-rate').textContent=rate+'%';
   document.getElementById('s-total').textContent=total;
   document.getElementById('s-blocked').textContent=blocked;
   document.getElementById('s-warned').textContent=warned;
+  document.getElementById('s-review').textContent=reviewed||0;
   document.getElementById('s-allowed').textContent=allowed;
   document.getElementById('s-rate').textContent=rate+'%';
 }
@@ -413,27 +425,28 @@ function renderEvents(){
     const t=new Date(e.timestamp).toLocaleTimeString('en-GB',{hour12:false});
     const cmd=e.command||e.cmd||'?';
     const rule=e.rule||'R00';
-    const vc=e.verdict==='block'?'v-block':e.verdict==='warn'?'v-warn':'v-allow';
+    const vc=e.verdict==='block'?'v-block':e.verdict==='warn'?'v-warn':e.verdict==='review'?'v-review':'v-allow';
     return '<div class="evt-row '+e.verdict+'" onclick="window.showDetail('+e.id+')"><span class="evt-time">'+t+'</span><span class="evt-verdict '+vc+'">'+e.verdict.toUpperCase()+'</span><span style="font-family:var(--mono);font-size:10px;color:'+(e.score>=80?'var(--red)':e.score>=40?'var(--amber)':'var(--green)')+'">'+e.score+'/100</span><span class="evt-cmd">'+escHtml(cmd)+'</span><span class="evt-rule">'+rule.split('.')[0]+'</span></div>';
   }).join('');
 }
 
 function updateChart(){
   if(allEvents.length===0)return;
-  const bins=Array.from({length:24},()=>({b:0,w:0,a:0}));
+  const bins=Array.from({length:24},()=>({b:0,w:0,r:0,a:0}));
   const times=allEvents.map(e=>new Date(e.timestamp).getTime());
   const oldest=Math.min(...times),newest=Math.max(...times);
   const range=newest-oldest||1;
   allEvents.forEach(e=>{
     const idx=Math.min(23,Math.floor(((new Date(e.timestamp).getTime()-oldest)/range)*24));
-    if(e.verdict==='block')bins[idx].b++;else if(e.verdict==='warn')bins[idx].w++;else bins[idx].a++;
+    if(e.verdict==='block')bins[idx].b++;else if(e.verdict==='warn')bins[idx].w++;else if(e.verdict==='review')bins[idx].r++;else bins[idx].a++;
   });
-  const maxVal=Math.max(...bins.map(b=>b.b+b.w+b.a))||1;
+  const maxVal=Math.max(...bins.map(b=>b.b+b.w+b.r+b.a))||1;
   document.getElementById('chart-bars').innerHTML=bins.map(bin=>{
-    const bh=Math.round((bin.b/maxVal)*72);
-    const wh=Math.round((bin.w/maxVal)*72);
-    const ah=Math.round((bin.a/maxVal)*72);
-    return '<div class="cbar-group"><div class="cbar b" style="height:'+bh+'px" title="Block:'+bin.b+'"></div><div class="cbar w" style="height:'+wh+'px" title="Warn:'+bin.w+'"></div><div class="cbar a" style="height:'+ah+'px" title="Allow:'+bin.a+'"></div></div>';
+    const bh=Math.round((bin.b/maxVal)*66);
+    const wh=Math.round((bin.w/maxVal)*66);
+    const rh=Math.round((bin.r/maxVal)*66);
+    const ah=Math.round((bin.a/maxVal)*66);
+    return '<div class="cbar-group"><div class="cbar b" style="height:'+bh+'px" title="Block:'+bin.b+'"></div><div class="cbar w" style="height:'+wh+'px" title="Warn:'+bin.w+'"></div><div class="cbar" style="height:'+rh+'px;background:var(--purple)" title="Review:'+bin.r+'"></div><div class="cbar a" style="height:'+ah+'px" title="Allow:'+bin.a+'"></div></div>';
   }).join('');
 }
 

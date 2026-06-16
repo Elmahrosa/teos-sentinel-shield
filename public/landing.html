@@ -1145,7 +1145,7 @@ footer::before {
         <div class="feat-icon">✈️</div>
         <div class="feat-cmd">@teoslinker_bot</div>
         <div class="feat-title">Telegram-Native Gateway</div>
-        <p class="feat-desc">Zero-friction via Telegram. Commands: /scan, /solana, /evm, /deps, /ci, /status, /upgrade, /credits, /report. No SDK, no account setup. Works in 60 seconds from first message.</p>
+        <p class="feat-desc">Zero-friction via Telegram. Commands: /scan, /solana, /evm, /deps, /ci, /github, /report, /batch, /feedback, /claude, /llama3, /qwen, /openai, /automod, /status, /upgrade, /credits. Batch mode, feedback loop, AI model commands, group auto-moderation — all live.</p>
         <div class="feat-tags"><span class="ftag">zero-signup</span><span class="ftag">5 free scans</span><span class="ftag">instant</span></div>
       </div>
       <div class="feat">
@@ -1339,7 +1339,7 @@ footer::before {
         <p class="plan-tag">1,000 credits/month · All rules</p>
         <ul class="plan-feats">
           <li>1,000 credits/month</li>
-          <li>/solana · /evm · /deps · /ci · /github · /report (PDF)</li>
+          <li>/solana · /evm · /deps · /ci · /github · /report (PDF) · /batch · /feedback</li>
           <li>Full repo scanning + CI/CD audits</li>
           <li>Email support</li>
         </ul>
@@ -1405,7 +1405,7 @@ footer::before {
       <div class="rm-card live">
         <div class="rm-q live-q"><span class="rm-dot"></span>Live Now</div>
         <div class="rm-title">Engine v3.0.0 + Telegram Bot</div>
-        <p class="rm-desc">103 detection rules (64 core + 29 Solana + 10 EVM). 348 tests passing. /scan, /solana, /evm, /deps, /ci — all live. Engine v3.0.0 production stable. 6 services online.</p>
+        <p class="rm-desc">103 detection rules (64 core + 29 Solana + 10 EVM). 348 tests passing. /scan, /solana, /evm, /deps, /ci, /github, /report, /batch, /feedback, /claude, /llama3, /qwen, /openai, /automod — all live. Engine v3.0.0 production stable. 6 services online.</p>
       </div>
       <div class="rm-card">
         <div class="rm-q">Q2 2026</div>
@@ -1514,6 +1514,9 @@ footer::before {
       <details class="faq-item"><summary>What does a BLOCK verdict mean?</summary><p>BLOCK means the code matched a critical rule (e.g., hardcoded secret, crypto miner, data exfiltration) with high confidence. The engine uses both deterministic rules and heuristic suspicion scoring to reach this verdict.</p></details>
       <details class="faq-item"><summary>Is my code sent to an external API?</summary><p>Yes &mdash; the CLI, desktop app, and extensions send code to <code>agent-code-risk-mcp-production-b97d.up.railway.app</code> for scanning. No code is stored after scanning. Self-hosted deployments are available on the Enterprise plan.</p></details>
       <details class="faq-item"><summary>How is TEOS different from a linter?</summary><p>Linters check syntax and style. TEOS checks security, supply-chain risk, blockchain program safety, and prompt injection &mdash; things a linter cannot detect. The engine includes the REVIEW verdict for cases requiring human judgment.</p></details>
+      <details class="faq-item"><summary>Can I scan multiple commands at once?</summary><p>Yes &mdash; the /batch command accepts multiple inputs separated by newlines or spaces. Results show per-command cost, verdict, risk score, and a summary block with ALLOW/WARN/BLOCK/REVIEW counts. LinkedIn and X share sections included.</p></details>
+      <details class="faq-item"><summary>How do I submit feedback?</summary><p>Use the /feedback command in the bot. Feedback is stored via the analytics service with Redis persist and a local fallback. Each submission is timestamped and audited. Admins can review via the admin analytics report.</p></details>
+      <details class="faq-item"><summary>What AI model commands are available?</summary><p>/claude, /llama3, /qwen, and /openai &mdash; each routes your scan through a different AI model for additional analysis. All results are cached. Credit costs vary by model. Type /&lt;model&gt; help for usage.</p></details>
     </div>
   </div>
 </section>
