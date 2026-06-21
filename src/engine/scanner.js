@@ -3,8 +3,16 @@ const { redis, loadEventsSync, REDIS_KEY } = require('../services/cache');
 
 const RULES = [
   { id:'R01', name:'DESTRUCTIVE_SHELL',    sev:'critical', score:100,
-    test: c => /rm\s+-rf|format\s+[a-z]:|deltree/i.test(c),
-    reasons: ['rm -rf permanently destroys all filesystem data','Wiper malware signature detected'] },
+    test: c => {
+      if (/rm\s+-rf\s+--no-preserve-root/i.test(c)) return true;
+      if (/rm\s+-rf\s+\/(?:\s|$|etc|bin|boot|dev|lib|sbin|root|usr|var|proc|sys|srv|opt)(?:\/|\s|$)/i.test(c)) return true;
+      if (/rm\s+-rf\s+~\/?(?:\s|$)/i.test(c)) return true;
+      if (/rm\s+-rf\s+\$home\b/i.test(c)) return true;
+      if (/format\s+[a-z]:/i.test(c)) return true;
+      if (/deltree/i.test(c)) return true;
+      return false;
+    },
+    reasons: ['rm -rf on system-critical path — permanent filesystem destruction','Wiper malware signature detected'] },
 
   { id:'R02', name:'CHMOD_ESCALATION',     sev:'critical', score:90,
     test: c => /chmod\s+[0-7]*7{2,}.*\/etc|777.*passwd/i.test(c),
@@ -15,7 +23,7 @@ const RULES = [
     reasons: ['curl/wget piped to shell executes untrusted remote code'] },
 
   { id:'R04', name:'SECRET_ECHO',          sev:'critical', score:90,
-    test: c => /echo\s+\$[A-Z_]*(KEY|TOKEN|SECRET|PASS|PWD)/i.test(c),
+    test: c => /echo\s+\$[A-Z_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD|PASS|CREDENTIAL)\b/i.test(c),
     reasons: ['Echoing secret environment variable — potential exfiltration'] },
 
   { id:'R05', name:'ENV_EXFIL',            sev:'critical', score:95,
@@ -43,12 +51,23 @@ const RULES = [
     reasons: ['Classic SQL injection pattern detected'] },
 
   { id:'R11', name:'PATH_TRAVERSAL',       sev:'high',     score:78,
-    test: c => /(\.\.\/){2,}|%2e%2e/i.test(c),
+    test: c => {
+      if (!/(\.\.\/){2,}|%2e%2e/i.test(c)) return false;
+      const lower = c.toLowerCase().trim();
+      if (/^[\w_]+\s*=\s*["']?[^"'\n]*\.\.\//.test(lower)) return false;
+      if (/^(export|local)\s+[\w_]+\s*=\s*["']?[^"'\n]*\.\.\//.test(lower)) return false;
+      if (/^(echo|printf|logger|print)\s+/.test(lower)) return false;
+      if (/^console\.(log|debug|info|warn)\s*\(/.test(lower)) return false;
+      if (/^(cd|pushd|popd)\s+/.test(lower)) return false;
+      if (/\b(realpath|readlink|dirname)\s+/.test(lower)) return false;
+      if (/\$[\(\{]\w+[\)\}]\s*\/\.\./.test(lower)) return false;
+      return true;
+    },
     reasons: ['Directory traversal detected in file path'] },
 
   { id:'R12', name:'COMMAND_INJECTION',    sev:'critical', score:92,
-    test: c => /[;&|`]\s*(ls|cat|id|whoami|uname)/i.test(c),
-    reasons: ['OS command injection via user-controlled input'] },
+    test: c => /(?:;|&&|\|\|)\s*(?:id|whoami|uname)\b/i.test(c),
+    reasons: ['OS command injection — reconnaissance command chained after separator'] },
 
   { id:'R13', name:'PRIVILEGE_ESCALATION', sev:'critical', score:90,
     test: c => /sudo\s+(su|bash|sh|python|perl)|chmod\s+u\+s/i.test(c),
