@@ -414,6 +414,40 @@ const RULES = [
   { id:'R25', name:'CI_SECRETS_DUMP',      sev:'critical', score:90,
     test: c => /printenv|env\s*\|\s*grep|\$\{\{\s*secrets\s*\}\}/i.test(c),
     reasons: ['CI secrets or environment dump detected'] },
+
+  // ═══ BANKING — Institutional finance (v4.0-FINANCE) ═══
+
+  { id:'R26', name:'LEDGER_MANIPULATION',  sev:'critical', score:95,
+    test: c => /\b(?:update|modify|set)\s+(?:balance|ledger|account_balance|credit_pool|reserve_token)\b[^\n]*?\bwithout\s+transaction\b/i.test(c),
+    reasons: ['Direct ledger manipulation bypassing atomic transaction hooks'] },
+
+  { id:'R27', name:'SWIFT_UNENCRYPTED',    sev:'critical', score:95,
+    test: c => /(?:ISO20022|SWIFT_MT|SWIFT_MX|payment_msg)\b[^\n]*?(?:\bhttp:\/\/|\bws:\/\/)|(?:\bhttp:\/\/|\bws:\/\/)[^\n]*?(?:ISO20022|SWIFT_MT|SWIFT_MX|payment_msg)\b/i.test(c),
+    reasons: ['Unencrypted SWIFT/ISO 20022 payment message over non-TLS transport'] },
+
+  { id:'R28', name:'FIX_CLEARTEXT',        sev:'critical', score:95,
+    test: c => /BeginString=FIX[^\n]{0,500}?35=A[^\n]{0,500}?(?:Password|RawData)=/i.test(c),
+    reasons: ['FIX protocol login with cleartext credentials'] },
+
+  { id:'R29', name:'FRONT_RUNNING',        sev:'medium',   score:65,
+    test: c => /(?:slippage_manipulation|front_run|gas_auction_override|force_block_height)\b/i.test(c),
+    reasons: ['Algorithmic front-running pattern detected'] },
+
+  { id:'R30', name:'RESERVE_LEAK',         sev:'critical', score:95,
+    test: c => /(?:console\.log|print|echo|logger|log\.|writeln|fs\.write|res\.(?:json|send)|response\.write|return\s+)\s*\(?\s*[^;\n]{0,100}?(?:mint_authority|vault_master_key|treasury_signing_key|reserve_mint_priv)\b/i.test(c),
+    reasons: ['Sovereign reserve/treasury key leaked via logging or response'] },
+
+  { id:'R31', name:'CROSS_IDENTITY_SILENT_TRUST', sev:'critical', score:92,
+    test: c => /(?:bind_identity|map_user_identities)\b(?![^\n]*?\bcreate_tamper_evident_correlation\b)/i.test(c),
+    reasons: ['Cross-identity binding without tamper-evident correlation attestation'] },
+
+  { id:'R32', name:'UNASSIGNED_DISPUTE_ESCALATION', sev:'critical', score:92,
+    test: c => /(?:initiate_installment|create_bnpl_flow)\b(?![^\n]*?\bassign_deterministic_dispute_owner\b)/i.test(c),
+    reasons: ['BNPL/installment flow without deterministic dispute owner assignment'] },
+
+  { id:'R33', name:'PCI_FRA_DATA_CONTAMINATION', sev:'critical', score:95,
+    test: c => /(?:merge_data_environments|pull_raw_pci_data|sync_cde_to_fra)\b/i.test(c),
+    reasons: ['PCI/FRA data environment contamination — regulated data boundary violation'] },
 ];
 
 function runEngine(command) {
