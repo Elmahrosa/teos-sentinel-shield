@@ -98,56 +98,72 @@ test("[NEG] const key = vault_master_key — assignment", () => {
 const R31 = RULES.find(r => r.id === 'R31');
 assert(R31, 'R31 must exist');
 
-console.log("\nBanking Rules — R31 CROSS_IDENTITY_SILENT_TRUST:");
+console.log("\nBanking Rules — R31 CROSS_IDENTITY_SILENT_TRUST (PDPL 2026):");
 
-test("[POS] bind_identity without attestation", () => {
-  assert.strictEqual(R31.test('bind_identity(cbe_uid, fra_uid)'), true);
+test("[POS] transfer_pii_to_fra_cloud without minimization", () => {
+  assert.strictEqual(R31.test('transfer_pii_to_fra_cloud(customer_data)'), true);
 });
 
-test("[POS] map_user_identities without attestation", () => {
-  assert.strictEqual(R31.test('map_user_identities(bank_kyc, finance_onboarding)'), true);
+test("[POS] sync_pii_cbe_to_fra without sha256 or zk_proof", () => {
+  assert.strictEqual(R31.test('sync_pii_cbe_to_fra(user_records)'), true);
 });
 
-test("[NEG] bind_identity WITH attestation (safe)", () => {
-  assert.strictEqual(R31.test('bind_identity(cbe_uid, fra_uid); create_tamper_evident_correlation(event)'), false);
+test("[POS] pii_cross_boundary without pdpl compliance", () => {
+  assert.strictEqual(R31.test('pii_cross_boundary(raw_data, fra_env)'), true);
+});
+
+test("[NEG] sync_pii_cbe_to_fra WITH sha256(national_id + salt) (safe)", () => {
+  assert.strictEqual(R31.test('sync_pii_cbe_to_fra(sha256(national_id + salt))'), false);
+});
+
+test("[NEG] export_customer_pii WITH zk_proof (safe)", () => {
+  assert.strictEqual(R31.test('export_customer_pii(data, zk_proof)'), false);
+});
+
+test("[NEG] pii_cross_boundary WITH pdpl_compliant_2026 (safe)", () => {
+  assert.strictEqual(R31.test('pii_cross_boundary(data, pdpl_compliant_2026)'), false);
 });
 
 const R32 = RULES.find(r => r.id === 'R32');
 assert(R32, 'R32 must exist');
 
-console.log("\nBanking Rules — R32 UNASSIGNED_DISPUTE_ESCALATION:");
+console.log("\nBanking Rules — R32 UNASSIGNED_DISPUTE_ESCALATION (Pre-Sign Atomic Split):");
 
-test("[POS] initiate_installment without dispute owner", () => {
-  assert.strictEqual(R32.test('initiate_installment(account, amount)'), true);
+test("[POS] split_payment_transaction without deterministic IDs", () => {
+  assert.strictEqual(R32.test('split_payment_transaction(total, card_alloc, bnpl_alloc)'), true);
 });
 
-test("[POS] create_bnpl_flow without dispute owner", () => {
-  assert.strictEqual(R32.test('create_bnpl_flow(user, merchant, 1000)'), true);
+test("[POS] fractional_split_payment without CBE/FRA routing", () => {
+  assert.strictEqual(R32.test('fractional_split_payment(amount, parts)'), true);
 });
 
-test("[NEG] initiate_installment WITH dispute owner (safe)", () => {
-  assert.strictEqual(R32.test('initiate_installment(account, amount); assign_deterministic_dispute_owner(team)'), false);
+test("[POS] mixed_payment_split without pre-sign IDs", () => {
+  assert.strictEqual(R32.test('mixed_payment_split(cbe_card, fra_bnpl)'), true);
+});
+
+test("[NEG] split_payment_transaction WITH generate_deterministic_id for CBE and FRA (safe)", () => {
+  assert.strictEqual(R32.test('split_payment_transaction(total, card_alloc, bnpl_alloc, generate_deterministic_id(meta, CBE), generate_deterministic_id(meta, FRA))'), false);
 });
 
 const R33 = RULES.find(r => r.id === 'R33');
 assert(R33, 'R33 must exist');
 
-console.log("\nBanking Rules — R33 PCI_FRA_DATA_CONTAMINATION:");
+console.log("\nBanking Rules — R33 FEDERATED_HSM_CLAIMS:");
 
-test("[POS] merge_data_environments", () => {
-  assert.strictEqual(R33.test('merge_data_environments(pci_env, fra_env)'), true);
+test("[POS] verify_card_access_authority without bank HSM ticket", () => {
+  assert.strictEqual(R33.test('verify_card_access_authority(payload)'), true);
 });
 
-test("[POS] pull_raw_pci_data", () => {
-  assert.strictEqual(R33.test('pull_raw_pci_data(production_db)'), true);
+test("[POS] process_card_payload without federated bank ticket", () => {
+  assert.strictEqual(R33.test('process_card_payload(txn_data)'), true);
 });
 
-test("[POS] sync_cde_to_fra", () => {
-  assert.strictEqual(R33.test('sync_cde_to_fra(card_data, fra_ledger)'), true);
+test("[NEG] verify_card_access_authority WITH federated_bank_ticket and PUBLIC_KEY_CBE_CUSTODIAN_BANK (safe)", () => {
+  assert.strictEqual(R33.test('verify_card_access_authority(payload, federated_bank_ticket, PUBLIC_KEY_CBE_CUSTODIAN_BANK)'), false);
 });
 
-test("[NEG] normal data sync (no contamination)", () => {
-  assert.strictEqual(R33.test('sync_users(prod, staging)'), false);
+test("[NEG] process_card_payload WITH bank HSM handshake (safe)", () => {
+  assert.strictEqual(R33.test('process_card_payload(data) federated_bank_ticket PUBLIC_KEY_CBE_CUSTODIAN_BANK'), false);
 });
 
 console.log("\nRunEngine integration:");
