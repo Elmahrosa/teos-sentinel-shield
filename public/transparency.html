@@ -120,7 +120,7 @@ footer a:hover{text-decoration:underline}
   <h1>Execution Control Infrastructure<br>for <em>Autonomous Systems</em></h1>
   <p>Every decision logged. Every rule inspectable. Every verdict reproducible. TEOS Sentinel is a deterministic, auditable governance engine — not a black box.</p>
   <div class="hero-badges">
-    <span class="hero-badge cyan">103 Detection Rules</span>
+    <span class="hero-badge cyan">121 Detection Rules</span>
     <span class="hero-badge green">BLOCK / WARN / ALLOW</span>
     <span class="hero-badge">Publicly Auditable</span>
     <span class="hero-badge">JSON Schema</span>
@@ -133,13 +133,13 @@ footer a:hover{text-decoration:underline}
 <!-- ENGINE OVERVIEW -->
 <div class="section">
   <div class="section-label">01 / Engine Architecture</div>
-  <h2>Deterministic Rule Engine v3.0.0</h2>
+  <h2>Deterministic Rule Engine v4.0</h2>
   <p>TEOS Sentinel uses a purely deterministic regex-based rule engine. No ML inference. No probabilistic verdicts. Every rule is a named, versioned, publicly inspectable pattern with explicit severity and scoring. The same input will always produce the same output — guaranteeing reproducibility for audit and compliance.</p>
 
   <div class="code-block">
     <span class="code-block-label">Engine Flow</span>INPUT: command string
   &darr;
-SCAN: 103 rules (64 core + 29 Solana + 10 EVM)
+SCAN: 121 rules (64 core + 29 Solana + 10 EVM + 8 banking)
   &darr;
 SCORE: highest-severity match wins (0-100)
   &darr;
@@ -149,7 +149,7 @@ OUTPUT: { verdict, score, rule, severity, reasons, timestamp }
   &darr;
 PERSIST: appended to events.json (rotating, max 500)</div>
 
-  <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;margin-top:32px">All 103 Rules</h3>
+  <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;margin-top:32px">All 121 Rules</h3>
   <div class="rule-list" id="rule-list"></div>
 </div>
 
@@ -184,11 +184,11 @@ PERSIST: appended to events.json (rotating, max 500)</div>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/rules.json</span></div>
-      <p>Static machine-readable rule definitions. 103 rules with regex patterns, severity levels, scores, and categories.</p>
+      <p>Static machine-readable rule definitions. 121 rules with regex patterns, severity levels, scores, and categories.</p>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/test-cases.json</span></div>
-      <p>348 attack simulation test cases with expected verdicts. Use to validate engine correctness.</p>
+      <p>410 attack simulation test cases with expected verdicts. Use to validate engine correctness.</p>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/audit-example.json</span></div>
@@ -211,7 +211,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
       <tr><td class="field-name">verdict</td><td class="field-type">string</td><td class="field-desc">"BLOCK" | "WARN" | "ALLOW" | "ERROR"</td></tr>
       <tr><td class="field-name">score</td><td class="field-type">number</td><td class="field-desc">Risk score 0-100. Higher = more dangerous.</td></tr>
       <tr><td class="field-name">rule</td><td class="field-type">string</td><td class="field-desc">Matched rule identifier. Format: "R{id}.{NAME}" e.g. "R01.DESTRUCTIVE_SHELL"</td></tr>
-      <tr><td class="field-name">ruleId</td><td class="field-type">string</td><td class="field-desc">Short rule ID: "R01" through "R103", or "R00" for clean.</td></tr>
+      <tr><td class="field-name">ruleId</td><td class="field-type">string</td><td class="field-desc">Short rule ID: "R01" through "R121", or "R00" for clean.</td></tr>
       <tr><td class="field-name">severity</td><td class="field-type">string</td><td class="field-desc">"critical" | "high" | "medium" | "none"</td></tr>
       <tr><td class="field-name">reasons</td><td class="field-type">string[]</td><td class="field-desc">Human-readable explanations for the verdict.</td></tr>
       <tr><td class="field-name">command</td><td class="field-type">string</td><td class="field-desc">The original input command (echoed back).</td></tr>
@@ -245,7 +245,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:16px">
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Deterministic</h4><p>Same input always produces the same output. No randomness. No model drift. Fully reproducible for auditors.</p></div>
-    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 103 rules, 348 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 121 rules, 410 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Event Persisted</h4><p>Every scan decision is logged with timestamp, rule, score, and verdict. Rotating store capped at 500 entries.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Export Ready</h4><p>Audit logs exportable as CSV or JSON. Compatible with SIEM ingestion and compliance review workflows.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">No ML Dependency</h4><p>Zero ML inference. No training data, no model weights, no probabilistic outputs. Pure pattern matching.</p></div>
@@ -343,7 +343,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 </div>
 
 <footer>
-  TEOS Sentinel Shield v3.0.0 &middot; Execution Control Infrastructure for Autonomous Systems<br>
+  TEOS Sentinel Shield v4.0 &middot; Execution Control Infrastructure for Autonomous Systems<br>
   <a href="index.html">Command Center</a> &middot;
   <a href="dashboard.html">SOC Dashboard</a> &middot;
   <a href="transparency.html#metrics">Beta Metrics</a> &middot;

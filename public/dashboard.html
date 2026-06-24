@@ -171,8 +171,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <div class="left-section">
       <span class="left-label">Engine Info</span>
       <div style="padding:0 8px;font-family:var(--mono);font-size:10px;color:var(--muted2);line-height:2">
-        <div>Version: <span style="color:var(--cyan);" id="eng-version">v3.0.0</span></div>
-        <div>Rules: <span style="color:var(--white);" id="eng-rules">103</span></div>
+        <div>Version: <span style="color:var(--cyan);" id="eng-version">v4.0</span></div>
+        <div>Rules: <span style="color:var(--white);" id="eng-rules">121</span></div>
         <div>Engine: <span style="color:var(--green)">Deterministic</span></div>
         <div id="engine-uptime">Uptime: --</div>
         <div>API: <span id="api-mode" style="color:var(--amber)">REST</span></div>
@@ -384,10 +384,10 @@ async function checkHealth(){
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     const badge=document.getElementById('ws-status');
-    badge.textContent=d.engine||'v3.0.0';
+    badge.textContent=d.engine||'v4.0';
     badge.className='topbar-badge badge-online';
     document.getElementById('engine-uptime').textContent='Uptime: '+(d.uptimeHuman||'--');
-    document.getElementById('eng-version').textContent=d.version||'v3.0.0';
+    document.getElementById('eng-version').textContent=d.version||'v4.0';
     document.getElementById('eng-rules').textContent=d.rules||'25';
     document.getElementById('r-peers').textContent='1';
     document.getElementById('api-mode').textContent='REST';

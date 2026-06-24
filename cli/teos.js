@@ -74,7 +74,7 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args[0] !== 'run') {
-    console.log('TEOS Sentinel Shield v3.0.0 — Deterministic Execution Control');
+    console.log('TEOS Sentinel Shield v4.0 — Deterministic Execution Control');
     console.log('');
     console.log('Usage:');
     console.log('  teos run <command>    Gate execution through enforcement engine');

@@ -27,7 +27,7 @@ router.get('/health', async (req, res) => {
 
   res.json({
     status: storeStatus !== 'redis_error' ? 'online' : 'critical',
-    engine: 'v3.0.0',
+    engine: 'v4.0',
     rules: RULES.length,
     uptime: Math.round(uptime),
     uptimeHuman: uptime > 86400 ? `${Math.floor(uptime / 86400)}d` :

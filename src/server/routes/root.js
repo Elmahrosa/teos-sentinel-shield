@@ -4,7 +4,7 @@ const { RULES } = require('../../engine/scanner');
 router.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: 'v3.0.0',
+    version: 'v4.0',
     engine: 'deterministic',
     rules: RULES.length,
     endpoints: ['/scan', '/stats', '/health', '/live', '/ready'],

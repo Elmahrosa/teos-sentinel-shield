@@ -1,5 +1,5 @@
 /*
-  TEOS Sentinel v3.0.0 — Deterministic Rule Engine + Railway API Gateway
+  TEOS Sentinel v4.0 — Deterministic Rule Engine + Railway API Gateway
   Deployment: Railway (production), local Docker (development)
   Data store: Upstash Redis (serverless) + in-memory fallback
 
@@ -83,7 +83,7 @@ function log(level, msg, meta = {}) {
   else console.log(JSON.stringify(entry));
 }
 
-log('info', 'Service started', { version: '3.0.0' });
+log('info', 'Service started', { version: '4.0.0' });
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -491,7 +491,7 @@ function runEngine(command) {
     rule:      'R00.CLEAN',
     ruleId:    'R00',
     severity:  'none',
-    reasons:   ['No threat patterns detected across 103 rules','Safe to execute'],
+    reasons:   ['No threat patterns detected across 121 rules','Safe to execute'],
     command:   cmd,
     timestamp: new Date().toISOString(),
   };
@@ -694,7 +694,7 @@ app.get('/health', async (req, res) => {
 
   res.json({
     status:         overallStatus,
-    engine:         'v3.0.0',
+    engine:         'v4.0',
     rules:          RULES.length,
     uptime:         Math.round(uptime),
     uptimeHuman:    uptime > 86400 ? `${Math.floor(uptime/86400)}d` :
@@ -702,7 +702,7 @@ app.get('/health', async (req, res) => {
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '3.0.0',
+    version:        '4.0.0',
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -720,7 +720,7 @@ app.get('/health', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: 'v3.0.0',
+    version: 'v4.0',
     engine:  'deterministic',
     rules:   RULES.length,
     endpoints: ['/scan','/stats','/health','/live','/ready'],
@@ -851,6 +851,6 @@ module.exports.log = log;
 // ── START (local dev / Railway) ─────────────────────────────
 if (require.main === module) {
   app.listen(PORT, () => {
-    log('info', 'TEOS Sentinel Engine v3.0.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory' });
+    log('info', 'TEOS Sentinel Engine v4.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory' });
   });
 }
