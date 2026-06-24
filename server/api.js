@@ -302,7 +302,7 @@ const RULES = [
       if (/rm\s+-rf\s+\/(?:\s|$|etc|bin|boot|dev|lib|sbin|root|usr|var|proc|sys|srv|opt)(?:\/|\s|$)/i.test(c)) return true;
       if (/rm\s+-rf\s+~\/?(?:\s|$)/i.test(c)) return true;
       if (/rm\s+-rf\s+\$home\b/i.test(c)) return true;
-      if (/\brm\s+-rf(?:\s*$|\s+\.\s*$|\s+\*\s*$)/i.test(c)) return true;
+      if (/\brm\s+-rf(?:\s*$|\s+\.(?:\/\*)?\s*$|\s+\*\s*$)/i.test(c)) return true;
       if (/format\s+[a-z]:/i.test(c)) return true;
       if (/deltree/i.test(c)) return true;
       return false;
