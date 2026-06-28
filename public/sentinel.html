@@ -544,7 +544,7 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
   <span class="ticker-sep">&#183;</span>
   <span><span class="ticker-dot"></span>121 Detection Rules Active</span>
   <span class="ticker-sep">&#183;</span>
-  <span><span class="ticker-dot"></span>410 Tests Passing</span>
+  <span><span class="ticker-dot"></span>596 Tests Passing</span>
 </div>
 
 <!-- HERO -->
@@ -1042,7 +1042,7 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
   <div class="faq-inner">
     <h2 class="faq-heading">Frequently Asked Questions</h2>
     <div class="faq-list">
-      <details class="faq-item"><summary>What does TEOS scan for?</summary><p>121 detection rules across 4 layers: 64 core rules (secrets, injections, malware, crypto miners, data exfiltration), 29 Solana rules (program security, account validation, authority checks), 10 EVM rules (reentrancy, flash loans, access control, oracle manipulation), and 8 banking rules (CBDC ledger manipulation, SWIFT/ISO 20022, FIX protocol, front-running, reserve key leaks, CBE/FRA dual-mandate).</p></details>
+      <details class="faq-item"><summary>What does TEOS scan for?</summary><p>121 Active Governance Controls across 4 layers: 64 core rules (secrets, injections, malware, crypto miners, data exfiltration), 29 Solana rules (program security, account validation, authority checks), 10 EVM rules (reentrancy, flash loans, access control, oracle manipulation), and 8 banking rules (CBDC ledger manipulation, SWIFT/ISO 20022, FIX protocol, front-running, reserve key leaks).</p></details>
       <details class="faq-item"><summary>How do I scan code from the terminal?</summary><p>Install the CLI (<code>node teos.js scan &lt;file&gt;</code>) or pipe code directly (<code>cat script.sh | node teos.js scan</code>). Results include verdict (ALLOW/WARN/REVIEW/BLOCK), risk score (0-100), and per-rule findings.</p></details>
       <details class="faq-item"><summary>Is there a desktop app?</summary><p>Yes &mdash; Extensions Desktop (Beta) is an Electron app with system tray monitoring, background health polling, and native OS notifications for BLOCK verdicts. Run <code>cd desktop &amp;&amp; npm start</code> to launch.</p></details>
       <details class="faq-item"><summary>Can I scan GitHub PRs automatically?</summary><p>The browser extension injects a &ldquo;TEOS Scan&rdquo; button on GitHub file views. The VS Code extension adds editor context menu commands. Both send code to the TEOS risk engine and display results inline.</p></details>

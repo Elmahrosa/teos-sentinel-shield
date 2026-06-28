@@ -841,7 +841,7 @@ footer::before {
   <div class="status-item"><div class="status-dot"></div> MCP Engine v4.0 — Online</div>
   <div class="status-item"><div class="status-dot"></div> Telegram Bot — Online</div>
   <div class="status-item"><div class="status-dot"></div> 121 Detection Rules Active</div>
-  <div class="status-item"><div class="status-dot"></div> 410 Tests Passing</div>
+  <div class="status-item"><div class="status-dot"></div> 596 Tests Passing</div>
 </div>
 
 <!-- HERO -->
@@ -879,7 +879,7 @@ footer::before {
 
   <div class="trust-strip">
     <div class="trust-item"><span class="trust-num" data-target="121">121</span>&nbsp;Deterministic Rules</div>
-    <div class="trust-item"><span class="trust-num" data-target="410">410</span>&nbsp;Tests Passing</div>
+    <div class="trust-item"><span class="trust-num" data-target="596">596</span>&nbsp;Tests Passing</div>
     <div class="trust-item"><span class="trust-num" data-target="75">75</span>+&nbsp;Nations</div>
     <div class="trust-item"><span class="trust-num" data-target="4">4</span>-Tier&nbsp;EU AI Act Enforcement</div>
   </div>
@@ -1030,7 +1030,7 @@ footer::before {
       <div class="estat-sub">R01 – R121 active</div>
     </div>
     <div class="estat">
-      <div class="estat-num" data-target="410">410</div>
+      <div class="estat-num" data-target="596">596</div>
       <div class="estat-label">Tests Passing</div>
       <div class="estat-sub">Engine v4.0 stable</div>
     </div>
@@ -1405,7 +1405,7 @@ footer::before {
       <div class="rm-card live">
         <div class="rm-q live-q"><span class="rm-dot"></span>Live Now</div>
         <div class="rm-title">Engine v4.0 + Telegram Bot</div>
-        <p class="rm-desc">121 detection rules (64 core + 29 Solana + 10 EVM + 8 banking). 410 tests passing. /scan, /solana, /evm, /deps, /ci, /github, /report, /batch, /feedback, /claude, /llama3, /qwen, /openai, /automod — all live. Engine v4.0 production stable. 6 services online.</p>
+        <p class="rm-desc">121 detection rules (64 core + 29 Solana + 10 EVM + 8 banking). 596 tests passing. /scan, /solana, /evm, /deps, /ci, /github, /report, /batch, /feedback, /claude, /llama3, /qwen, /openai, /automod — all live. Engine v4.0 production stable. 6 services online.</p>
       </div>
       <div class="rm-card">
         <div class="rm-q">Q2 2026</div>
@@ -1507,7 +1507,7 @@ footer::before {
   <div class="faq-inner">
     <h2 class="faq-heading">Frequently Asked Questions</h2>
     <div class="faq-list">
-      <details class="faq-item"><summary>What does TEOS scan for?</summary><p>121 detection rules across 4 layers: 64 core rules (secrets, injections, malware, crypto miners, data exfiltration), 29 Solana rules (program security, account validation, authority checks), 10 EVM rules (reentrancy, flash loans, access control, oracle manipulation), and 8 banking rules (CBDC ledger manipulation, SWIFT/ISO 20022, FIX protocol, front-running, reserve key leaks, CBE/FRA dual-mandate).</p></details>
+      <details class="faq-item"><summary>What does TEOS scan for?</summary><p>121 Active Governance Controls across 4 layers: 64 core rules (secrets, injections, malware, crypto miners, data exfiltration), 29 Solana rules (program security, account validation, authority checks), 10 EVM rules (reentrancy, flash loans, access control, oracle manipulation), and 8 banking rules (CBDC ledger manipulation, SWIFT/ISO 20022, FIX protocol, front-running, reserve key leaks).</p></details>
       <details class="faq-item"><summary>How do I scan code from the terminal?</summary><p>Install the CLI (<code>node teos.js scan &lt;file&gt;</code>) or pipe code directly (<code>cat script.sh | node teos.js scan</code>). Results include verdict (ALLOW/WARN/REVIEW/BLOCK), risk score (0-100), and per-rule findings.</p></details>
       <details class="faq-item"><summary>Is there a desktop app?</summary><p>Yes &mdash; Extensions Desktop (Beta) is an Electron app with system tray monitoring, background health polling, and native OS notifications for BLOCK verdicts. Run <code>cd desktop &amp;&amp; npm start</code> to launch.</p></details>
       <details class="faq-item"><summary>Can I scan GitHub PRs automatically?</summary><p>The browser extension injects a &ldquo;TEOS Scan&rdquo; button on GitHub file views. The VS Code extension adds editor context menu commands. Both send code to the TEOS risk engine and display results inline.</p></details>
@@ -1653,7 +1653,7 @@ const BUILT_IN = {
     'MCP Engine v4.0 \u2014 Online':'\u0645\u062D\u0631\u0643 MCP v4.0 \u2014 \u0645\u062A\u0635\u0644',
     'Telegram Bot \u2014 Online':'\u0628\u0648\u062A \u062A\u064A\u0644\u064A\u063A\u0631\u0627\u0645 \u2014 \u0645\u062A\u0635\u0644',
     '121 Detection Rules Active':'\u0662\u0665 \u0642\u0627\u0639\u062F\u0629 \u0646\u0634\u0637\u0629',
-    '410 Tests Passing':'\u0663\u0667 \u0627\u062E\u062A\u0628\u0627\u0631\u0627\u064B \u0646\u0627\u062C\u062D\u064B\u0627',
+    '596 Tests Passing':'\u0665\u0669\u0666 \u0627\u062E\u062A\u0628\u0627\u0631\u0627\u064B \u0646\u0627\u062C\u062D\u064B\u0627',
     'Generate \u2192 Validate \u2192':'\u062A\u0648\u0644\u064A\u062F \u2192 \u062A\u062D\u0642\u0642 \u2192',
     'Multiple engines.':'\u0623\u0643\u062B\u0631 \u0645\u0646 \u0645\u062D\u0631\u0643.',
     'One interface.':'\u0648\u0627\u062D\u062F\u0629 \u0648\u0627\u062C\u0647\u0629.',
@@ -1674,7 +1674,7 @@ const BUILT_IN = {
     'MCP Engine v4.0 \u2014 Online':'Mesin MCP v4.0 \u2014 Online',
     'Telegram Bot \u2014 Online':'Bot Telegram \u2014 Online',
     '121 Detection Rules Active':'121 Aturan Aktif',
-    '410 Tests Passing':'410 Tes Berhasil',
+    '596 Tests Passing':'596 Tes Berhasil',
     'Generate \u2192 Validate \u2192':'Hasilkan \u2192 Validasi \u2192',
     'Multiple engines.':'Banyak mesin.','One interface.':'Satu antarmuka.',
     'Stay protected.':'Tetap terlindungi.','Choose your level.':'Pilih tingkatan Anda.',

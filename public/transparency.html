@@ -188,7 +188,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/test-cases.json</span></div>
-      <p>410 attack simulation test cases with expected verdicts. Use to validate engine correctness.</p>
+      <p>596 attack simulation test cases with expected verdicts. Use to validate engine correctness.</p>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/audit-example.json</span></div>
@@ -245,7 +245,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:16px">
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Deterministic</h4><p>Same input always produces the same output. No randomness. No model drift. Fully reproducible for auditors.</p></div>
-    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 121 rules, 410 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 121 rules, 596 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Event Persisted</h4><p>Every scan decision is logged with timestamp, rule, score, and verdict. Rotating store capped at 500 entries.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Export Ready</h4><p>Audit logs exportable as CSV or JSON. Compatible with SIEM ingestion and compliance review workflows.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">No ML Dependency</h4><p>Zero ML inference. No training data, no model weights, no probabilistic outputs. Pure pattern matching.</p></div>
