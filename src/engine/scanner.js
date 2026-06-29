@@ -53,7 +53,7 @@ const RULES = [
 
   { id:'R11', name:'PATH_TRAVERSAL',       sev:'high',     score:78,
     test: c => {
-      if (!/(\.\.\/){2,}|%2e%2e/i.test(c)) return false;
+      if (!/(\.\.\/){2,}|(\.\.\\){2,}|%2e%2e/i.test(c)) return false;
       const lower = c.toLowerCase().trim();
       if (/^[\w_]+\s*=\s*["']?[^"'\n]*\.\.\//.test(lower)) return false;
       if (/^(export|local)\s+[\w_]+\s*=\s*["']?[^"'\n]*\.\.\//.test(lower)) return false;
@@ -181,6 +181,18 @@ const RULES = [
     reasons: ['Detected privileged service or network administration. This command modifies system services or firewall configuration, potentially affecting availability. No malicious behavior was detected. User verification is recommended before execution.'],
     meta: { category:'Service Administration', confidence:'high', platform:'Linux', attck:['T1562.001'], recommendation:'Verify the operator intended to modify service or firewall state. Confirm maintenance window authorization.' },
     audit: { operationType:'Service/Network Administration', privilegeLevel:'Root Required', impact:'Service Availability Modification' } },
+
+  { id:'R38', name:'SSH_KEY_LEAK',           sev:'high',     score:80,
+    test: c => /\b(?:ssh-rsa\s+A{4,}|ssh-ed25519\s+A{4,}|ecdsa-sha2-nistp\d+\s+A{4,}|AAAAB3NzaC1yc2|AAAAC3NzaC1lZDI1NTE5)/i.test(c),
+    reasons: ['SSH public key detected in source code — credential exposure risk'] },
+
+  { id:'R39', name:'DOCKERFILE_BUILD',       sev:'critical', score:95,
+    test: c => /FROM\s+\S+\s+(?:AS\s+\S+\s+)?RUN\s+(?:rm\s+-rf\s+\/|curl\s+.*\|\s*(?:bash|sh|zsh))/i.test(c),
+    reasons: ['Destructive operation in Dockerfile build stage — system damage risk'] },
+
+  { id:'R40', name:'TERRAFORM_DESTROY',      sev:'medium',   score:65,
+    test: c => /\bterraform\s+destroy\s+-auto-approve\b/i.test(c),
+    reasons: ['Terraform destroy with auto-approve — infrastructure destruction risk'] },
 ];
 
 const GOVERNANCE_MAPPINGS = {
@@ -221,6 +233,9 @@ const GOVERNANCE_MAPPINGS = {
   R35: { framework:'NIST CSF PR.PT-3', confidence:'high', governanceEngine:'Infrastructure', attck:['T1072'], suggestedFix:'Verify the operator intended to remove this package. Confirm the package is not a system dependency.' },
   R36: { framework:'NIST CSF PR.PT-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1485'], suggestedFix:'Verify the operator intended to modify filesystem configuration. Confirm no production volumes are affected.' },
   R37: { framework:'NIST CSF PR.PT-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1562.001'], suggestedFix:'Verify the operator intended to modify service or firewall state. Confirm maintenance window authorization.' },
+  R38: { framework:'NIST CSF PR.AC-3, OWASP ASVS 4.2.2', confidence:'high', governanceEngine:'Compliance', attck:['T1552'], suggestedFix:'Remove SSH public keys from source code. Store in a secrets manager or authorized_keys file.' },
+  R39: { framework:'NIST CSF PR.PT-3, OWASP ASVS 4.7.3', confidence:'high', governanceEngine:'Infrastructure', attck:['T1105'], suggestedFix:'Avoid destructive operations in Dockerfile build stages. Use multi-stage builds to isolate build and runtime.' },
+  R40: { framework:'NIST CSF PR.AC-4', confidence:'medium', governanceEngine:'Infrastructure', attck:['T1485'], suggestedFix:'Require manual approval for terraform destroy commands. Use terraform plan to review changes before apply.' },
 };
 
 function runEngine(command) {
@@ -296,6 +311,7 @@ const RULE_ID_MAP = {
   'R29': 'FRONT_RUNNING', 'R30': 'RESERVE_LEAK', 'R31': 'CROSS_IDENTITY_SILENT_TRUST',
   'R32': 'UNASSIGNED_DISPUTE_ESCALATION', 'R33': 'FEDERATED_HSM_CLAIMS',
   'R34': 'ADMIN_ELEVATION', 'R35': 'PKG_MANAGER_REMOVE', 'R36': 'FILESYSTEM_ADMIN', 'R37': 'SERVICE_ADMIN',
+  'R38': 'SSH_KEY_LEAK', 'R39': 'DOCKERFILE_BUILD', 'R40': 'TERRAFORM_DESTROY',
 };
 
 const SEED_BLOCK_EVENTS = [

@@ -24,6 +24,15 @@ const MAX_WS_PEERS  = parseInt(process.env.MAX_WS_PEERS)     || 100;
 const PUBLIC_DIR    = path.join(__dirname, '..', 'public');
 const NODE_ENV      = process.env.NODE_ENV || 'production';
 
+const SECURITY_HEADERS = {
+  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src-attr 'none'; upgrade-insecure-requests",
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '0',
+  'Referrer-Policy': 'no-referrer',
+};
+
 // ── STATIC FILE SERVER ──────────────────────────────────────
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -57,7 +66,7 @@ function serveStatic(req, res) {
       if (filePath !== '/index.html') {
         fs.readFile(path.join(PUBLIC_DIR, 'index.html'), (err2, html) => {
           if (err2) { res.writeHead(404); res.end('Not found'); return; }
-          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.writeHead(200, { 'Content-Type': 'text/html', ...SECURITY_HEADERS });
           res.end(html);
         });
         return;
@@ -67,7 +76,7 @@ function serveStatic(req, res) {
       return;
     }
     const cacheControl = NODE_ENV === 'production' ? 'public, max-age=3600' : 'no-cache';
-    res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': cacheControl });
+    res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': cacheControl, ...SECURITY_HEADERS });
     res.end(data);
   });
 }
