@@ -2256,6 +2256,19 @@
     }
 
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PNCZ19CVCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PNCZ19CVCD', {
+    send_page_view: true,
+    anonymize_ip: true,
+    cookie_flags: 'SameSite=None;Secure'
+  });
+</script>
+<!-- CLARITY: Insert Microsoft Clarity snippet here when available -->
 </head>
 
 <body>
@@ -3180,6 +3193,10 @@
         showLegal(id);
       });
     });
+    /* GA4 event tracking for tool downloads */
+    try{document.querySelectorAll('.tools-strip a[download]').forEach(function(a){
+      a.addEventListener('click',function(){gtag('event','download_tool',{event_category:'tool',event_label:this.href.split('/').pop()})});
+    })}catch(e){}
   </script>
 </body>
 </html>

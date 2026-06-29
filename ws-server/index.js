@@ -76,7 +76,8 @@ function serveStatic(req, res) {
 const server = http.createServer((req, res) => {
   if (req.url.startsWith('/scan') || req.url.startsWith('/stats') ||
       req.url.startsWith('/events') || req.url.startsWith('/audit') ||
-      req.url.startsWith('/health') || req.url.startsWith('/ingest')) {
+      req.url.startsWith('/health') || req.url.startsWith('/ingest') ||
+      req.url.startsWith('/api/version') || req.url.startsWith('/api/health')) {
     app(req, res);
     return;
   }

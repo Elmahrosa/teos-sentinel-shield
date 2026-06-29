@@ -1,6 +1,6 @@
 {
   "name": "teos-sentinel-shield",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware",
   "main": "ws-server/index.js",
   "bin": {

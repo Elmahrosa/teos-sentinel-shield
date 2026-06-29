@@ -142,6 +142,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 @media(max-width:1100px){#main{grid-template-columns:200px 1fr 240px}#left-panel{padding:12px 8px}#right-panel{padding:12px 8px}}
 @media(max-width:900px){#main{grid-template-columns:1fr;grid-template-rows:auto 1fr}#left-panel,#right-panel{display:none}}
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PNCZ19CVCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PNCZ19CVCD', {
+    send_page_view: true,
+    anonymize_ip: true,
+    cookie_flags: 'SameSite=None;Secure'
+  });
+</script>
+<!-- CLARITY: Insert Microsoft Clarity snippet here when available -->
 </head>
 <body>
 
@@ -554,6 +567,11 @@ window.exportCSV=exportCSV;
 window.showDetail=showDetail;
 window.toast=toast;
 window.renderEvents=renderEvents;
+/* GA4 event tracking */
+(function(){try{
+  var _csv=window.exportCSV;if(_csv)window.exportCSV=function(){_csv.apply(this,arguments);gtag('event','export_csv',{event_category:'dashboard'})};
+  var _flt=window.setFilter;if(_flt)window.setFilter=function(f,btn){_flt.apply(this,arguments);gtag('event','filter_change',{event_category:'dashboard',event_label:f})};
+}catch(e){}})();
 
 init();
 </script>

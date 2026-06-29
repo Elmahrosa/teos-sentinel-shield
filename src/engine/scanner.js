@@ -155,6 +155,32 @@ const RULES = [
   { id:'R33', name:'FEDERATED_HSM_CLAIMS', sev:'critical', score:95,
     test: c => /(?:verify_card_access_authority|process_card_payload)\b(?![^\n]*?\bfederated_bank_ticket\b[^\n]*?\bPUBLIC_KEY_CBE_CUSTODIAN_BANK\b)/i.test(c),
     reasons: ['Fintech attempting to claim direct authority over card environment without Federated HSM Ticket signed by Custodian Bank.'] },
+
+  // ═══ LINUX ADMIN — DevOps / system administration operations (v4.0-DEVOPS) ═══
+
+  { id:'R34', name:'ADMIN_ELEVATION',        sev:'medium',   score:55,
+    test: c => /\b(?:sudo|doas|pkexec|runas)\s+(?:pacman|apt(?:-get)?|dnf|yum|apk|zypper|systemctl|service|iptables|ufw|firewall-cmd|mkfs|fdisk|mount|umount)\b/i.test(c),
+    reasons: ['Detected privileged system administration. This command uses elevated privileges to modify system state. No malicious behavior was detected. User verification is recommended before execution.'],
+    meta: { category:'Administrative Operations', confidence:'high', platform:'Linux', attck:['T1548','T1548.003'], recommendation:'Verify operator intent before execution. Confirm the command is part of an authorized maintenance window.' },
+    audit: { operationType:'System Administration', privilegeLevel:'Root Required', impact:'System State Modification' } },
+
+  { id:'R35', name:'PKG_MANAGER_REMOVE',     sev:'medium',   score:50,
+    test: c => /\b(?:pacman\s+-R[cns]*\b|apt\s+(?:remove|purge)\b|apt-get\s+(?:remove|purge)\b|dnf\s+remove\b|yum\s+erase\b|apk\s+del\b|zypper\s+remove\b)/i.test(c),
+    reasons: ['Detected privileged package removal. This command requires elevated privileges and may permanently remove installed software. No malicious behavior was detected. User verification is recommended before execution.'],
+    meta: { category:'Package Management', confidence:'high', platform:'Linux', attck:['T1072'], recommendation:'Verify the operator intended to remove this package. Confirm the package is not a system dependency.' },
+    audit: { operationType:'Package Management', privilegeLevel:'Root Required', impact:'Software Removal' } },
+
+  { id:'R36', name:'FILESYSTEM_ADMIN',       sev:'medium',   score:60,
+    test: c => /\b(?:mkfs\s+\/dev\/|fdisk\s+\/dev\/|mount\s+\/dev\/|umount\s+\/|chmod\s+(?:777|666|a\+w)\s|chown\s+-R\s)/i.test(c),
+    reasons: ['Detected privileged filesystem operation. This command modifies disk partitions, mounts, or file permission boundaries. No malicious behavior was detected. User verification is recommended before execution.'],
+    meta: { category:'Filesystem Administration', confidence:'high', platform:'Linux', attck:['T1485'], recommendation:'Verify the operator intended to modify filesystem configuration. Confirm no production volumes are affected.' },
+    audit: { operationType:'Filesystem Administration', privilegeLevel:'Root Required', impact:'Filesystem Modification' } },
+
+  { id:'R37', name:'SERVICE_ADMIN',          sev:'medium',   score:55,
+    test: c => /\b(?:systemctl\s+(?:stop|disable|mask|kill)\s+\w+|service\s+\w+\s+(?:stop|kill)|iptables\s+(?:-F|--flush|INPUT\s+-j\s+DROP|OUTPUT\s+-j\s+DROP)|ufw\s+disable|firewall-cmd\s+(?:--complete-reload|--reload))\b/i.test(c),
+    reasons: ['Detected privileged service or network administration. This command modifies system services or firewall configuration, potentially affecting availability. No malicious behavior was detected. User verification is recommended before execution.'],
+    meta: { category:'Service Administration', confidence:'high', platform:'Linux', attck:['T1562.001'], recommendation:'Verify the operator intended to modify service or firewall state. Confirm maintenance window authorization.' },
+    audit: { operationType:'Service/Network Administration', privilegeLevel:'Root Required', impact:'Service Availability Modification' } },
 ];
 
 function runEngine(command) {
@@ -185,6 +211,8 @@ function runEngine(command) {
       ruleId: topHit.rule.id,
       severity: topHit.rule.sev,
       reasons: topHit.rule.reasons,
+      meta: topHit.rule.meta,
+      audit: topHit.rule.audit,
       command: cmd,
       timestamp: new Date().toISOString(),
     };
@@ -212,6 +240,7 @@ const RULE_ID_MAP = {
   'R26': 'LEDGER_MANIPULATION', 'R27': 'SWIFT_UNENCRYPTED', 'R28': 'FIX_CLEARTEXT',
   'R29': 'FRONT_RUNNING', 'R30': 'RESERVE_LEAK', 'R31': 'CROSS_IDENTITY_SILENT_TRUST',
   'R32': 'UNASSIGNED_DISPUTE_ESCALATION', 'R33': 'FEDERATED_HSM_CLAIMS',
+  'R34': 'ADMIN_ELEVATION', 'R35': 'PKG_MANAGER_REMOVE', 'R36': 'FILESYSTEM_ADMIN', 'R37': 'SERVICE_ADMIN',
 };
 
 const SEED_BLOCK_EVENTS = [

@@ -1362,6 +1362,19 @@
     .compare-table { min-width: 600px; }
   }
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PNCZ19CVCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PNCZ19CVCD', {
+    send_page_view: true,
+    anonymize_ip: true,
+    cookie_flags: 'SameSite=None;Secure'
+  });
+</script>
+<!-- CLARITY: Insert Microsoft Clarity snippet here when available -->
 </head>
 <body>
 
@@ -1784,6 +1797,7 @@ function addAuditEntry(decision, rule, severity, evidence) {
 }
 
 function runDemo(type) {
+  try{gtag('event','demo_scan',{event_category:'demo',event_label:type})}catch(e){}
   const el = document.getElementById('demo-result');
   const demoData = {
     solidity: {
@@ -1835,6 +1849,7 @@ function runDemo(type) {
 
 function downloadPDF() {
   if (!lastScanResult) return;
+  try{gtag('event','download_report_pdf',{event_category:'report',event_label:lastScanResult.type})}catch(e){}
   const r = lastScanResult;
   const sevCounts = {};
   r.findings.forEach(f => { sevCounts[f.severity] = (sevCounts[f.severity] || 0) + 1; });

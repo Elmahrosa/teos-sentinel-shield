@@ -114,6 +114,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 @media(max-width:700px){#controls{flex-direction:column;align-items:flex-start}.ctrl-right{margin-left:0}}
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PNCZ19CVCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PNCZ19CVCD', {
+    send_page_view: true,
+    anonymize_ip: true,
+    cookie_flags: 'SameSite=None;Secure'
+  });
+</script>
+<!-- CLARITY: Insert Microsoft Clarity snippet here when available -->
 </head>
 <body>
 
@@ -400,6 +413,17 @@ document.addEventListener('keydown',e=>{
   else if(e.code==='ArrowLeft'){e.preventDefault();stopPlay();currentIndex=Math.max(0,currentIndex-1);showEvent(currentIndex);updateTimelinePosition();highlightCard(currentIndex)}
   else if(e.code==='KeyR'){e.preventDefault();resetReplay()}
 });
+
+/* ── GA4 event tracking ─────────────────────────────── */
+(function(){try{
+  var t=window.togglePlay;if(t)window.togglePlay=function(){t.apply(this,arguments);gtag('event','replay_toggle_play',{event_category:'replay'})};
+  var s=window.stepForward;if(s)window.stepForward=function(){s.apply(this,arguments);gtag('event','replay_step',{event_category:'replay'})};
+  var r=window.resetReplay;if(r)window.resetReplay=function(){r.apply(this,arguments);gtag('event','replay_reset',{event_category:'replay'})};
+  var o=window.toast;if(o)window.toast=function(msg,dur){
+    o.apply(this,arguments);
+    if(msg&&msg.indexOf('offline')>=0)gtag('event','error',{event_category:'replay',event_label:'engine_offline'});
+  };
+}catch(e){}})();
 
 /* ── INIT ────────────────────────────────────────────────── */
 loadEvents();

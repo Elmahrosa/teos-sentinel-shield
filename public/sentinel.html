@@ -518,6 +518,19 @@ footer::before { content:''; display:block; height:1px; background:linear-gradie
   .footer-bottom { flex-direction:column; text-align:center; gap:6px; }
 }
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PNCZ19CVCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PNCZ19CVCD', {
+    send_page_view: true,
+    anonymize_ip: true,
+    cookie_flags: 'SameSite=None;Secure'
+  });
+</script>
+<!-- CLARITY: Insert Microsoft Clarity snippet here when available -->
 </head>
 <body>
 
@@ -1291,6 +1304,13 @@ try {
     });
   } catch(e){}
 })();
+/* GA4 event tracking for tester scans */
+(function(){try{
+  var _scan=window.runTesterScan;
+  if(_scan)window.runTesterScan=function(){_scan.apply(this,arguments);gtag('event','tester_scan_run',{event_category:'tester'})};
+  var _load=window.loadTesterExample;
+  if(_load)window.loadTesterExample=function(cat){_load.apply(this,arguments);gtag('event','tester_load_example',{event_category:'tester',event_label:cat})};
+}catch(e){}})();
 </script>
 </body>
 </html>
