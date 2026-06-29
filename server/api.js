@@ -479,6 +479,46 @@ const RULES = [
     audit: { operationType:'Service/Network Administration', privilegeLevel:'Root Required', impact:'Service Availability Modification' } },
 ];
 
+const GOVERNANCE_MAPPINGS = {
+  R01: { framework:'NIST CSF PR.AC-5, OWASP ASVS 4.0', confidence:'high', governanceEngine:'Security', attck:['T1485'], suggestedFix:'Verify the path is a non-critical directory. Use rm with explicit path validation.' },
+  R02: { framework:'NIST CSF PR.AC-4, OWASP ASVS 4.2.1', confidence:'high', governanceEngine:'Security', attck:['T1222'], suggestedFix:'Replace recursive chmod with targeted permissions. Avoid 777 on sensitive files.' },
+  R03: { framework:'NIST CSF PR.PT-3, OWASP ASVS 4.7.3', confidence:'high', governanceEngine:'Infrastructure', attck:['T1105'], suggestedFix:'Use signed packages instead of pipe-to-shell. Verify checksums before execution.' },
+  R04: { framework:'NIST CSF PR.AC-3, OWASP ASVS 4.2.2', confidence:'high', governanceEngine:'Compliance', attck:['T1539'], suggestedFix:'Remove echo of environment secrets. Use a secrets manager instead.' },
+  R05: { framework:'NIST CSF PR.DS-2, OWASP ASVS 4.8.6', confidence:'high', governanceEngine:'Security', attck:['T1048'], suggestedFix:'Do not pipe environment keys to external endpoints. Audit all outbound secret leaks.' },
+  R06: { framework:'NIST CSF PR.PT-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1498'], suggestedFix:'Fork bombs cause denial of service. Block and terminate the source process.' },
+  R07: { framework:'NIST CSF PR.PT-3, OWASP ASVS 4.5.2', confidence:'medium', governanceEngine:'Security', attck:['T1027'], suggestedFix:'Decode the base64 payload and review before execution. Base64 can hide malicious code.' },
+  R08: { framework:'NIST CSF PR.AC-5, OWASP ASVS 4.1.3', confidence:'high', governanceEngine:'Security', attck:['T1016'], suggestedFix:'Block outbound reverse shell connections. Verify network egress filtering.' },
+  R09: { framework:'NIST CSF PR.DS-2, OWASP ASVS 4.3.4', confidence:'high', governanceEngine:'Compliance', attck:['T1485'], suggestedFix:'SQL DROP operations should require multi-person approval. Use database backups.' },
+  R10: { framework:'NIST CSF PR.AC-4, OWASP ASVS 4.3.1', confidence:'high', governanceEngine:'Security', attck:['T1190'], suggestedFix:'Use parameterized queries. Never concatenate user input into SQL statements.' },
+  R11: { framework:'NIST CSF PR.AC-4, OWASP ASVS 4.2.4', confidence:'high', governanceEngine:'Security', attck:['T1083'], suggestedFix:'Validate file paths against an allowlist. Reject paths with ../ sequences.' },
+  R12: { framework:'NIST CSF PR.AC-4, OWASP ASVS 4.2.3', confidence:'high', governanceEngine:'Security', attck:['T1202'], suggestedFix:'Avoid shell execution with user input. Use parameterized APIs instead.' },
+  R13: { framework:'NIST CSF PR.AC-4, OWASP ASVS 4.2.2', confidence:'high', governanceEngine:'Security', attck:['T1548'], suggestedFix:'Restrict sudo access. Remove SUID bits from custom binaries.' },
+  R14: { framework:'NIST CSF PR.PT-3, OWASP ASVS 4.7.1', confidence:'high', governanceEngine:'Supply Chain', attck:['T1195'], suggestedFix:'Pin dependency versions. Use npm audit and SCA tools to detect malicious packages.' },
+  R15: { framework:'NIST CSF PR.PT-3, OWASP ASVS 4.7.1', confidence:'medium', governanceEngine:'Supply Chain', attck:['T1195'], suggestedFix:'Verify package names before requiring. Typosquatting is a common supply chain attack.' },
+  R16: { framework:'NIST CSF PR.AC-4', confidence:'medium', governanceEngine:'Infrastructure', attck:['T1562'], suggestedFix:'Set write permissions to specific branches only. Avoid write-all in GitHub Actions.' },
+  R17: { framework:'NIST CSF PR.PT-3, OWASP ASVS 4.7.3', confidence:'high', governanceEngine:'Infrastructure', attck:['T1105'], suggestedFix:'Replace inline curl|bash in CI with containerized builds from trusted registries.' },
+  R18: { framework:'NIST CSF PR.PT-4, OWASP ASVS 4.1.1', confidence:'high', governanceEngine:'Infrastructure', attck:['T1610'], suggestedFix:'Remove --privileged flag. Use granular security contexts instead.' },
+  R19: { framework:'NIST CSF PR.AC-3, OWASP ASVS 4.2.2', confidence:'high', governanceEngine:'Compliance', attck:['T1552'], suggestedFix:'Use environment variables or a secrets manager. Never hardcode secrets in source.' },
+  R20: { framework:'NIST CSF PR.AC-4, OWASP ASVS 4.8.1', confidence:'medium', governanceEngine:'AI Safety', attck:['T1564'], suggestedFix:'Sanitize user input before feeding to LLMs. Use input validation and output filtering.' },
+  R21: { framework:'NIST CSF PR.AC-5, OWASP ASVS 4.2.6', confidence:'high', governanceEngine:'Security', attck:['T1595'], suggestedFix:'Block requests to internal IP ranges. Use network policies to restrict egress.' },
+  R22: { framework:'NIST CSF PR.DS-2, OWASP ASVS 4.3.6', confidence:'high', governanceEngine:'Security', attck:['T1190'], suggestedFix:'Disable XML external entity processing. Use JSON instead of XML where possible.' },
+  R23: { framework:'NIST CSF PR.PT-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1496'], suggestedFix:'Block known cryptomining pool addresses. Monitor for anomalous CPU usage.' },
+  R24: { framework:'NIST CSF PR.DS-2, OWASP ASVS 4.8.6', confidence:'high', governanceEngine:'Security', attck:['T1048'], suggestedFix:'Audit all data exfiltration attempts. Restrict curl access to sensitive files.' },
+  R25: { framework:'NIST CSF PR.AC-3, OWASP ASVS 4.2.2', confidence:'high', governanceEngine:'Compliance', attck:['T1552'], suggestedFix:'Mask CI secrets in logs. Use read-only secret references in CI pipelines.' },
+  R26: { framework:'NIST CSF PR.DS-2', confidence:'high', governanceEngine:'Finance', attck:['T1565'], suggestedFix:'All ledger mutations must go through atomic transaction hooks. Direct set operations violate audit integrity.' },
+  R27: { framework:'NIST CSF PR.DS-2, PCI DSS 4.0.1', confidence:'high', governanceEngine:'Finance', attck:['T1040'], suggestedFix:'Enforce TLS for all SWIFT/ISO 20022 transports. Reject unencrypted payment messages.' },
+  R28: { framework:'NIST CSF PR.AC-3, PCI DSS 4.0.1', confidence:'high', governanceEngine:'Finance', attck:['T1552'], suggestedFix:'Use TLS for FIX protocol sessions. Never transmit credentials in cleartext.' },
+  R29: { framework:'NIST CSF PR.PT-4', confidence:'medium', governanceEngine:'Finance', attck:['T1498'], suggestedFix:'Implement commit-reveal schemes. Detect and flag gas auction manipulation patterns.' },
+  R30: { framework:'NIST CSF PR.DS-2, PCI DSS 4.0.1', confidence:'high', governanceEngine:'Compliance', attck:['T1539'], suggestedFix:'Use key vaults for reserve keys. Strip key material from application logs and responses.' },
+  R31: { framework:'Egypt PDP Art.7, NIST CSF PR.DS-1', confidence:'high', governanceEngine:'Compliance', attck:['T1059'], suggestedFix:'Anonymize PII before cross-regulator transfer. Use sha256(national_id + salt) at minimum.' },
+  R32: { framework:'CBE Reg.4, NIST CSF ID.RM-1', confidence:'high', governanceEngine:'Finance', attck:['T1565'], suggestedFix:'Each split payment must have a deterministic dispute owner. Implement CBE/FRA dual-authority IDs.' },
+  R33: { framework:'CBE Reg.6, NIST CSF PR.AC-4', confidence:'high', governanceEngine:'Finance', attck:['T1610'], suggestedFix:'Verify federated bank ticket before processing card payloads. Require PUBLIC_KEY_CBE_CUSTODIAN_BANK signature.' },
+  R34: { framework:'NIST CSF PR.AC-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1548','T1548.003'], suggestedFix:'Verify operator intent before execution. Confirm the command is part of an authorized maintenance window.' },
+  R35: { framework:'NIST CSF PR.PT-3', confidence:'high', governanceEngine:'Infrastructure', attck:['T1072'], suggestedFix:'Verify the operator intended to remove this package. Confirm the package is not a system dependency.' },
+  R36: { framework:'NIST CSF PR.PT-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1485'], suggestedFix:'Verify the operator intended to modify filesystem configuration. Confirm no production volumes are affected.' },
+  R37: { framework:'NIST CSF PR.PT-4', confidence:'high', governanceEngine:'Infrastructure', attck:['T1562.001'], suggestedFix:'Verify the operator intended to modify service or firewall state. Confirm maintenance window authorization.' },
+};
+
 function runEngine(command) {
   if (!command || typeof command !== 'string') {
     return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['No command provided'] };
@@ -500,6 +540,7 @@ function runEngine(command) {
   }
 
   if (topHit) {
+    const gov = GOVERNANCE_MAPPINGS[topHit.rule.id] || {};
     const verdict = topHit.score >= 80 ? 'BLOCK' : 'WARN';
     return {
       verdict,
@@ -510,6 +551,13 @@ function runEngine(command) {
       reasons:  topHit.rule.reasons,
       meta:     topHit.rule.meta,
       audit:    topHit.rule.audit,
+      governance: {
+        framework: gov.framework || 'NIST CSF, OWASP ASVS',
+        confidence: gov.confidence || 'medium',
+        governanceEngine: gov.governanceEngine || 'Security',
+        suggestedFix: gov.suggestedFix || 'Review the finding and apply appropriate mitigation.',
+        attck: gov.attck || [],
+      },
       command:  cmd,
       timestamp: new Date().toISOString(),
     };
@@ -522,6 +570,13 @@ function runEngine(command) {
     ruleId:    'R00',
     severity:  'none',
     reasons:   ['No threat patterns detected across 121 rules','Safe to execute'],
+    governance: {
+      framework: 'NIST CSF, OWASP ASVS',
+      confidence: 'high',
+      governanceEngine: 'Security',
+      suggestedFix: 'No action required.',
+      attck: [],
+    },
     command:   cmd,
     timestamp: new Date().toISOString(),
   };
