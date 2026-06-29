@@ -1,7 +1,9 @@
 /**
- * SARIF 2.1.0 Output Formatter
- * Converts TEOS Sentinel scan results into SARIF format for SIEM/CI integration.
+ * SARIF 2.1.0 Output Formatter + Cryptographic Audit Chain
+ * Converts TEOS Sentinel scan results into SARIF, NDJSON audit, and hash-chained evidence.
  */
+
+import { createHash } from "crypto";
 
 export interface ScanFinding {
   rule: string;
@@ -34,13 +36,40 @@ export interface ScanResult {
   scanner?: string;
 }
 
-const SEVERITY_MAP: Record<string, string> = {
-  critical: "error",
-  high: "error",
-  medium: "warning",
-  low: "note",
-  info: "note",
-};
+export interface AuditChainEntry {
+  version: string;
+  scanId: string;
+  timestamp: string;
+  verdict: string;
+  riskScore: number;
+  findingCount: number;
+  totalSeverityScore: number;
+  findings: Array<{
+    rule: string;
+    severity: string;
+    line: number;
+    message: string;
+    confidence: string;
+    fix: string;
+  }>;
+  governance: object | null;
+  previousHash: string | null;
+  hash: string;
+}
+
+// In-memory chain state — last hash is updated on each append
+let lastChainHash: string | null = null;
+
+function sha256Hex(data: string): string {
+  return createHash("sha256").update(data, "utf-8").digest("hex");
+}
+
+export function generateAuditHash(result: ScanResult): string {
+  const input = result.input || "";
+  const findings = result.findings.map(f => `${f.rule}:${f.severity}:${f.line}`).join(",");
+  const payload = `${input}|${findings}|${result.ts}|${result.verdict}|${result.riskScore}`;
+  return "TEOS-" + sha256Hex(payload).slice(0, 16);
+}
 
 const SEVERITY_SCORE_MAP: Record<string, number> = {
   critical: 100,
@@ -50,7 +79,78 @@ const SEVERITY_SCORE_MAP: Record<string, number> = {
   info: 0,
 };
 
+export function toAuditEntry(result: ScanResult): AuditChainEntry {
+  const base = {
+    version: "4.0.0",
+    scanId: generateAuditHash(result),
+    timestamp: result.ts,
+    verdict: result.verdict,
+    riskScore: result.riskScore,
+    findingCount: result.findings.length,
+    totalSeverityScore: result.findings.reduce((sum, f) => sum + (SEVERITY_SCORE_MAP[f.severity] || 0), 0),
+    findings: result.findings.map(f => ({
+      rule: f.rule,
+      severity: f.severity,
+      line: f.line,
+      message: f.message,
+      confidence: f.governance?.confidence || "medium",
+      fix: f.governance?.suggestedFix || "Review and apply appropriate mitigation.",
+    })),
+    governance: result.governance || null,
+    previousHash: lastChainHash,
+    hash: "",
+  };
+
+  const hashInput = JSON.stringify({ ...base, hash: undefined, _chain: undefined });
+  base.hash = sha256Hex(hashInput);
+
+  lastChainHash = base.hash;
+  return base;
+}
+
+/**
+ * Verify chain integrity from a list of entries.
+ * Returns a list of index → { valid, reason } for each entry.
+ */
+export function verifyChain(entries: AuditChainEntry[]): Array<{ index: number; valid: boolean; reason?: string }> {
+  const results: Array<{ index: number; valid: boolean; reason?: string }> = [];
+
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+
+    // Verify hash matches content
+    const hashInput = JSON.stringify({ ...entry, hash: undefined, previousHash: entry.previousHash });
+    const expectedHash = sha256Hex(hashInput);
+    if (entry.hash !== expectedHash) {
+      results.push({ index: i, valid: false, reason: `Hash mismatch: expected ${expectedHash}, got ${entry.hash}` });
+      continue;
+    }
+
+    // Verify chain linking
+    if (i === 0) {
+      if (entry.previousHash !== null) {
+        results.push({ index: i, valid: false, reason: "First entry should have previousHash=null" });
+        continue;
+      }
+    } else {
+      const prev = entries[i - 1];
+      if (entry.previousHash !== prev.hash) {
+        results.push({ index: i, valid: false, reason: `Chain break: previousHash ${entry.previousHash} does not match entry ${i - 1} hash ${prev.hash}` });
+        continue;
+      }
+    }
+
+    results.push({ index: i, valid: true });
+  }
+
+  return results;
+}
+
 export function toSarif(result: ScanResult): string {
+  const SEVERITY_MAP: Record<string, string> = {
+    critical: "error", high: "error", medium: "warning", low: "note", info: "note",
+  };
+
   const sarif = {
     $schema: "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
     version: "2.1.0",
@@ -61,9 +161,8 @@ export function toSarif(result: ScanResult): string {
             name: "TEOS Sentinel",
             semanticVersion: "4.0.0",
             informationUri: "https://sentinel.teosegypt.com",
-            rules: result.findings.map((f, i) => ({
+            rules: result.findings.map((f) => ({
               id: f.rule,
-              name: f.rule,
               shortDescription: { text: f.message },
               fullDescription: { text: f.message + (f.snippet ? "\nSnippet: " + f.snippet : "") },
               defaultConfiguration: { level: SEVERITY_MAP[f.severity] || "warning" },
@@ -90,17 +189,15 @@ export function toSarif(result: ScanResult): string {
           ruleIndex: result.findings.indexOf(f),
           level: SEVERITY_MAP[f.severity] || "warning",
           message: { text: f.message },
-          locations: [
-            {
-              physicalLocation: {
-                artifactLocation: { uri: result.input ? "input.txt" : "scanned-code" },
-                region: {
-                  startLine: f.line || 1,
-                  snippet: f.snippet ? { text: f.snippet } : undefined,
-                },
+          locations: [{
+            physicalLocation: {
+              artifactLocation: { uri: result.input ? "input.txt" : "scanned-code" },
+              region: {
+                startLine: f.line || 1,
+                snippet: f.snippet ? { text: f.snippet } : undefined,
               },
             },
-          ],
+          }],
           properties: {
             severity: f.severity,
             riskScore: SEVERITY_SCORE_MAP[f.severity] || 0,
@@ -110,13 +207,11 @@ export function toSarif(result: ScanResult): string {
             framework: f.governance?.framework || "NIST CSF, OWASP ASVS",
           },
         })),
-        invocations: [
-          {
-            startTimeUtc: result.ts,
-            executionSuccessful: result.verdict !== "ERROR",
-            attachments: [],
-          },
-        ],
+        invocations: [{
+          startTimeUtc: result.ts,
+          executionSuccessful: result.verdict !== "ERROR",
+          attachments: [],
+        }],
         properties: {
           teos: {
             verdict: result.verdict,
@@ -132,39 +227,14 @@ export function toSarif(result: ScanResult): string {
   return JSON.stringify(sarif, null, 2);
 }
 
-export function generateAuditHash(result: ScanResult): string {
-  const input = result.input || "";
-  const findings = result.findings.map(f => `${f.rule}:${f.severity}:${f.line}`).join(",");
-  const payload = `${input}|${findings}|${result.ts}|${result.verdict}|${result.riskScore}`;
-  let hash = 0;
-  for (let i = 0; i < payload.length; i++) {
-    const char = payload.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return "TEOS-" + Math.abs(hash).toString(16).padStart(8, "0");
+export function resetChain(): void {
+  lastChainHash = null;
 }
 
-export function toAuditEntry(result: ScanResult): object {
-  return {
-    version: "4.0.0",
-    scanId: generateAuditHash(result),
-    timestamp: result.ts,
-    verdict: result.verdict,
-    riskScore: result.riskScore,
-    findingCount: result.findings.length,
-    totalSeverityScore: result.findings.reduce((sum, f) => sum + (SEVERITY_SCORE_MAP[f.severity] || 0), 0),
-    findings: result.findings.map(f => ({
-      rule: f.rule,
-      severity: f.severity,
-      line: f.line,
-      message: f.message,
-      confidence: f.governance?.confidence || "medium",
-      fix: f.governance?.suggestedFix || "Review and apply appropriate mitigation.",
-    })),
-    governance: result.governance || null,
-    _hash: generateAuditHash(result),
-    _signed: false,
-    _chain: [],
-  };
+export function getLastChainHash(): string | null {
+  return lastChainHash;
+}
+
+export function setLastChainHash(h: string | null): void {
+  lastChainHash = h;
 }
