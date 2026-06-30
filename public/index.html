@@ -2294,7 +2294,7 @@
 
   <!-- Status Bar -->
   <div class="status-bar">
-    <div class="s-item"><div class="s-dot"></div>Sentinel Engine v4.0.0 — Online</div>
+    <div class="s-item"><div class="s-dot"></div>Sentinel Engine v4.0.0 — Online <a href="https://github.com/Elmahrosa/teos-sentinel-shield/releases" style="color:var(--alabaster-f);text-decoration:none;margin-left:4px;" title="v4.0.0-rc1: heuristic engine + REVIEW verdict + MENA rules">ⓘ</a></div>
     <div class="s-item"><div class="s-dot"></div>Telegram Bot — Online</div>
     <div class="s-item"><div class="s-dot"></div>121 Active Governance Controls</div>
     <div class="s-item"><div class="s-dot"></div>596 Tests Passing</div>
@@ -2326,7 +2326,7 @@
       <a href="#verdicts" class="btn-primary">𓂀 See It Work →</a>
       <a href="#v4" class="btn-ghost">What's New in v4.0</a>
     </div>
-    <p class="hero-micro">Beta Now Open · Limited testers · teostech.online</p>
+    <p class="hero-micro">Beta Now Open · Limited testers · sentinel.teosegypt.com</p>
 
     <div class="stat-strip">
       <div class="stat-item">
@@ -2360,7 +2360,7 @@
       <span class="tick"><span class="t-review">🔵 REVIEW</span>curl https://api.unknown.io/run · suspicion 62/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>console.log("hello") · R00.CLEAN · 0/100</span>
       <span class="tick"><span class="t-block">🛑 BLOCK</span>eval(atob("...")) · R07.BASE64_EXEC · 88/100</span>
-      <span class="tick"><span class="t-review">🔵 REVIEW</span>npm install unknown-pkg@latest · suspicion 55/100</span>
+      <span class="tick"><span class="t-review">🔵 REVIEW</span>npm install unknown-pkg@latest · suspicion 65/100</span>
       <span class="tick"><span class="t-block">🛑 BLOCK</span>chmod 777 /etc/passwd · R02.CHMOD_ESC · 90/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>git status · R00.CLEAN · 0/100</span>
       <!-- Duplicate for seamless loop -->
@@ -2369,7 +2369,7 @@
       <span class="tick"><span class="t-review">🔵 REVIEW</span>curl https://api.unknown.io/run · suspicion 62/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>console.log("hello") · R00.CLEAN · 0/100</span>
       <span class="tick"><span class="t-block">🛑 BLOCK</span>eval(atob("...")) · R07.BASE64_EXEC · 88/100</span>
-      <span class="tick"><span class="t-review">🔵 REVIEW</span>npm install unknown-pkg@latest · suspicion 55/100</span>
+      <span class="tick"><span class="t-review">🔵 REVIEW</span>npm install unknown-pkg@latest · suspicion 65/100</span>
       <span class="tick"><span class="t-block">🛑 BLOCK</span>chmod 777 /etc/passwd · R02.CHMOD_ESC · 90/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>git status · R00.CLEAN · 0/100</span>
     </div>
@@ -2393,7 +2393,7 @@
         <li>✓ Immutable audit trail</li>
         <li>✓ Engine v4.0.0 live</li>
       </ul>
-      <small class="cz-note">Built in Alexandria, Egypt · Elmahrosa International · teostech.online</small>
+      <small class="cz-note">Built in Alexandria, Egypt · Elmahrosa International · sentinel.teosegypt.com</small>
     </div>
   </div>
 
@@ -2438,13 +2438,13 @@
         <div class="verdict-card vc-review">
           <div class="verdict-icon">🔵</div>
           <div class="verdict-name">Review</div>
-          <p class="verdict-desc">New in v4.0. Heuristic suspicion score 60–100 but no deterministic rule fired. Human review required.</p>
+          <p class="verdict-desc">New in v4.0. No deterministic rule matched but heuristic suspicion score ≥60. Human review required.</p>
           <div class="verdict-trigger">Triggers: unknown patterns, suspicious context, heuristic flags</div>
         </div>
         <div class="verdict-card vc-allow">
           <div class="verdict-icon">✅</div>
           <div class="verdict-name">Allow</div>
-          <p class="verdict-desc">No threat patterns detected. Heuristic score below threshold. Safe to execute. Logged to audit trail.</p>
+          <p class="verdict-desc">No threat patterns detected. Heuristic score below 60. Safe to execute. Logged to audit trail.</p>
           <div class="verdict-trigger">Triggers: clean code, standard commands, validated operations</div>
         </div>
       </div>
@@ -2602,7 +2602,7 @@
       <h2 class="s-title reveal">Sovereign Pilot Portal.<br><span class="gold">Multi-Tenant Security.</span></h2>
       <p class="s-sub reveal">7 tenants live. Per-tenant login, activation lifecycle, 3-month pilot windows. Built for MENA sovereign deployment.</p>
       <div class="v4-grid reveal">
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Multi-Tenant Login Gate</strong>7 tenants: Uganda, Egypt, UAE, KSA, Qatar, US, Solana Foundation. Universal admin credentials.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Multi-Tenant Login Gate</strong>7 tenants: Uganda, Egypt, UAE, KSA, Qatar, US, Solana Foundation. Per-tenant credentials (RC pilot phase: shared admin gate, per-tenant isolation at GA).</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Activation Lifecycle</strong>First-login triggers activation service. Credit ledger dormant until tenant authenticates.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>3-Month Pilot Windows</strong>Per-country start dates with auto-expiry. Uganda (Jun 21), MENA (Jul 1), US (Aug 1).</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>CORS-Free Deployment</strong>PHP proxy on Hostinger forwards scans to Railway. No CORS issues. Zero config.</div></div>
@@ -2786,7 +2786,7 @@
           <li>Continuous improvement loop</li>
         </ul>
         <div class="alpha-cta-box">
-          <div class="acb-url">teostech.online · @teoslinker_bot</div>
+          <div class="acb-url">sentinel.teosegypt.com · @teoslinker_bot</div>
           <p class="acb-note">Open @teoslinker_bot on Telegram. Join the beta. Get your first scan in 60 seconds. No account. No credit card.</p>
           <br>
           <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-alpha-cta" style="margin-top: 4px;">🟢 Join Beta →</a>
@@ -2932,7 +2932,7 @@
           <ul class="plan-feats">
             <li>Dedicated deployment</li>
             <li>Custom policy engine</li>
-            <li>Air-gap capable</li>
+            <li>Air-gap capable (on-prem SKU; cloud tiers run on Railway)</li>
             <li>Full audit log export</li>
             <li>SLA + named support</li>
           </ul>

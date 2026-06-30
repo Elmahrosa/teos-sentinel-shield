@@ -134,10 +134,10 @@ footer a:hover{text-decoration:underline}
   <p>Every decision logged. Every rule inspectable. Every verdict reproducible. TEOS Sentinel is a deterministic, auditable governance engine — not a black box.</p>
   <div class="hero-badges">
     <span class="hero-badge cyan">121 Detection Rules</span>
-    <span class="hero-badge green">BLOCK / WARN / ALLOW</span>
+    <span class="hero-badge green">BLOCK / WARN / REVIEW / ALLOW</span>
     <span class="hero-badge">Publicly Auditable</span>
     <span class="hero-badge">JSON Schema</span>
-    <span class="hero-badge">No ML Black Box</span>
+    <span class="hero-badge">Rule Engine: No ML Black Box</span>
   </div>
 </div>
 
@@ -146,17 +146,20 @@ footer a:hover{text-decoration:underline}
 <!-- ENGINE OVERVIEW -->
 <div class="section">
   <div class="section-label">01 / Engine Architecture</div>
-  <h2>Deterministic Rule Engine v4.0</h2>
-  <p>TEOS Sentinel uses a purely deterministic regex-based rule engine. No ML inference. No probabilistic verdicts. Every rule is a named, versioned, publicly inspectable pattern with explicit severity and scoring. The same input will always produce the same output — guaranteeing reproducibility for audit and compliance.</p>
+  <h2>Deterministic Rule Engine (Scan/Verdict Pipeline) v4.0</h2>
+  <p>The TEOS governance verdict engine (BLOCK/WARN/REVIEW/ALLOW) is 100% deterministic regex/rule-based and never uses ML. No ML inference. No probabilistic verdicts. Every rule is a named, versioned, publicly inspectable pattern with explicit severity and scoring. The same input will always produce the same output — guaranteeing reproducibility for audit and compliance. Separately, optional <code>/claude</code>, <code>/llama3</code>, <code>/qwen</code>, <code>/openai</code> commands let users chat with an LLM behind the TEOS firewall — these are advisory chat features, not part of the verdict engine, and never affect scan verdicts.</p>
 
   <div class="code-block">
     <span class="code-block-label">Engine Flow</span>INPUT: command string
   &darr;
 SCAN: 121 rules (64 core + 29 Solana + 10 EVM + 8 banking)
   &darr;
-SCORE: highest-severity match wins (0-100)
+MATCH: deterministic rule found?
   &darr;
-VERDICT: BLOCK (>=80) | WARN (40-79) | ALLOW (0-39)
+  YES &rarr; BLOCK (severity &ge;80) | WARN (severity 40-79)
+  &darr;
+  NO &rarr; HEURISTIC suspicion score via 77 patterns / 7 signal categories (0-100)
+  &rarr; REVIEW (suspicion &ge;60) | ALLOW (suspicion &lt;60)
   &darr;
 OUTPUT: { verdict, score, rule, severity, reasons, timestamp }
   &darr;
@@ -221,8 +224,8 @@ PERSIST: appended to events.json (rotating, max 500)</div>
   <table class="schema-table">
     <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td class="field-name">verdict</td><td class="field-type">string</td><td class="field-desc">"BLOCK" | "WARN" | "ALLOW" | "ERROR"</td></tr>
-      <tr><td class="field-name">score</td><td class="field-type">number</td><td class="field-desc">Risk score 0-100. Higher = more dangerous.</td></tr>
+      <tr><td class="field-name">verdict</td><td class="field-type">string</td><td class="field-desc">"BLOCK" | "WARN" | "REVIEW" | "ALLOW" | "ERROR"</td></tr>
+      <tr><td class="field-name">score</td><td class="field-type">number</td><td class="field-desc">Risk score 0-100. For BLOCK/WARN: rule-match severity. For REVIEW/ALLOW: heuristic suspicion score (separate axis, applies when no rule matched).</td></tr>
       <tr><td class="field-name">rule</td><td class="field-type">string</td><td class="field-desc">Matched rule identifier. Format: "R{id}.{NAME}" e.g. "R01.DESTRUCTIVE_SHELL"</td></tr>
       <tr><td class="field-name">ruleId</td><td class="field-type">string</td><td class="field-desc">Short rule ID: "R01" through "R121", or "R00" for clean.</td></tr>
       <tr><td class="field-name">severity</td><td class="field-type">string</td><td class="field-desc">"critical" | "high" | "medium" | "none"</td></tr>
@@ -261,7 +264,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 121 rules, 596 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Event Persisted</h4><p>Every scan decision is logged with timestamp, rule, score, and verdict. Rotating store capped at 500 entries.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Export Ready</h4><p>Audit logs exportable as CSV or JSON. Compatible with SIEM ingestion and compliance review workflows.</p></div>
-    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">No ML Dependency</h4><p>Zero ML inference. No training data, no model weights, no probabilistic outputs. Pure pattern matching.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">No ML Dependency (Scan/Verdict Pipeline)</h4><p>The governance verdict engine (BLOCK/WARN/REVIEW/ALLOW) is 100% deterministic regex/rule-based and never uses ML. Zero ML inference. No training data, no model weights, no probabilistic outputs. Pure pattern matching. Separately, optional <code>/claude</code>, <code>/llama3</code>, <code>/qwen</code>, <code>/openai</code> commands let users chat with an LLM — these are advisory chat features outside the verdict pipeline.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Versioned Engine</h4><p>Engine version reported in every endpoint. Rule updates are additive — existing patterns are never silently changed.</p></div>
   </div>
 </div>
@@ -272,7 +275,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 <div class="section">
   <div class="section-label">00 / Beta Metrics</div>
   <h2>Live Adoption Data</h2>
-  <p>Real beta adoption metrics. Updated manually. All numbers represent real Telegram bot interactions since beta launch.</p>
+  <p>Real beta adoption metrics. Updated manually. All numbers represent real Telegram bot interactions since beta launch. These metrics track public Telegram beta usage only and are separate from the sovereign tenant pilot program (see Enterprise &amp; Government on the Command Center).</p>
 
   <div class="alpha-status">
     <span class="alpha-dot"></span>
@@ -352,7 +355,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
     </div>
   </div>
 
-  <a href="mailto:ayman@teosegypt.com?subject=Bug%20Bounty%20Report%20%E2%80%94%20TEOS%20Sentinel" class="btn btn-cyan" style="display:inline-flex">&#128231; Report a Bypass &rarr;</a>
+  <a href="mailto:ayman@elmahrosa.org?subject=Bug%20Bounty%20Report%20%E2%80%94%20TEOS%20Sentinel" class="btn btn-cyan" style="display:inline-flex">&#128231; Report a Bypass &rarr;</a>
 </div>
 
 <footer>
