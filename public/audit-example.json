@@ -1,6 +1,6 @@
 {
   "description": "Sample audit log showing TEOS Sentinel verdict records",
-  "engine": "TEOS Sentinel v4.0.0",
+  "engine": "TEOS Sentinel v4.0.0-rc1",
   "schema": {
     "id":        "unix timestamp (unique event ID)",
     "verdict":   "BLOCK | WARN | ALLOW",

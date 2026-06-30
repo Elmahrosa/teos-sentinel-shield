@@ -83,7 +83,7 @@ function log(level, msg, meta = {}) {
   else console.log(JSON.stringify(entry));
 }
 
-log('info', 'Service started', { version: '4.0.0' });
+log('info', 'Service started', { version: '4.0.0-rc1' });
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -807,7 +807,7 @@ app.get('/health', async (req, res) => {
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '4.0.0',
+    version:        '4.0.0-rc1',
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -824,7 +824,7 @@ app.get('/health', async (req, res) => {
 // GET /api/version
 app.get('/api/version', (req, res) => {
   res.json({
-    version: '4.0.0',
+    version: '4.0.0-rc1',
     controls: 121,
     tests: 410,
   });
