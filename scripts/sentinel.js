@@ -5,7 +5,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const API_URL = process.env.TEOS_API_URL || 'https://teos-sentinel-shield-production-ef7a.up.railway.app';
+const API_URL = process.env.TEOS_API_URL || 'https://sentinel.teosegypt.com';
 const API_KEY = process.env.TEOS_API_KEY || '';
 
 function postJSON(url, body, timeout = 10000) {

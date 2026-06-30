@@ -7,7 +7,7 @@ const crypto    = require('crypto');
 const fs        = require('fs');
 const path      = require('path');
 
-const API_URL  = process.env.TEOS_API_URL || 'https://teos-sentinel-shield-production-ef7a.up.railway.app';
+const API_URL  = process.env.TEOS_API_URL || 'https://sentinel.teosegypt.com';
 const LOG_FILE = path.join(process.env.TEOS_LOG_DIR || process.cwd(), '.teos-enforcement.log');
 
 // ── HELPERS ──────────────────────────────────────────────────
@@ -80,7 +80,7 @@ async function main() {
     console.log('  teos run <command>    Gate execution through enforcement engine');
     console.log('');
     console.log('Environment:');
-    console.log('  TEOS_API_URL          Override API endpoint (default: https://teos-sentinel-shield-production-ef7a.up.railway.app)');
+    console.log('  TEOS_API_URL          Override API endpoint (default: https://sentinel.teosegypt.com)');
     console.log('  TEOS_LOG_DIR          Override log directory (default: cwd)');
     console.log('');
     console.log('Examples:');
