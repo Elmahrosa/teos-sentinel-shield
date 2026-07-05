@@ -1,0 +1,26 @@
+# TEOS Sovereign Security Stack — CODEOWNERS
+# Each line specifies who owns which part of the codebase.
+
+# Orchestrator root
+/                       @Elmahrosa/teos-core
+CLAUDE.md               @Elmahrosa/teos-core
+CRITICAL_NOTE.md        @Elmahrosa/teos-core
+ecosystem.config.cjs    @Elmahrosa/teos-core
+docker-compose.yml      @Elmahrosa/teos-core
+
+# CI/CD
+.github/                @Elmahrosa/teos-core
+
+# Docs
+docs/                   @Elmahrosa/teos-core
+README.md               @Elmahrosa/teos-core
+SECURITY.md             @Elmahrosa/teos-core
+
+# Services
+services/teoslinker-bot/              @Elmahrosa/teos-bot
+services/teos-activation-service/     @Elmahrosa/teos-billing
+services/agent-code-risk-mcp/         @Elmahrosa/teos-risk
+services/teos-sentinel-shield/        @Elmahrosa/teos-ui
+services/safe-ingestion-engine/       @Elmahrosa/teos-data
+services/teosmcp-ci-example/          @Elmahrosa/teos-core
+services/teos-civic-mixer/            @Elmahrosa/teos-governance

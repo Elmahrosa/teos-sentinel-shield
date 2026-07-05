@@ -1,0 +1,115 @@
+# =============================================================================
+# TEOS Enterprise — Alerting Configuration
+# =============================================================================
+# Defines alert rules for TEOS Sentinel Shield services.
+# Compatible with: UptimeRobot, BetterStack, or custom webhook receivers.
+# =============================================================================
+
+alerting:
+  version: "1.0"
+
+  # ── P0 — Critical (immediate response required) ─────────────────────
+  p0:
+    - name: bot_down
+      description: "TEOS Telegram Bot is unreachable"
+      condition: "liveness == false for 2 consecutive checks"
+      interval: 60s
+      escalation: "5min → Slack, 10min → PagerDuty, 15min → Phone"
+      response: "INCIDENT_RESPONSE.md — Bot Service Failure"
+      services: [bot]
+
+    - name: risk_engine_down
+      description: "Risk Engine (MCP) is unreachable"
+      condition: "liveness == false for 2 consecutive checks"
+      interval: 60s
+      escalation: "5min → Slack, 10min → PagerDuty"
+      response: "INCIDENT_RESPONSE.md — Risk Engine Failure"
+      services: [risk-engine]
+
+  # ── P1 — High (respond within 15min) ────────────────────────────────
+  p1:
+    - name: activation_service_down
+      description: "Activation Service is unreachable"
+      condition: "liveness == false for 3 consecutive checks"
+      interval: 120s
+      escalation: "10min → Slack, 20min → PagerDuty"
+      response: "INCIDENT_RESPONSE.md — Activation Service Failure"
+      services: [activation]
+
+    - name: shield_down
+      description: "Sentinel Shield dashboard is unreachable"
+      condition: "readiness == false for 3 consecutive checks"
+      interval: 120s
+      escalation: "10min → Slack"
+      response: "INCIDENT_RESPONSE.md — Shield Failure"
+      services: [shield]
+
+    - name: api_latency_spike
+      description: "API latency exceeds 5s P99 for 5 minutes"
+      condition: "p99_latency > 5000ms for 5 consecutive minutes"
+      interval: 300s
+      response: "Investigate scan throughput and Redis connection"
+      services: [bot, risk-engine]
+
+  # ── P2 — Medium (respond within 1hr) ────────────────────────────────
+  p2:
+    - name: elevated_error_rate
+      description: "Error rate exceeds 5% for 10 minutes"
+      condition: "error_rate > 5% for 10 consecutive minutes"
+      interval: 300s
+      response: "Check service logs for upstream failures"
+      services: [all]
+
+    - name: credit_usage_anomaly
+      description: "Unusual credit consumption pattern"
+      condition: "credit_usage > 3σ from 7-day rolling average"
+      interval: 600s
+      response: "Investigate potential abuse or billing issue"
+      services: [activation]
+
+    - name: deployment_failure
+      description: "CI/CD pipeline deployment failed"
+      condition: "deploy job result == failure"
+      interval: immediate (GitHub Actions)
+      response: "Check CI logs, verify Railway token, retry"
+      services: [all]
+
+  # ── P3 — Low (respond within 24hr) ──────────────────────────────────
+  p3:
+    - name: ssl_cert_expiry
+      description: "SSL certificate expires within 30 days"
+      condition: "cert_expiry_days < 30"
+      interval: daily
+      response: "Renew SSL certificate via Railway"
+      services: [all]
+
+    - name: disk_space
+      description: "Disk usage exceeds 80%"
+      condition: "disk_usage > 80%"
+      interval: hourly
+      response: "Clean up logs or increase volume size"
+      services: [all]
+
+  # ── Notification Channels ──────────────────────────────────────────
+  channels:
+    slack:
+      webhook_url: "${TEOS_ALERT_URL}"
+      mentions:
+        p0: ["@oncall"]
+        p1: ["@team-lead"]
+        p2: []
+        p3: []
+
+    pagerduty:
+      integration_key: "${TEOS_PAGERDUTY_KEY}"
+      severity_map:
+        p0: critical
+        p1: error
+        p2: warning
+        p3: info
+
+    email:
+      recipients:
+        p0: ["oncall@teos.dev"]
+        p1: ["engineering@teos.dev"]
+        p2: ["devops@teos.dev"]
