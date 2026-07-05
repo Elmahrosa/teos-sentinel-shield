@@ -62,7 +62,7 @@ Beta testers: **200 credits**. Expires: **June 30, 2026**.
 
 ## 5. Next Steps
 
-- [CLI Guide](CLI_GUIDE.md) — Scan from terminal
-- [Browser Extension Guide](BROWSER_EXTENSION_GUIDE.md) — Chrome/Edge
-- [VS Code Extension Guide](VSCODE_EXTENSION_GUIDE.md) — VS Code
-- [Desktop Guide](DESKTOP_GUIDE.md) — Electron dashboard
+- [CLI Guide](cli-guide.md) — Scan from terminal
+- [Bot Guide](bot-guide.md) — Telegram bot commands
+- [API Reference](api-reference.md) — REST API endpoints
+- [SDK Guide](sdk-guide.md) — Integration SDK
