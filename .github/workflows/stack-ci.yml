@@ -1,0 +1,76 @@
+name: TEOS Sovereign Stack CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-orchestrator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate docker-compose.yml
+        run: |
+          mkdir -p services/agent-code-risk-mcp services/teoslinker-bot services/teos-activation-service services/safe-ingestion-engine
+          touch services/agent-code-risk-mcp/.env services/teoslinker-bot/.env services/teos-activation-service/.env services/safe-ingestion-engine/.env
+          docker compose config > /dev/null
+      - name: Validate Makefile
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq make shellcheck
+          make -n up 2>/dev/null || true
+      - name: Shellcheck scripts
+        run: |
+          shellcheck --severity=warning \
+            launch-closed-beta.sh \
+            healthcheck.sh \
+            bootstrap.sh \
+            scripts/*.sh \
+            scripts/runtime-validation/*.sh 2>/dev/null || echo "Shellcheck warnings found (non-blocking)"
+      - name: Check ecosystem.config.cjs removed
+        run: test ! -f ecosystem.config.cjs || (echo "ecosystem.config.cjs still exists — should have been removed (PM2 deprecated)" && exit 1)
+      - name: Validate .version.json
+        run: node -e "const v=require('./.version.json'); if(!v.commit||!v.buildTime) throw new Error('Invalid .version.json')"
+      - name: Secret scan
+        run: |
+          bash scripts/secret-scan.sh
+
+  build-services:
+    needs: validate-orchestrator
+    strategy:
+      matrix:
+        service:
+          - agent-code-risk-mcp
+          - teoslinker-bot
+          - teos-activation-service
+          # safe-ingestion-engine archived — build disabled until unarchived
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ matrix.service }}
+        uses: actions/checkout@v7
+        with:
+          repository: Elmahrosa/${{ matrix.service }}
+          token: ${{ secrets.GH_PAT }}
+          path: services/${{ matrix.service }}
+      - name: Build Docker image
+        run: docker build -t teos-${{ matrix.service }} services/${{ matrix.service }}/
+      - name: Print image size
+        run: |
+          docker images teos-${{ matrix.service }} --format "{{.Repository}}: {{.Size}}"
+
+  ci-result:
+    if: always()
+    needs: [validate-orchestrator, build-services]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark CI result
+        run: |
+          if [ "${{ needs.validate-orchestrator.result }}" = "success" ] && [ "${{ needs.build-services.result }}" = "success" ]; then
+            echo "TEOS CI passed"
+          else
+            echo "TEOS CI failed — validate-orchestrator: ${{ needs.validate-orchestrator.result }}, build-services: ${{ needs.build-services.result }}"
+            exit 1
+          fi

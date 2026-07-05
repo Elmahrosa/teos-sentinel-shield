@@ -1,0 +1,47 @@
+# UptimeRobot Configuration — TEOS Sovereign Security Stack
+# Import via UptimeRobot dashboard → Add Monitor → Import from YAML
+# https://uptimerobot.com
+
+version: "1.0"
+monitors:
+  # ── PUBLIC (Railway production URLs) ───────────────────────
+  - friendly_name: TEOS Risk Engine (MCP)
+    url: https://agent-code-risk-mcp-production-b97d.up.railway.app/live
+    type: https
+    interval: 60
+    timeout: 30
+    alert_contacts: [ "${TEOS_ALERT_CONTACT}" ]
+
+  - friendly_name: TEOS Activation Service
+    url: https://activation-service-production-4228.up.railway.app/live
+    type: https
+    interval: 60
+    timeout: 30
+    alert_contacts: [ "${TEOS_ALERT_CONTACT}" ]
+
+  - friendly_name: TEOS Telegram Bot
+    url: https://teoslinker-bot-production.up.railway.app/health
+    type: https
+    interval: 60
+    timeout: 30
+    alert_contacts: [ "${TEOS_ALERT_CONTACT}" ]
+
+  # ── PUBLIC (domain-based) ──────────────────────────────────
+  - friendly_name: TEOS Sentinel Shield
+    url: https://sentinel.teos.dev/
+    type: https
+    interval: 60
+    timeout: 15
+    alert_contacts: [ "${TEOS_ALERT_CONTACT}" ]
+
+  - friendly_name: TEOS Safe Ingestion API
+    url: https://api.teos.dev/health
+    type: https
+    interval: 60
+    timeout: 15
+    alert_contacts: [ "${TEOS_ALERT_CONTACT}" ]
+
+# Recommended alert contacts:
+#   Slack  — https://uptimerobot.com/integrations/slack/
+#   Email  — default (UptimeRobot free tier)
+#   Webhook — custom (upgrade required)

@@ -1,0 +1,35 @@
+name: TEOS CI — Divergence Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  divergence-check:
+    name: Block Branch Divergence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check branch is not behind origin/main
+        run: |
+          git fetch origin main
+          BEHIND=$(git rev-list --count HEAD..origin/main)
+          AHEAD=$(git rev-list --count origin/main..HEAD)
+          echo "Behind: $BEHIND, Ahead: $AHEAD"
+          if [ "$BEHIND" -gt 0 ]; then
+            echo "❌ Branch is behind origin/main — rebase or merge before pushing"
+            exit 1
+          fi
+          if [ "$AHEAD" -gt 20 ]; then
+            echo "⚠️ Branch diverged too far from main ($AHEAD commits) — consider smaller PRs"
+            exit 1
+          fi
+          echo "✅ Branch divergence check passed"

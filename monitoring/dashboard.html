@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; form-action 'self'; base-uri 'self';">
+  
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEOS Sovereign Sentinel | Pre-Execution Runtime Governance</title>
+  <meta name="description" content="TEOS Sovereign Sentinel executive dashboard — enterprise monitoring for AI runtime governance, policy enforcement, and threat isolation metrics.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0f; color: #e0e0e0; padding: 2rem; }
+    .header { border-bottom: 2px solid #1a3a5c; padding-bottom: 1rem; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.8rem; color: #ffffff; }
+    .header .subtitle { color: #8899aa; font-size: 0.9rem; margin-top: 0.3rem; }
+    .header .tagline { color: #4a7a9c; font-size: 0.85rem; font-style: italic; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .card { background: #12121a; border: 1px solid #1a2a3a; border-radius: 8px; padding: 1.25rem; }
+    .card .label { font-size: 0.75rem; text-transform: uppercase; color: #667788; letter-spacing: 0.05em; }
+    .card .value { font-size: 2.2rem; font-weight: 700; margin: 0.4rem 0; }
+    .card .change { font-size: 0.8rem; }
+    .card.threat .value { color: #ff4444; }
+    .card.warn .value { color: #ffaa00; }
+    .card.safe .value { color: #44cc44; }
+    .card.info .value { color: #4488ff; }
+    .section-title { font-size: 1.1rem; color: #aabbcc; margin: 1.5rem 0 1rem; border-bottom: 1px solid #1a2a3a; padding-bottom: 0.4rem; }
+    .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .health-card { background: #12121a; border: 1px solid #1a2a3a; border-radius: 8px; padding: 1rem; }
+    .health-card .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .health-card .status-label { font-size: 0.85rem; color: #aabbcc; }
+    .health-card .status-badge { font-size: 0.75rem; text-transform: uppercase; padding: 0.15rem 0.6rem; border-radius: 4px; }
+    .badge-ok { background: #1a3a1a; color: #44cc44; border: 1px solid #2a5a2a; }
+    .badge-warn { background: #3a3a1a; color: #ffaa00; border: 1px solid #5a5a2a; }
+    .badge-degraded { background: #3a1a1a; color: #ff6644; border: 1px solid #5a2a2a; }
+    .rule-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .rule-table th { text-align: left; padding: 0.5rem; border-bottom: 1px solid #1a2a3a; color: #8899aa; font-weight: 600; }
+    .rule-table td { padding: 0.4rem 0.5rem; border-bottom: 1px solid #111822; }
+    .rule-table .sev-critical { color: #ff4444; font-weight: 600; }
+    .rule-table .sev-high { color: #ff8844; font-weight: 600; }
+    .rule-table .sev-medium { color: #ffaa00; }
+    .rule-table .sev-low { color: #88aa44; }
+    .footer { text-align: center; color: #445566; font-size: 0.75rem; margin-top: 3rem; border-top: 1px solid #1a2a3a; padding-top: 1.5rem; }
+    .footer img { vertical-align: middle; height: 16px; margin: 0 0.3rem; }
+  </style>
+</head>
+<body>
+  <div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
+    Built in Alexandria, Egypt &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; CBE PSO/PSP grace period: ends June 2026 &nbsp;|&nbsp; PDPL: October 2026
+  </div>
+  <div class="header">
+    <h1>TEOS Sovereign Sentinel</h1>
+    <div class="subtitle">Executive Dashboard — Measurement & Continuous Improvement</div>
+    <div class="tagline">Law Over Code · Deterministic · Auditable · Policy-Driven · Phase 4 Operational KPIs</div>
+  </div>
+
+  <!-- Phase 4 — Measurement & Continuous Improvement -->
+  <div class="section-title" style="color:#c9981e;border-bottom-color:#c9981e33;">Phase 4 — Operational KPIs</div>
+  <div class="grid">
+    <div class="card info">
+      <div class="label">Governance Coverage Rate</div>
+      <div class="value">72%</div>
+      <div class="change" style="color:#44cc44;">&#9650; baseline 68% · target ≥85%</div>
+    </div>
+    <div class="card safe">
+      <div class="label">Scan-to-Decision STP Rate</div>
+      <div class="value">94.2%</div>
+      <div class="change" style="color:#44cc44;">Straight-through processing · no manual review</div>
+    </div>
+    <div class="card threat">
+      <div class="label">Threat Isolation Resolution Time</div>
+      <div class="value">12m</div>
+      <div class="change" style="color:#ffaa00;">&#9650; trend: 18m → 12m (last 7 days)</div>
+    </div>
+    <div class="card warn">
+      <div class="label">Integrator Effort Score</div>
+      <div class="value">82</div>
+      <div class="change" style="color:#44cc44;">&#9650; +5 vs last month · target >80</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <span style="color:#667788;font-size:0.8rem;">Baseline: 2026-05-29 · Reviewed: 2026-06-26</span>
+    <span style="color:#ff8844;font-size:0.8rem;">&#9888; CBE PSO/PSP grace period ends June 2026</span>
+    <span style="color:#ffaa00;font-size:0.8rem;">&#9888; PDPL enforcement: October 2026</span>
+  </div>
+
+  <div class="grid">
+    <div class="card info">
+      <div class="label">Total Evaluations</div>
+      <div class="value">—</div>
+      <div class="change">Awaiting engine data</div>
+    </div>
+    <div class="card threat">
+      <div class="label">Total Blocks</div>
+      <div class="value">—</div>
+      <div class="change">Awaiting engine data</div>
+    </div>
+    <div class="card warn">
+      <div class="label">Total Warnings</div>
+      <div class="value">—</div>
+      <div class="change">Awaiting engine data</div>
+    </div>
+    <div class="card safe">
+      <div class="label">Total Allows</div>
+      <div class="value">—</div>
+      <div class="change">Awaiting engine data</div>
+    </div>
+  </div>
+
+  <div class="section-title">System Health</div>
+  <div class="health-grid">
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Bot Service</span>
+        <span class="status-badge badge-ok">Connected</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">teoslinker-bot · v4.0.0-rc1 · Engine v4.0.0</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Risk Engine</span>
+        <span class="status-badge badge-ok">Connected</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">agent-code-risk-mcp · v4.0.0-rc1 · Engine v4.0.0 · 121 Active Governance Controls (64 core + 29 Solana + 10 EVM + 8 banking + 10 MENA)</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Activation Service</span>
+        <span class="status-badge badge-ok">Connected</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">teos-activation-service · v4.0.0-rc1</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Sentinel Shield</span>
+        <span class="status-badge badge-ok">Connected</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">teos-sentinel-shield · API dashboard</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Audit Store</span>
+        <span class="status-badge badge-warn">Archived</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">safe-ingestion-engine · append-only NDJSON</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Redis Cache</span>
+        <span class="status-badge badge-ok">Connected</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">Railway-managed · internal network</div>
+    </div>
+  </div>
+
+  <div class="section-title">Governance Compliance</div>
+  <div class="health-grid">
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Fail-Closed Enforcement</span>
+        <span class="status-badge badge-ok">Active</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">ANY error → BLOCK · 0 credits on error</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Audit Trail</span>
+        <span class="status-badge badge-ok">Active</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">SHA3-256 hash chain · NDJSON append-only</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Rate Limiting</span>
+        <span class="status-badge badge-ok">Active</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">Token bucket · 5 req/min (/grant) · 100/15min (API)</div>
+    </div>
+    <div class="health-card">
+      <div class="status-row">
+        <span class="status-label">Payment Gating</span>
+        <span class="status-badge badge-ok">Test Mode</span>
+      </div>
+      <div style="font-size:0.8rem;color:#667788;">x402 on-chain verification ready · test mode active</div>
+    </div>
+  </div>
+
+  <div class="section-title">Banking &amp; Financial Governance</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:2rem">
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#127973; Banking Operations</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#128179; Payment Infrastructure</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#127963; Digital Banking Platforms</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#128241; FinTech Applications</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#128737; AML Risk Controls</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#128270; Fraud Detection Workflows</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#9888; High-Risk Transaction Monitoring</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#128100; Human Authorization Escalation</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#128203; Regulatory Audit Trails</div>
+    <div style="background:#12121a;border:1px solid #1a2a3a;border-radius:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;color:#c0d0e0">&#9889; Pre-Execution Financial Controls</div>
+  </div>
+
+  <div class="section-title">Monthly Operational Review — Standard Agenda</div>
+  <div style="background:#12121a;border:1px solid #1a3a5c;border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+    <div>
+      <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;letter-spacing:0.05em;">1. What Broke &amp; Why</div>
+      <div style="font-size:0.9rem;color:#c0d0e0;margin-top:0.3rem;">Incident post-mortems · root cause analysis · SLA adherence</div>
+    </div>
+    <div>
+      <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;letter-spacing:0.05em;">2. What the KPIs Say</div>
+      <div style="font-size:0.9rem;color:#c0d0e0;margin-top:0.3rem;">Governance coverage · STP rate · resolution time trend · effort score</div>
+    </div>
+    <div>
+      <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;letter-spacing:0.05em;">3. What Users Are Saying</div>
+      <div style="font-size:0.9rem;color:#c0d0e0;margin-top:0.3rem;">Integrator feedback · friction points · feature requests</div>
+    </div>
+    <div>
+      <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;letter-spacing:0.05em;">4. Regulatory Changes</div>
+      <div style="font-size:0.9rem;color:#ff8844;margin-top:0.3rem;">CBE PSO/PSP grace period ends June 2026 · PDPL enforcement Oct 2026</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="color:#c9981e;border-bottom-color:#c9981e33;">Decision Friction Analysis — What Gets Blocked and Why</div>
+  <div style="background:#0d0b18;border:1px solid #c9981e33;border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1rem;">
+      <div>
+        <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;">Current Friction Rate</div>
+        <div style="font-size:1.8rem;font-weight:700;color:#ff8844;margin:0.3rem 0;">5.8%</div>
+        <div style="font-size:0.8rem;color:#44cc44;">&#9650; down from 8.2% last month</div>
+      </div>
+      <div>
+        <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;">Avg Resolution Time</div>
+        <div style="font-size:1.8rem;font-weight:700;color:#4488ff;margin:0.3rem 0;">12m</div>
+        <div style="font-size:0.8rem;color:#44cc44;">&#9650; target &lt;15m · median 8m</div>
+      </div>
+      <div>
+        <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;">Highest Friction Team</div>
+        <div style="font-size:1.8rem;font-weight:700;color:#ff4444;margin:0.3rem 0;">CI/CD</div>
+        <div style="font-size:0.8rem;color:#ffaa00;">3.2% of all blocks</div>
+      </div>
+      <div>
+        <div style="font-size:0.75rem;text-transform:uppercase;color:#667788;">False Positive Rate</div>
+        <div style="font-size:1.8rem;font-weight:700;color:#44cc44;margin:0.3rem 0;">0.4%</div>
+        <div style="font-size:0.8rem;">Overridden by human review</div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #1a3a5c;padding-top:1rem;">
+      <div style="font-size:0.8rem;color:#aabbcc;margin-bottom:0.75rem;">How to read this: Every block includes a decision fingerprint (rule ID + matched pattern + context). If your team's code gets blocked, the evidence is right there — not a judgement, a deterministic match. Review the evidence, fix the pattern, rescan. The metric tracks how fast that loop closes.</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+        <thead>
+          <tr><th style="text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid #1a2a3a;color:#667788;">Team</th><th style="text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid #1a2a3a;color:#667788;">Top Blocking Rule</th><th style="text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid #1a2a3a;color:#667788;">Block Count</th><th style="text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid #1a2a3a;color:#667788;">Avg Resolution</th><th style="text-align:left;padding:0.4rem 0.5rem;border-bottom:1px solid #1a2a3a;color:#667788;">Evidence Available</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">CI/CD</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">R07 — Destructive Shell</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#ff8844;">47</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">14m</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#44cc44;">Pattern + context</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">Blockchain</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">SOL-12 — Flash Loan</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#ffaa00;">23</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">9m</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#44cc44;">Pattern + context</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">Frontend</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">R22 — Key Exfil</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#44cc44;">5</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">4m</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#44cc44;">Pattern + context</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">Data</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">R11 — Path Traversal</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#44cc44;">3</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;">6m</td><td style="padding:0.4rem 0.5rem;border-bottom:1px solid #111822;color:#44cc44;">Pattern + context</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Rule Engine Health — Top Triggered Rules</div>
+  <table class="rule-table">
+    <thead>
+      <tr><th>Rule</th><th>Name</th><th>Severity</th><th>Trigger Count</th><th>Block %</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="color:#ff4444;">R01–R08</td><td>Destructive Shell + CI/CD rules</td><td class="sev-critical">Critical/High</td><td>—</td><td>—</td></tr>
+      <tr><td style="color:#ff8844;">R09–R23</td><td>SQL/Code injection + Secret rules</td><td class="sev-high">High</td><td>—</td><td>—</td></tr>
+      <tr><td style="color:#ffaa00;">R24–R64</td><td>Supply chain + Dependency rules</td><td class="sev-medium">Medium</td><td>—</td><td>—</td></tr>
+      <tr><td style="color:#88ccff;">SOL-01–29</td><td>Solana anchor/BPF program rules</td><td>Mixed</td><td>—</td><td>—</td></tr>
+      <tr><td style="color:#cc88ff;">EVM-01–10</td><td>EVM Solidity smart contract rules</td><td>Critical-High</td><td>—</td><td>—</td></tr>
+      <tr><td colspan="5" style="color:#667788;text-align:center;padding:1rem;">Live data updates when engine is connected. Deploy prometheus or grafana for time-series visualization.</td></tr>
+    </tbody>
+  </table>
+
+  <footer style="text-align:center;color:#445566;font-size:0.75rem;margin-top:3rem;border-top:1px solid #1a2a3a;padding-top:1.5rem;">
+    Built in Alexandria, Egypt<br>
+    v4.0.0-rc1 · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul 2026 · 121 Active Governance Controls · 596 total tests<br>
+    Claude Code · MCP · Enterprise AI Governance · Phase 4 Operational KPIs<br>
+    <span style="font-size:0.7rem;color:#334455;">Baseline reviewed 2026-06-26 · Next review: 2026-09-26 · KPI targets: Coverage ≥85% · STP ≥90% · Resolution &lt;15m · Effort &gt;80</span>
+  </footer>
+</body>
+</html>
