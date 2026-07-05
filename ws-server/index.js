@@ -201,7 +201,7 @@ setInterval(pollEvents,     WS_POLL_MS);
 setInterval(heartbeatCheck, WS_HEARTBEAT);
 
 // ── START ───────────────────────────────────────────────────
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '127.0.0.1', () => {
   console.log(JSON.stringify({
     ts:      new Date().toISOString(),
     level:   'info',
