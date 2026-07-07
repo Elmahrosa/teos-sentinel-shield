@@ -1,6 +1,6 @@
 {
   "name": "teos-sentinel-shield",
-  "version": "4.0.0-rc1",
+  "version": "4.1.0",
   "description": "Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware",
   "main": "ws-server/index.js",
   "bin": {
@@ -11,6 +11,10 @@
     "dev": "node src/server/index.js",
     "dev:ws": "node ws-server/index.js",
     "test:engine": "node test/engine-test.js",
+    "test:all": "node test/engine-test.js && node test/expanded-engine-test.js && node test/banking-engine-test.js && node test/solana-engine-test.js && node test/evm-engine-test.js && node test/dependency-engine-test.js && node test/ci-engine-test.js && node test/token-intelligence-test.js && node test/due-diligence-test.js && node test/integration-test.js && node test/bot-test.js",
+    "test:engines": "node test/expanded-engine-test.js && node test/banking-engine-test.js && node test/solana-engine-test.js && node test/evm-engine-test.js && node test/dependency-engine-test.js && node test/ci-engine-test.js && node test/token-intelligence-test.js && node test/due-diligence-test.js",
+    "test:integration": "node test/integration-test.js",
+    "bot": "node gateway-bot/bot.js",
     "railway": "node src/server/index.js"
   },
   "keywords": [
@@ -30,6 +34,7 @@
     "express": "^4.21.1",
     "helmet": "^8.2.0",
     "ioredis": "5.11.1",
+    "telegraf": "^4.16.3",
     "ws": "^8.20.0"
   }
 }
