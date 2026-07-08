@@ -1,13 +1,14 @@
 const router = require('express').Router();
-const { RULES } = require('../../engine/scanner');
+const { getTotalRuleCount, getVersion, getEngineCounts } = require('../../../lib/ruleRegistry');
 
 router.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: 'v4.0',
+    version: getVersion(),
     engine: 'deterministic',
-    rules: RULES.length,
-    endpoints: ['/scan', '/stats', '/health', '/live', '/ready'],
+    rules: getTotalRuleCount(),
+    engines: getEngineCounts(),
+    endpoints: ['/scan', '/scan/:engine', '/engines', '/stats', '/health', '/live', '/ready'],
     auth: 'X-API-Key header required',
   });
 });

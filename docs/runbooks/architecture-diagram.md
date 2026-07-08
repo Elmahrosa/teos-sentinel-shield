@@ -57,7 +57,7 @@
 2. Bot Gateway receives message
 3. Bot checks activation status via Activation Service
 4. Bot sends code to Risk Engine (MCP)
-5. Risk Engine evaluates 103 rules (64 core + 29 Solana + 10 EVM)
+5. Risk Engine evaluates 258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence)
 6. Risk Engine returns verdict (ALLOW/WARN/REVIEW/BLOCK)
 7. Bot formats response and replies to user
 8. Shield dashboard updates audit trail

@@ -3,6 +3,7 @@ const app          = api;
 const RULES        = api.RULES;
 const runEngine    = api.runEngine;
 const loadEventsFn = api.loadEvents; // async
+const { getTotalRuleCount } = require('../lib/ruleRegistry');
 const WebSocket    = require('ws');
 const http         = require('http');
 const path         = require('path');
@@ -201,7 +202,7 @@ setInterval(pollEvents,     WS_POLL_MS);
 setInterval(heartbeatCheck, WS_HEARTBEAT);
 
 // ── START ───────────────────────────────────────────────────
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(JSON.stringify({
     ts:      new Date().toISOString(),
     level:   'info',
@@ -209,9 +210,20 @@ server.listen(PORT, '127.0.0.1', () => {
     port:    PORT,
     env:     NODE_ENV,
     mode:    'unified (Express + WS + Static)',
-    rules:   RULES.length,
+    rules:   getTotalRuleCount(),
     maxPeers: MAX_WS_PEERS,
   }));
 });
+
+// ── OPTIONAL: TELEGRAM BOT ───────────────────────────────────
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
+if (BOT_TOKEN) {
+  try {
+    require('../gateway-bot/bot');
+    console.log(JSON.stringify({ ts: new Date().toISOString(), level: 'info', msg: 'Telegram bot started' }));
+  } catch (e) {
+    console.error(JSON.stringify({ ts: new Date().toISOString(), level: 'error', msg: 'Telegram bot failed to start', error: e.message }));
+  }
+}
 
 module.exports = { server, wss };

@@ -87,7 +87,7 @@ Bridging this gap requires:
 
 ### 5.1 Engine Architecture
 
-The TEOS risk engine evaluates input against 103 rules (64 core + 29 Solana + 10 EVM) organized by priority. Rules are pattern-matching checks that operate on the input string, its context, and metadata.
+The TEOS risk engine evaluates input against 258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence) organized by priority. Rules are pattern-matching checks that operate on the input string, its context, and metadata.
 
 | Component | Description |
 |-----------|-------------|
@@ -123,7 +123,7 @@ The engine defaults to BLOCK on any error condition: unreachable service, evalua
 
 ### 5.5 Test Coverage
 
-596 tests validate the rule engine across:
+1325 tests validate the rule engine across:
 - Known safe inputs (ALLOW)
 - Known risky inputs (WARN)
 - Known malicious inputs (BLOCK)
@@ -140,7 +140,7 @@ The engine defaults to BLOCK on any error condition: unreachable service, evalua
 │  INPUT SOURCES   │  │  GATEWAY     │  │  RULE ENGINE │
 │                  │  │  LAYER       │  │  v3.0.0      │
 │  ┌────────────┐  │  │              │  │              │
-│  │ Telegram   │──┼──▶│  Auth       │──▶│  103 rules   │
+│  │ Telegram   │──┼──▶│  Auth       │──▶│  258 rules   │
 │  └────────────┘  │  │  Rate limit │  │  Priority    │
 │  ┌────────────┐  │  │  Validation │  │  ordering    │
 │  │ REST API   │──┼──▶│  Sanitize   │  │  Pattern     │
@@ -179,14 +179,14 @@ The gateway is the entry point for all execution requests. It handles authentica
 
 #### Rule Engine (agent-code-risk-mcp)
 
-The core evaluation engine implements 103 detection rules (64 core + 29 Solana + 10 EVM). It receives input, evaluates against all applicable rules, and returns an ALLOW/WARN/BLOCK verdict with supporting reasons.
+The core evaluation engine implements 258 detection rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence). It receives input, evaluates against all applicable rules, and returns an ALLOW/WARN/BLOCK verdict with supporting reasons.
 
 | Attribute | Value |
 |-----------|-------|
 | Runtime | Node.js |
-| Version | v3.0.0 |
-| Rules | 103 (64 core + 29 Solana + 10 EVM) |
-| Tests | 596 |
+| Version | v4.1.0 |
+| Rules | 258 (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence) |
+| Tests | 1325 |
 | Architecture | MCP server |
 | Deployment | Railway / Docker |
 
@@ -462,5 +462,5 @@ Audit entries can be encrypted with AES-256-GCM using a customer-provided key (`
 ---
 
 *TEOS Sovereign Sentinel — Law Over Code*  
-*Engine v4.0.0 · 111 rules (64 core + 29 Solana + 10 EVM + 8 banking) · 596 tests*  
+*Engine v4.1.0 · 258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence) · 1325 tests*  
 *© Elmahrosa International*

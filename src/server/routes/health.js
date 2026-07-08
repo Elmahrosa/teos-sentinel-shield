@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { redis, loadEventsSync, REDIS_KEY, BOOT_KEY } = require('../../services/cache');
-const { RULES } = require('../../engine/scanner');
+const { getTotalRuleCount, getVersion } = require('../../../lib/ruleRegistry');
 
 router.get('/health', async (req, res) => {
   res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
@@ -27,15 +27,15 @@ router.get('/health', async (req, res) => {
 
   res.json({
     status: storeStatus !== 'redis_error' ? 'online' : 'critical',
-    engine: 'v4.0',
-    rules: RULES.length,
+    engine: 'v' + getVersion(),
+    rules: getTotalRuleCount(),
     uptime: Math.round(uptime),
     uptimeHuman: uptime > 86400 ? `${Math.floor(uptime / 86400)}d` :
       uptime > 3600 ? `${Math.floor(uptime / 3600)}h` :
       `${Math.floor(uptime / 60)}m`,
     env: NODE_ENV,
     time: new Date().toISOString(),
-    version: '2.4.0',
+    version: getVersion(),
     store: storeStatus,
     eventsCount: eventCount,
     sla: '99.95%',

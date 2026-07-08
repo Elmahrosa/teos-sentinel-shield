@@ -97,7 +97,7 @@ This document consolidates all findings from the audit and proposes a ranked, ph
 | W7 | LP lock verification in token scanner |
 | W8 | Prompt injection pattern expansion + leetspeak |
 
-### Phase 4: v4.0 Launch (9-12 weeks)
+### Phase 4: v4.1 Launch (9-12 weeks)
 
 **Goal:** Enterprise-ready with REVIEW verdict
 
@@ -108,7 +108,7 @@ This document consolidates all findings from the audit and proposes a ranked, ph
 | W10 | On-premises deployment package (Helm chart) |
 | W10 | SOC 2 readiness documentation |
 | W11 | Compliance certification audit kickoff |
-| W12 | v4.0 launch with all critical/high findings resolved |
+| W12 | v4.1 launch with all critical/high findings resolved |
 
 ---
 
@@ -116,7 +116,7 @@ This document consolidates all findings from the audit and proposes a ranked, ph
 
 ### Decision 1: Deterministic Rules Remain Authoritative
 
-**Rule:** The deterministic rule engine (103 rules) is the final authority. Heuristic suspicion can only **upgrade** verdicts (ALLOW → WARN → BLOCK), never downgrade. This preserves the auditability and repeatability that make TEOS Sentinel enterprise-grade.
+**Rule:** The deterministic rule engine (258 rules) is the final authority. Heuristic suspicion can only **upgrade** verdicts (ALLOW → WARN → BLOCK), never downgrade. This preserves the auditability and repeatability that make TEOS Sentinel enterprise-grade.
 
 ### Decision 2: Heuristic Layer is Stateless
 
@@ -168,7 +168,7 @@ Verification: Re-compute hash chain from genesis, verify ED25519 signatures. Any
 It is enabled by three layers that work together:
 
 ```
-Layer 1: Deterministic Matching (103 rules)
+Layer 1: Deterministic Matching (258 rules)
     ↓ No match found
 Layer 2: Heuristic Suspicion Scoring (0-100)
     ↓ Score > 60? → REVIEW, not ALLOW
@@ -207,7 +207,7 @@ Layer 3: Threshold Implementation
 | REVIEW verdict plumbing | 3-5 dev days | Foundation for v4 — affects all endpoints |
 | SSO/SAML | 10-15 dev days | Unblocks enterprise sales pipeline |
 | Cryptographic audit chain | 5-7 dev days | Unblocks SOC 2 audit |
-| **TOTAL** | **~40 dev days** | v4.0 Enterprise-ready release |
+| **TOTAL** | **~40 dev days** | v4.1 Enterprise-ready release |
 
 ---
 

@@ -182,7 +182,7 @@ BLOCK verdicts are silently removed. WARN and REVIEW verdicts are flagged with a
 Each scan passes through the TEOS governance engine:
 
 ```
-Input → Deterministic Rules (121) → Heuristic Suspicion (77 patterns) → REVIEW gate → Final Verdict
+Input → Deterministic Rules (258) → Heuristic Suspicion (77 patterns) → REVIEW gate → Final Verdict
 ```
 
 Governance metadata is included in every scan response:

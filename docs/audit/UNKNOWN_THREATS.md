@@ -136,7 +136,7 @@ User Input
            ▼
 ┌──────────────────────┐     ┌──────────────────────┐
 │  Deterministic Rules  │ ──▶ │ Heuristic Suspicion   │
-│  (103 rules,          │     │ Scoring (0-100)       │
+│  (258 rules,          │     │ Scoring (0-100)       │
 │   authoritative)      │     │                       │
 │  BLOCK/WARN/ALLOW     │     │ Signals:              │
 └──────────────────────┘     │ • Obfuscation signals  │
@@ -307,7 +307,7 @@ To prevent context from being used as a permanent bypass:
 ### 4.2 Answer: Three-Layer Defense
 
 ```
-Layer 1: Deterministic Rules (103 rules)
+Layer 1: Deterministic Rules (258 rules)
     ↓ Match? → Yes → Return BLOCK/WARN/ALLOW
     ↓ No match
 Layer 2: Heuristic Suspicion Scoring (0-100)

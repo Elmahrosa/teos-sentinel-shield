@@ -1,6 +1,6 @@
 # TEOS Sovereign Sentinel — MCP Architecture
 
-**Engine:** v4.0.0-rc1  
+**Engine:** v4.1.0  
 **Updated:** 2026-06-26  
 **Protocol:** Model Context Protocol (JSON-RPC 2.0)  
 **Transport:** HTTP POST + Server-Sent Events (SSE) + stdio  
@@ -66,7 +66,7 @@
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │    │
 │  │  │Determin. │  │Heuristic │  │ Token    │  │Supply  │  │    │
 │  │  │  Engine  │  │Suspicion │  │Analysis  │  │Chain   │  │    │
-│  │  │ 103 rules│  │77 regex  │  │SPL/ERC20 │  │Scan    │  │    │
+│  │  │ 258 rules│  │77 regex  │  │SPL/ERC20 │  │Scan    │  │    │
 │  │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬───┘  │    │
 │  │       │              │              │              │       │    │
 │  │       └──────────────┴──────────────┴──────────────┘       │    │
@@ -102,7 +102,7 @@
 
 | Tool | Registry Name | Description |
 |------|--------------|-------------|
-| `scan_code` | `scan-code` | Full deterministic scan (111 rules) |
+| `scan_code` | `scan-code` | Full deterministic scan (258 rules) |
 | `scan_solana` | `scan-solana` | Solana program-specific scan (29 rules) |
 | `scan_evm` | `scan-evm` | EVM contract scan (10 rules) |
 | `eval_suspicion` | `eval-suspicion` | Heuristic suspicion analysis (77 patterns) |
@@ -154,9 +154,9 @@
 
 | Resource URI | Description | Response |
 |-------------|-------------|----------|
-| `teos://health` | Engine health | `{"status":"ok","version": "4.0.0-rc1"}` |
-| `teos://version` | Version info | `{"version": "4.0.0-rc1","engine":"4.0","rules":111,"tests":596}` |
-| `teos://rules` | Rules summary | `{"total":111,"categories":{"core":64,"solana":29,"evm":10,"banking":8}}` |
+| `teos://health` | Engine health | `{"status":"ok","version": "4.1.0"}` |
+| `teos://version` | Version info | `{"version": "4.1.0","engine":"4.1","rules":258,"tests":1325}` |
+| `teos://rules` | Rules summary | `{"total":258,"categories":{"core":95,"banking":32,"solana":29,"evm":21,"dependency":8,"cicd":23,"tokenIntel":25,"dueDiligence":25}}` |
 | `teos://tier/{userId}` | User tier | `{"tier":"free","credits":0}` |
 
 ---
@@ -174,7 +174,7 @@ User → Telegram Bot → Activation Service → MCP Server → Response → Use
 3. **Bot queries** Activation Service (`/api/tier/:userId`) for credit check
 4. **Bot consumes** credits via Activation Service (`/consume`)
 5. **Bot calls** MCP Server (`POST /scan`) with code payload
-6. **MCP Server** runs deterministic engine (111 rules) + heuristic suspicion (77 patterns)
+6. **MCP Server** runs deterministic engine (258 rules) + heuristic suspicion (77 patterns)
 7. **MCP Server** returns `{verdict, findings, score}` to bot
 8. **Bot formats** response and sends to user via Telegram
 9. **Bot sends** audit event to Sentinel Shield (`/ingest`)
@@ -224,14 +224,18 @@ Input
 
 ### 4.2 Layer 2 — Deterministic Engine
 
-**111 Rules across 4 categories:**
+**258 Rules across 8 categories:**
 
 | Category | Count | Examples |
 |----------|-------|---------|
-| Core Security | 64 | R01 DESTRUCTIVE_SHELL, R07 HARDCODED_SECRET, R22 KEY_EXFIL |
+| Core Security | 95 | R01 DESTRUCTIVE_SHELL, R07 HARDCODED_SECRET, R22 KEY_EXFIL |
+| Banking | 32 | Ledger Manipulation, SWIFT Unencrypted, Reserve Key Leak |
 | Solana | 29 | SOL-REENTRANCY, SOL-ARBITRARY-CPI, SOL-OWNER-CHECK |
-| EVM | 10 | EVM-REENTRANCY, EVM-UNCHECKED-CALL, EVM-TX-ORIGIN |
-| Banking | 8 | Ledger Manipulation, SWIFT Unencrypted, Reserve Key Leak |
+| EVM | 21 | EVM-REENTRANCY, EVM-UNCHECKED-CALL, EVM-TX-ORIGIN |
+| Dependency | 8 | Malicious packages, typosquatting |
+| CI/CD | 23 | Destructive shell, pipeline injection |
+| Token Intelligence | 25 | SPL/ERC20 analysis, honeypot detection |
+| Due Diligence | 25 | Compliance checks, policy enforcement |
 
 Each rule produces: `{rule, severity, message, line, snippet, category}`
 
@@ -323,7 +327,7 @@ Every decision is recorded in the audit store with:
 - Rate limiting (5 req/min for admin commands)
 
 ### Checkpoint 3 — Deterministic Analysis (MCP Layer)
-- 111 rules executed against input
+- 258 rules executed against input
 - Pattern matching with context awareness
 - Language-specific rule filtering
 - False-positive mitigation filters (7 skip functions)
@@ -445,9 +449,9 @@ Claude Code tool call
 
 | Metric | Value |
 |--------|-------|
-| Engine Version | v4.0.0-rc1 |
-| Total Rules | 111 (64 core + 29 Solana + 10 EVM + 8 banking) |
-| Validation Tests | 596 |
+| Engine Version | v4.1.0 |
+| Total Rules | 258 (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence) |
+| Validation Tests | 1325 |
 | Verdict Tiers | 4 (ALLOW / WARN / REVIEW / BLOCK) |
 | Heuristic Signal Families | 7 |
 | Heuristic Regex Patterns | 77 |

@@ -27,7 +27,7 @@ The rule engine uses semantic versioning (MAJOR.MINOR.PATCH):
 
 ### Current Version
 
-v4.0.0-rc1 — 111 rules (64 core + 29 Solana + 10 EVM + 8 banking), 596 tests.
+v4.1.0 — 258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence), 1325 tests.
 
 ### Version Recording
 

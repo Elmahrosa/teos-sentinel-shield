@@ -209,13 +209,22 @@ async function cmdHealth() {
   process.exit(allUp ? EXIT.SUCCESS : EXIT.ERROR);
 }
 
+async function fetchApiInfo() {
+  try {
+    const r = await fetchWithTimeout(`${BRIDGE_URL}/api/version`, {}, 3000);
+    if (r.ok) return await r.json();
+  } catch {}
+  return { version: VERSION, controls: '121', tests: '596' };
+}
+
 async function cmdStatus() {
   const cfg = loadConfig();
   const apiKey = cfg.apiKey || process.env.TEOS_API_KEY || null;
+  const info = await fetchApiInfo();
 
   console.log(`${BLD}TEOS Sovereign Security Stack${RST}`);
   console.log(`Version: ${VERSION}`);
-  console.log(`Engine:  v4.0 | 121 Active Governance Controls | 596 tests\n`);
+  console.log(`Engine:  v${info.version || '4.0'} | ${info.controls} Active Governance Controls | ${info.tests} tests\n`);
 
   if (apiKey) {
     console.log(`  ${GRN}API Key: ${apiKey.slice(0, 12)}...${RST}`);
@@ -242,12 +251,13 @@ async function cmdStatus() {
   await cmdHealth();
 }
 
-function cmdVersion() {
+async function cmdVersion() {
+  const info = await fetchApiInfo();
   console.log(`TEOS Sovereign Security Stack`);
   console.log(`Version: ${VERSION}`);
-  console.log(`Engine:  v4.0`);
-  console.log(`Rules:   121 (64 core + 29 Solana + 10 EVM + 8 Banking + 10 MENA)`);
-  console.log(`Tests:   596`);
+  console.log(`Engine:  v${info.version || '4.0'}`);
+  console.log(`Rules:   ${info.controls} Active Governance Controls`);
+  console.log(`Tests:   ${info.tests}`);
   console.log(`Services: Bridge, Identity, Bot, Risk Engine, Shield`);
   console.log(`Runtime: Railway (production)`);
   console.log(`\n${YLW}Pricing may change after beta — early founders locked in.${RST}`);
@@ -526,7 +536,8 @@ if (cmd === 'scan' || cmd === 'doctor') {
 const commands = { scan: cmdScan, health: cmdHealth, status: cmdStatus, credits: cmdCredits, login: cmdLogin, logout: cmdLogout, version: cmdVersion, deploy: cmdDeploy, ci: cmdCi, doctor: cmdDoctor, help: cmdHelp };
 
 if (commands[cmd]) {
-  commands[cmd](rest, flags);
+  const result = commands[cmd](rest, flags);
+  if (result && typeof result.then === 'function') result.catch(e => { console.error(RED + 'Error:' + RST, e.message); process.exit(EXIT.ERROR); });
 } else {
   console.error(`${RED}Unknown command: ${cmd}${RST}\n`);
   cmdHelp();

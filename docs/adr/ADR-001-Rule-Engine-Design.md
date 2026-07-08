@@ -75,6 +75,6 @@ Maintain a list of explicitly permitted commands and block everything else.
 ### Mitigations
 
 - Regular rule review cadence
-- 596 tests covering known attack patterns
+- 1325 tests covering known attack patterns
 - WARN tier catches ambiguous patterns
 - fail-closed default ensures unknown errors do not permit execution

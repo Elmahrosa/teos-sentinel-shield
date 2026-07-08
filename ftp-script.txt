@@ -1,0 +1,14 @@
+open ftp.sentinel.teosegypt.com
+user u461931265.aiagent1
+Elibs2026#$
+binary
+prompt
+cd public_html
+put public/index.html
+put public/dashboard.html
+put public/landing.html
+put public/rules.html
+put public/sentinel.html
+put public/transparency.html
+put public/app.html
+quit

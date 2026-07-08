@@ -2,14 +2,14 @@
 
 **Date:** 2026-06-12  
 **Engine:** v3.0.0  
-**Total Rules:** 103 (64 Core + 29 Solana + 10 EVM)  
+**Total Rules:** 258 (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence)  
 **Analyst:** Principal Security Engineer
 
 ---
 
 ## Executive Summary
 
-TEOS Sentinel's 103 deterministic rules provide broad coverage across injection attacks, secret leakage, Solana program vulnerabilities, EVM contract exploits, and infrastructure escape vectors. However, a systematic audit reveals **37 distinct gaps** across all layers: 11 critical blind spots, 14 detection weaknesses, 7 false-positive risks, and 5 rule conflicts.
+TEOS Sentinel's 258 deterministic rules provide broad coverage across injection attacks, secret leakage, Solana program vulnerabilities, EVM contract exploits, and infrastructure escape vectors. However, a systematic audit reveals **37 distinct gaps** across all layers: 11 critical blind spots, 14 detection weaknesses, 7 false-positive risks, and 5 rule conflicts.
 
 ---
 

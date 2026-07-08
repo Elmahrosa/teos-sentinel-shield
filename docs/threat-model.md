@@ -55,7 +55,7 @@ All 5 TEOS services deployed on Railway, their APIs, inter-service communication
 ### Data Flow
 1. User sends code/command via Telegram, CLI, API, or extension
 2. Bot validates credits → forwards to Risk Engine (MCP)
-3. MCP runs 121 governance controls + heuristic suspicion engine
+3. MCP runs 258 governance controls + heuristic suspicion engine
 4. Result returned with governance metadata, audit trail entry written
 5. BLOCK/WARN/REVIEW/ALLOW verdict delivered to user
 6. Audit log stored in activation service (SQLite/PostgreSQL)

@@ -20,7 +20,7 @@ The operational core consists of six green services running in an isolated Railw
 |---------|------|
 | **teos-sentinel-shield** | Central API backend, telemetry ingestion gateway, and secure Command Center Dashboard. Processes incoming requests from consumers (`dashboard.html`, Desktop clients, and the `teos.js` CLI). |
 | **teoslinker-bot** | Telegram interface and workflow orchestration. Handles user authentication, deep-linking, and quick-action triggers. |
-| **agent-code-risk-mcp** | Model Context Protocol (MCP) compliant execution guardrail. Implements the 103 security rules and issues the 4 critical verdicts: **BLOCK**, **WARN**, **REVIEW**, **ALLOW**. |
+| **agent-code-risk-mcp** | Model Context Protocol (MCP) compliant execution guardrail. Implements the 258 security rules and issues the 4 critical verdicts: **BLOCK**, **WARN**, **REVIEW**, **ALLOW**. |
 | **activation-service** | Lifecycle, credit ledger management, and licensing verification (enforcing the June 30 hard freeze). |
 | **Redis (×2)** | Dual-instance in-memory caching and message brokerage. Segregates real-time rate limiting and state tracking from asynchronous risk evaluation queues. |
 

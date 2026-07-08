@@ -18,6 +18,7 @@ const helmet  = require('helmet');
 const crypto  = require('crypto');
 const { requestContext } = require('../lib/request-context');
 const { printStartupBanner } = require('../lib/version');
+const { getTotalRuleCount, getVersion, getEngineCounts } = require('../lib/ruleRegistry');
 const app     = express();
 
 try {
@@ -83,7 +84,7 @@ function log(level, msg, meta = {}) {
   else console.log(JSON.stringify(entry));
 }
 
-log('info', 'Service started', { version: '4.0.0-rc1' });
+log('info', 'Service started', { version: getVersion() });
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -584,7 +585,7 @@ function runEngine(command) {
     rule:      'R00.CLEAN',
     ruleId:    'R00',
     severity:  'none',
-    reasons:   ['No threat patterns detected across 121 rules','Safe to execute'],
+    reasons:   ['No threat patterns detected across ' + getTotalRuleCount() + ' rules','Safe to execute'],
     governance: {
       framework: 'NIST CSF, OWASP ASVS',
       confidence: 'high',
@@ -799,15 +800,15 @@ app.get('/health', async (req, res) => {
 
   res.json({
     status:         overallStatus,
-    engine:         'v4.0',
-    rules:          RULES.length,
+    engine:         'v' + getVersion(),
+    rules:          getTotalRuleCount(),
     uptime:         Math.round(uptime),
     uptimeHuman:    uptime > 86400 ? `${Math.floor(uptime/86400)}d` :
                     uptime > 3600  ? `${Math.floor(uptime/3600)}h` :
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '4.0.0-rc1',
+    version:        getVersion(),
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -824,9 +825,9 @@ app.get('/health', async (req, res) => {
 // GET /api/version
 app.get('/api/version', (req, res) => {
   res.json({
-    version: '4.0.0-rc1',
-    controls: 121,
-    tests: 410,
+    version: getVersion(),
+    controls: getTotalRuleCount(),
+    tests: 1325,
   });
 });
 
@@ -834,7 +835,7 @@ app.get('/api/version', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    engine: '4.0.0',
+    engine: getVersion(),
   });
 });
 
@@ -842,9 +843,9 @@ app.get('/api/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: 'v4.0',
+    version: getVersion(),
     engine:  'deterministic',
-    rules:   RULES.length,
+    rules:   getTotalRuleCount(),
     endpoints: ['/scan','/stats','/health','/live','/ready'],
     auth:    'X-API-Key header required',
   });
@@ -941,7 +942,7 @@ app.get('/stats', async (req, res) => {
     allowed,
     blockRate,
     topRules,
-    rulesActive: RULES.length,
+    rulesActive: getTotalRuleCount(),
     generated: new Date().toISOString(),
   });
 });

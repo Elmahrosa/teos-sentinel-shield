@@ -65,7 +65,7 @@ TEOS_API_KEY=teos_abc123 teos scan payload.py
 Findings:
   • destructive-shell-cmd: Destructive shell command detected — system damage risk
 
-  121 governance controls evaluated
+  258 governance controls evaluated
 ```
 
 ### `teos health`
@@ -101,7 +101,7 @@ teos status
 ```
 TEOS Sovereign Security Stack
 Version: 4.2.1
-Engine:  v4.0 | 121 Active Governance Controls | 596 tests
+Engine:  v4.1 | 258 Active Governance Controls | 1325 tests
 
   ✅  API Key: teos_abc123...
   ✅  Tier: Free | Credits: 5 (5/day)
@@ -163,8 +163,8 @@ teos version
 TEOS Sovereign Security Stack
 Version: 4.2.1
 Engine:  v4.0
-Rules:   121 (64 core + 29 Solana + 10 EVM + 8 Banking + 10 MENA)
-Tests:   596
+Rules:   258 (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence)
+Tests:   1325
 Services: Bridge, Identity, Bot, Risk Engine, Shield
 Runtime: Railway (production)
 ```

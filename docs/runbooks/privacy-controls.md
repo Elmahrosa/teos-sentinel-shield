@@ -23,7 +23,7 @@
 
 When a user submits code for scanning:
 1. Code is sent to Risk Engine via HTTPS
-2. Risk Engine processes code in-memory with 103 rules
+2. Risk Engine processes code in-memory with 258 rules
 3. Verdict and findings returned — raw code not persisted by default
 4. Results stored in audit trail (90-day retention)
 

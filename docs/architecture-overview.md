@@ -38,7 +38,7 @@ flowchart TD
     H1 --> G
 
     %% Gateway routes to engine
-    G --> E[🛡️ Risk Engine MCP<br/>111 Rules • Heuristic Detection • 77 Patterns]
+    G --> E[🛡️ Risk Engine MCP<br/>258 Rules • Heuristic Detection • 77 Patterns]
 
     %% EU AI Act 4-Tier Decision
     E --> F{🚦 EU AI Act 4-Tier Verdict}
@@ -89,7 +89,7 @@ flowchart TD
 | 2 | Runtime Governance Principles | Monitor, Assess, Intervene, Override, Secure | Runtime AI agent governance framework |
 | 3 | EU AI Act Classification | Unacceptable / High / Limited / Minimal tier mapping | Regulatory compliance |
 | 4 | TSS Execution Gateway | Claude Agent hook, Telegram bot, REST API, CI/CD | Multi-surface action interception |
-| 5 | TSS Risk Engine | 111 deterministic rules, heuristic suspicion (77 patterns) | Core enforcement |
+| 5 | TSS Risk Engine | 258 deterministic rules, heuristic suspicion (77 patterns) | Core enforcement |
 | 6 | Sentinel SOC Dashboard | Real-time visibility, review queue, trend analytics | Enterprise command center |
 | 7 | Audit Layer | SHA3-256 chained, SIEM-ready, AES-256-GCM optional | Board-ready compliance evidence |
 

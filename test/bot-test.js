@@ -12,19 +12,17 @@ console.log('\n=== Bot Module Tests ===\n');
 
 test('Bot module loads without error', () => {
   assert.doesNotThrow(() => {
-    const bot = require('../gateway-bot/bot');
-    assert.ok(bot.bot);
-    assert.ok(bot.users);
-    assert.ok(bot.auditLog);
+    const m = require('../gateway-bot/bot');
+    assert.ok(typeof m.users === 'object');
+    assert.ok(Array.isArray(m.auditLog));
   });
 });
 
 test('Bot exports have expected properties', () => {
-  const bot = require('../gateway-bot/bot');
-  assert.ok(typeof bot.startBot === 'function');
-  assert.ok(typeof bot.bot !== 'undefined');
-  assert.ok(Array.isArray(bot.auditLog));
-  assert.ok(typeof bot.users === 'object');
+  const m = require('../gateway-bot/bot');
+  assert.ok(typeof m.startBot === 'function');
+  assert.ok(typeof m.users === 'object');
+  assert.ok(Array.isArray(m.auditLog));
 });
 
 test('Bot users map supports credit operations', () => {

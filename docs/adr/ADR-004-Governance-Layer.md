@@ -31,7 +31,7 @@ Input → Gateway → Auth → Rate Limit → Rule Engine → Verdict → (Block
 
 ### Current Rule Set
 
-103 rules (64 core + 29 Solana + 10 EVM) organized into 6 categories: destructive operations, secret exfiltration, supply chain risk, code injection, permission escalation, and network abuse.
+258 rules (95 Core + 32 Banking + 29 Solana + 21 EVM + 8 Dependency + 23 CI/CD + 25 Token Intelligence + 25 Due Diligence) organized into 8 categories: destructive operations, secret exfiltration, supply chain risk, code injection, permission escalation, network abuse, token analysis, and due diligence.
 
 ### Versioning
 
@@ -85,7 +85,7 @@ Allow all execution and audit decisions after the fact.
 
 ### Mitigations
 
-- 596 tests validate rule behavior across known patterns
+- 1325 tests validate rule behavior across known patterns
 - WARN tier catches ambiguous or borderline cases
 - Regular rule review cycle
 - Engine versioning enables retrospective analysis of rule applicability

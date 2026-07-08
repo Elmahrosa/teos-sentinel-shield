@@ -1,6 +1,6 @@
 # TEOS Sovereign Sentinel — API Reference
 
-> Engine v4.0.0 · 121 Rules · 596 Tests · 7 Framework Mappings
+> Engine v4.1.0 · 258 Rules · 1325 Tests · 7 Framework Mappings
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## 1. MCP Risk Engine (agent-code-risk-mcp)
 
-The core security analysis engine. Performs deterministic rule matching (121 rules) and heuristic suspicion scoring on code, dependencies, and Solana/EVM tokens.
+The core security analysis engine. Performs deterministic rule matching (258 rules) and heuristic suspicion scoring on code, dependencies, and Solana/EVM tokens.
 
 **Base URLs**
 
@@ -81,9 +81,9 @@ GET /health
 ```json
 {
   "status": "ok",
-  "version": "4.0.0-rc1",
-  "rules": 121,
-  "tests": 596,
+  "version": "4.1.0",
+  "rules": 258,
+  "tests": 1325,
   "governance": true,
   "heuristicEngine": true,
   "suspicionSignals": 7,
@@ -109,10 +109,10 @@ GET /version
 
 ```json
 {
-  "version": "4.0.0-rc1",
-  "engine": "4.0",
-  "rules": 121,
-  "tests": 596
+  "version": "4.1.0",
+  "engine": "4.1",
+  "rules": 258,
+  "tests": 1325
 }
 ```
 
@@ -619,8 +619,8 @@ GET /health
 ```json
 {
   "status": "ok",
-  "version": "4.0.0-rc1",
-  "engine": "4.0",
+  "version": "4.1.0",
+  "engine": "4.1",
   "rules": 37,
   "governance": true,
   "scanners": ["shell", "solidity", "solana"]
@@ -1270,8 +1270,8 @@ GET /health
 ```json
 {
   "status": "ok",
-  "engine": "4.0",
-  "version": "4.0.0-rc1",
+  "engine": "4.1",
+  "version": "4.1.0",
   "bot": "online",
   "activation": "online",
   "mcp": "online"
@@ -1408,4 +1408,4 @@ All rate limits return `429 Too Many Requests` with body:
 
 ---
 
-> **Trust Through Verification.** — TEOS Sovereign Sentinel v4.0.0-rc1
+> **Trust Through Verification.** — TEOS Sovereign Sentinel v4.1.0

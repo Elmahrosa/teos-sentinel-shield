@@ -1,13 +1,13 @@
 # Changelog
 
-## v4.0.0-rc1 (Planned — 2026-07-15)
+## v4.1.0 (Planned — 2026-07-15)
 
 ### Release Candidate (June 28 — July 14)
 
-- v4.0.0-rc1 baseline established
+- v4.1.0 baseline established
 - Stabilization freeze: no new features, no refactoring, no architecture changes
-- 596/596 tests passing (MCP 459, Shield 119, Playground 18)
-- Engine v4.0.0 consistent across all surfaces
+- 1325/1325 tests passing
+- Engine v4.1.0 consistent across all surfaces
 - Linux admin rules (R34–R37): ADMIN_ELEVATION, PKG_MANAGER_REMOVE, FILESYSTEM_ADMIN, SERVICE_ADMIN
 - 27 Playground Scenarios (all categories)
 - Fixed health.test.ts (engine version, test count expectations)
@@ -24,7 +24,7 @@
 - False-positive/negative validation
 - Browser compatibility testing
 - Performance validation
-- Regression testing across all 111 rules
+- Regression testing across all 258 rules
 
 ### General Availability (Planned — 2026-07-15)
 
@@ -48,7 +48,7 @@
 
 ### Performance
 
-- Build time reduced by 98.4%: ~48 min (v4.0.0-rc1) → ~46.5 sec (v4.2.1)
+- Build time reduced by 98.4%: ~48 min (v4.1.0) → ~46.5 sec (v4.2.1)
 
 ### Bug Fix
 
@@ -90,7 +90,7 @@
 ### Deployment
 - Railway bot service: healthy (Engine 4.0)
 - Hostinger Shield: healthy (all public endpoints HTTP 200)
-- Risk MCP engine: healthy (Engine 4.0.0, 596 tests)
+- Risk MCP engine: healthy (Engine 4.1.0, 1325 tests)
 - CI pipeline validated end-to-end
 
 ### Notes
