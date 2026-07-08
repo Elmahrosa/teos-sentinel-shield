@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
     engine: 'deterministic',
     rules: getTotalRuleCount(),
     engines: getEngineCounts(),
-    endpoints: ['/scan', '/scan/:engine', '/engines', '/stats', '/health', '/live', '/ready'],
+    endpoints: ['/scan', '/scan/:engine', '/engines', '/stats', '/health', '/live', '/ready', '/api/rules', '/api/audit/:auditId'],
     auth: 'X-API-Key header required',
   });
 });

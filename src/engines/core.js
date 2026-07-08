@@ -457,27 +457,26 @@ const CORE_RULES = [
     reasons: ['Stack trace leaked to client — information disclosure'] },
 ];
 
+const { extractMatch, toRecommendation } = require('./finding-utils');
+
 function runCoreEngine(input, options = {}) {
   if (!input || typeof input !== 'string') {
-    return { verdict: 'ERROR', score: 0, rule: 'R00.ERROR', reasons: ['No input provided'] };
+    return { verdict: 'ERROR', score: 0, rule: 'R00.ERROR', reasons: ['No input provided'], findings: [] };
   }
 
   const cmd = input.trim();
   if (cmd.length > 10000) {
-    return { verdict: 'ERROR', score: 0, rule: 'R00.CLEAN', reasons: ['Input exceeds 10KB limit'] };
+    return { verdict: 'ERROR', score: 0, rule: 'R00.CLEAN', reasons: ['Input exceeds 10KB limit'], findings: [] };
   }
 
-  const findings = [];
+  const triggered = [];
   let maxScore = 0;
   let topRule = null;
 
   for (const rule of CORE_RULES) {
     try {
       if (rule.test(cmd)) {
-        findings.push({
-          ruleId: rule.id, name: rule.name, severity: rule.sev,
-          score: rule.score, reasons: rule.reasons,
-        });
+        triggered.push(rule);
         if (rule.score > maxScore) {
           maxScore = rule.score;
           topRule = rule;
@@ -485,6 +484,13 @@ function runCoreEngine(input, options = {}) {
       }
     } catch (e) { /* skip rule on error */ }
   }
+
+  const findings = triggered.map(t => ({
+    ruleId: t.id, name: t.name, severity: t.sev,
+    score: t.score, reasons: t.reasons,
+    matchedPattern: extractMatch(cmd, t),
+    recommendation: toRecommendation(t.reasons, t.sev),
+  }));
 
   if (!topRule) {
     return {

@@ -105,22 +105,21 @@ const DUE_DILIGENCE_RULES = [
     reasons: ['Impersonation of known project or brand — likely scam'] },
 ];
 
+const { extractMatch, toRecommendation } = require('./finding-utils');
+
 function runDueDiligenceEngine(input, options = {}) {
   if (!input || typeof input !== 'string') {
-    return { verdict: 'ERROR', score: 0, rule: 'DD00.ERROR', reasons: ['No input provided'] };
+    return { verdict: 'ERROR', score: 0, rule: 'DD00.ERROR', reasons: ['No input provided'], findings: [] };
   }
 
-  const findings = [];
+  const triggered = [];
   let maxScore = 0;
   let topRule = null;
 
   for (const rule of DUE_DILIGENCE_RULES) {
     try {
       if (rule.test(input)) {
-        findings.push({
-          ruleId: rule.id, name: rule.name, severity: rule.sev,
-          score: rule.score, reasons: rule.reasons,
-        });
+        triggered.push(rule);
         if (rule.score > maxScore) {
           maxScore = rule.score;
           topRule = rule;
@@ -128,6 +127,13 @@ function runDueDiligenceEngine(input, options = {}) {
       }
     } catch (e) { /* skip */ }
   }
+
+  const findings = triggered.map(t => ({
+    ruleId: t.id, name: t.name, severity: t.sev,
+    score: t.score, reasons: t.reasons,
+    matchedPattern: extractMatch(input, t),
+    recommendation: toRecommendation(t.reasons, t.sev),
+  }));
 
   if (!topRule) {
     return {

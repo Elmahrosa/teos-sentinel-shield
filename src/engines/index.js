@@ -9,6 +9,10 @@ const { runDueDiligenceEngine } = require('./due-diligence');
 
 const crypto = require('crypto');
 
+const ENGINE_VERSION = '4.1.0';
+const RULE_PACK_VERSION = 'rules-258';
+const POLICY_VERSION = 'policy-1.0';
+
 function generateAuditId() {
   return 'TOS-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(4).toString('hex').toUpperCase();
 }
@@ -31,17 +35,37 @@ function executeEngine(engineName, input, options = {}) {
       verdict: 'ERROR', score: 0, auditId: generateAuditId(),
       error: `Unknown engine: ${engineName}`,
       timestamp: new Date().toISOString(),
+      engineVersion: ENGINE_VERSION,
+      rulePackVersion: RULE_PACK_VERSION,
+      policyVersion: POLICY_VERSION,
     };
   }
 
   const auditId = generateAuditId();
   const result = engine.run(input, options);
+
+  // Find highest-scoring rule from findings
+  let highestRule = null;
+  let highestRuleScore = 0;
+  if (result.findings && result.findings.length > 0) {
+    for (const f of result.findings) {
+      if (f.score > highestRuleScore) {
+        highestRuleScore = f.score;
+        highestRule = f.ruleId;
+      }
+    }
+  }
+
   return {
     ...result,
     engine: engine.name,
     auditId,
     timestamp: result.timestamp || new Date().toISOString(),
     creditCost: options.skipCredit ? 0 : engine.creditCost,
+    engineVersion: ENGINE_VERSION,
+    rulePackVersion: RULE_PACK_VERSION,
+    policyVersion: POLICY_VERSION,
+    ...(highestRule ? { highestRule, highestRuleScore } : {}),
   };
 }
 

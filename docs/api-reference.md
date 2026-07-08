@@ -1,6 +1,7 @@
 # TEOS Sovereign Sentinel — API Reference
 
 > Engine v4.1.0 · 258 Rules · 1325 Tests · 7 Framework Mappings
+> **Cross-Reference:** [SCORING_POLICY.md](../SCORING_POLICY.md) · [RULE_CATALOG.md](RULE_CATALOG.md) · [Architecture](architecture-overview.md) · [Audit](audit/) · [Changelog](changelog.md)
 
 ---
 

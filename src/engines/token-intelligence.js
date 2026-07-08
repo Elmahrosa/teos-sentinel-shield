@@ -119,22 +119,21 @@ const TOKEN_INTELLIGENCE_RULES = [
     reasons: ['Anyone can create trading pair — counterfeit token pairs possible'] },
 ];
 
+const { extractMatch, toRecommendation } = require('./finding-utils');
+
 function runTokenIntelligenceEngine(input, options = {}) {
   if (!input || typeof input !== 'string') {
-    return { verdict: 'ERROR', score: 0, rule: 'T00.ERROR', reasons: ['No input provided'] };
+    return { verdict: 'ERROR', score: 0, rule: 'T00.ERROR', reasons: ['No input provided'], findings: [] };
   }
 
-  const findings = [];
+  const triggered = [];
   let maxScore = 0;
   let topRule = null;
 
   for (const rule of TOKEN_INTELLIGENCE_RULES) {
     try {
       if (rule.test(input)) {
-        findings.push({
-          ruleId: rule.id, name: rule.name, severity: rule.sev,
-          score: rule.score, reasons: rule.reasons,
-        });
+        triggered.push(rule);
         if (rule.score > maxScore) {
           maxScore = rule.score;
           topRule = rule;
@@ -142,6 +141,13 @@ function runTokenIntelligenceEngine(input, options = {}) {
       }
     } catch (e) { /* skip */ }
   }
+
+  const findings = triggered.map(t => ({
+    ruleId: t.id, name: t.name, severity: t.sev,
+    score: t.score, reasons: t.reasons,
+    matchedPattern: extractMatch(input, t),
+    recommendation: toRecommendation(t.reasons, t.sev),
+  }));
 
   if (!topRule) {
     return {

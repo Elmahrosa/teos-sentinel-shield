@@ -14,6 +14,10 @@
     "test:all": "node test/engine-test.js && node test/expanded-engine-test.js && node test/banking-engine-test.js && node test/solana-engine-test.js && node test/evm-engine-test.js && node test/dependency-engine-test.js && node test/ci-engine-test.js && node test/token-intelligence-test.js && node test/due-diligence-test.js && node test/integration-test.js && node test/bot-test.js",
     "test:engines": "node test/expanded-engine-test.js && node test/banking-engine-test.js && node test/solana-engine-test.js && node test/evm-engine-test.js && node test/dependency-engine-test.js && node test/ci-engine-test.js && node test/token-intelligence-test.js && node test/due-diligence-test.js",
     "test:integration": "node test/integration-test.js",
+    "test:determinism": "node test/determinism-test.js",
+    "validate:policy": "node scripts/validate-policy.js",
+    "ci": "node scripts/validate-policy.js && node test/determinism-test.js",
+    "lint": "node scripts/lint.js",
     "bot": "node gateway-bot/bot.js",
     "railway": "node src/server/index.js"
   },

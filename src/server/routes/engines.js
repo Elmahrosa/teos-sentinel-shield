@@ -3,6 +3,18 @@ const crypto = require('crypto');
 const { executeEngine, getEngineInfo } = require('../../engines/index');
 const { saveEvent } = require('../../services/cache');
 
+// In-memory audit store for replay (shared with rules route)
+const auditStore = global.__auditStore || new Map();
+global.__auditStore = auditStore;
+
+function storeAuditRecord(auditId, record) {
+  if (auditStore.size > 10000) {
+    const oldest = auditStore.keys().next().value;
+    if (oldest) auditStore.delete(oldest);
+  }
+  auditStore.set(auditId, { ...record, _stored: Date.now() });
+}
+
 const ENGINE_MAP = {
   'banking': 'banking',
   'solana': 'solana',
@@ -36,6 +48,12 @@ router.post('/scan/:engine', async (req, res) => {
   result.tier = req.apiTier;
 
   const commandHash = crypto.createHash('sha3-256').update(input).digest('hex');
+
+  // Store audit record for replay verification
+  if (result.auditId) {
+    storeAuditRecord(result.auditId, { ...result, input, commandHash, engine: mapped });
+  }
+
   await saveEvent({ id: Date.now(), ...result, commandHash, engine: mapped });
 
   res.json(result);

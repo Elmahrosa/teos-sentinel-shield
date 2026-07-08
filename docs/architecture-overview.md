@@ -1,5 +1,7 @@
 # TEOS Sovereign Sentinel — Enterprise AI Governance Architecture
 
+> **Cross-Reference:** [SCORING_POLICY.md](../SCORING_POLICY.md) · [RULE_CATALOG.md](RULE_CATALOG.md) · [API Reference](api-reference.md) · [Audit](audit/) · [Changelog](changelog.md)
+
 ## Overview
 
 **TEOS Sovereign Sentinel (TSS)** is a real-time runtime AI governance and execution firewall. It operationalizes five runtime governance principles (Monitor, Assess, Intervene, Override, Secure) and provides the technical enforcement layer aligned with the **EU AI Act's 4-tier risk classification system**.

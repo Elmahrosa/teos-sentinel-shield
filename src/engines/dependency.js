@@ -179,12 +179,15 @@ function parseDeps(input) {
   }
 }
 
+const { extractMatch, toRecommendation } = require('./finding-utils');
+
 function runDependencyEngine(input, options = {}) {
   if (!input || typeof input !== 'string') {
-    return { verdict: 'ERROR', score: 0, rule: 'D00.ERROR', reasons: ['No input provided'] };
+    return { verdict: 'ERROR', score: 0, rule: 'D00.ERROR', reasons: ['No input provided'], findings: [] };
   }
 
-  const findings = [];
+  let findings = [];
+  const cmd = input.trim();
 
   // Check known vulnerability databases
   let packages = {};
@@ -199,29 +202,42 @@ function runDependencyEngine(input, options = {}) {
 
   if (Object.keys(packages).length > 0) {
     const npmFindings = scanNpmManifest(packages);
-    findings.push(...npmFindings.map(f => ({
-      ruleId: f.id, name: 'KNOWN_VULNERABLE_DEP', severity: f.severity,
-      score: f.severity === 'critical' ? 92 : f.severity === 'high' ? 82 : 65,
-      reasons: [`${f.package}@${f.version}: ${f.desc} (${f.cve})`, `Fix: upgrade ${f.package} to ${f.range}`],
-    })));
+    for (const f of npmFindings) {
+      const severity = f.severity;
+      const scoreVal = severity === 'critical' ? 92 : severity === 'high' ? 82 : 65;
+      findings.push({
+        ruleId: f.id, name: 'KNOWN_VULNERABLE_DEP', severity,
+        score: scoreVal,
+        reasons: [`${f.package}@${f.version}: ${f.desc} (${f.cve})`, `Fix: upgrade ${f.package} to ${f.range}`],
+        matchedPattern: `${f.package}@${f.version}`,
+        recommendation: toRecommendation([`Fix: upgrade ${f.package} to ${f.range}`], severity),
+      });
+    }
   }
 
   let maxScore = 0;
   let topRule = null;
+  const triggered = [];
 
   for (const rule of DEP_RULES) {
     try {
       if (rule.test(input)) {
-        findings.push({
-          ruleId: rule.id, name: rule.name, severity: rule.id.startsWith('D0') ? 'critical' : rule.id.startsWith('D1') ? 'high' : 'medium',
-          score: rule.score, reasons: rule.reasons,
-        });
+        triggered.push(rule);
         if (rule.score > maxScore) {
           maxScore = rule.score;
           topRule = rule;
         }
       }
     } catch (e) { /* skip */ }
+  }
+
+  for (const t of triggered) {
+    findings.push({
+      ruleId: t.id, name: t.name, severity: t.id.startsWith('D0') ? 'critical' : t.id.startsWith('D1') ? 'high' : 'medium',
+      score: t.score, reasons: t.reasons,
+      matchedPattern: extractMatch(input, t),
+      recommendation: toRecommendation(t.reasons, t.id.startsWith('D0') ? 'critical' : 'high'),
+    });
   }
 
   // Update maxScore from CVE findings too

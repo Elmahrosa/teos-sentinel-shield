@@ -535,25 +535,49 @@ const GOVERNANCE_MAPPINGS = {
   R40: { framework:'NIST CSF PR.AC-4', confidence:'medium', governanceEngine:'Infrastructure', attck:['T1485'], suggestedFix:'Require manual approval for terraform destroy commands. Use terraform plan to review changes before apply.' },
 };
 
+const ENGINE_VERSION = '4.1.0';
+const RULE_PACK_VERSION = 'rules-258';
+const POLICY_VERSION = 'policy-1.0';
+
 function runEngine(command) {
   if (!command || typeof command !== 'string') {
-    return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['No command provided'] };
+    return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['No command provided'], findings: [],
+      engineVersion: ENGINE_VERSION, rulePackVersion: RULE_PACK_VERSION, policyVersion: POLICY_VERSION };
   }
 
   const cmd = command.trim();
   if (cmd.length > 10000) {
-    return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['Input exceeds 10KB limit'] };
+    return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['Input exceeds 10KB limit'], findings: [],
+      engineVersion: ENGINE_VERSION, rulePackVersion: RULE_PACK_VERSION, policyVersion: POLICY_VERSION };
   }
 
   let topHit = null;
+  const triggered = [];
 
   for (const rule of RULES) {
     if (rule.test(cmd)) {
+      triggered.push(rule);
       if (!topHit || rule.score > topHit.score) {
         topHit = { rule, score: rule.score };
       }
     }
   }
+
+  const findings = triggered.map(t => ({
+    ruleId: t.id, name: t.name, severity: t.sev, score: t.score,
+    reasons: t.reasons,
+    matchedPattern: cmd.length > 200 ? cmd.substring(0, 200) + '...' : cmd,
+    recommendation: t.sev === 'critical' ? 'Immediate action: ' + (t.reasons[0] || '') : 'Review: ' + (t.reasons[0] || ''),
+  }));
+
+  const baseMeta = {
+    engineVersion: ENGINE_VERSION,
+    rulePackVersion: RULE_PACK_VERSION,
+    policyVersion: POLICY_VERSION,
+    highestRule: topHit ? topHit.rule.id : null,
+    highestRuleScore: topHit ? topHit.score : 0,
+    findings,
+  };
 
   if (topHit) {
     const gov = GOVERNANCE_MAPPINGS[topHit.rule.id] || {};
@@ -576,6 +600,7 @@ function runEngine(command) {
       },
       command:  cmd,
       timestamp: new Date().toISOString(),
+      ...baseMeta,
     };
   }
 
@@ -595,6 +620,7 @@ function runEngine(command) {
     },
     command:   cmd,
     timestamp: new Date().toISOString(),
+    ...baseMeta,
   };
 }
 
@@ -840,13 +866,24 @@ app.get('/api/health', (req, res) => {
 });
 
 // GET / (root)
+// In-memory audit store for replay verification
+const auditStore = new Map();
+
+function storeAuditRecord(auditId, record) {
+  if (auditStore.size > 10000) {
+    const oldest = auditStore.keys().next().value;
+    if (oldest) auditStore.delete(oldest);
+  }
+  auditStore.set(auditId, { ...record, _stored: Date.now() });
+}
+
 app.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
     version: getVersion(),
     engine:  'deterministic',
     rules:   getTotalRuleCount(),
-    endpoints: ['/scan','/stats','/health','/live','/ready'],
+    endpoints: ['/scan','/stats','/health','/live','/ready','/api/rules','/api/audit/:auditId'],
     auth:    'X-API-Key header required',
   });
 });
@@ -874,6 +911,10 @@ app.post('/scan', async (req, res) => {
   result.tier  = req.apiTier;
 
   const commandHash = crypto.createHash('sha3-256').update(input).digest('hex');
+
+  // Store audit record for replay
+  const auditId = result.auditId || 'TOS-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+  storeAuditRecord(auditId, { ...result, input, commandHash });
 
   await saveEvent({ id: Date.now(), ...result, commandHash });
 
@@ -915,6 +956,32 @@ app.post('/ingest', async (req, res) => {
   };
   await saveEvent(event);
   res.json({ status: 'ok', event });
+});
+
+// GET /api/rules — public rule registry (metadata only)
+app.get('/api/rules', (req, res) => {
+  const registry = getRuleRegistry();
+  const sanitized = {};
+  for (const [key, val] of Object.entries(registry.engines)) {
+    sanitized[key] = {
+      id: val.id, name: val.name, ruleCount: val.count,
+      rules: val.rules.map(r => ({
+        id: r.id, name: r.name, severity: r.sev || r.severity, score: r.score, status: 'active',
+      })),
+    };
+  }
+  res.json({
+    version: '1.0', totalEngines: registry.totalEngines, totalRules: registry.totalRules, engines: sanitized,
+  });
+});
+
+// GET /api/audit/:auditId — replay verification
+app.get('/api/audit/:auditId', (req, res) => {
+  const record = auditStore.get(req.params.auditId);
+  if (!record) {
+    return res.status(404).json({ error: 'audit_not_found', message: 'No audit record for this ID' });
+  }
+  res.json(record);
 });
 
 // GET /stats
