@@ -87,8 +87,9 @@ const server = http.createServer((req, res) => {
   if (req.url.startsWith('/scan') || req.url.startsWith('/stats') ||
       req.url.startsWith('/events') || req.url.startsWith('/audit') ||
       req.url.startsWith('/health') || req.url.startsWith('/ingest') ||
+      req.url.startsWith('/rules') || req.url.startsWith('/engines') ||
       req.url.startsWith('/api/version') || req.url.startsWith('/api/health') ||
-      req.url.startsWith('/rules') || req.url.startsWith('/engines')) {
+      req.url.startsWith('/api/rules') || req.url.startsWith('/api/audit')) {
     app(req, res);
     return;
   }
@@ -207,7 +208,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(JSON.stringify({
     ts:      new Date().toISOString(),
     level:   'info',
-    msg:     'TEOS Sentinel v4.0 started',
+    msg:     'TEOS Sentinel v4.1.0 started',
     port:    PORT,
     env:     NODE_ENV,
     mode:    'unified (Express + WS + Static)',
