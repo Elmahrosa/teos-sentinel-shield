@@ -66,7 +66,7 @@ initBootTime().catch(e => log('warn', 'Boot time init failed', { error: e.messag
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    log('info', 'TEOS Sentinel Engine v4.0 started', { port: PORT, env: NODE_ENV, store: process.env.REDIS_URL ? 'redis' : 'memory' });
+    log('info', 'TEOS Sentinel Engine v4.1.0 started', { port: PORT, env: NODE_ENV, store: process.env.REDIS_URL ? 'redis' : 'memory' });
   });
 }
 
