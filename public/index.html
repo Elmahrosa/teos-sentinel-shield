@@ -2398,7 +2398,7 @@
   </div>
 
   <!-- Launch Video -->
-  <div class="launch-video-wrap">
+  <div id="demo" class="launch-video-wrap">
     <div class="launch-video-label">Official Launch</div>
     <div class="launch-video-frame">
       <iframe
@@ -3198,6 +3198,13 @@
     try{document.querySelectorAll('.tools-strip a[download]').forEach(function(a){
       a.addEventListener('click',function(){gtag('event','download_tool',{event_category:'tool',event_label:this.href.split('/').pop()})});
     })}catch(e){}
+    /* Live stats from backend */
+    fetch('/engines').then(function(r){return r.json()}).then(function(d){
+      var e=d.engines||{}; var total=0; for(var k in e) total+=e[k].count||0;
+      document.querySelectorAll('.stat-n').forEach(function(el){
+        if(el.textContent==='121') el.textContent=total;
+      });
+    }).catch(function(){});
   </script>
 </body>
 </html>
