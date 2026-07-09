@@ -865,6 +865,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// GET /engines — engine info with rule counts
+app.get('/engines', (req, res) => {
+  const counts = getEngineCounts();
+  const engines = {
+    core:         { name: 'Core Security Engine',       creditCost: 1, count: counts.core || 0 },
+    banking:      { name: 'Banking Compliance Engine',  creditCost: 1, count: counts.banking || 0 },
+    solana:       { name: 'Solana Security Engine',      creditCost: 1, count: counts.solana || 0 },
+    evm:          { name: 'EVM Security Engine',         creditCost: 1, count: counts.evm || 0 },
+    dependency:   { name: 'Dependency Engine',           creditCost: 1, count: counts.dependency || 0 },
+    ci:           { name: 'CI/CD Pipeline Engine',       creditCost: 1, count: counts.ci || 0 },
+    tokenIntel:   { name: 'Token Intelligence Engine',   creditCost: 5, count: counts.tokenIntel || 0 },
+    dueDiligence: { name: 'Due Diligence Engine',        creditCost: 15, count: counts.dueDiligence || 0 },
+  };
+  res.json({ engines });
+});
+
 // GET / (root)
 // In-memory audit store for replay verification
 const auditStore = new Map();

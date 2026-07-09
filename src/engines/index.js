@@ -70,9 +70,11 @@ function executeEngine(engineName, input, options = {}) {
 }
 
 function getEngineInfo() {
+  const { getEngineCounts } = require('../../lib/ruleRegistry');
+  const counts = getEngineCounts();
   const info = {};
   for (const [key, val] of Object.entries(ENGINE_REGISTRY)) {
-    info[key] = { name: val.name, creditCost: val.creditCost };
+    info[key] = { name: val.name, creditCost: val.creditCost, count: counts[key] || 0 };
   }
   return info;
 }
