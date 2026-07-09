@@ -18,7 +18,7 @@ const helmet  = require('helmet');
 const crypto  = require('crypto');
 const { requestContext } = require('../lib/request-context');
 const { printStartupBanner } = require('../lib/version');
-const { getTotalRuleCount, getVersion, getEngineCounts } = require('../lib/ruleRegistry');
+const { getTotalRuleCount, getVersion, getEngineCounts, getRuleRegistry } = require('../lib/ruleRegistry');
 const app     = express();
 
 try {
