@@ -214,7 +214,7 @@ async function fetchApiInfo() {
     const r = await fetchWithTimeout(`${BRIDGE_URL}/api/version`, {}, 3000);
     if (r.ok) return await r.json();
   } catch {}
-  return { version: VERSION, controls: '121', tests: '596' };
+  return { version: VERSION, controls: '258', tests: '1325' };
 }
 
 async function cmdStatus() {
@@ -224,7 +224,7 @@ async function cmdStatus() {
 
   console.log(`${BLD}TEOS Sovereign Security Stack${RST}`);
   console.log(`Version: ${VERSION}`);
-  console.log(`Engine:  v${info.version || '4.0'} | ${info.controls} Active Governance Controls | ${info.tests} tests\n`);
+  console.log(`Engine:  v${info.version || '4.1.0'} | ${info.controls} Active Governance Controls | ${info.tests} tests\n`);
 
   if (apiKey) {
     console.log(`  ${GRN}API Key: ${apiKey.slice(0, 12)}...${RST}`);
@@ -255,7 +255,7 @@ async function cmdVersion() {
   const info = await fetchApiInfo();
   console.log(`TEOS Sovereign Security Stack`);
   console.log(`Version: ${VERSION}`);
-  console.log(`Engine:  v${info.version || '4.0'}`);
+  console.log(`Engine:  v${info.version || '4.1.0'}`);
   console.log(`Rules:   ${info.controls} Active Governance Controls`);
   console.log(`Tests:   ${info.tests}`);
   console.log(`Services: Bridge, Identity, Bot, Risk Engine, Shield`);

@@ -16,7 +16,7 @@ out();
 out(`**Generated from source — v${pkg.version}**`);
 out(`**Total Rules:** ${registry.totalRules} across ${registry.totalEngines} engines`);
 out(`**Policy Version:** policy-1.0`);
-out(`**Rule Pack:** rules-258`);
+out(`**Rule Pack:** rules-${registry.totalRules || 258}`);
 out();
 out(`---`);
 out();

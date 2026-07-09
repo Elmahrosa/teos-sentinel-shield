@@ -8,8 +8,8 @@ const { runTokenIntelligenceEngine } = require('./token-intelligence');
 const { runDueDiligenceEngine } = require('./due-diligence');
 
 const crypto = require('crypto');
+const { version: ENGINE_VERSION } = require('../../package.json');
 
-const ENGINE_VERSION = '4.1.0';
 const RULE_PACK_VERSION = 'rules-258';
 const POLICY_VERSION = 'policy-1.0';
 

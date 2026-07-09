@@ -535,7 +535,7 @@ const GOVERNANCE_MAPPINGS = {
   R40: { framework:'NIST CSF PR.AC-4', confidence:'medium', governanceEngine:'Infrastructure', attck:['T1485'], suggestedFix:'Require manual approval for terraform destroy commands. Use terraform plan to review changes before apply.' },
 };
 
-const ENGINE_VERSION = '4.1.0';
+const { version: ENGINE_VERSION } = require('../package.json');
 const RULE_PACK_VERSION = 'rules-258';
 const POLICY_VERSION = 'policy-1.0';
 
