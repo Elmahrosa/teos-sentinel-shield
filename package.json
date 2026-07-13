@@ -32,7 +32,7 @@
   "author": "TEOS Sovereign",
   "license": "MIT",
   "dependencies": {
-    "@babel/parser": "^7.29.7",
+    "@babel/parser": "^8.0.4",
     "@babel/traverse": "^8.0.0",
     "dodopayments": "^2.31.1",
     "express": "^4.21.1",
