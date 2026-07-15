@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 const LINKS = {
-  free:               'https://dodo.pe/xm1619v9elp',
-  starter_monthly:    'https://dodo.pe/iba2piggql',
-  starter_annual:     'https://dodo.pe/slkqpsvswlt',
-  team_monthly:       'https://dodo.pe/mz3a54cb2s',
-  team_annual:        'https://dodo.pe/d4fr3ef9qt6',
-  enterprise_monthly: 'https://dodo.pe/xn38jipi66d',
-  enterprise_annual:  'https://dodo.pe/kuqery53ove',
-  sovereign:          'https://dodo.pe/uft6rqarbel',
+  free:               'https://dodo.pe/teos-free-730161',
+  starter_monthly:    'https://dodo.pe/teos-starter-monthly-730161',
+  starter_annual:     'https://dodo.pe/teos-starter-annual-730161',
+  team_monthly:       'https://dodo.pe/teos-team-monthly-730161',
+  team_annual:        'https://dodo.pe/teos-team-annual-730161',
+  enterprise_monthly: 'mailto:sales@elmahrosa.org?subject=Enterprise%20Inquiry',
+  enterprise_annual:  'mailto:sales@elmahrosa.org?subject=Enterprise%20Inquiry',
+  sovereign:          'mailto:sales@elmahrosa.org?subject=Sovereign%20Inquiry',
 } as const;
 
 const TIERS = [
@@ -40,9 +40,9 @@ const TIERS = [
   {
     id: 'starter',
     name: 'Starter',
-    monthly: '$29',
-    annual: '$290',
-    annualNote: '$24.17/mo effective',
+    monthly: '$69',
+    annual: '$690',
+    annualNote: '$57.50/mo effective',
     setup: '$500',
     scans: '5,000 / mo',
     rpm: '30',
@@ -61,9 +61,9 @@ const TIERS = [
   {
     id: 'team',
     name: 'Team',
-    monthly: '$149',
-    annual: '$1,490',
-    annualNote: '$124.17/mo effective',
+    monthly: '$199',
+    annual: '$1,990',
+    annualNote: '$165.83/mo effective',
     setup: '$2,000',
     scans: '50,000 / mo',
     rpm: '150',
@@ -83,9 +83,9 @@ const TIERS = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    monthly: '$499',
-    annual: '$4,990',
-    annualNote: '$415.83/mo effective',
+    monthly: 'Custom',
+    annual: 'Custom',
+    annualNote: 'Contact us for pricing',
     setup: '$5,000',
     scans: 'Unlimited',
     rpm: '600',
@@ -96,7 +96,7 @@ const TIERS = [
       'Dedicated account manager',
       'Compliance reports + audit exports',
     ],
-    cta: 'Subscribe \u2192',
+    cta: 'Contact Sales \u2192',
     ctaMonthly: LINKS.enterprise_monthly,
     ctaAnnual: LINKS.enterprise_annual,
     featured: false,
@@ -277,8 +277,8 @@ export default function PricingSection() {
 
         <p className="text-center text-xs text-muted mt-6">
           Annual plans save ~17% \u00B7 Setup fees are one-time \u00B7{' '}
-          <a href="mailto:ayman@teosegypt.com?subject=Pricing%20Question%20%E2%80%94%20TEOS%20Sentinel" className="text-muted hover:text-white underline underline-offset-2">
-            Questions? ayman@teosegypt.com
+          <a href="mailto:sales@elmahrosa.org?subject=Pricing%20Question%20%E2%80%94%20TEOS%20Sentinel" className="text-muted hover:text-white underline underline-offset-2">
+            Questions? sales@elmahrosa.org
           </a>
         </p>
       </div>

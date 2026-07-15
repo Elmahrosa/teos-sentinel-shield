@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 const DODO = {
-  free:              'https://dodo.pe/xm1619v9elp',
-  starter_monthly:   'https://dodo.pe/iba2piggql',
-  starter_annual:    'https://dodo.pe/slkqpsvswlt',
-  team_monthly:      'https://dodo.pe/mz3a54cb2s',
-  team_annual:       'https://dodo.pe/d4fr3ef9qt6',
-  enterprise_monthly:'https://dodo.pe/xn38jipi66d',
-  enterprise_annual: 'https://dodo.pe/kuqery53ove',
-  sovereign:         'https://dodo.pe/uft6rqarbel',
+  free:              'https://dodo.pe/teos-free-730161',
+  starter_monthly:   'https://dodo.pe/teos-starter-monthly-730161',
+  starter_annual:    'https://dodo.pe/teos-starter-annual-730161',
+  team_monthly:      'https://dodo.pe/teos-team-monthly-730161',
+  team_annual:       'https://dodo.pe/teos-team-annual-730161',
+  enterprise_monthly:'mailto:sales@elmahrosa.org?subject=Enterprise%20Inquiry',
+  enterprise_annual: 'mailto:sales@elmahrosa.org?subject=Enterprise%20Inquiry',
+  sovereign:         'mailto:sales@elmahrosa.org?subject=Sovereign%20Inquiry',
 };
 
 interface Tier {
@@ -54,9 +54,9 @@ const TIERS: Tier[] = [
   {
     id: 'starter',
     name: 'Starter',
-    monthlyPrice: '$29',
-    annualPrice: '$290',
-    annualEffective: '$24.17 / mo',
+    monthlyPrice: '$69',
+    annualPrice: '$690',
+    annualEffective: '$57.50 / mo',
     setup: '$500',
     scans: '5,000 / mo',
     rpm: '30',
@@ -73,9 +73,9 @@ const TIERS: Tier[] = [
   {
     id: 'team',
     name: 'Team',
-    monthlyPrice: '$149',
-    annualPrice: '$1,490',
-    annualEffective: '$124.17 / mo',
+    monthlyPrice: '$199',
+    annualPrice: '$1,990',
+    annualEffective: '$165.83 / mo',
     setup: '$2,000',
     scans: '50,000 / mo',
     rpm: '150',
@@ -95,9 +95,9 @@ const TIERS: Tier[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    monthlyPrice: '$499',
-    annualPrice: '$4,990',
-    annualEffective: '$415.83 / mo',
+    monthlyPrice: 'Custom',
+    annualPrice: 'Custom',
+    annualEffective: 'Contact us for pricing',
     setup: '$5,000',
     scans: 'Unlimited',
     rpm: '600',
@@ -350,10 +350,10 @@ export default function PricingTable() {
         <p className="text-center text-xs text-[rgba(240,237,232,0.45)] mt-6">
           Billing via Dodo Payments. All prices in USD. Setup fee is one-time.{' '}
           <a
-            href="mailto:ayman@teosegypt.com"
+            href="mailto:sales@elmahrosa.org"
             className="text-[rgba(240,237,232,0.45)] hover:text-white underline underline-offset-2"
           >
-            Questions? ayman@teosegypt.com
+            Questions? sales@elmahrosa.org
           </a>
         </p>
       </div>
