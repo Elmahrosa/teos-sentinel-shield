@@ -634,9 +634,9 @@ async function resolveKeyId(apiKey) {
 async function apiKeyAuth(req, res, next) {
   // Public routes — no auth required
   if (req.path === '/billing/pricing') return next();
-
-  // Billing checkout — email required but no API key
   if (req.path === '/billing/checkout' && req.method === 'POST') return next();
+  // Dashboard monitoring — read-only, no auth required
+  if (req.path === '/stats' || req.path === '/events' || req.path === '/health') return next();
 
   const apiKey = req.headers['x-api-key'] || req.query.apiKey;
   if (!apiKey) {
