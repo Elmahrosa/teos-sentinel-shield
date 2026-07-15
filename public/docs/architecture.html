@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEOS Sentinel — Architecture Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#020509;--bg2:#060d16;--bg3:#0a1520;--panel:#0c1926;--panel2:#102030;--border:rgba(0,200,255,0.06);--border2:rgba(0,200,255,0.14);--border3:rgba(0,200,255,0.28);--cyan:#00c8ff;--green:#00ff88;--red:#ff3d57;--amber:#ffb020;--purple:#9d6fff;--white:#c8dfe8;--muted:rgba(200,223,232,0.45);--muted2:rgba(200,223,232,0.2);--mono:'JetBrains Mono','Courier New',monospace;--sans:'Inter',sans-serif}
+html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:var(--sans);font-size:13px}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.006) 2px,rgba(0,200,255,0.006) 4px);pointer-events:none;z-index:9999}
+#topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;gap:16px}
+.topbar-logo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:0.06em;text-decoration:none}
+.topbar-logo span{width:24px;height:24px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.topbar-sep{width:1px;height:20px;background:var(--border2)}
+.topbar-title{font-size:13px;font-weight:600;letter-spacing:-0.01em}
+.topbar-title small{color:var(--muted);font-weight:400;font-size:11px;margin-left:8px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-time{font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:0.06em}
+.hero{padding:48px 20px 32px;max-width:900px;margin:0 auto;text-align:center}
+.hero h1{font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.hero p{font-family:var(--mono);font-size:13px;color:var(--muted);line-height:1.8;max-width:640px;margin:0 auto}
+.section{max-width:900px;margin:0 auto;padding:32px 20px}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.section h2{font-size:22px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px}
+.section>p{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:24px}
+.section h3{font-size:16px;font-weight:700;color:var(--cyan);margin-top:24px;margin-bottom:8px}
+.diagram-box{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:24px;margin-bottom:20px;font-family:var(--mono);font-size:11px;line-height:2;overflow-x:auto;white-space:pre;text-align:center;color:var(--muted)}
+.diagram-box .hl{color:var(--cyan)}.diagram-box .hl2{color:var(--green)}.diagram-box .hl3{color:var(--purple)}.diagram-box .hl4{color:var(--amber)}
+.component-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:24px}
+.component-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:16px}
+.component-card .name{font-weight:700;font-size:14px;color:var(--cyan);margin-bottom:4px}
+.component-card .desc{font-size:12px;color:var(--muted);line-height:1.6}
+.component-card .tech{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:8px}
+.flow-list{list-style:none;counter-reset:step}
+.flow-list li{counter-increment:step;padding:12px 16px 12px 48px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;background:var(--panel);position:relative;font-size:12px;color:var(--muted);line-height:1.6}
+.flow-list li::before{content:counter(step);position:absolute;left:12px;top:12px;width:24px;height:24px;background:var(--cyan);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700}
+.flow-list li strong{color:var(--white)}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-bottom:16px}
+th{text-align:left;padding:8px 12px;background:var(--panel2);color:var(--muted2);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border2);font-weight:600}
+td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:var(--panel)}
+.tag{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:10px;border:1px solid var(--border2);display:inline-block}
+.tag.cyan{color:var(--cyan);border-color:var(--border3);background:rgba(0,200,255,0.06)}
+.tag.green{color:var(--green);border-color:rgba(0,255,136,0.2);background:rgba(0,255,136,0.06)}
+.tag.purple{color:var(--purple);border-color:rgba(157,111,255,0.2);background:rgba(157,111,255,0.06)}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <a class="topbar-logo" href="/"><span>⛊</span> TEOS</a>
+  <div class="topbar-sep"></div>
+  <div class="topbar-title">Architecture Guide <small>v4.0.0-rc1</small></div>
+  <div class="topbar-right"><span class="topbar-time" id="clock"></span></div>
+</div>
+
+<div class="hero">
+  <h1>TEOS Sentinel <em>Architecture</em></h1>
+  <p>Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware.</p>
+</div>
+
+<div class="section">
+  <div class="section-label">System Overview</div>
+  <h2>Architecture Diagram</h2>
+  <p>High-level system architecture showing the request flow from client through governance to execution.</p>
+  <div class="diagram-box">
+    <span class="hl">┌──────────┐</span>     <span class="hl3">┌──────────────┐</span>     <span class="hl2">┌─────────────┐</span>
+<span class="hl">│  Client  │</span> ──→ <span class="hl3">│ Sentinel API │</span> ──→ <span class="hl2">│ Risk Engine │</span>
+<span class="hl">│ (Agent)  │</span>     <span class="hl3">│ (Express)    │</span>     <span class="hl2">│ (MCP)       │</span>
+<span class="hl">└──────────┘</span>     <span class="hl3">└──────┬───────┘</span>     <span class="hl2">└──────┬──────┘</span>
+                           │                      │
+                           ▼                      ▼
+                    <span class="hl4">┌──────────┐</span>     <span class="hl">┌──────────────┐</span>
+                    <span class="hl4">│ Upstash  │</span>     <span class="hl">│   27 Rules   │</span>
+                    <span class="hl4">│ Redis    │</span>     <span class="hl">│ + Heuristics │</span>
+                    <span class="hl4">└──────────┘</span>     <span class="hl">└──────────────┘</span>
+                           │
+                           ▼
+                    <span class="hl2">┌──────────────┐</span>
+                    <span class="hl2">│  Supabase   │</span>
+                    <span class="hl2">│  Audit Log  │</span>
+                    <span class="hl2">└──────────────┘</span>
+  </div>
+  <p><span class="tag cyan">Client Layer</span> <span class="tag purple">API Gateway</span> <span class="tag green">Engine Layer</span> <span class="tag" style="color:var(--amber);border-color:rgba(255,176,32,0.2);background:rgba(255,176,32,0.06)">Data Layer</span></p>
+</div>
+
+<div class="section">
+  <div class="section-label">Core Components</div>
+  <h2>Service Architecture</h2>
+  <p>The TEOS Sentinel ecosystem consists of six primary services.</p>
+  <div class="component-grid">
+    <div class="component-card">
+      <div class="name">Sentinel Shield API</div>
+      <div class="desc">Express API gateway handling authentication, rate limiting, billing, and routing scan requests to the risk engine. Provides SSE streaming for live dashboard events.</div>
+      <div class="tech">Node.js · Express · Upstash Redis · Supabase · Dodo Payments</div>
+    </div>
+    <div class="component-card">
+      <div class="name">Risk Engine (MCP)</div>
+      <div class="desc">Deterministic risk classification engine with 27 named rules across 8 categories. Supports code/shell, CI/CD, and dependency scanning. Model Context Protocol interface for AI agent integration.</div>
+      <div class="tech">TypeScript · Express · Regex Engine · Prometheus Metrics</div>
+    </div>
+    <div class="component-card">
+      <div class="name">Activation Service</div>
+      <div class="desc">Hybrid CQRS/event-sourced license activation service. Manages product key validation, credit tracking, and tier enforcement.</div>
+      <div class="tech">Node.js · Event Sourcing · Railway</div>
+    </div>
+    <div class="component-card">
+      <div class="name">TEOS Bot</div>
+      <div class="desc">Telegram bot providing scan, dependency check, and CI/CD audit commands. Routes requests through the MCP API and activation service for credit management.</div>
+      <div class="tech">Telegraf · Telegram API · Railway</div>
+    </div>
+    <div class="component-card">
+      <div class="name">WebSocket Server</div>
+      <div class="desc">Railway-deployed WebSocket server serving static front-end assets and providing real-time communication for the SOC dashboard.</div>
+      <div class="tech">ws · Express · Railway</div>
+    </div>
+    <div class="component-card">
+      <div class="name">Landing Site</div>
+      <div class="desc">Next.js marketing site deployed on Hostinger. Features Egyptian-themed sentinel landing page, pricing tiers, and transparency hub.</div>
+      <div class="tech">Next.js · Hostinger · GitHub Pages</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Scan Flow</div>
+  <h2>Request Lifecycle</h2>
+  <p>How a scan request flows through the system.</p>
+  <ol class="flow-list">
+    <li><strong>Client Request</strong> — Code is submitted via API (REST/Telegram/MCP)</li>
+    <li><strong>Authentication</strong> — Sentinel API validates API key and checks rate limits via Upstash Redis</li>
+    <li><strong>Credit Check</strong> — Activation service verifies available credits for the requester's tier</li>
+    <li><strong>Deterministic Scan</strong> — Risk Engine matches input against 27 named rules (regex-based, 8 categories)</li>
+    <li><strong>Heuristic Analysis</strong> — Additional suspicion scoring via heuristic engine (7 signals)</li>
+    <li><strong>Verdict Assembly</strong> — Combined deterministic + heuristic result: ALLOW / WARN / BLOCK with score 0–100</li>
+    <li><strong>Audit Logging</strong> — Structured audit entry written to Supabase Postgres and NDJSON file</li>
+    <li><strong>Billing Event</strong> — Credit consumed via activation service; Dodo Payments webhook for subscription plans</li>
+    <li><strong>Response</strong> — Verdict, score, matched rules, and reasons returned to client</li>
+  </ol>
+</div>
+
+<div class="section">
+  <div class="section-label">Rule Categories</div>
+  <h2>Deterministic Rules</h2>
+  <p>The engine comprises 27 named rules organized into 8 security categories. Each rule has a fixed risk score and severity level. The maximum matched rule score determines the verdict (BLOCK ≥ 85, WARN ≥ 40).</p>
+  <table>
+    <tr><th>Category</th><th>Rules</th><th>Example Patterns</th></tr>
+    <tr><td style="color:var(--red)">Shell Commands</td><td>R01–R03, R06, R08, R13</td><td>rm -rf, chmod 777, fork bomb, reverse shell, sudo abuse</td></tr>
+    <tr><td style="color:var(--red)">Secrets</td><td>R04, R05, R07, R19</td><td>echo $SECRET, env exfil, hardcoded keys, tokens</td></tr>
+    <tr><td style="color:var(--amber)">SQL Injection</td><td>R09, R10</td><td>DROP TABLE, UNION SELECT, OR 1=1, SQL comments</td></tr>
+    <tr><td style="color:var(--cyan)">Supply Chain</td><td>R14, R15</td><td>Known malicious packages, typosquatted names</td></tr>
+    <tr><td style="color:var(--amber)">CI/CD</td><td>R16, R17, R18, R25</td><td>write-all permissions, curl|bash, privileged containers</td></tr>
+    <tr><td style="color:var(--purple)">Network</td><td>R21, R22</td><td>SSRF to metadata endpoints, SSH key exfil</td></tr>
+    <tr><td style="color:var(--red)">Malware</td><td>R23, R24</td><td>Cryptominers, data exfiltration via curl/nc</td></tr>
+    <tr><td style="color:var(--amber)">Other</td><td>R11, R12, R20, R26, R27</td><td>Path traversal, command injection, prompt injection, base64 exec, XXE</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-label">Deployment</div>
+  <h2>Infrastructure</h2>
+  <p>Services are distributed across multiple providers for resilience and geographic distribution.</p>
+  <table>
+    <tr><th>Service</th><th>Provider</th><th>Region</th></tr>
+    <tr><td>MCP Risk Engine</td><td>Railway</td><td>europe-west4 (Netherlands)</td></tr>
+    <tr><td>Sentinel Shield API</td><td>Vercel + Railway</td><td>Global (serverless) + Netherlands (WS)</td></tr>
+    <tr><td>Activation Service</td><td>Railway</td><td>Netherlands</td></tr>
+    <tr><td>TEOS Bot</td><td>Railway</td><td>Netherlands</td></tr>
+    <tr><td>Landing Site</td><td>Hostinger</td><td>Egypt (local hosting)</td></tr>
+    <tr><td>Redis (Upstash)</td><td>Railway + Upstash</td><td>Global (serverless)</td></tr>
+    <tr><td>Audit (Supabase)</td><td>Supabase</td><td>Global (Postgres)</td></tr>
+  </table>
+</div>
+
+<script>
+function updateClock(){document.getElementById('clock').textContent=new Date().toISOString().replace('T',' ').slice(0,19)+' UTC'}
+setInterval(updateClock,1e3);updateClock();
+</script>
+</body>
+</html>

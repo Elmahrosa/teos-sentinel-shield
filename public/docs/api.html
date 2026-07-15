@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEOS Sentinel — API Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#020509;--bg2:#060d16;--bg3:#0a1520;--panel:#0c1926;--panel2:#102030;--border:rgba(0,200,255,0.06);--border2:rgba(0,200,255,0.14);--border3:rgba(0,200,255,0.28);--cyan:#00c8ff;--green:#00ff88;--red:#ff3d57;--amber:#ffb020;--purple:#9d6fff;--white:#c8dfe8;--muted:rgba(200,223,232,0.45);--muted2:rgba(200,223,232,0.2);--mono:'JetBrains Mono','Courier New',monospace;--sans:'Inter',sans-serif}
+html,body{min-height:100%;background:var(--bg);color:var(--white);font-family:var(--sans);font-size:13px}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.006) 2px,rgba(0,200,255,0.006) 4px);pointer-events:none;z-index:9999}
+#topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;gap:16px}
+.topbar-logo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:0.06em;text-decoration:none}
+.topbar-logo span{width:24px;height:24px;background:linear-gradient(135deg,var(--cyan),var(--purple));border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.topbar-sep{width:1px;height:20px;background:var(--border2)}
+.topbar-title{font-size:13px;font-weight:600;letter-spacing:-0.01em}
+.topbar-title small{color:var(--muted);font-weight:400;font-size:11px;margin-left:8px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-time{font-family:var(--mono);font-size:11px;color:var(--muted2);letter-spacing:0.06em}
+.hero{padding:48px 20px 32px;max-width:900px;margin:0 auto;text-align:center}
+.hero h1{font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.hero p{font-family:var(--mono);font-size:13px;color:var(--muted);line-height:1.8;max-width:640px;margin:0 auto}
+.section{max-width:900px;margin:0 auto;padding:32px 20px}
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.section h2{font-size:22px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px}
+.section>p{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:24px}
+.endpoint{margin-bottom:24px;background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.endpoint-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.endpoint-method{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.04em}
+.method-get{color:var(--green);background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.2)}
+.method-post{color:var(--cyan);background:rgba(0,200,255,0.06);border:1px solid var(--border3)}
+.endpoint-path{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--white)}
+.endpoint-desc{font-size:12px;color:var(--muted);margin-left:auto}
+.endpoint-body{padding:16px}
+.endpoint-body h4{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px}
+.endpoint-body pre{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:12px;font-family:var(--mono);font-size:11px;line-height:1.6;overflow-x:auto;white-space:pre;color:var(--white);margin-bottom:12px}
+.endpoint-body code{font-family:var(--mono);font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:3px}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-bottom:12px}
+th{text-align:left;padding:6px 10px;background:var(--panel2);color:var(--muted2);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border2);font-weight:600}
+td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:var(--panel)}
+.field-name{color:var(--cyan)}.field-type{color:var(--amber)}.field-desc{color:var(--muted)}.field-req{color:var(--red);font-size:9px}
+.tag{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:10px;border:1px solid var(--border2)}
+.tag.cyan{color:var(--cyan);border-color:var(--border3);background:rgba(0,200,255,0.06)}
+.tag.green{color:var(--green);border-color:rgba(0,255,136,0.2);background:rgba(0,255,136,0.06)}
+.tag.red{color:var(--red);border-color:rgba(255,61,87,0.2);background:rgba(255,61,87,0.06)}
+.tag.amber{color:var(--amber);border-color:rgba(255,176,32,0.2);background:rgba(255,176,32,0.06)}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <a class="topbar-logo" href="/"><span>⛊</span> TEOS</a>
+  <div class="topbar-sep"></div>
+  <div class="topbar-title">API Reference <small>v4.0.0-rc1</small></div>
+  <div class="topbar-right"><span class="topbar-time" id="clock"></span></div>
+</div>
+
+<div class="hero">
+  <h1><em>REST API</em> Reference</h1>
+  <p>Complete API documentation for the TEOS Sentinel Shield Risk Engine and supporting services. Base URL: <code style="color:var(--cyan)">https://agent-code-risk-mcp-production-b97d.up.railway.app</code></p>
+</div>
+
+<div class="section">
+  <div class="section-label">Core Endpoints</div>
+  <h2>Risk Scanning</h2>
+  <p>Primary endpoints for code analysis, dependency scanning, and CI/CD pipeline security auditing.</p>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-post">POST</span><span class="endpoint-path">/scan</span><span class="endpoint-desc">Analyze code or shell commands for security risks</span></div>
+    <div class="endpoint-body">
+      <h4>Request Body</h4>
+      <pre>{
+  "code": "rm -rf /",
+  "context": "telegram"
+}</pre>
+      <table>
+        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+        <tr><td class="field-name">code</td><td class="field-type">string</td><td class="field-desc">Code or command to scan</td></tr>
+        <tr><td class="field-name">context</td><td class="field-type">string</td><td class="field-desc">Optional. Scan context (e.g. "telegram", "ci")</td></tr>
+      </table>
+      <h4>Response</h4>
+      <pre>{
+  "verdict": "BLOCK",
+  "score": 95,
+  "ruleId": "R03",
+  "severity": "CRITICAL",
+  "reasons": ["Remote script piped to shell"],
+  "findings": [{ "ruleId": "R03", "name": "CURL_EXEC_CHAIN", "score": 95, "severity": "CRITICAL" }]
+}</pre>
+      <p><span class="tag green">ALLOW</span> <span class="tag amber">WARN</span> <span class="tag red">BLOCK</span> Score range: 0–100. Thresholds: BLOCK ≥ 85, WARN ≥ 40, ALLOW &lt; 40.</p>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-post">POST</span><span class="endpoint-path">/analyze</span><span class="endpoint-desc">Full analysis with tiered access (x402 pay-per-request)</span></div>
+    <div class="endpoint-body">
+      <h4>Request Body</h4>
+      <pre>{
+  "code": "console.log('hello')",
+  "language": "javascript",
+  "mode": "basic"
+}</pre>
+      <table>
+        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+        <tr><td class="field-name">code</td><td class="field-type">string</td><td class="field-desc">Code to analyze <span class="field-req">required</span></td></tr>
+        <tr><td class="field-name">language</td><td class="field-type">string</td><td class="field-desc">Language hint</td></tr>
+        <tr><td class="field-name">mode</td><td class="field-type">string</td><td class="field-desc">"basic" (default) or "premium"</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-post">POST</span><span class="endpoint-path">/scan-dependencies</span><span class="endpoint-desc">Audit npm/pypi manifests for supply-chain risks</span></div>
+    <div class="endpoint-body">
+      <pre>{
+  "manifest": "{\"dependencies\":{\"event-stream\":\"3.3.6\"}}",
+  "ecosystem": "npm"
+}</pre>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-post">POST</span><span class="endpoint-path">/ci</span><span class="endpoint-desc">CI/CD pipeline YAML security audit</span></div>
+    <div class="endpoint-body">
+      <pre>{
+  "content": "permissions: write-all"
+}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Health & Metadata</div>
+  <h2>Service Endpoints</h2>
+  <p>Health checks, version info, and service discovery endpoints.</p>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/health</span><span class="endpoint-desc">Service health and engine metadata</span></div>
+    <div class="endpoint-body">
+      <pre>{
+  "status": "ok",
+  "service": "agent-code-risk-mcp",
+  "engine": "4.0",
+  "version": "4.0.0-rc1",
+  "rules": 64,
+  "tests": 596,
+  "heuristicEngine": true,
+  "uptime": 127472
+}</pre>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/version</span><span class="endpoint-desc">Version information</span></div>
+    <div class="endpoint-body">
+      <pre>{
+  "service": "agent-code-risk-mcp",
+  "version": "4.0.0-rc1",
+  "environment": "production"
+}</pre>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/live</span><span class="endpoint-desc">Liveness probe</span></div>
+    <div class="endpoint-body">
+      <pre>{ "status": "ok", "alive": true, "uptime": 127136 }</pre>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/metrics</span><span class="endpoint-desc">Prometheus metrics (CPU, memory, request count, GC)</span></div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/stats</span><span class="endpoint-desc">Aggregate scan statistics</span></div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/audit</span><span class="endpoint-desc">Recent scan audit log (last 100 events)</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Error Codes</div>
+  <h2>Error Handling</h2>
+  <p>All endpoints return standard HTTP status codes.</p>
+  <table>
+    <tr><th>Status</th><th>Description</th></tr>
+    <tr><td style="color:var(--amber)">400</td><td>Bad Request — missing or invalid parameters</td></tr>
+    <tr><td style="color:var(--amber)">401</td><td>Unauthorized — missing or invalid API key</td></tr>
+    <tr><td style="color:var(--red)">404</td><td>Not Found — endpoint does not exist</td></tr>
+    <tr><td style="color:var(--red)">413</td><td>Payload Too Large — input exceeds 100KB limit</td></tr>
+    <tr><td style="color:var(--red)">429</td><td>Too Many Requests — rate limit exceeded</td></tr>
+    <tr><td style="color:var(--red)">500</td><td>Internal Server Error</td></tr>
+  </table>
+</div>
+
+<script>
+function updateClock(){document.getElementById('clock').textContent=new Date().toISOString().replace('T',' ').slice(0,19)+' UTC'}
+setInterval(updateClock,1e3);updateClock();
+</script>
+</body>
+</html>

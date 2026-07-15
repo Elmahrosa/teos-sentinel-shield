@@ -3,4 +3,10 @@ node_modules/
 data/events.json
 .env
 .env.local
+*.env.production
+.env.example
+.next/
+dashboard/
 *.log
+FOUNDER-CREDENTIALS.md
+FOUNDER_CREDENTIALS.md
