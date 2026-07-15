@@ -7,7 +7,7 @@ const crypto    = require('crypto');
 const fs        = require('fs');
 const path      = require('path');
 
-const API_URL  = process.env.TEOS_API_URL || 'https://teos-sentinel-shield.vercel.app';
+const API_URL  = process.env.TEOS_API_URL || 'https://agent-code-risk-mcp-production-b97d.up.railway.app';
 const LOG_FILE = path.join(process.env.TEOS_LOG_DIR || process.cwd(), '.teos-enforcement.log');
 
 // ── HELPERS ──────────────────────────────────────────────────

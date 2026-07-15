@@ -275,7 +275,7 @@ async function createCheckoutSession({ email, name, tier, type = 'monthly', isAn
       const session = await dodoClient.checkout.sessions.create({
         customer: { email, name },
         product_cart: [{ product_id: productId, quantity: 1 }],
-        return_url: process.env.DODO_RETURN_URL || 'https://teos-landing-seven.vercel.app',
+        return_url: process.env.DODO_RETURN_URL || 'https://sentinel.teosegypt.com',
       });
       return { checkoutUrl: session.checkout_url, sessionId: session.id, tier: 'sovereign', type };
     } catch (e) {
@@ -301,7 +301,7 @@ async function createCheckoutSession({ email, name, tier, type = 'monthly', isAn
     const session = await dodoClient.checkout.sessions.create({
       customer: { email, name },
       product_cart: [{ product_id: productId, quantity: 1 }],
-      return_url: process.env.DODO_RETURN_URL || 'https://teos-landing-seven.vercel.app',
+      return_url: process.env.DODO_RETURN_URL || 'https://sentinel.teosegypt.com',
     });
 
     return { checkoutUrl: session.checkout_url, sessionId: session.id, tier, type: productKey };
