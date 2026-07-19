@@ -1043,7 +1043,7 @@ app.get('/health', async (req, res) => {
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '2.4.0',
+    version: '4.0.0-rc1',
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -1223,8 +1223,8 @@ app.get('/audit', async (req, res) => {
   const events = await loadEvents();
   res.json({
     generated:   new Date().toISOString(),
-    engine:      'TEOS Sentinel v2.3',
-      version: '2.4.0',
+    engine:      'TEOS Sentinel 4.0.0-rc1',
+      version: '4.0.0-rc1',
     rulesActive: RULES.length,
     totalEvents: events.length,
     events:      events.slice(-200).reverse(),
@@ -1367,7 +1367,7 @@ app.get('/metrics', async (req, res) => {
 
   const metrics = {
     teos_engine_info: {
-      version: '2.4.0',
+      version: '4.0.0-rc1',
       rules: RULES.length,
       store: redis ? 'redis' : 'memory',
       auditStore: supabase ? 'supabase' : 'redis-fallback',

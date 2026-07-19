@@ -186,7 +186,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(JSON.stringify({
     ts:      new Date().toISOString(),
     level:   'info',
-    msg:     'TEOS Sentinel v2.0 started',
+    msg:     'TEOS Sentinel 4.0.0-rc1 started',
     port:    PORT,
     env:     NODE_ENV,
     mode:    'unified (Express + WS + Static)',
