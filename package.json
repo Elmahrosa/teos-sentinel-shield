@@ -28,6 +28,10 @@
     "@upstash/redis": "^1.38.0",
     "dodopayments": "^2.31.1",
     "express": "4.21.1",
-    "ws": "^8.20.0"
+    "ws": "^8.21.0"
+  },
+  "overrides": {
+    "path-to-regexp": "0.1.13",
+    "qs": "6.15.2"
   }
 }
