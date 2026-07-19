@@ -347,6 +347,7 @@ async function getUsageStats(keyId, days = 30) {
       period: `last ${days} days`,
     };
   } catch (e) {
+    log('warn', 'Failed to fetch usage stats', { error: e.message, keyId, days });
     return { total: 0, blocks: 0, warns: 0, allows: 0 };
   }
 }
@@ -636,7 +637,7 @@ async function apiKeyAuth(req, res, next) {
   if (req.path === '/billing/pricing') return next();
   if (req.path === '/billing/checkout' && req.method === 'POST') return next();
   // Dashboard monitoring — read-only, no auth required
-  if (req.path === '/stats' || req.path === '/events' || req.path === '/health') return next();
+  if (req.path === '/stats' || req.path === '/events' || req.path === '/health' || req.path === '/openapi-spec.yaml') return next();
 
   const apiKey = req.headers['x-api-key'] || req.query.apiKey;
   if (!apiKey) {
@@ -1019,6 +1020,7 @@ app.get('/health', async (req, res) => {
       eventCount = memStore.length;
     }
   } catch (e) {
+    log('warn', 'Redis health check failed', { error: e.message });
     storeStatus = 'redis_error';
     eventCount = memStore.length;
   }
@@ -1028,7 +1030,9 @@ app.get('/health', async (req, res) => {
       const { error } = await supabase.from('audit_logs').select('id').limit(1);
       postgresHealthy = !error;
     }
-  } catch (e) {}
+  } catch (e) {
+    log('warn', 'Supabase health check failed', { error: e.message });
+  }
 
   const overallStatus = (storeStatus !== 'redis_error' && postgresHealthy) ? 'online'
     : (storeStatus !== 'redis_error' || postgresHealthy) ? 'degraded' : 'critical';
@@ -1063,6 +1067,10 @@ app.get('/health', async (req, res) => {
     },
   });
 });
+
+app.get('/openapi-spec.yaml', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'docs', 'openapi-spec.yaml'));
+  });
 
 // GET / (root)
 app.get('/', (req, res) => {
