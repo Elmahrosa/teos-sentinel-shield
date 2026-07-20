@@ -114,7 +114,7 @@ global.emitScanEvent = function(result) {
   }
 };
 
-wss.on('connection', (ws, req) => {
+wss.on('connection', async (ws, req) => {
   if (peers.size >= MAX_WS_PEERS) {
     ws.close(1013, 'Max connections reached');
     return;
@@ -133,8 +133,10 @@ wss.on('connection', (ws, req) => {
   });
   ws.on('close', () => { peers.delete(ws); totalDisc++; });
 
-  // Send snapshot from Redis
-  loadEventsFn().then(events => {
+  // Send snapshot — loadEventsFn may be sync or async
+  try {
+    const result = loadEventsFn();
+    const events = (result && typeof result.then === 'function') ? await result : result;
     lastEventCount = events.length;
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
@@ -144,7 +146,7 @@ wss.on('connection', (ws, req) => {
         serverTime: new Date().toISOString(),
       }));
     }
-  }).catch(() => {});
+  } catch (_) {}
 });
 
 // ── POLLING (syncs with Redis via shared loadEvents) ────────
