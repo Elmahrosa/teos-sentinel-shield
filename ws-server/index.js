@@ -188,6 +188,7 @@ setInterval(heartbeatCheck, WS_HEARTBEAT);
 // ── START ───────────────────────────────────────────────────
 process.on('uncaughtException', (err) => {
   console.error(JSON.stringify({ ts: new Date().toISOString(), level: 'fatal', msg: 'uncaughtException', err: err.message, stack: err.stack }));
+  process.exit(1);
 });
 process.on('unhandledRejection', (reason) => {
   console.error(JSON.stringify({ ts: new Date().toISOString(), level: 'error', msg: 'unhandledRejection', reason: String(reason) }));
