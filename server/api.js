@@ -347,7 +347,6 @@ async function getUsageStats(keyId, days = 30) {
       period: `last ${days} days`,
     };
   } catch (e) {
-    log('warn', 'Failed to fetch usage stats', { error: e.message, keyId, days });
     return { total: 0, blocks: 0, warns: 0, allows: 0 };
   }
 }
@@ -637,7 +636,7 @@ async function apiKeyAuth(req, res, next) {
   if (req.path === '/billing/pricing') return next();
   if (req.path === '/billing/checkout' && req.method === 'POST') return next();
   // Dashboard monitoring — read-only, no auth required
-  if (req.path === '/stats' || req.path === '/events' || req.path === '/health' || req.path === '/openapi-spec.yaml') return next();
+  if (req.path === '/stats' || req.path === '/events' || req.path === '/health') return next();
 
   const apiKey = req.headers['x-api-key'] || req.query.apiKey;
   if (!apiKey) {
@@ -1020,7 +1019,6 @@ app.get('/health', async (req, res) => {
       eventCount = memStore.length;
     }
   } catch (e) {
-    log('warn', 'Redis health check failed', { error: e.message });
     storeStatus = 'redis_error';
     eventCount = memStore.length;
   }
@@ -1030,9 +1028,7 @@ app.get('/health', async (req, res) => {
       const { error } = await supabase.from('audit_logs').select('id').limit(1);
       postgresHealthy = !error;
     }
-  } catch (e) {
-    log('warn', 'Supabase health check failed', { error: e.message });
-  }
+  } catch (e) {}
 
   const overallStatus = (storeStatus !== 'redis_error' && postgresHealthy) ? 'online'
     : (storeStatus !== 'redis_error' || postgresHealthy) ? 'degraded' : 'critical';
@@ -1047,7 +1043,7 @@ app.get('/health', async (req, res) => {
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version: '4.0.0-rc1',
+    version:        '2.4.0',
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -1067,10 +1063,6 @@ app.get('/health', async (req, res) => {
     },
   });
 });
-
-app.get('/openapi-spec.yaml', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'docs', 'openapi-spec.yaml'));
-  });
 
 // GET / (root)
 app.get('/', (req, res) => {
@@ -1231,8 +1223,8 @@ app.get('/audit', async (req, res) => {
   const events = await loadEvents();
   res.json({
     generated:   new Date().toISOString(),
-    engine:      'TEOS Sentinel 4.0.0-rc1',
-      version: '4.0.0-rc1',
+    engine:      'TEOS Sentinel v2.3',
+      version: '2.4.0',
     rulesActive: RULES.length,
     totalEvents: events.length,
     events:      events.slice(-200).reverse(),
@@ -1375,7 +1367,7 @@ app.get('/metrics', async (req, res) => {
 
   const metrics = {
     teos_engine_info: {
-      version: '4.0.0-rc1',
+      version: '2.4.0',
       rules: RULES.length,
       store: redis ? 'redis' : 'memory',
       auditStore: supabase ? 'supabase' : 'redis-fallback',

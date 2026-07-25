@@ -114,7 +114,7 @@ global.emitScanEvent = function(result) {
   }
 };
 
-wss.on('connection', async (ws, req) => {
+wss.on('connection', (ws, req) => {
   if (peers.size >= MAX_WS_PEERS) {
     ws.close(1013, 'Max connections reached');
     return;
@@ -133,10 +133,8 @@ wss.on('connection', async (ws, req) => {
   });
   ws.on('close', () => { peers.delete(ws); totalDisc++; });
 
-  // Send snapshot — loadEventsFn may be sync or async
-  try {
-    const result = loadEventsFn();
-    const events = (result && typeof result.then === 'function') ? await result : result;
+  // Send snapshot from Redis
+  loadEventsFn().then(events => {
     lastEventCount = events.length;
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
@@ -146,7 +144,7 @@ wss.on('connection', async (ws, req) => {
         serverTime: new Date().toISOString(),
       }));
     }
-  } catch (_) {}
+  }).catch(() => {});
 });
 
 // ── POLLING (syncs with Redis via shared loadEvents) ────────
@@ -188,7 +186,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(JSON.stringify({
     ts:      new Date().toISOString(),
     level:   'info',
-    msg:     'TEOS Sentinel 4.0.0-rc1 started',
+    msg:     'TEOS Sentinel v2.0 started',
     port:    PORT,
     env:     NODE_ENV,
     mode:    'unified (Express + WS + Static)',
