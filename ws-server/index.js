@@ -125,6 +125,10 @@ wss.on('connection', (ws, req) => {
   ws.isAlive = true;
 
   ws.on('pong', () => { ws.isAlive = true; });
+  ws.on('error', (err) => {
+    console.error(JSON.stringify({ ts: new Date().toISOString(), level: 'error', msg: 'ws error', peerId, err: err.message }));
+    peers.delete(ws);
+  });
   ws.on('message', (data) => {
     try {
       const msg = JSON.parse(data.toString());
@@ -174,7 +178,7 @@ function heartbeatCheck() {
   for (const [ws, meta] of peers) {
     if (!ws.isAlive) { ws.terminate(); peers.delete(ws); totalDisc++; continue; }
     ws.isAlive = false;
-    ws.ping();
+    try { ws.ping(); } catch (_) { ws.terminate(); peers.delete(ws); totalDisc++; }
   }
 }
 
@@ -182,6 +186,13 @@ setInterval(pollEvents,     WS_POLL_MS);
 setInterval(heartbeatCheck, WS_HEARTBEAT);
 
 // ── START ───────────────────────────────────────────────────
+process.on('uncaughtException', (err) => {
+  console.error(JSON.stringify({ ts: new Date().toISOString(), level: 'fatal', msg: 'uncaughtException', err: err.message, stack: err.stack }));
+});
+process.on('unhandledRejection', (reason) => {
+  console.error(JSON.stringify({ ts: new Date().toISOString(), level: 'error', msg: 'unhandledRejection', reason: String(reason) }));
+});
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log(JSON.stringify({
     ts:      new Date().toISOString(),
