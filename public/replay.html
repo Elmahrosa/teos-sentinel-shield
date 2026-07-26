@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="/config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEOS Sentinel — Forensic Replay</title>
@@ -186,7 +187,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <div id="toast"></div>
 
 <script>
-const ENGINE_URL = 'https://agent-code-risk-mcp-production.up.railway.app';
+const ENGINE_URL = (window.TEOS_CONFIG && window.TEOS_CONFIG.apiBase) || 'https://teos-sentinel-shield-production-ef7a.up.railway.app';
 let allEvents     = [];
 let filteredEvents= [];
 let currentIndex  = 0;

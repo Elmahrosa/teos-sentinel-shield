@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="/config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEOS Sentinel — API Reference</title>
@@ -60,7 +61,7 @@ tr:hover td{background:var(--panel)}
 
 <div class="hero">
   <h1><em>REST API</em> Reference</h1>
-  <p>Complete API documentation for the TEOS Sentinel Shield Risk Engine and supporting services. Base URL: <code style="color:var(--cyan)">https://agent-code-risk-mcp-production-b97d.up.railway.app</code></p>
+  <p>Complete API documentation for the TEOS Sentinel Shield Risk Engine and supporting services. Base URL: <code style="color:var(--cyan)">https://teos-sentinel-shield-production-ef7a.up.railway.app</code></p>
 </div>
 
 <div class="section">
@@ -142,7 +143,7 @@ tr:hover td{background:var(--panel)}
     <div class="endpoint-body">
       <pre>{
   "status": "ok",
-  "service": "agent-code-risk-mcp",
+  "service": "teos-sentinel-shield",
   "engine": "4.0",
   "version": "4.0.0-rc1",
   "rules": 64,
@@ -157,7 +158,7 @@ tr:hover td{background:var(--panel)}
     <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/version</span><span class="endpoint-desc">Version information</span></div>
     <div class="endpoint-body">
       <pre>{
-  "service": "agent-code-risk-mcp",
+  "service": "teos-sentinel-shield",
   "version": "4.0.0-rc1",
   "environment": "production"
 }</pre>

@@ -1,4 +1,4 @@
-# TEOS Sentinel Shield — Architecture
+# TEOS Sentinel Shield — Architecture (v4.0.0 GA)
 
 ## System Overview
 
@@ -6,7 +6,7 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    TEOS Sovereign Stack                      │
 │                                                             │
-│  AI Agent / LLM Output                                      │
+│  AI Agent / LLM Output / CI / CLI                           │
 │         │                                                   │
 │         ▼                                                   │
 │  ┌─────────────────┐                                        │
@@ -16,13 +16,7 @@
 │  └────────┬─────────┘                                        │
 │           │                                                  │
 │           ▼                                                  │
-│  ┌─────────────────┐     ┌──────────────────┐               │
-│  │  Policy Engine   │     │  Activation Svc  │               │
-│  │  Rules + Config  │     │  License + Pay   │               │
-│  └─────────────────┘     └──────────────────┘               │
-│           │                                                  │
-│           ▼                                                  │
-│  Runtime Execution (safe code only)                          │
+│  Audit (Supabase) + Cache (Upstash Redis) + Billing (Dodo)  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -30,61 +24,80 @@
 
 ```
 teos-sentinel-shield/
-├── dashboard/              Next.js 15 control plane
-│   ├── app/                App Router pages + API routes
-│   ├── components/         UI components
-│   └── lib/                Shared utilities
-├── integrations/           CI/CD and external hooks
-│   └── github-actions/     GitHub Actions enforcement gate
-├── .github/workflows/      CI pipeline
-├── .env.example            Environment variable template
-├── docker-compose.yml      Local development stack
-├── package.json
-└── README.md
+├── server/api.js           Express engine (scan, enforce, audit, billing)
+├── ws-server/index.js      Unified process: Express + WebSocket + static
+├── cli/teos.js             Local enforcement CLI (teos run)
+├── public/                 Static marketing / dashboards
+├── teos-landing/           Next.js marketing site (optional deploy)
+├── docs/                   OpenAPI + integration notes
+├── migrations/             Supabase SQL (audit_logs, billing)
+├── test/engine-test.js     Deterministic engine tests
+├── vercel.json             Vercel routes → server/api.js + public/
+├── railway.toml            Railway start: node ws-server/index.js
+└── package.json            version 4.0.0
 ```
 
 ## Data Flow
 
-1. **Input** — AI agent submits code/command to the Sentinel API
-2. **Parse** — Payload is normalized and fingerprinted
-3. **Policy check** — Verdict engine applies rule set (configurable per tier)
-4. **Verdict issued** — ALLOW / WARN / BLOCK returned with audit record
-5. **Activation** — Tier entitlements checked against license DB (Neon PostgreSQL)
-6. **Logging** — All verdicts written to audit log with timestamp, payload hash, verdict, policy version
+1. **Input** — Agent/CLI/CI submits command to `POST /scan` or `POST /enforce`
+2. **Auth** — `X-API-Key` resolves tier (env map → Redis → Supabase hash)
+3. **Rate limit** — Tiered RPM/RPD; `-1` means unlimited
+4. **Policy** — 31 deterministic regex rules → highest score wins
+5. **Verdict** — ALLOW / WARN / BLOCK (+ score, ruleId, reasons)
+6. **Persist** — Redis event ring + Supabase `audit_logs`
+7. **Stream** — SSE `/events/stream` (auth) + WebSocket telemetry
+
+## Public vs Protected Routes
+
+| Route | Auth |
+|-------|------|
+| `GET /health` | Public |
+| `GET /stats` | Public (counts only, no commands) |
+| `GET /billing/pricing` | Public |
+| `POST /webhook/dodo` | HMAC signature (not API key) |
+| `POST /billing/checkout` | Public (IP rate-limited as free) |
+| `POST /scan`, `/enforce` | API key |
+| `GET /events`, `/audit`, `/metrics`, `/ledger/verify` | API key |
+| `GET /events/stream` | API key |
 
 ## Environment Variables
 
+See `.env.example`. Required for production:
+
 ```env
-# Solana
-NEXT_PUBLIC_SOLANA_NETWORK=mainnet-beta        # or devnet for testing
-SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
-
-# Telegram bot
-TELEGRAM_BOT_TOKEN=
-
-# Database (Neon PostgreSQL)
-DATABASE_URL=postgresql://...
-
-# App
-NEXTAUTH_SECRET=                               # 32+ char random string
-NEXTAUTH_URL=https://teos-sentinel-shield.vercel.app
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+TEOS_API_KEYS=sk-prod-starter-...,sk-prod-enterprise-...
+DODO_PAYMENTS_API_KEY=
+DODO_PAYMENTS_WEBHOOK_KEY=
+DODO_RETURN_URL=https://sentinel.teosegypt.com
+CORS_ORIGIN=https://sentinel.teosegypt.com
+NODE_ENV=production
 ```
 
-## Deployment
+## Deployment Targets
 
-**Production:** Fly.io (bot) + Vercel (dashboard) + Neon (database)
-
-**Local:**
-```bash
-docker-compose up      # starts Postgres + app
-npm run dev            # Next.js dev server
-```
+| Target | Role | Entry |
+|--------|------|--------|
+| **Hostinger** | Public site `sentinel.teosegypt.com` | Static `public/` or `teos-landing` build |
+| **Railway** | API + WS unified | `npm start` → `ws-server/index.js` |
+| **Vercel** | HTTP API + static | `vercel.json` → `server/api.js` |
+| **Local** | Dev | `npm run dev` or `npm start` |
 
 ## Scan Tier Limits
 
-| Tier | Scans/day | Policy Engine | CI Integration |
-|------|-----------|--------------|----------------|
-| Starter | 3 | Basic | No |
-| Pioneer | 50 | Standard | No |
-| Builder | 500 | Advanced | Yes |
-| Sovereign | Unlimited | Custom | Yes |
+| Tier | RPM | RPD | Scans |
+|------|-----|-----|-------|
+| Free | 5 | 100 | 50 |
+| Starter | 30 | 5000 | 5000 |
+| Team | 150 | 50000 | 50000 |
+| Enterprise | 600 | unlimited | unlimited |
+| Sovereign | unlimited | unlimited | unlimited |
+
+## Rule Engine
+
+- Deterministic regex rules (R01–R31)
+- Score ≥ 80 → BLOCK; else WARN; no hit → ALLOW
+- Covers shell, SQL, CI, containers, secrets, PowerShell, Windows, K8s, cloud transfer

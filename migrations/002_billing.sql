@@ -72,4 +72,8 @@ CREATE POLICY api_keys_update_policy ON api_keys
 
 CREATE POLICY usage_write_policy ON usage_logs
   FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (current_setting('app.role', true) = 'service_role');
+
+CREATE POLICY usage_read_policy ON usage_logs
+  FOR SELECT
+  USING (current_setting('app.role', true) = 'service_role');

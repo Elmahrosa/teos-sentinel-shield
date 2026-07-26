@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="/config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEOS Sentinel — SOC Dashboard</title>
@@ -252,8 +253,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <div id="toast"></div>
 
 <script>
-const API_BASE = 'https://teos-sentinel-shield-production-ef7a.up.railway.app';
-const WS_URL   = 'wss://teos-sentinel-shield-production-ef7a.up.railway.app';
+const API_BASE = (window.TEOS_CONFIG && window.TEOS_CONFIG.apiBase) || 'https://teos-sentinel-shield-production-ef7a.up.railway.app';
+const WS_URL   = (window.TEOS_CONFIG && window.TEOS_CONFIG.wsUrl) || API_BASE.replace(/^http/, 'ws');
 
 let allEvents   = [];
 let feedFilter  = 'all';

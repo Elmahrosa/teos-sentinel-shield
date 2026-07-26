@@ -1,14 +1,14 @@
 /*
-  TEOS Sentinel v2.4 — Monetized SaaS + Dodo Billing + Tiered Auth + Supabase Audit
-  Deployment: Vercel serverless (primary) + Railway (via ws-server)
+  TEOS Sentinel Shield v4.0.0 GA — Monetized SaaS + Dodo Billing + Tiered Auth + Supabase Audit
+  Deployment: Vercel serverless (primary) + Railway (via ws-server) + Hostinger static (site)
   Data store: Upstash Redis (serverless) + Supabase Postgres (audit persistence)
 
   Hardening layers:
     1. Structured JSON logging with request IDs
-    2. Redis-backed tiered rate limiting (survives cold starts)
-    3. X-API-Key authentication with tier enforcement
+    2. Redis-backed tiered rate limiting (survives cold starts; -1 = unlimited)
+    3. X-API-Key authentication with tier enforcement + suspended key rejection
     4. Supabase Postgres audit log persistence (zero data loss across deploys)
-    5. Server-Sent Events (SSE) for real-time dashboard streaming
+    5. Server-Sent Events (SSE) for real-time dashboard streaming (auth required)
     6. Input validation + sanitization
     7. Payload size limits
     8. Security headers
@@ -39,13 +39,19 @@ let webhookTotal     = 0;
 let webhookProcessed = 0;
 let webhookFailed    = 0;
 
+// rpm/rpd of -1 or 0 means unlimited (never trip that bucket)
 const TIERS = {
   free:       { rpm: 5,    rpd: 100,   label: 'Free',       scans: 50,     price: 0 },
   starter:    { rpm: 30,   rpd: 5000,  label: 'Starter',    scans: 5000,   price: 29 },
   team:       { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 149 },
+  pro:        { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 149 }, // alias of team
   enterprise: { rpm: 600,  rpd: -1,    label: 'Enterprise', scans: -1,     price: 499 },
   sovereign:  { rpm: -1,   rpd: -1,    label: 'Sovereign',  scans: -1,     price: 25000 },
 };
+
+function isUnlimited(limit) {
+  return limit === -1 || limit === 0 || limit == null;
+}
 
 // ── REDIS (Upstash) — shared store across bot + API + WS ────
 let redis = null;
@@ -491,48 +497,18 @@ function log(level, msg, meta = {}) {
   else console.log(JSON.stringify(entry));
 }
 
-// ── SSE EVENT STREAM (real-time dashboard) ─────────────────
+// ── SSE EVENT STREAM (real-time dashboard; auth required via route below) ─
 const sseClients = new Set();
 
 function broadcastEvent(event) {
   const data = `data: ${JSON.stringify(event)}\n\n`;
   for (const res of sseClients) {
-    try { res.write(data); } catch {}
+    try { res.write(data); } catch (_) { /* client gone */ }
   }
 }
 
 // Expose for ws-server compatibility
 global.emitScanEvent = (result) => broadcastEvent(result);
-
-function sseMiddleware(req, res, next) {
-  if (req.path === '/events/stream' && req.method === 'GET') {
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no',
-    });
-
-    res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Subscribed to TEOS event stream', tier: req.apiTier })}\n\n`);
-
-    sseClients.add(res);
-
-    req.on('close', () => {
-      sseClients.delete(res);
-      res.end();
-    });
-
-    req.on('abort', () => {
-      sseClients.delete(res);
-      res.end();
-    });
-
-    return;
-  }
-  next();
-}
-
-app.use(sseMiddleware);
 
 // ── SECURITY MIDDLEWARE ─────────────────────────────────────
 app.use(express.json({ limit: MAX_PAYLOAD_KB + 'kb' }));
@@ -578,24 +554,28 @@ app.use((req, res, next) => {
 
 // ── API KEY AUTH ─────────────────────────────────────────────
 const VALID_KEYS = process.env.TEOS_API_KEYS
-  ? process.env.TEOS_API_KEYS.split(',').map(k => k.trim())
-  : (NODE_ENV === 'development' ? ['dev-key-free-001'] : []);
+  ? process.env.TEOS_API_KEYS.split(',').map(k => k.trim()).filter(Boolean)
+  : (NODE_ENV === 'development' || NODE_ENV === 'test' ? ['dev-key-free-001'] : []);
 
 const KEY_TIER_MAP = {};
 VALID_KEYS.forEach(k => {
-  if (k.includes('-enterprise')) KEY_TIER_MAP[k] = 'enterprise';
-  else if (k.includes('-pro')) KEY_TIER_MAP[k] = 'pro';
+  if (k.includes('-sovereign')) KEY_TIER_MAP[k] = 'sovereign';
+  else if (k.includes('-enterprise')) KEY_TIER_MAP[k] = 'enterprise';
+  else if (k.includes('-team') || k.includes('-pro')) KEY_TIER_MAP[k] = 'team';
   else if (k.includes('-starter')) KEY_TIER_MAP[k] = 'starter';
   else KEY_TIER_MAP[k] = 'free';
 });
 
 async function resolveKeyTier(apiKey) {
-  if (KEY_TIER_MAP[apiKey]) return KEY_TIER_MAP[apiKey];
+  if (KEY_TIER_MAP[apiKey]) return { tier: KEY_TIER_MAP[apiKey], status: 'active' };
   if (redis) {
     try {
       const tier = await redis.get(`${API_KEY_PREFIX}${apiKey}`);
-      if (tier && TIERS[tier]) return tier;
-    } catch {}
+      if (tier === 'suspended' || tier === 'cancelled') return { tier, status: tier };
+      if (tier && TIERS[tier]) return { tier, status: 'active' };
+    } catch (e) {
+      log('warn', 'Redis key lookup failed', { error: e.message });
+    }
   }
   if (supabase) {
     try {
@@ -605,13 +585,12 @@ async function resolveKeyTier(apiKey) {
         .select('tier, status')
         .eq('key_hash', keyHash)
         .single();
-      if (data && data.status === 'active' && TIERS[data.tier]) {
-        return data.tier;
+      if (data) {
+        return { tier: data.tier, status: data.status || 'active' };
       }
-      if (data && data.status === 'suspended') {
-        return 'suspended';
-      }
-    } catch {}
+    } catch (e) {
+      log('warn', 'Supabase key lookup failed', { error: e.message });
+    }
   }
   return null;
 }
@@ -626,36 +605,58 @@ async function resolveKeyId(apiKey) {
         .eq('key_hash', keyHash)
         .single();
       return data?.id || null;
-    } catch {}
+    } catch (e) {
+      log('warn', 'Supabase key id lookup failed', { error: e.message });
+    }
   }
   return null;
 }
 
+// Public routes: health probes, marketing stats (counts only), pricing, webhooks, root
+const PUBLIC_PATHS = new Set([
+  '/health',
+  '/stats',
+  '/billing/pricing',
+  '/',
+  '/webhook/dodo',
+]);
+
 async function apiKeyAuth(req, res, next) {
-  // Public routes — no auth required
-  if (req.path === '/billing/pricing') return next();
+  if (PUBLIC_PATHS.has(req.path)) return next();
   if (req.path === '/billing/checkout' && req.method === 'POST') return next();
-  // Dashboard monitoring — read-only, no auth required
-  if (req.path === '/stats' || req.path === '/events' || req.path === '/health') return next();
 
   const apiKey = req.headers['x-api-key'] || req.query.apiKey;
   if (!apiKey) {
     return res.status(401).json({
       error: 'missing_api_key',
-      message: 'Provide X-API-Key header or ?apiKey= query parameter (for SSE).',
+      message: 'Provide X-API-Key header (preferred) or ?apiKey= query parameter (SSE only).',
     });
   }
 
-  const tier = await resolveKeyTier(apiKey);
-  if (!tier) {
+  const resolved = await resolveKeyTier(apiKey);
+  if (!resolved) {
     return res.status(403).json({
       error: 'invalid_api_key',
       message: 'API key not recognized',
     });
   }
 
+  if (resolved.status === 'suspended' || resolved.status === 'cancelled') {
+    return res.status(403).json({
+      error: 'key_' + resolved.status,
+      message: `API key is ${resolved.status}. Update billing or contact support.`,
+    });
+  }
+
+  if (!TIERS[resolved.tier]) {
+    return res.status(403).json({
+      error: 'invalid_tier',
+      message: 'API key tier is not recognized',
+    });
+  }
+
   req.apiKey = apiKey;
-  req.apiTier = tier;
+  req.apiTier = resolved.tier;
   next();
 }
 
@@ -667,11 +668,13 @@ async function redisRateLimiter(req, res, next) {
 
   const tier = req.apiTier || 'free';
   const limits = TIERS[tier] || TIERS.free;
-  const identifier = req.apiKey ? `key:${req.apiKey}` : (req.ip || req.socket.remoteAddress || 'unknown');
+  const identifier = req.apiKey ? `key:${crypto.createHash('sha256').update(req.apiKey).digest('hex').slice(0, 16)}` : (req.ip || req.socket.remoteAddress || 'unknown');
 
   const now = Math.floor(Date.now() / 1000);
   const minuteKey = `${RL_PREFIX}${identifier}:m:${Math.floor(now / 60)}`;
   const dayKey    = `${RL_PREFIX}${identifier}:d:${Math.floor(now / 86400)}`;
+  const rpmUnlimited = isUnlimited(limits.rpm);
+  const rpdUnlimited = isUnlimited(limits.rpd);
 
   if (redis) {
     try {
@@ -682,16 +685,16 @@ async function redisRateLimiter(req, res, next) {
       await redis.expire(minuteKey, 120);
       await redis.expire(dayKey, 172800);
 
-      const remainingMinute = Math.max(0, limits.rpm - minuteCount);
-      const remainingDay    = Math.max(0, limits.rpd - dayCount);
+      const remainingMinute = rpmUnlimited ? -1 : Math.max(0, limits.rpm - minuteCount);
+      const remainingDay    = rpdUnlimited ? -1 : Math.max(0, limits.rpd - dayCount);
 
-      res.setHeader('X-RateLimit-Limit-Minute', String(limits.rpm));
-      res.setHeader('X-RateLimit-Limit-Day',     String(limits.rpd));
+      res.setHeader('X-RateLimit-Limit-Minute', rpmUnlimited ? 'unlimited' : String(limits.rpm));
+      res.setHeader('X-RateLimit-Limit-Day',     rpdUnlimited ? 'unlimited' : String(limits.rpd));
       res.setHeader('X-RateLimit-Remaining-Minute', String(remainingMinute));
       res.setHeader('X-RateLimit-Remaining-Day',    String(remainingDay));
       res.setHeader('X-RateLimit-Tier',             tier);
 
-      if (minuteCount > limits.rpm) {
+      if (!rpmUnlimited && minuteCount > limits.rpm) {
         res.setHeader('Retry-After', '60');
         return res.status(429).json({
           error:   'rate_limit_minute_exceeded',
@@ -700,7 +703,7 @@ async function redisRateLimiter(req, res, next) {
           tier,
         });
       }
-      if (dayCount > limits.rpd) {
+      if (!rpdUnlimited && dayCount > limits.rpd) {
         res.setHeader('Retry-After', String(86400 - (now % 86400)));
         return res.status(429).json({
           error:   'rate_limit_day_exceeded',
@@ -722,7 +725,7 @@ async function redisRateLimiter(req, res, next) {
     rateStore.set(key, entry);
   }
   entry.count++;
-  if (entry.count > limits.rpm) {
+  if (!rpmUnlimited && entry.count > limits.rpm) {
     res.setHeader('X-RateLimit-Remaining', '0');
     res.setHeader('X-RateLimit-Reset', String(entry.windowStart + RATE_LIMIT_WIN));
     return res.status(429).json({
@@ -732,8 +735,8 @@ async function redisRateLimiter(req, res, next) {
       tier,
     });
   }
-  res.setHeader('X-RateLimit-Remaining', String(limits.rpm - entry.count));
-  res.setHeader('X-RateLimit-Limit', String(limits.rpm));
+  res.setHeader('X-RateLimit-Remaining', rpmUnlimited ? '-1' : String(limits.rpm - entry.count));
+  res.setHeader('X-RateLimit-Limit', rpmUnlimited ? 'unlimited' : String(limits.rpm));
   res.setHeader('X-RateLimit-Tier', tier);
   next();
 }
@@ -889,6 +892,31 @@ const RULES = [
   { id:'R25', name:'CI_SECRETS_DUMP',      sev:'critical', score:90,
     test: c => /printenv|env\s*\|\s*grep|\$\{\{\s*secrets\s*\}\}/i.test(c),
     reasons: ['CI secrets or environment dump detected'] },
+
+  // ── v4.0.0 expansion: Windows / PowerShell / cloud / K8s ──
+  { id:'R26', name:'POWERSHELL_ENCODED',   sev:'critical', score:95,
+    test: c => /powershell[^\n]*(-e|-enc|-encodedcommand)\b|pwsh[^\n]*(-e|-enc)\b/i.test(c),
+    reasons: ['Encoded PowerShell payload — common malware delivery pattern'] },
+
+  { id:'R27', name:'POWERSHELL_IEX',       sev:'critical', score:96,
+    test: c => /\bIEX\b|\bInvoke-Expression\b|\bInvoke-WebRequest\b.*\|.*IEX|DownloadString\s*\(/i.test(c),
+    reasons: ['PowerShell download-and-execute (IEX/DownloadString) pattern detected'] },
+
+  { id:'R28', name:'WINDOWS_DESTRUCTIVE',  sev:'critical', score:98,
+    test: c => /\bdel\s+(?:\/[sqf]+\s*)+[a-z]:\\|rmdir\s+\/s\s+\/q|format\s+[a-z]:\s*\/|Remove-Item[\s\S]*-Recurse[\s\S]*-Force/i.test(c),
+    reasons: ['Windows destructive filesystem command detected'] },
+
+  { id:'R29', name:'SENSITIVE_FILE_READ',  sev:'high',     score:82,
+    test: c => /\b(cat|type|Get-Content|less|more)\s+[^\n]*(\/etc\/(passwd|shadow|sudoers)|\\\\windows\\\\system32|id_rsa|\.aws\/credentials|\.env\b)/i.test(c),
+    reasons: ['Reading sensitive system or credential files'] },
+
+  { id:'R30', name:'K8S_DESTRUCTIVE',      sev:'critical', score:94,
+    test: c => /kubectl\s+(delete|drain)\s+(ns|namespace|node)|kubectl\s+delete\s+.*( --force| --grace-period=0)/i.test(c),
+    reasons: ['Kubernetes destructive cluster operation detected'] },
+
+  { id:'R31', name:'CLOUD_DATA_EXFIL',     sev:'high',     score:88,
+    test: c => /aws\s+s3\s+(sync|cp)\s+s3:\/\/|az\s+storage\s+blob\s+download|gsutil\s+-m\s+cp\s+-r/i.test(c),
+    reasons: ['Cloud storage bulk transfer may indicate data exfiltration'] },
 ];
 
 function runEngine(command) {
@@ -931,7 +959,7 @@ function runEngine(command) {
     rule:      'R00.CLEAN',
     ruleId:    'R00',
     severity:  'none',
-    reasons:   ['No threat patterns detected across 25 rules','Safe to execute'],
+    reasons:   [`No threat patterns detected across ${RULES.length} rules`,'Safe to execute'],
     command:   cmd,
     timestamp: new Date().toISOString(),
   };
@@ -1028,14 +1056,18 @@ app.get('/health', async (req, res) => {
       const { error } = await supabase.from('audit_logs').select('id').limit(1);
       postgresHealthy = !error;
     }
-  } catch (e) {}
+  } catch (e) {
+    log('warn', 'Supabase health probe failed', { error: e.message });
+  }
 
-  const overallStatus = (storeStatus !== 'redis_error' && postgresHealthy) ? 'online'
-    : (storeStatus !== 'redis_error' || postgresHealthy) ? 'degraded' : 'critical';
+  // online if store OK; postgres optional (degraded when configured but unhealthy)
+  const overallStatus = storeStatus === 'redis_error'
+    ? 'critical'
+    : (supabase && !postgresHealthy) ? 'degraded' : 'online';
 
   res.json({
     status:         overallStatus,
-    engine:         'v2.4',
+    engine:         'v4.0.0',
     rules:          RULES.length,
     uptime:         Math.round(uptime),
     uptimeHuman:    uptime > 86400 ? `${Math.floor(uptime/86400)}d` :
@@ -1043,11 +1075,11 @@ app.get('/health', async (req, res) => {
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '2.4.0',
+    version:        '4.0.0',
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
-    lastDeployment: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
+    lastDeployment: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RAILWAY_GIT_COMMIT_SHA || 'unknown',
     auth:           'x-api-key',
     rateLimiting:   'redis-backed-tiered',
     auditStore:     supabase ? (postgresHealthy ? 'supabase' : 'supabase_unhealthy') : 'redis-fallback',
@@ -1058,7 +1090,7 @@ app.get('/health', async (req, res) => {
       failed:    webhookFailed,
     },
     dependencies: {
-      redis:  storeStatus !== 'redis_error' ? 'healthy' : 'unhealthy',
+      redis:  storeStatus !== 'redis_error' ? (redis ? 'healthy' : 'memory') : 'unhealthy',
       postgres: postgresHealthy ? 'healthy' : (supabase ? 'unhealthy' : 'not_configured'),
     },
   });
@@ -1068,12 +1100,13 @@ app.get('/health', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: 'v2.3',
+    version: '4.0.0',
     engine:  'deterministic',
     rules:   RULES.length,
-    endpoints: ['/scan','/stats','/events','/events/stream','/audit','/health','/enforce','/ledger/verify','/metrics','/audit/summary','/rules.json'],
-    auth:    'X-API-Key header required',
-    docs:    'https://github.com/teos-sovereign/teos-sentinel-shield',
+    endpoints: ['/scan','/stats','/events','/events/stream','/audit','/health','/enforce','/ledger/verify','/metrics','/audit/summary','/billing/pricing','/billing/checkout','/webhook/dodo'],
+    auth:    'X-API-Key required except /health /stats /billing/pricing /webhook/dodo',
+    docs:    'https://github.com/Elmahrosa/teos-sentinel-shield',
+    site:    'https://sentinel.teosegypt.com',
   });
 });
 
@@ -1185,6 +1218,27 @@ app.get('/events', async (req, res) => {
   res.json({ total, page, limit, events: sliced, sseEndpoint: '/events/stream' });
 });
 
+// GET /events/stream — SSE (requires API key; registered after auth middleware)
+app.get('/events/stream', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no',
+  });
+
+  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Subscribed to TEOS event stream', tier: req.apiTier, version: '4.0.0' })}\n\n`);
+
+  sseClients.add(res);
+
+  const cleanup = () => {
+    sseClients.delete(res);
+    try { res.end(); } catch (_) { /* already closed */ }
+  };
+  req.on('close', cleanup);
+  req.on('aborted', cleanup);
+});
+
 // GET /audit
 app.get('/audit', async (req, res) => {
   const { verdict, ruleId, limit = 200, offset = 0, startDate, endDate, export: exportFormat } = req.query;
@@ -1215,7 +1269,8 @@ app.get('/audit', async (req, res) => {
     return res.json({
       ...result,
       generated: new Date().toISOString(),
-    engine: 'TEOS Sentinel v2.4',
+      engine: 'TEOS Sentinel v4.0.0',
+      version: '4.0.0',
     });
   }
 
@@ -1223,8 +1278,8 @@ app.get('/audit', async (req, res) => {
   const events = await loadEvents();
   res.json({
     generated:   new Date().toISOString(),
-    engine:      'TEOS Sentinel v2.3',
-      version: '2.4.0',
+    engine:      'TEOS Sentinel v4.0.0',
+    version:     '4.0.0',
     rulesActive: RULES.length,
     totalEvents: events.length,
     events:      events.slice(-200).reverse(),
@@ -1240,7 +1295,8 @@ app.get('/audit/summary', async (req, res) => {
   res.json({
     ...summary,
     generated: new Date().toISOString(),
-    engine: 'TEOS Sentinel v2.3',
+    engine: 'TEOS Sentinel v4.0.0',
+    version: '4.0.0',
   });
 });
 
@@ -1276,15 +1332,16 @@ app.post('/enforce', async (req, res) => {
     agentId,
     action: action.trim(),
     timestamp: new Date().toISOString(),
-    engine: 'v2.4',
+    engine: 'v4.0.0',
     tier: req.apiTier,
     reqId: req.id,
   };
 
   const commandHash = crypto.createHash('sha256').update(action).digest('hex');
 
-  // Persist enforcement decision
-  await saveEvent({ id: Date.now(), type: 'enforce', agentId, apiKey: req.apiKey.slice(0, 8) + '...', ...result, commandHash });
+  // Persist enforcement decision (never store full API key)
+  const keyPrefix = req.apiKey ? `${req.apiKey.slice(0, 8)}...` : 'anonymous';
+  await saveEvent({ id: Date.now(), type: 'enforce', agentId, apiKey: keyPrefix, ...result, commandHash });
 
   // Persist to Supabase (async, never block response)
   writeAuditLog({
@@ -1341,7 +1398,8 @@ app.get('/ledger/verify', async (req, res) => {
 
   res.json({
     generated: new Date().toISOString(),
-    engine: 'v2.4',
+    engine: 'v4.0.0',
+    version: '4.0.0',
     totalEvents: events.length,
     entries: ledger,
     verification: {
@@ -1367,7 +1425,7 @@ app.get('/metrics', async (req, res) => {
 
   const metrics = {
     teos_engine_info: {
-      version: '2.4.0',
+      version: '4.0.0',
       rules: RULES.length,
       store: redis ? 'redis' : 'memory',
       auditStore: supabase ? 'supabase' : 'redis-fallback',
@@ -1445,16 +1503,20 @@ app.use((err, req, res, next) => {
 });
 
 // ── EXPORT (Vercel serverless + Railway) ──────────────────────
-module.exports         = app;
-module.exports.RULES   = RULES;
+module.exports           = app;
+module.exports.RULES     = RULES;
 module.exports.runEngine = runEngine;
-module.exports.loadEvents = loadEventsSync;
+module.exports.loadEvents = loadEvents;       // async — Redis-aware (use in ws-server)
+module.exports.loadEventsSync = loadEventsSync;
 module.exports.saveEvent = saveEvent;
-module.exports.redis = redis;
+module.exports.redis     = redis;
+module.exports.TIERS     = TIERS;
+module.exports.isUnlimited = isUnlimited;
+module.exports.VERSION   = '4.0.0';
 
-// ── START (local dev / Railway) ─────────────────────────────
+// ── START (local dev) ───────────────────────────────────────
 if (require.main === module) {
   app.listen(PORT, () => {
-    log('info', 'TEOS Sentinel Engine v2.4 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory', audit: supabase ? 'supabase' : 'redis-fallback' });
+    log('info', 'TEOS Sentinel Engine v4.0.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory', audit: supabase ? 'supabase' : 'redis-fallback', rules: RULES.length });
   });
 }

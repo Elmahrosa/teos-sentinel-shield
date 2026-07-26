@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="/config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEOS Sentinel — Monitor Dashboard</title>
@@ -123,7 +124,7 @@ tr:hover td{background:var(--panel)}
 <script>
 function updateClock(){const n=new Date;document.getElementById('clock').textContent=n.toISOString().replace('T',' ').slice(0,19)+' UTC'}
 setInterval(updateClock,1e3);updateClock();
-async function loadVerdicts(){try{const r=await fetch('https://agent-code-risk-mcp-production-b97d.up.railway.app/audit');const d=await r.json();const tbody=document.getElementById('verdictTable');const events=d.events||d;if(!events||!events.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted2)">No recent scan data available.</td></tr>';return}
+async function loadVerdicts(){try{const r=await fetch(((window.TEOS_CONFIG&&window.TEOS_CONFIG.apiBase)||'https://teos-sentinel-shield-production-ef7a.up.railway.app')+'/stats');const d=await r.json();const tbody=document.getElementById('verdictTable');const events=d.events||d;if(!events||!events.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted2)">No recent scan data available.</td></tr>';return}
 tbody.innerHTML=events.slice(0,20).map(e=>{const v=e.verdict||e.decision||'?';const s=e.score??e.riskScore??'?';const ri=e.ruleId||e.rule||'R00';const ts=e.timestamp||e.ts||'?';const c=v==='BLOCK'?'red':v==='WARN'?'amber':'green';return'<tr><td style="color:var(--muted2)">'+ts.slice(0,19)+'</td><td><span class="tag '+c+'">'+v+'</span></td><td>'+s+'</td><td style="color:var(--muted2)">'+ri+'</td></tr>'}).join('')}catch(e){document.getElementById('verdictTable').innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted2)">Unable to load live data.</td></tr>'}}
 loadVerdicts();setInterval(loadVerdicts,3e4);
 </script>

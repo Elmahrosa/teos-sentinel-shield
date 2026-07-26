@@ -1,0 +1,21 @@
+# TEOS Sentinel Shield v4.0.0 GA — SHA-256 checksums
+# Generated: 2026-07-26T06:32:38.7094842+03:00
+# Site: https://sentinel.teosegypt.com
+
+# downloads/
+a75c59936e1da97e283903d910f1c204b7ccde19f31d150940873abb7006227f  downloads/index.html
+21e3ac6a767335aa1d15147929ea912eaad642bd42e4d3b9339cd771177bd7d1  downloads/teos-browser-ext-edge.zip
+64414b86489b05126ab2ec3b37360bbcc24bfeafcab6ce77a35186c92556863b  downloads/teos-browser-ext.zip
+9a66bf3b382d6f57ad5b18b5b41d5e7b10e0047af5fcf74c6842d178229925dd  downloads/teos-desktop.zip
+cbc29ecccbbb9ea265507e68f9af7f7c2cc61ed69566af4eec4e8aee382ad2b3  downloads/teos-tools-all.zip
+e426db1caf95b347d6345ab710043a653a85f03afbea07e4c6915454a5aa5aa5  downloads/teos-vscode-ext.vsix
+fd06bfb2bdf92ea2a87688e2464b1f7fece1660ca133e761ad62230d15ccd754  downloads/teos.js
+
+# root legal + config
+efdd7900b25eb21d4c57f218dc9fb80b93be846fafb6b921661692fe3f61c847  privacy.md
+0e49dba39de34a25ff65cb38363ede108ba382cbbb201d2db5c82e7a3b8fc2b7  responsible-disclosure.md
+b7f8420537734c5dbcfd34b60f5f74da0e14febfd14b24185a49d05bd9baf9de  security.txt
+144ceb632901332529eb115bc133acde1f17a97ae90bbead8a36db339c052690  config.js
+c7888d10902ca050d59c61ec228f65112c6646b6d122ab28e96268b7baa39691  index.html
+5a44eab08ad5165ddfc5e5daf7e137b22504b49a2ecef206736a79029131bba4  sentinel.html
+c695a4c7de81c519e5344ff3b6bb3f8bb64e9a47008b10a76f8304ae04a2c16d  dashboard.html

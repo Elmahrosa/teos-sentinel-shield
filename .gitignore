@@ -4,9 +4,15 @@ data/events.json
 .env
 .env.local
 *.env.production
-.env.example
 .next/
 dashboard/
 *.log
 FOUNDER-CREDENTIALS.md
 FOUNDER_CREDENTIALS.md
+.teos-enforcement.log
+outputs/
+
+
+dist-hostinger/
+build-downloads-tmp/
+

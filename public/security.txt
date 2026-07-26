@@ -1,0 +1,8 @@
+Contact: mailto:ayman@teosegypt.com
+Contact: mailto:security@teos-sentinel.io
+Expires: 2027-07-26T00:00:00.000Z
+Preferred-Languages: en, ar
+Canonical: https://sentinel.teosegypt.com/.well-known/security.txt
+Policy: https://sentinel.teosegypt.com/responsible-disclosure.md
+Hiring: mailto:ayman@teosegypt.com
+Acknowledgments: https://sentinel.teosegypt.com/transparency.html
