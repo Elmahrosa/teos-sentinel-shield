@@ -8,8 +8,8 @@
 
   // Primary API host. Prefer api subdomain once Railway custom domain is live.
   // Fallback: set RAILWAY_API to your current Railway public URL.
-  // Canonical Railway production host (Test 4)
-  var RAILWAY_API = 'https://teos-sentinel-shield-production.up.railway.app';
+  // Canonical Railway production host (teos-sentinel-api service)
+  var RAILWAY_API = 'https://teos-sentinel-api-production.up.railway.app';
   var API_SUBDOMAIN = 'https://api.sentinel.teosegypt.com';
 
   // Use subdomain when production DNS is ready; otherwise Railway direct.
