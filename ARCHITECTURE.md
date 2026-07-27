@@ -81,7 +81,6 @@ NODE_ENV=production
 
 | Target | Role | Entry |
 |--------|------|--------|
-| **Hostinger** | Public site `sentinel.teosegypt.com` | Static `public/` or `teos-landing` build |
 | **Railway** | API + WS unified | `npm start` → `ws-server/index.js` |
 | **Vercel** | HTTP API + static | `vercel.json` → `server/api.js` |
 | **Local** | Dev | `npm run dev` or `npm start` |

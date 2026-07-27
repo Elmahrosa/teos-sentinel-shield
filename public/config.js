@@ -6,25 +6,15 @@
 (function (global) {
   var SITE = 'https://sentinel.teosegypt.com';
 
-  // Primary API host. Prefer api subdomain once Railway custom domain is live.
-  // Fallback: set RAILWAY_API to your current Railway public URL.
-  // Canonical Railway production host (teos-sentinel-api service)
-  var RAILWAY_API = 'https://teos-sentinel-api-production.up.railway.app';
-  var API_SUBDOMAIN = 'https://api.sentinel.teosegypt.com';
-
-  // Use subdomain when production DNS is ready; otherwise Railway direct.
-  // Flip USE_API_SUBDOMAIN to true after CNAME api.sentinel.teosegypt.com → Railway.
-  var USE_API_SUBDOMAIN = false;
-
-  var apiBase = USE_API_SUBDOMAIN ? API_SUBDOMAIN : RAILWAY_API;
+  // Railway API backend (agent-code-risk-mcp)
+  var RAILWAY_API = 'https://agent-code-risk-mcp-production-b97d.up.railway.app';
 
   global.TEOS_CONFIG = {
     version: '4.0.0',
     siteUrl: SITE,
-    apiBase: apiBase,
-    wsUrl: apiBase.replace(/^http/, 'ws'),
-    rulesCount: 121,
-    // Optional free-tier demo key for public /scan demos only (low RPM). Leave empty to require user key.
+    apiBase: RAILWAY_API,
+    wsUrl: RAILWAY_API.replace(/^http/, 'ws'),
+    rulesCount: 31,
     demoApiKey: '',
   };
 

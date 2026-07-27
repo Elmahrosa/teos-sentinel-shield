@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TEOS Sovereign Sentinel beta access — pre-execution runtime governance for enterprise AI systems. Beta access temporarily frozen for system synchronization.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>𓂀</text></svg>">
+  <title>TEOS Sovereign Sentinel | Pre-Execution Runtime Governance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --kohl: #04030a; --kohl-mid: #07060f; --kohl-card: #0d0b18; --kohl-card-hi: #13112a;
+      --border-1: #1a1730; --border-2: #251f45;
+      --gold: #c9981e; --gold-dim: #7a5c10; --gold-glow: rgba(201,152,30,0.15);
+      --turquoise: #00b090; --red: #ff1744; --blue: #2979ff; --amber: #ffab00; --green: #00c853;
+      --alabaster: #ece6d4; --alabaster-dim: #8e8878;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --shadow-hi: 0 8px 40px rgba(201,152,30,0.08);
+      --font-d: 'Cinzel', serif; --font-m: 'JetBrains Mono', monospace; --font-b: 'Inter', sans-serif; --font-ar: 'Cairo', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--kohl); color: var(--alabaster);
+      font-family: var(--font-b); line-height: 1.6; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(201,152,30,0.015) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(201,152,30,0.015) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 90% 70% at 50% 20%, black, transparent);
+    }
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; background: rgba(4,3,10,0.85);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-1);
+    }
+    .brand { font-family: var(--font-d); color: var(--gold); font-weight: 700; letter-spacing: 0.08em; text-decoration: none; font-size: 1rem; }
+    .container { max-width: 640px; margin: 0 auto; padding: 5.5rem 1.5rem 4rem; position: relative; z-index: 1; }
+
+    .card {
+      background: var(--kohl-card); border: 1px solid var(--border-1);
+      border-radius: 16px; padding: 2.5rem; margin-bottom: 1.25rem;
+      box-shadow: var(--shadow); position: relative; overflow: hidden;
+      text-align: center;
+    }
+
+    .freeze-badge {
+      display: inline-block;
+      background: rgba(255,23,68,0.1); border: 1px solid var(--red);
+      border-radius: 8px; padding: 0.6rem 1.2rem;
+      font-family: var(--font-m); font-size: 0.7rem; color: var(--red);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+    }
+
+    .icon-lock {
+      font-size: 3rem; margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: var(--font-d); font-size: 1.5rem;
+      color: var(--alabaster); margin-bottom: 1rem;
+      letter-spacing: 0.04em;
+    }
+
+    p {
+      font-size: 0.85rem; color: var(--alabaster-dim);
+      margin-bottom: 1rem; line-height: 1.7;
+    }
+
+    .freeze-notice {
+      background: rgba(201,152,30,0.06); border: 1px solid var(--gold-dim);
+      border-radius: 10px; padding: 1.25rem 1.5rem;
+      font-family: var(--font-m); font-size: 0.75rem;
+      color: var(--amber); text-align: center; margin: 1.5rem 0;
+    }
+
+    .freeze-notice strong {
+      color: var(--gold);
+    }
+
+    .btn-disabled {
+      display: inline-block;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border-2);
+      border-radius: 8px; padding: 0.9rem 2rem;
+      font-family: var(--font-m); font-size: 0.75rem;
+      color: var(--alabaster-dim); text-decoration: none;
+      cursor: not-allowed; opacity: 0.5;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+
+    .sep {
+      border: none; border-top: 1px solid var(--border-1);
+      margin: 1.5rem 0;
+    }
+
+    .timeline {
+      text-align: left; margin-top: 1rem;
+    }
+
+    .tl-item {
+      display: flex; gap: 1rem; padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .tl-item:last-child { border-bottom: none; }
+
+    .tl-date {
+      font-family: var(--font-m); font-size: 0.65rem;
+      color: var(--gold-dim); white-space: nowrap; padding-top: 0.1rem;
+      min-width: 90px;
+    }
+
+    .tl-desc {
+      font-size: 0.78rem; color: var(--alabaster-dim);
+    }
+    .tl-desc strong { color: var(--alabaster); }
+
+    .links {
+      display: flex; gap: 1rem; justify-content: center;
+      flex-wrap: wrap; margin-top: 1rem;
+    }
+    .links a {
+      font-family: var(--font-m); font-size: 0.65rem;
+      color: var(--alabaster-dim); text-decoration: none;
+      border: 1px solid var(--border-1); padding: 0.4rem 0.8rem;
+      border-radius: 6px; transition: border-color 0.3s;
+    }
+    .links a:hover { border-color: var(--border-2); }
+
+    footer {
+      text-align: center; padding: 2rem 0 1rem;
+      font-family: var(--font-m); font-size: 0.6rem;
+      color: var(--alabaster-dim);
+    }
+    footer a { color: var(--gold-dim); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      nav { padding: 0.75rem 1rem; }
+      .container { padding: 5rem 1rem 3rem; }
+      .card { padding: 1.5rem; border-radius: 12px; }
+      .tl-date { min-width: 70px; font-size: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
+    Built in Alexandria, Egypt &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; Pre-Execution Policy Enforcement &nbsp;|&nbsp; Banking • FinTech • Sovereign DPI
+  </div>
+  <nav>
+    <a href="/" class="brand">𓂀 TEOS SENTINEL SHIELD</a>
+    <div style="display:flex;align-items:center;gap:0.6rem;">
+      <a href="/" style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);text-decoration:none;border:1px solid var(--border-1);padding:3px 6px;border-radius:4px;">Home</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <div class="freeze-badge">🧊 ACCESS FROZEN</div>
+      <div class="icon-lock">🔒</div>
+      <h1>Beta Registration Frozen</h1>
+      <p>
+        Public beta access is temporarily frozen until <strong>June 30, 2026</strong>,
+        for system synchronization and governance alignment with the
+        Banking Dual-Mandate Layer (v4.0.0).
+      </p>
+
+      <div class="freeze-notice">
+        <strong>NOTICE:</strong> Public Beta Access is temporarily frozen until June 30, 2026,
+        for system synchronization.
+      </div>
+
+      <div class="btn-disabled">✕ Beta Full — Access Frozen</div>
+
+      <p style="margin-top:1.2rem;font-size:0.72rem;">
+        Existing testers retain access. No new beta registrations are being accepted at this time.
+      </p>
+    </div>
+
+    <div class="card" style="text-align:left;">
+      <h2 style="font-family:var(--font-d);font-size:1rem;color:var(--gold);margin-bottom:0.75rem;text-align:center;letter-spacing:0.04em;">Frozen Beta Timeline</h2>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">June 11, 2026</div>
+          <div class="tl-desc"><strong>v4.0.0</strong> — 8 institutional banking controls activated (R104–R111). Banking dual-mandate governance layer live.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">June 20, 2026</div>
+          <div class="tl-desc"><strong>Beta Freeze Initiated</strong> — All new public beta registrations suspended for synchronization.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">June 22, 2026</div>
+          <div class="tl-desc"><strong>Bot Expansion</strong> — Scanning rules extended to full 121-rule coverage including banking, Solana, EVM, and asset-drainer signatures.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">June 30, 2026</div>
+          <div class="tl-desc"><strong>Beta Ends</strong> — All tester accounts expire. GA launch preparations begin.</div>
+        </div>
+        <div class="tl-item" style="border-bottom:none;">
+          <div class="tl-date">TBD</div>
+          <div class="tl-desc"><strong>General Availability</strong> — Full product launch with commercial plans, platform capabilities, and self-service onboarding.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:left;padding:1.5rem;">
+      <h2 style="font-family:var(--font-d);font-size:0.85rem;color:var(--alabaster);margin-bottom:0.75rem;text-align:center;">Existing Testers</h2>
+      <p style="font-size:0.75rem;text-align:center;">
+        If you already have an active tester account, you can continue scanning via
+        <a href="https://t.me/teoslinker_bot" style="color:var(--gold);text-decoration:none;">@teoslinker_bot</a>.
+        Your credits and access remain unaffected.
+      </p>
+    </div>
+
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="https://t.me/teoslinker_bot">Bot Dashboard</a>
+      <a href="https://t.me/Elmahrosapi">Community</a>
+      <a href="https://teosegypt.com">teosegypt.com</a>
+    </div>
+
+    <footer style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-align:center;padding:2rem 0 1rem">
+      Built in Alexandria, Egypt<br>
+      Engine v4.0.0 · 121 Active Governance Controls · 410 Validation Tests<br>
+      Claude Code · MCP · Enterprise AI Governance
+    </footer>
+  </div>
+</body>
+</html>

@@ -25,7 +25,7 @@
 
 1. Configure production env on Railway + Vercel (Redis, Supabase, Dodo, TEOS_API_KEYS)
 2. Run migrations `001_audit_logs.sql` + `002_billing.sql` on Supabase
-3. Point Hostinger `sentinel.teosegypt.com` to static site; API reverse-proxy or CNAME to Railway
+3. Configure Railway + Vercel production env
 4. Smoke: `GET /health` → version `4.0.0`; `POST /enforce` with key; webhook HMAC
 5. Confirm CORS_ORIGIN locked to production domain
 

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TEOS Sovereign Sentinel is a deterministic runtime governance platform that evaluates code and AI agent actions before execution using policy-based governance controls, audit trails, and threat isolation workflows.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com; connect-src 'self';">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>𓂀</text></svg>">
+  <title>TEOS Sovereign Sentinel | Pre-Execution Runtime Governance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --kohl: #04030a; --kohl-mid: #07060f; --kohl-card: #0d0b18; --kohl-card-hi: #13112a;
+      --border-1: #1a1730; --border-2: #251f45;
+      --gold: #c9981e; --gold-dim: #7a5c10; --gold-glow: rgba(201,152,30,0.15);
+      --turquoise: #00b090; --red: #ff1744; --blue: #2979ff; --amber: #ffab00; --green: #00c853;
+      --alabaster: #ece6d4; --alabaster-dim: #8e8878;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --shadow-hi: 0 8px 40px rgba(201,152,30,0.08);
+      --font-d: 'Cinzel', serif; --font-m: 'JetBrains Mono', monospace; --font-b: 'Inter', sans-serif; --font-ar: 'Cairo', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--kohl); color: var(--alabaster);
+      font-family: var(--font-b); line-height: 1.6; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(201,152,30,0.015) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(201,152,30,0.015) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 90% 70% at 50% 20%, black, transparent);
+    }
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; background: rgba(4,3,10,0.85);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-1);
+    }
+    .brand { font-family: var(--font-d); color: var(--gold); font-weight: 700; letter-spacing: 0.08em; text-decoration: none; font-size: 1rem; }
+    .container { max-width: 920px; margin: 0 auto; padding: 5.5rem 1.5rem 4rem; position: relative; z-index: 1; }
+
+    .card {
+      background: var(--kohl-card); border: 1px solid var(--border-1);
+      border-radius: 16px; padding: 2.5rem; margin-bottom: 1.25rem;
+      box-shadow: var(--shadow); position: relative; overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { border-color: var(--border-2); box-shadow: var(--shadow-hi); }
+
+    .eyebrow {
+      font-family: var(--font-m); font-size: 0.6rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gold-dim); margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-family: var(--font-d); font-size: 2.6rem; font-weight: 900;
+      letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1.25rem;
+    }
+    h1 .gold { color: var(--gold); }
+    .sub {
+      font-family: var(--font-b); font-size: 0.9rem; color: var(--alabaster-dim);
+      max-width: 600px; line-height: 1.7;
+    }
+    .cta-row {
+      display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem;
+    }
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--gold); color: var(--kohl); border: none;
+      padding: 0.7rem 1.8rem; border-radius: 40px;
+      font-family: var(--font-m); font-weight: 700; font-size: 0.75rem;
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-gold:hover { background: #d4a828; transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: transparent; color: var(--gold); border: 1px solid var(--gold-dim);
+      padding: 0.7rem 1.8rem; border-radius: 40px;
+      font-family: var(--font-m); font-weight: 500; font-size: 0.75rem;
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: var(--gold-glow); }
+
+    h2 {
+      font-family: var(--font-d); font-size: 1.5rem; font-weight: 700;
+      letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+    h2 .gold { color: var(--gold); }
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .feature { padding: 0.5rem 0; }
+    .feature-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+    .feature-title {
+      font-family: var(--font-d); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.04em; color: var(--gold); margin-bottom: 0.25rem;
+      text-transform: uppercase;
+    }
+    .feature-desc { font-size: 0.8rem; color: var(--alabaster-dim); line-height: 1.6; }
+
+    .verdicts {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0;
+    }
+    .verdict-tag {
+      font-family: var(--font-m); font-size: 0.65rem; font-weight: 700;
+      padding: 0.25rem 0.7rem; border-radius: 20px; letter-spacing: 0.04em;
+    }
+    .allow { background: rgba(0,200,83,0.12); color: var(--green); border: 1px solid rgba(0,200,83,0.2); }
+    .warn { background: rgba(255,171,0,0.12); color: var(--amber); border: 1px solid rgba(255,171,0,0.2); }
+    .block { background: rgba(255,23,68,0.12); color: var(--red); border: 1px solid rgba(255,23,68,0.2); }
+    .review { background: rgba(0,176,144,0.12); color: var(--turquoise); border: 1px solid rgba(0,176,144,0.2); }
+    .rule-badge {
+      display: inline-block;
+      font-family: var(--font-m); font-size: 0.65rem; font-weight: 700;
+      padding: 0.3rem 0.8rem; border-radius: 6px; background: var(--gold-glow);
+      border: 1px solid var(--gold-dim); color: var(--gold); margin: 0.15rem;
+    }
+
+    .goals {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1rem 0;
+    }
+    .goal {
+      background: var(--kohl-card); border: 1px solid var(--border-1);
+      border-radius: 10px; padding: 1.25rem; text-align: center;
+    }
+    .goal-num { font-family: var(--font-d); font-size: 2rem; font-weight: 900; color: var(--gold); }
+    .goal-label { font-family: var(--font-m); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--alabaster-dim); margin-top: 0.2rem; }
+
+    .perk-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;
+    }
+    .perk {
+      background: var(--kohl-card); border: 1px solid var(--border-1);
+      border-radius: 10px; padding: 1rem; text-align: center;
+      font-size: 0.75rem; color: var(--alabaster-dim);
+    }
+    .perk-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    .perk-title { font-family: var(--font-d); font-size: 0.7rem; color: var(--gold); font-weight: 700; letter-spacing: 0.04em; }
+
+    .timeline-item {
+      display: flex; gap: 1rem; margin-bottom: 1rem;
+    }
+    .tl-date {
+      font-family: var(--font-m); font-size: 0.65rem; font-weight: 700;
+      color: var(--gold); min-width: 5rem; padding-top: 0.1rem;
+    }
+    .tl-desc { font-size: 0.8rem; color: var(--alabaster-dim); line-height: 1.5; }
+    .tl-desc strong { color: var(--alabaster); }
+
+    .cta-section {
+      background: linear-gradient(135deg, rgba(201,152,30,0.06), rgba(0,176,144,0.04));
+      border: 1px solid var(--border-2); border-radius: 16px;
+      padding: 2.5rem; text-align: center;
+    }
+    .cta-section h2 { font-size: 1.8rem; }
+    .cta-section p { font-size: 0.85rem; color: var(--alabaster-dim); max-width: 500px; margin: 0 auto 1.25rem; }
+
+    .inline-nav {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+      padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-1);
+    }
+    .inline-nav a {
+      font-family: var(--font-m); font-size: 0.6rem; font-weight: 600;
+      color: var(--alabaster-dim); text-decoration: none;
+      padding: 0.3rem 0.7rem; border: 1px solid var(--border-1);
+      border-radius: 6px; transition: all 0.15s;
+    }
+    .inline-nav a:hover { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+    .inline-nav a.active { color: var(--gold); border-color: var(--gold-dim); }
+
+    .ar { display: none; }
+
+    @media (max-width: 640px) {
+      .container { padding: 4.5rem 1rem 3rem; } h1 { font-size: 1.8rem; }
+      .grid-2 { grid-template-columns: 1fr; } .goals { grid-template-columns: 1fr; }
+      nav { padding: 0.75rem 1rem; }
+      .nav-links { display: none; }
+      .inline-nav { gap: 0.3rem; }
+      .inline-nav a { font-size: 0.55rem; padding: 0.2rem 0.5rem; }
+    }
+
+    footer {
+      margin-top: 3rem; padding-top: 2rem;
+      border-top: 1px solid var(--border-1);
+      font-size: 0.65rem; color: var(--alabaster-dim);
+    }
+    footer a { color: var(--gold-dim); text-decoration: none; }
+    footer a:hover { color: var(--gold); }
+    .foot-nav { display: flex; gap: 0.4rem 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .foot-nav a { font-family: var(--font-m); font-size: 0.6rem; }
+    .foot-bottom { opacity: 0.6; font-size: 0.55rem; }
+  </style>
+</head>
+<body>
+<div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
+  Built in Alexandria, Egypt &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; Pre-Execution Policy Enforcement &nbsp;|&nbsp; Banking • FinTech • Sovereign DPI
+</div>
+<nav>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:1.2rem;">𓂀</span>
+    <span class="brand">TEOS SENTINEL</span>
+  </div>
+  <div class="nav-links" style="display:flex;align-items:center;gap:0.5rem;">
+    <a href="../index.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">HOME</a>
+    <a href="../dashboard.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">DASHBOARD</a>
+    <a href="../app.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">APP</a>
+    <a href="../rules.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">RULES</a>
+    <a href="../transparency.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">TRANSPARENCY</a>
+    <a href="../replay.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">REPLAY</a>
+    <a href="../pitch-deck.html" style="font-family:var(--font-m);font-size:0.6rem;color:var(--alabaster-dim);text-decoration:none;letter-spacing:0.04em;">PITCH</a>
+    <span style="font-family:var(--font-m);font-size:0.55rem;color:var(--gold-dim);cursor:pointer;" id="lang-toggle"><span style="color:var(--gold);">AR</span> | EN</span>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="inline-nav">
+    <a href="../index.html">Command Center</a>
+    <a href="../dashboard.html">SOC Dashboard</a>
+    <a href="../app.html">App Hub</a>
+    <a href="../rules.html">121 Active Governance Controls</a>
+    <a href="index.html" class="active">Sentinel</a>
+    <a href="../transparency.html">Transparency</a>
+    <a href="../replay.html">Replay</a>
+    <a href="../pitch-deck.html">Pitch Deck</a>
+    <a href="../monitoring/dashboard.html">Monitoring</a>
+    <a href="../desktop/dashboard.html">Desktop</a>
+    <a href="../downloads/teos-browser-ext.zip" download target="_blank" rel="noopener noreferrer>Extension</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">TEOS Sovereign Sentinel</span><span class="ar">حارس السيادة تيوس</span></div>
+    <h1><span class="en">Pre-Execution Runtime Governance<br><span class="gold">for Claude Code, MCP &amp; Enterprise AI</span></span><span class="ar">الحوكمة الوقائية في وقت التشغيل<br><span class="gold">لكلود كود و MCP وأنظمة المؤسسات</span></span></h1>
+    <p class="sub"><span class="en">121 Active Governance Controls &middot; 4 verdict types (ALLOW, WARN, REVIEW, BLOCK) &middot; AI-native design &middot; Built for sovereign infrastructure &middot; 596/596 passing tests &middot; Banking governance controls</span><span class="ar">121 قاعدة أمنية حتمية &middot; 4 أنواع من الأحكام (السماح، التحذير، المراجعة، المنع) &middot; تصميم أصلي للذكاء الاصطناعي &middot; 596 اختباراً ناجحاً</span></p>
+    <div class="verdicts">
+      <span class="verdict-tag allow">ALLOW</span>
+      <span class="verdict-tag warn">WARN</span>
+      <span class="verdict-tag review">REVIEW</span>
+      <span class="verdict-tag block">BLOCK</span>
+    </div>
+    <div class="cta-row">
+      <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-gold"><span class="en">🟢 Open @teoslinker_bot →</span><span class="ar">🟢 افتح @teoslinker_bot ←</span></a>
+      <a href="mailto:ayman@elmahrosa.org" class="btn-outline"><span class="en">Enterprise inquiry →</span><span class="ar">استفسار مؤسسي ←</span></a>
+    </div>
+  </div>
+
+  <!-- RULE COUNT + VERDICTS -->
+  <div class="card" style="text-align:center;">
+    <div style="font-family:var(--font-d);font-size:3.5rem;color:var(--gold);">121</div>
+    <div style="font-family:var(--font-m);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:0.75rem;"><span class="en">Deterministic Active Governance Controls</span><span class="ar">قاعدة أمنية حتمية</span></div>
+    <div style="display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;">
+      <div><span style="font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--green);">64</span><br><span style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);"><span class="en">Core</span><span class="ar">أساسية</span></span></div>
+      <div><span style="font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--amber);">29</span><br><span style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);"><span class="en">Solana</span><span class="ar">سولانا</span></span></div>
+      <div><span style="font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--turquoise);">10</span><br><span style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);"><span class="en">EVM</span><span class="ar">إي في إم</span></span></div>
+      <div><span style="font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--blue);">8</span><br><span style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);"><span class="en">Banking</span><span class="ar">بنكية</span></span></div>
+      <div><span style="font-family:var(--font-d);font-size:2rem;font-weight:700;color:var(--alabaster-dim);">10</span><br><span style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);"><span class="en">MENA</span><span class="ar">إقليمية</span></span></div>
+    </div>
+  </div>
+
+  <!-- WHAT IS TEOS SENTINEL -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">What is TEOS Sovereign Sentinel?</span><span class="ar">ما هو حارس تيوس؟</span></div>
+    <h2><span class="en">Runtime Governance<br><span class="gold">for AI Agents</span></span><span class="ar">جدار النار التنفيذي<br><span class="gold">لوكلاء الذكاء الاصطناعي</span></span></h2>
+    <p style="font-size:0.85rem;color:var(--alabaster-dim);line-height:1.8;margin-bottom:1.5rem;">
+      <span class="en">
+        TEOS Sovereign Sentinel is a deterministic code/repository/agent execution pre-scanning firewall. 
+        Every command, script, or AI prompt is evaluated against 121 Active Governance Controls before execution. 
+        Decisions are binary and auditable: ALLOW, WARN, REVIEW, or BLOCK.
+      </span>
+      <span class="ar">
+        حارس تيوس هو جدار ناري حتمي لفحص التعليمات البرمجية والمستودعات والوكلاء قبل التنفيذ.
+        يتم تقييم كل أمر أو نص أو موجه ذكاء اصطناعي مقابل 121 قاعدة أمنية قبل التنفيذ.
+        القرارات ثنائية وقابلة للتدقيق: السماح، التحذير، المراجعة، أو المنع.
+      </span>
+    </p>
+    <div class="grid-2">
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title"><span class="en">Deterministic</span><span class="ar">حتمي</span></div>
+        <div class="feature-desc"><span class="en">No ML black boxes. Every rule is regex-based, tested, and auditable.</span><span class="ar">لا صناديق سوداء للتعلم الآلي. كل قاعدة مبنية على التعبيرات العادية ومختبرة وقابلة للتدقيق.</span></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-title"><span class="en">AI-Native</span><span class="ar">أصلي للذكاء الاصطناعي</span></div>
+        <div class="feature-desc"><span class="en">Built from the ground up for LLM agent execution environments.</span><span class="ar">مبني من الألف إلى الياء لبيئات تنفيذ وكلاء LLM.</span></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title"><span class="en">Auditable</span><span class="ar">قابل للتدقيق</span></div>
+        <div class="feature-desc"><span class="en">SHA-256 chained logs. Every verdict has an immutable audit trail.</span><span class="ar">سجلات مرتبطة بـ SHA-256. كل حكم له مسار تدقيق غير قابل للتغيير.</span></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚖️</div>
+        <div class="feature-title"><span class="en">Law Over Code</span><span class="ar">القانون فوق الكود</span></div>
+        <div class="feature-desc"><span class="en">Humans govern systems. AI serves authority. Deterministic rules enforce policy.</span><span class="ar">البشر يحكمون الأنظمة. الذكاء الاصطناعي يخدم السلطة. القواعد الحتمية تفرض السياسة.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERDICT MODEL -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">Verdict Model</span><span class="ar">نموذج الحكم</span></div>
+    <h2><span class="en">4 Verdict Types.<br><span class="gold">No Grey Areas.</span></span><span class="ar">4 أنواع من الأحكام.<br><span class="gold">لا مناطق رمادية.</span></span></h2>
+    <p style="font-size:0.85rem;color:var(--alabaster-dim);line-height:1.8;margin-bottom:1rem;">
+      <span class="en">Every scanned input receives one of four deterministic verdicts. No probability scores. No ML confidence thresholds. Every decision is rule-driven and auditable.</span>
+      <span class="ar">كل إدخال يتم فحصه يتلقى واحداً من أربعة أحكام حتمية. لا نتائج احتمالية. لا عتبات ثقة للتعلم الآلي. كل قرار مدفوع بالقواعد وقابل للتدقيق.</span>
+    </p>
+    <div class="grid-2">
+      <div class="feature" style="border-left:3px solid var(--green);padding-left:1rem;">
+        <div class="feature-title" style="color:var(--green);">ALLOW</div>
+        <div class="feature-desc"><span class="en">No rule matched. Safe to proceed. Lowest risk.</span><span class="ar">لم يتم مطابقة أي قاعدة. آمن للمتابعة. أقل مخاطرة.</span></div>
+      </div>
+      <div class="feature" style="border-left:3px solid var(--amber);padding-left:1rem;">
+        <div class="feature-title" style="color:var(--amber);">WARN</div>
+        <div class="feature-desc"><span class="en">Suspicious patterns detected. Caution advised.</span><span class="ar">تم اكتشاف أنماط مشبوهة. يُنصح بالحذر.</span></div>
+      </div>
+      <div class="feature" style="border-left:3px solid var(--turquoise);padding-left:1rem;">
+        <div class="feature-title" style="color:var(--turquoise);">REVIEW</div>
+        <div class="feature-desc"><span class="en">Heuristic suspicion detected. Human validation required.</span><span class="ar">تم اكتشاف اشتباه استدلالي. التحقق البشري مطلوب.</span></div>
+      </div>
+      <div class="feature" style="border-left:3px solid var(--red);padding-left:1rem;">
+        <div class="feature-title" style="color:var(--red);">BLOCK</div>
+        <div class="feature-desc"><span class="en">Deterministic rule matched. Execution prevented.</span><span class="ar">تم مطابقة قاعدة حتمية. تم منع التنفيذ.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RULE CATEGORIES -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">Rule Architecture</span><span class="ar">هندسة القواعد</span></div>
+    <h2><span class="en">121 Active Governance Controls Across<br><span class="gold">5 Security Domains</span></span><span class="ar">121 قاعدة عبر<br><span class="gold">5 مجالات أمنية</span></span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin:1rem 0;">
+      <span class="rule-badge">🔐 Secret Detection</span>
+      <span class="rule-badge">⚙️ Code Security</span>
+      <span class="rule-badge">🔗 Supply Chain</span>
+      <span class="rule-badge">🕸️ CI/CD Security</span>
+      <span class="rule-badge">🛡️ Blockchain (Solana)</span>
+      <span class="rule-badge">📜 EVM (Solidity)</span>
+      <span class="rule-badge">🏦 Banking Governance</span>
+      <span class="rule-badge">🌍 MENA Governance (RFM/NIK)</span>
+      <span class="rule-badge">🔍 Heuristic (77 patterns)</span>
+    </div>
+    <div class="grid-2">
+      <div><p style="font-size:0.8rem;color:var(--alabaster-dim);line-height:1.8;">
+        <span class="en">64 core rules cover destructive shell commands, secret exfiltration, SQL injection, command injection, path traversal, reverse shells, fork bombs, crypto miners, and supply chain attacks. 29 Solana rules detect anchor/BPF program vulnerabilities. 10 EVM rules cover reentrancy, flash loans, and centralization risks. <strong>8 banking controls</strong> enforce governance for institutional finance. <strong>10 MENA governance controls</strong> (RFM/NIK) enforce zero-trust settlement integrity and national identity verification for regional deployments.</span>
+        <span class="ar">64 قاعدة أساسية تغطي أوامر الصدفة المدمرة، تسرب الأسرار، حقن SQL، حقن الأوامر، اختراق المسار، الصدف العكسية، قنابل الشوكة، عمال منجم العملات الرقمية، وهجمات سلسلة التوريد. 29 قاعدة سولانا تكتشف ثغرات برامج anchor/BPF. 10 قواعد EVM تغطي إعادة الدخول، القروض الخاطفة، ومخاطر المركزية. 8 قواعد بنكية تطبق الامتثال للبنك المركزي المصري وهيئة الرقابة المالية للمؤسسات المالية. 10 قواعد امتثال إقليمي تطبق سلامة التسوية والتحقق من الهوية الوطنية.</span>
+      </p></div>
+      <div><p style="font-size:0.8rem;color:var(--alabaster-dim);line-height:1.8;">
+        <span class="en">Plus <strong>77 heuristic patterns</strong> across 7 signal families (encoding, obfuscation, multi-stage, hidden execution, tool chaining, suspicious URLs, prompt manipulation) — scoring unknown threats 0-100 for REVIEW verdict determination.</span>
+        <span class="ar">بالإضافة إلى <strong>77 نمطاً استدلالياً</strong> عبر 7 عائلات إشارات (التشفير، التعتيم، متعدد المراحل، التنفيذ المخفي، تسلسل الأدوات، عناوين URL المشبوهة، التلاعب بالموجهات) — لتسجيل التهديدات غير المعروفة من 0-100 لتحديد حكم المراجعة.</span>
+      </p></div>
+    </div>
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-1);font-family:var(--font-m);font-size:0.65rem;color:var(--alabaster-dim);text-align:center;">
+      <span class="en"><strong style="color:var(--gold);">Industry Governance Modules:</strong> Banking Governance Shield · MENA Governance Shield · Web3 Governance Shield · AI Runtime Governance Shield</span>
+      <span class="ar"><strong style="color:var(--gold);">وحدات الحوكمة الصناعية:</strong> درع الحوكمة المصرفية · درع الامتثال الإقليمي · درع حوكمة الويب 3 · درع حوكمة تشغيل الذكاء الاصطناعي</span>
+    </div>
+  </div>
+
+  <!-- MENA REGIONAL COMPLIANCE -->
+  <div class="card" id="mena">
+    <div class="eyebrow"><span class="en">MENA Regional Compliance</span><span class="ar">الامتثال الإقليمي</span></div>
+    <h2><span class="en">RFM / NIK<br><span class="gold">Zero-Trust Framework</span></span><span class="ar">إطار الثقة الصفرية<br><span class="gold">للتحويلات والهوية</span></span></h2>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:0.8rem;color:var(--alabaster-dim);line-height:1.8;">
+          <span class="en"><strong>RFM (Real-time Funds Movement)</strong> — 5 rules preventing settlement manipulation, idempotency bypass, open banking scope violations, post-signing field reassignment, and aggregation scope escalation. Purpose-built for Central Bank digital payment infrastructure.</span>
+          <span class="ar"><strong>RFM</strong> — 5 قواعد تمنع التلاعب بالتسوية، تجاوز التكرارية، انتهاكات نطاق الخدمات المصرفية المفتوحة، إعادة تعيين الحقول بعد التوقيع، وتصعيد نطاق التجميع. مصممة خصيصاً للبنية التحتية للمدفوعات الرقمية للبنك المركزي.</span>
+        </p>
+      </div>
+      <div>
+        <p style="font-size:0.8rem;color:var(--alabaster-dim);line-height:1.8;">
+          <span class="en"><strong>NIK (National Identity & KYC)</strong> — 5 rules detecting stubbed signature verification, missing verification steps, short-circuited cryptographic checks, feature-flag KYC bypass, and silent identity bypass. Ensures no national ID verification can be silently disabled.</span>
+          <span class="ar"><strong>NIK</strong> — 5 قواعد تكشف التحقق المزيف من التوقيع، خطوات التحقق المفقودة، تجاوز الفحص المشفر، تجاوز KYC عبر أعلام الميزات، وتجاوز الهوية الصامت. تضمن عدم تعطيل التحقق من الهوية الوطنية بصمت.</span>
+        </p>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:0.5rem;">
+      <span style="background:rgba(0,200,83,0.1);color:#00c853;border:1px solid rgba(0,200,83,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">Banking Governance</span>
+      <span style="background:rgba(100,150,255,0.1);color:#6496ff;border:1px solid rgba(100,150,255,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">Zero-Trust Settlement</span>
+      <span style="background:rgba(255,200,0,0.1);color:#ffc800;border:1px solid rgba(255,200,0,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">National ID Integrity</span>
+      <span style="background:rgba(255,100,100,0.1);color:#ff6464;border:1px solid rgba(255,100,100,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">Pre-Execution BLOCK</span>
+    </div>
+  </div>
+
+  <!-- Banking & Financial Governance -->
+  <div class="card" id="banking-governance" style="padding:2.5rem;">
+    <div class="eyebrow"><span class="en">Banking & Financial Governance</span><span class="ar">الحوكمة المصرفية والمالية</span></div>
+    <h2><span class="en">Banking<br><span class="gold">Dual-Mandate Governance</span></span><span class="ar">حوكمة الائحة المزدوجة<br><span class="gold">للبنك المركزي وهيئة الرقابة المالية</span></span></h2>
+    <p style="font-size:0.85rem;color:var(--alabaster-dim);line-height:1.8;margin-bottom:1.5rem;">
+      <span class="en">TEOS Sovereign Sentinel includes deterministic governance controls for financial infrastructure, payment rails, and regulated banking environments. 8 rules covering CBDC ledger manipulation, SWIFT/ISO 20022 unencrypted transport, FIX protocol cleartext credentials, algorithmic front-running, sovereign reserve key leaks, cross-identity silent trust, unassigned dispute escalation, and PCI/FRA data contamination.</span>
+      <span class="ar">يتضمن حارس تيوس ضوابط حوكمة حتمية للبنية التحتية المالية ومنصات الدفع والبيئات المصرفية الخاضعة للتنظيم. 8 قواعد تغطي التلاعب بدفتر العملة الرقمية للبنك المركزي، نقل SWIFT/ISO 20022 غير المشفر، بيانات اعتماد بروتوكول FIX الواضحة، التداول الخوارزمي الاستباقي، تسرب مفاتيح الاحتياطي السيادي، الثقة الصامتة عبر الهوية، تصعيد النزاعات غير المعينة، وتلوث بيانات PCI/FRA.</span>
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:1.5rem;">
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">🏦</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Banking Operations</span><span class="ar">العمليات المصرفية</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">💳</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Payment Infrastructure</span><span class="ar">البنية التحتية للمدفوعات</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">🏗️</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Digital Banking Platforms</span><span class="ar">منصات الخدمات المصرفية الرقمية</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">📱</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">FinTech Applications</span><span class="ar">تطبيقات التكنولوجيا المالية</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">🛡️</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">AML Risk Controls</span><span class="ar">ضوابط مخاطر مكافحة غسل الأموال</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">🔍</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Fraud Detection Workflows</span><span class="ar">سير عمل كشف الاحتيال</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">⚠️</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">High-Risk Transaction Monitoring</span><span class="ar">مراقبة المعاملات عالية المخاطر</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">👤</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Human Authorization Escalation</span><span class="ar">تصعيد التفويض البشري</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">📋</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Regulatory Audit Trails</span><span class="ar">مسارات التدقيق التنظيمي</span></div>
+      </div>
+      <div style="background:var(--kohl-card);border:1px solid var(--border-1);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:6px">⚡</div>
+        <div style="color:var(--alabaster-dim);font-size:12px;font-weight:600"><span class="en">Pre-Execution Financial Controls</span><span class="ar">ضوابط مالية قبل التنفيذ</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <span style="background:rgba(0,200,83,0.1);color:#00c853;border:1px solid rgba(0,200,83,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">CBDC Ledger Rules</span>
+      <span style="background:rgba(100,150,255,0.1);color:#6496ff;border:1px solid rgba(100,150,255,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">SWIFT / ISO 20022</span>
+      <span style="background:rgba(255,200,0,0.1);color:#ffc800;border:1px solid rgba(255,200,0,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">FIX Protocol</span>
+      <span style="background:rgba(255,100,100,0.1);color:#ff6464;border:1px solid rgba(255,100,100,0.3);padding:4px 12px;border-radius:4px;font-family:var(--font-m);font-size:0.5rem;text-transform:uppercase;">Pre-Execution BLOCK</span>
+    </div>
+  </div>
+
+  <!-- USE CASES -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">Use Cases</span><span class="ar">حالات الاستخدام</span></div>
+    <h2><span class="en">Who Needs<br><span class="gold">Deterministic Security?</span></span><span class="ar">من يحتاج<br><span class="gold">الأمن الحتمي؟</span></span></h2>
+    <div class="grid-2">
+      <div class="feature">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title"><span class="en">AI Agent Platforms</span><span class="ar">منصات وكلاء الذكاء الاصطناعي</span></div>
+        <div class="feature-desc"><span class="en">Pre-scan every command before an AI agent executes it. BLOCK destructive operations automatically.</span><span class="ar">افحص كل أمر قبل تنفيذ وكيل الذكاء الاصطناعي له. امنع العمليات التدميرية تلقائياً.</span></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏛️</div>
+        <div class="feature-title"><span class="en">Central Banks & Regulators</span><span class="ar">البنوك المركزية والجهات التنظيمية</span></div>
+        <div class="feature-desc"><span class="en">Banking governance controls for CBDC ledgers, SWIFT/ISO 20022, FIX protocol, and sovereign reserve key protection.</span><span class="ar">ضوابط حوكمة بنكية لدفاتر العملات الرقمية للبنوك المركزية، SWIFT/ISO 20022، بروتوكول FIX، وحماية مفاتيح الاحتياطي السيادي.</span></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-title"><span class="en">Blockchain Programs</span><span class="ar">برامج البلوكشين</span></div>
+        <div class="feature-desc"><span class="en">Scan Solana anchor programs and EVM Solidity contracts for 39 blockchain-specific vulnerabilities.</span><span class="ar">افحص برامج سولانا anchor وعقود إي في إم Solidity بحثاً عن 39 ثغرة خاصة بالبلوكشين.</span></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title"><span class="en">CI/CD Pipelines</span><span class="ar">خطوط CI/CD</span></div>
+        <div class="feature-desc"><span class="en">Block malicious PRs, secret exfiltration, and supply chain attacks before they reach production.</span><span class="ar">امنع طلبات السحب الخبيثة، تسرب الأسرار، وهجمات سلسلة التوريد قبل وصولها إلى الإنتاج.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">Roadmap</span><span class="ar">خارطة الطريق</span></div>
+    <h2><span class="en">Transparent<br><span class="gold">By Design</span></span><span class="ar">شفاف<br><span class="gold">بالتصميم</span></span></h2>
+    <div class="timeline-item">
+      <div class="tl-date"><span class="en">v3.0 · May 2026</span><span class="ar">مايو 2026</span></div>
+      <div class="tl-desc"><span class="en"><strong>Alpha Launch.</strong> 121 Active Governance Controls, 596 total tests, Telegram bot, PDF reports, GitHub scanning, Railway deployment.</span><span class="ar"><strong>إطلاق ألفا.</strong> 121 قاعدة، 596 اختباراً، بوت تلغرام، تقارير PDF، فحص GitHub، نشر على Railway.</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-date"><span class="en">v4.0.0 GA · June 2026</span><span class="ar">يونيو 2026</span></div>
+      <div class="tl-desc"><span class="en"><strong>REVIEW Verdict + Heuristics + Banking.</strong> 121 Active Governance Controls, 596 total tests, 77 heuristic patterns, 8 banking governance controls, CLI/Desktop/Extensions.</span><span class="ar"><strong>حكم المراجعة + الاستدلال + الخدمات البنكية.</strong> 121 قاعدة، 596 اختباراً، 77 نمطاً استدلالياً، 8 ضوابط حوكمة بنكية، CLI/سطح المكتب/إضافات.</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-date"><span class="en">v4.3 · August 2026</span><span class="ar">يوليو 2026</span></div>
+      <div class="tl-desc"><span class="en"><strong>Enterprise Governance.</strong> Review queue, cryptographic audit chain, multi-party approval, policy-as-code, custom rule definitions, RBAC with team management.</span><span class="ar"><strong>حوكمة المؤسسات.</strong> قائمة انتظار المراجعة، سلسلة تدقيق تشفيرية، موافقة متعددة الأطراف، السياسات كرمز، تعريفات قواعد مخصصة، RBAC مع إدارة الفرق.</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-date"><span class="en">v5.0 · Q3 2026</span><span class="ar">الربع الثالث 2026</span></div>
+      <div class="tl-desc"><span class="en"><strong>Enterprise Deploy.</strong> SSO/SAML, on-prem air-gapped deployment, SIEM-compatible audit export, SOC 2 readiness.</span><span class="ar"><strong>نشر مؤسسي.</strong> SSO/SAML، نشر محلي معزول، تصدير تدقيق متوافق مع SIEM، جاهزية SOC 2.</span></div>
+    </div>
+  </div>
+
+  <!-- ALPHA GOALS -->
+  <div class="card" style="text-align:center;">
+    <div class="eyebrow"><span class="en">Open Alpha</span><span class="ar">ألفا مفتوحة</span></div>
+    <h2><span class="en">Deterministic Security<br><span class="gold">Free During Alpha</span></span><span class="ar">الأمن الحتمي<br><span class="gold">مجاني خلال ألفا</span></span></h2>
+    <p style="font-size:0.85rem;color:var(--alabaster-dim);max-width:500px;margin:0 auto 1.5rem;">
+      <span class="en">Open @teoslinker_bot on Telegram. Paste a command. Get a verdict in seconds. No account. No credit card.</span>
+      <span class="ar">افتح @teoslinker_bot على تلغرام. الصق أمراً. احصل على حكم في ثوانٍ. لا حساب. لا بطاقة ائتمان.</span>
+    </p>
+    <div class="goals">
+      <div class="goal">
+        <div class="goal-num">500</div>
+        <div class="goal-label"><span class="en">Free Credits</span><span class="ar">رصيد مجاني</span></div>
+      </div>
+      <div class="goal">
+        <div class="goal-num">121</div>
+        <div class="goal-label"><span class="en">Active Governance Controls</span><span class="ar">قاعدة أمنية</span></div>
+      </div>
+      <div class="goal">
+        <div class="goal-num">4</div>
+        <div class="goal-label"><span class="en">Verdict Types</span><span class="ar">أنواع الأحكام</span></div>
+      </div>
+    </div>
+    <div class="cta-row" style="justify-content:center;">
+      <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-gold"><span class="en">🟢 Open @teoslinker_bot →</span><span class="ar">🟢 افتح @teoslinker_bot ←</span></a>
+    </div>
+  </div>
+
+  <!-- PERKS -->
+  <div class="card">
+    <div class="eyebrow"><span class="en">What You Get</span><span class="ar">ما تحصل عليه</span></div>
+    <h2><span class="en">Everything You Need<br><span class="gold">To Ship Safely</span></span><span class="ar">كل ما تحتاجه<br><span class="gold">للنشر بأمان</span></span></h2>
+    <div class="perk-grid">
+      <div class="perk"><div class="perk-icon">🤖</div><div class="perk-title"><span class="en">Telegram Bot</span><span class="ar">بوت تلغرام</span></div>@teoslinker_bot</div>
+      <div class="perk"><div class="perk-icon">📄</div><div class="perk-title"><span class="en">PDF Reports</span><span class="ar">تقارير PDF</span></div><span class="en">Color-coded findings</span><span class="ar">نتائج ملونة</span></div>
+      <div class="perk"><div class="perk-icon">🔍</div><div class="perk-title"><span class="en">GitHub Scanning</span><span class="ar">فحص GitHub</span></div><span class="en">Public & private repos</span><span class="ar">المستودعات العامة والخاصة</span></div>
+      <div class="perk"><div class="perk-icon">🔗</div><div class="perk-title"><span class="en">Solana Security</span><span class="ar">أمن سولانا</span></div>29 rules</div>
+      <div class="perk"><div class="perk-icon">📜</div><div class="perk-title"><span class="en">EVM Security</span><span class="ar">أمن إي في إم</span></div>10 rules</div>
+      <div class="perk"><div class="perk-icon">🏦</div><div class="perk-title"><span class="en">Banking Governance</span><span class="ar">الحوكمة البنكية</span></div><span class="en">Banking controls</span><span class="ar">ضوابط بنكية</span></div>
+      <div class="perk"><div class="perk-icon">⚡</div><div class="perk-title"><span class="en">CLI Tool</span><span class="ar">أداة CLI</span></div>npm install</div>
+      <div class="perk"><div class="perk-icon">🖥️</div><div class="perk-title"><span class="en">Desktop App</span><span class="ar">تطبيق سطح المكتب</span></div><span class="en">Electron SOC dashboard</span><span class="ar">لوحة تحكم SOC إلكترون</span></div>
+      <div class="perk"><div class="perk-icon">🌐</div><div class="perk-title"><span class="en">Browser Extension</span><span class="ar">إضافة المتصفح</span></div><span class="en">Chrome/Edge/Firefox</span><span class="ar">كروم/إيدج/فايرفوكس</span></div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div class="cta-section">
+    <h2><span class="en">Start free.<br><span class="gold">Block the first threat</span><br><span class="en">in 60 seconds.</span></span><span class="ar">ابدأ مجاناً.<br><span class="gold">احجب أول تهديد</span><br>في 60 ثانية.</span></h2>
+    <p><span class="en">Open Telegram. Message @teoslinker_bot. Paste your first command. Get your verdict. No account. No credit card.</span><span class="ar">افتح تلغرام. راسل @teoslinker_bot. الصق أمرك الأول. احصل على حكمك. لا حساب. لا بطاقة ائتمان.</span></p>
+    <div class="cta-row" style="justify-content:center;">
+      <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-gold"><span class="en">🟢 Open @teoslinker_bot →</span><span class="ar">🟢 افتح @teoslinker_bot ←</span></a>
+      <a href="mailto:ayman@elmahrosa.org" class="btn-outline"><span class="en">Enterprise inquiry →</span><span class="ar">استفسار مؤسسي ←</span></a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-nav">
+      <a href="../index.html">Command Center</a>
+      <a href="../dashboard.html">SOC Dashboard</a>
+      <a href="../app.html">App Hub</a>
+      <a href="../rules.html">121 Active Governance Controls</a>
+      <a href="index.html">Sentinel</a>
+      <a href="../transparency.html">Transparency</a>
+      <a href="../replay.html">Replay</a>
+      <a href="../pitch-deck.html">Pitch Deck</a>
+      <a href="../monitoring/dashboard.html">Monitoring</a>
+      <a href="../desktop/dashboard.html">Desktop</a>
+      <a href="../downloads/teos-browser-ext.zip" download target="_blank" rel="noopener noreferrer>Browser Ext</a>
+    </div>
+    <p style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);margin-bottom:0.3rem;">
+      <span class="en">Built in Alexandria, Egypt</span><span class="ar">صُنع في الإسكندرية، مصر</span>
+    </p>
+    <p style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);margin-bottom:0.3rem;">
+      <span class="en">v4.0.0 GA · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul 2026 · 121 Active Governance Controls · 596 total tests</span><span class="ar">الإصدار v4.0.0 GA · v4.0.0 GA · 121 ضابط حوكمة نشط · 596 اختبار تحقق</span>
+    </p>
+    <p style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);">
+      <span class="en">Claude Code · MCP · Enterprise AI Governance</span><span class="ar">كلود كود · MCP · حوكمة الذكاء الاصطناعي للمؤسسات</span>
+    </p>
+    </p>
+    <p style="font-family:var(--font-m);font-size:0.55rem;color:var(--alabaster-dim);">
+      <span class="en">Law Governs Code. Humans Govern Systems. AI Serves Authority.</span><span class="ar">القانون يحكم الكود. البشر يحكمون الأنظمة. الذكاء الاصطناعي يخدم السلطة.</span>
+    </p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var isAr = false;
+  var btn = document.getElementById('lang-toggle');
+  if(!btn){console.warn('lang-toggle: #lang-toggle not found');return}
+  console.log('lang-toggle: initialized');
+  var ens = document.querySelectorAll('.en');
+  var ars = document.querySelectorAll('.ar');
+  function update(){
+    if (isAr) {
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+      btn.innerHTML = 'AR | <span style="color:var(--gold);">EN</span>';
+    } else {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+      btn.innerHTML = '<span style="color:var(--gold);">AR</span> | EN';
+    }
+    ens.forEach(function(el){ el.style.display = isAr ? 'none' : ''; });
+    ars.forEach(function(el){ el.style.display = isAr ? '' : 'none'; });
+  }
+  btn.onclick = function(){ isAr = !isAr; update(); };
+  update();
+})();
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 Deterministic AI runtime security middleware that sits between AI-generated actions and execution — providing inspection, scoring, blocking, auditability, and compliance visibility before commands, code, or scripts are executed.
 
-**Production site:** https://sentinel.teosegypt.com
+**Production site:** Railway (API) + Vercel (HTTP)
 
 ```
 INPUT  →  31 deterministic rules  →  BLOCK / WARN / ALLOW  →  PERSIST + STREAM

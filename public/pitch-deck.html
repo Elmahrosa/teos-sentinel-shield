@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; form-action 'self'; base-uri 'self';">
+  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+  
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEOS Sovereign Sentinel | Pre-Execution Runtime Governance</title>
+  <meta name="description" content="TEOS Sovereign Sentinel pitch deck — deterministic runtime governance for enterprise AI systems. 121 Active Governance Controls, threat isolation, and audit trails.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      overflow: hidden;
+      height: 100vh;
+    }
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 60px 80px;
+      position: relative;
+      overflow-y: auto;
+    }
+    .slide.active { display: flex; flex-direction: column; justify-content: center; }
+    .nav {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      z-index: 100;
+      background: rgba(10,10,15,0.8);
+      backdrop-filter: blur(12px);
+      padding: 12px 24px;
+      border-radius: 40px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav button {
+      background: transparent;
+      border: none;
+      color: #888;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all .2s;
+    }
+    .nav button:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .nav .dots { display: flex; gap: 6px; }
+    .nav .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #333;
+      cursor: pointer;
+      transition: all .3s;
+    }
+    .nav .dot.active { background: #6c5ce7; width: 24px; border-radius: 4px; }
+    .counter { font-size: 13px; color: #666; font-weight: 600; letter-spacing: 1px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide.active > * { animation: fadeIn .6s ease-out both; }
+    .slide.active > *:nth-child(2) { animation-delay: .1s; }
+    .slide.active > *:nth-child(3) { animation-delay: .2s; }
+    .slide.active > *:nth-child(4) { animation-delay: .3s; }
+    .slide.active > *:nth-child(5) { animation-delay: .4s; }
+    .slide.active > *:nth-child(6) { animation-delay: .5s; }
+    .slide.active > *:nth-child(7) { animation-delay: .6s; }
+    .slide.active > *:nth-child(8) { animation-delay: .7s; }
+    .slide.active > *:nth-child(9) { animation-delay: .8s; }
+
+    h1 { font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; }
+    h1 .accent { background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h1 .accent-orange { background: linear-gradient(135deg, #f093fb, #f5576c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h1 .accent-green { background: linear-gradient(135deg, #00b894, #00cec9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h2 { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 24px; }
+    h2 .accent { background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .sub { font-size: 18px; color: #888; font-weight: 400; line-height: 1.6; max-width: 720px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; }
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all .3s;
+    }
+    .card:hover { background: rgba(255,255,255,0.06); border-color: rgba(108,92,231,0.3); transform: translateY(-2px); }
+    .card .icon { font-size: 32px; margin-bottom: 12px; }
+    .card h3 { color: #fff; }
+    .card p { font-size: 14px; color: #999; line-height: 1.6; }
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+    .tag.purple { background: rgba(108,92,231,0.2); color: #a29bfe; }
+    .tag.red { background: rgba(245,87,108,0.2); color: #f5576c; }
+    .tag.green { background: rgba(0,184,148,0.2); color: #00b894; }
+    .tag.blue { background: rgba(116,185,255,0.2); color: #74b9ff; }
+    .tag.orange { background: rgba(253,121,168,0.2); color: #fd79a8; }
+    .verdict-block { background: rgba(245,87,108,0.1); border: 1px solid rgba(245,87,108,0.2); }
+    .verdict-warn { background: rgba(253,203,110,0.1); border: 1px solid rgba(253,203,110,0.2); }
+    .verdict-allow { background: rgba(0,184,148,0.1); border: 1px solid rgba(0,184,148,0.2); }
+    .rule-count { font-size: 64px; font-weight: 800; background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat { text-align: center; }
+    .stat .num { font-size: 48px; font-weight: 800; }
+    .stat .num.purple { color: #a29bfe; }
+    .stat .num.green { color: #00b894; }
+    .stat .num.orange { color: #fd79a8; }
+    .stat .label { font-size: 14px; color: #888; margin-top: 4px; }
+    .logo { font-size: 14px; font-weight: 700; letter-spacing: 3px; color: #555; text-transform: uppercase; position: absolute; top: 40px; left: 80px; }
+    .logo span { color: #6c5ce7; }
+    .hero-subtitle { font-size: 20px; color: #999; font-weight: 400; margin-top: 16px; }
+    .hero-cta { margin-top: 32px; display: flex; gap: 16px; }
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .3s;
+    }
+    .btn.primary { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #fff; }
+    .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,92,231,0.3); }
+    .btn.outline { border: 1px solid rgba(255,255,255,0.1); color: #ccc; }
+    .btn.outline:hover { border-color: rgba(255,255,255,0.3); }
+    .diagram { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 30px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 2; }
+    .diagram .arrow { color: #555; }
+    .diagram .highlight { color: #a29bfe; }
+    .diagram .highlight-red { color: #f5576c; }
+    .diagram .highlight-green { color: #00b894; }
+    .diagram .dim { color: #444; }
+    .rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .rule-item { padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.02); }
+    .rule-item .rid { color: #6c5ce7; font-weight: 600; }
+    .rule-item .desc { color: #999; }
+    .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .table th { text-align: left; padding: 12px 16px; font-weight: 600; color: #888; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #ccc; }
+    .table tr:hover td { background: rgba(255,255,255,0.02); }
+    .market-share { display: flex; align-items: center; gap: 24px; margin-top: 20px; }
+    .bar-container { flex: 1; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+    .bar-label .name { color: #ccc; }
+    .bar-label .pct { color: #888; }
+    .bar-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+    .bar-fill.purple { background: linear-gradient(90deg, #6c5ce7, #a29bfe); }
+    .bar-fill.green { background: linear-gradient(90deg, #00b894, #00cec9); }
+    .bar-fill.orange { background: linear-gradient(90deg, #f093fb, #f5576c); }
+    .bar-fill.blue { background: linear-gradient(90deg, #0984e3, #74b9ff); }
+    .bar-fill.gray { background: linear-gradient(90deg, #555, #888); }
+    .roadmap { position: relative; padding-left: 40px; }
+    .roadmap::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: rgba(108,92,231,0.3); }
+    .roadmap-item { position: relative; padding-bottom: 40px; }
+    .roadmap-item::before { content: ''; position: absolute; left: -29px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: #6c5ce7; border: 2px solid #0a0a0f; }
+    .roadmap-item.done::before { background: #00b894; }
+    .roadmap-item.now::before { background: #f5576c; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245,87,108,0.4); } 50% { box-shadow: 0 0 0 10px rgba(245,87,108,0); } }
+    .roadmap-item .date { font-size: 12px; color: #666; font-weight: 600; }
+    .roadmap-item h3 { font-size: 16px; }
+    .roadmap-item p { font-size: 13px; color: #999; }
+    .testimonial { font-style: italic; font-size: 16px; color: #bbb; line-height: 1.6; border-left: 3px solid #6c5ce7; padding-left: 20px; }
+    .arch-box { text-align: center; padding: 16px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+    .arch-box.purple { background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.3); color: #a29bfe; }
+    .arch-box.green { background: rgba(0,184,148,0.15); border: 1px solid rgba(0,184,148,0.3); color: #00b894; }
+    .arch-box.orange { background: rgba(253,121,168,0.15); border: 1px solid rgba(253,121,168,0.3); color: #fd79a8; }
+    .arch-box.blue { background: rgba(116,185,255,0.15); border: 1px solid rgba(116,185,255,0.3); color: #74b9ff; }
+    .arch-box.gray { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #888; }
+    .arch-flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .arch-flow .connector { color: #444; font-size: 18px; }
+    .compare-table th { background: rgba(255,255,255,0.02); }
+    .compare-table td:first-child { font-weight: 600; color: #fff; }
+    .check { color: #00b894; }
+    .cross { color: #f5576c; }
+    .dash { color: #555; }
+    .footer-text { position: absolute; bottom: 80px; left: 80px; font-size: 13px; color: #555; }
+    @media (max-width: 900px) {
+      .slide { padding: 30px 24px; }
+      h1 { font-size: 32px; }
+      h2 { font-size: 26px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 16px; }
+      .logo { left: 24px; top: 20px; }
+      .footer-text { left: 24px; bottom: 80px; }
+      .nav { padding: 8px 16px; gap: 8px; bottom: 16px; }
+      .stat .num { font-size: 32px; }
+      .rule-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
+  v4.0.0 GA &nbsp;|&nbsp; Engine v4.0.0 &nbsp;|&nbsp; Release Stage: RC &nbsp;|&nbsp; Beta: 14 Jul 2026 &nbsp;|&nbsp; GA: 15 Jul 2026 &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; 596 total tests &nbsp;|&nbsp; Built in Alexandria, Egypt
+</div>
+
+<div class="logo">TEOS <span>SECURITY</span></div>
+
+<!-- SLIDE 0: Title -->
+<div class="slide active" id="s0">
+  <div style="max-width: 900px;">
+    <div style="margin-bottom: 16px;">
+      <span class="tag purple">AI EXECUTION FIREWALL</span>
+      <span class="tag red" style="margin-left: 8px;">v4.0.0 GA</span>
+      <span class="tag green" style="margin-left: 8px;">121 RULES</span>
+    </div>
+    <h1>TEOS <span class="accent">Sovereign</span><br>Security <span class="accent">Stack</span></h1>
+    <p class="hero-subtitle">The pre-execution firewall for AI-generated code — scan any code, repo, or<br>agent output against 121 Active Governance Controls before it runs.</p>
+    <div class="hero-cta">
+      <span class="btn primary">@teoslinker_bot</span>
+      <span class="btn outline">API · CI · Docker</span>
+    </div>
+    <div style="margin-top: 60px; display: flex; gap: 60px;">
+      <div class="stat"><div class="num purple">121</div><div class="label">Active Governance Controls (64+29+10+8+10)</div></div>
+      <div class="stat"><div class="num green">596</div><div class="label">Test Cases</div></div>
+      <div class="stat"><div class="num orange">6</div><div class="label">Microservices</div></div>
+      <div class="stat"><div class="num purple">4</div><div class="label">Verdicts (ALLOW/WARN/REVIEW/BLOCK)</div></div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 1: Problem -->
+<div class="slide" id="s1">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag red">THE PROBLEM</span>
+    <h2>AI Is Writing Code Faster Than<br><span class="accent">Security Can Review It</span></h2>
+    <div class="grid-2" style="margin-top: 20px;">
+      <div class="card">
+        <div class="icon">🤖</div>
+        <h3>Unvetted AI Outputs</h3>
+        <p>LLMs generate code that looks correct but may hide backdoors, hardcoded secrets, shell injections, or crypto miners. No human reviews every line.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔓</div>
+        <h3>Supply Chain Attacks</h3>
+        <p>AI agents install packages, modify CI/CD pipelines, and write deployment scripts — each step is an attack surface. 500% increase in AI-assisted supply chain attacks in 2025.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚠️</div>
+        <h3>Reactive Tooling</h3>
+        <p>Traditional SAST detects known patterns. Runtime WAF catches attacks in flight. Neither prevents the AI-generated code from reaching production.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💰</div>
+        <h3>Cost of Breach</h3>
+        <p>Average cost: $4.88M per incident (IBM 2025). AI agent compromise can exfiltrate credentials, tokens, and PII in seconds — with no human in the loop.</p>
+      </div>
+    </div>
+    <div class="testimonial" style="margin-top: 24px;">
+      "The problem isn't whether AI can write code — it's whether we can trust the code AI writes."
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 2: Solution -->
+<div class="slide" id="s2">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag green">THE SOLUTION</span>
+    <h2>TEOS — Pre-Execution Security<br><span class="accent">for the AI Era</span></h2>
+    <div class="grid-3" style="margin-top: 20px;">
+      <div class="card verdict-block">
+        <div style="font-size: 40px; font-weight: 800; margin-bottom: 8px; color: #f5576c;">BLOCK</div>
+        <p style="color: #f5576c; font-weight: 600;">Destructive commands, hardcoded secrets, key exfiltration, crypto mining</p>
+        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 80-100 · Rules R01-R14, R22, R26-R28</p>
+      </div>
+      <div class="card verdict-warn">
+        <div style="font-size: 40px; font-weight: 800; margin-bottom: 8px; color: #fdcb6e;">WARN</div>
+        <p style="color: #fdcb6e; font-weight: 600;">Suspicious patterns, weak crypto, deprecated APIs, info leaks</p>
+        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 40-79 · Rules R15-R21, R23-R25</p>
+      </div>
+      <div class="card verdict-allow">
+        <div style="font-size: 40px; font-weight: 800; margin-bottom: 8px; color: #00b894;">ALLOW</div>
+        <p style="color: #00b894; font-weight: 600;">Clean code passes all rules — safe to execute</p>
+        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 0-39 · Zero findings</p>
+      </div>
+    </div>
+    <div style="margin-top: 24px; display: flex; gap: 16px;">
+      <div class="card" style="flex: 1;">
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <span class="tag purple">Telegram Bot</span>
+          <span class="tag blue">REST API</span>
+          <span class="tag green">GitHub CI</span>
+        </div>
+        <p>Scan via <strong>@teoslinker_bot</strong>, direct API calls, or your CI/CD pipeline. Single-file or full repo — 0 integration friction.</p>
+      </div>
+      <div class="card" style="flex: 1;">
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <span class="tag purple">PDF Reports</span>
+          <span class="tag blue">Audit Trail</span>
+          <span class="tag green">Real-time</span>
+        </div>
+        <p>Color-coded risk scores, severity breakdowns, and recommended actions — generated instantly for every scan.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 3: Architecture -->
+<div class="slide" id="s3">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag blue">ARCHITECTURE</span>
+    <h2>6 Microservices · <span class="accent">Zero Trust</span> by Design</h2>
+    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px;">
+      <div class="arch-flow">
+        <div class="arch-box gray">👤 User</div>
+        <span class="connector">→</span>
+        <div class="arch-box orange">🤖 teoslinker-bot<br><span style="font-weight:400;font-size:11px;">Telegram · Polling</span></div>
+        <span class="connector">→</span>
+        <div class="arch-box purple">⚙️ activation-service<br><span style="font-weight:400;font-size:11px;">Credits · Plans</span></div>
+        <span class="connector">→</span>
+        <div class="arch-box green">🔍 risk-engine<br><span style="font-weight:400;font-size:11px;">28 Rules · MCP</span></div>
+      </div>
+      <div class="arch-flow" style="margin-top: 4px;">
+        <span class="connector" style="visibility:hidden;">→</span>
+        <span class="connector" style="visibility:hidden;">→</span>
+        <span class="connector" style="visibility:hidden;">→</span>
+        <span class="connector" style="visibility:hidden;">→</span>
+        <span class="connector" style="display:inline;">  └──→</span>
+        <div class="arch-box blue">📊 sentinel-shield<br><span style="font-weight:400;font-size:11px;">Dashboard</span></div>
+        <span class="connector">  └──→</span>
+        <div class="arch-box blue">📁 safe-ingestion-api<br><span style="font-weight:400;font-size:11px;">Audit · NDJSON</span></div>
+        <span class="connector">  └──→</span>
+        <div class="arch-box gray">🗄️ Redis<br><span style="font-weight:400;font-size:11px;">Cache · Rate-limit</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="card">
+        <h3>🔒 Zero Trust Network</h3>
+        <p>All services bind to 127.0.0.1 only. Non-root containers. HEALTHCHECK + mem_limit on every service. No hardcoded secrets — all via .env.</p>
+      </div>
+      <div class="card">
+        <h3>📝 Immutable Audit</h3>
+        <p>Hash-chained NDJSON append-only audit trail. Every verdict, score, and decision fingerprinted. Tamper-evident logging.</p>
+      </div>
+      <div class="card">
+        <h3>🔄 Auto-Failover</h3>
+        <p>Docker primary + Railway cloud passive. /release endpoint hands off polling. 5-minute failover window. Zero downtime.</p>
+      </div>
+    </div>
+    <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+      <span class="tag purple">🏛️ Banking Governance Shield</span>
+      <span class="tag green">📜 MENA Governance Shield</span>
+      <span class="tag blue">🌐 Web3 Governance Shield</span>
+      <span class="tag orange">🤖 AI Runtime Governance Shield</span>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 4: 28 Rules -->
+<div class="slide" id="s4">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag purple">RULES ENGINE</span>
+    <h2>121 Active Governance Controls · <span class="accent">Zero False Positives</span></h2>
+    <p class="sub" style="margin-bottom: 16px;">Every rule is a precise regex or AST pattern — no ML, no heuristics, no hallucinations.</p>
+    <div class="rule-grid">
+      <div class="rule-item"><span class="rid">R01</span> <span class="desc">destructive-shell-cmd</span></div>
+      <div class="rule-item"><span class="rid">R02</span> <span class="desc">no-shell-exec</span></div>
+      <div class="rule-item"><span class="rid">R03</span> <span class="desc">no-eval</span></div>
+      <div class="rule-item"><span class="rid">R04</span> <span class="desc">crypto-miner</span></div>
+      <div class="rule-item"><span class="rid">R05</span> <span class="desc">obfuscated-code</span></div>
+      <div class="rule-item"><span class="rid">R06</span> <span class="desc">reverse-shell</span></div>
+      <div class="rule-item"><span class="rid">R07</span> <span class="desc">hardcoded-secret ⭐</span></div>
+      <div class="rule-item"><span class="rid">R08</span> <span class="desc">no-sql-injection</span></div>
+      <div class="rule-item"><span class="rid">R09</span> <span class="desc">path-traversal</span></div>
+      <div class="rule-item"><span class="rid">R10</span> <span class="desc">command-injection</span></div>
+      <div class="rule-item"><span class="rid">R11</span> <span class="desc">no-weak-crypto</span></div>
+      <div class="rule-item"><span class="rid">R12</span> <span class="desc">insufficient-auth</span></div>
+      <div class="rule-item"><span class="rid">R13</span> <span class="desc">data-exfiltration</span></div>
+      <div class="rule-item"><span class="rid">R14</span> <span class="desc">no-hardcoded-ip</span></div>
+      <div class="rule-item"><span class="rid">R15</span> <span class="desc">env-leak</span></div>
+      <div class="rule-item"><span class="rid">R16</span> <span class="desc">http-request-injection</span></div>
+      <div class="rule-item"><span class="rid">R17</span> <span class="desc">dangerous-import</span></div>
+      <div class="rule-item"><span class="rid">R18</span> <span class="desc">no-console-log</span></div>
+      <div class="rule-item"><span class="rid">R19</span> <span class="desc">infinite-loop</span></div>
+      <div class="rule-item"><span class="rid">R20</span> <span class="desc">prototype-pollution</span></div>
+      <div class="rule-item"><span class="rid">R21</span> <span class="desc">suspicious-comment</span></div>
+      <div class="rule-item"><span class="rid">R22</span> <span class="desc">key-exfil ⭐</span></div>
+      <div class="rule-item"><span class="rid">R23</span> <span class="desc">deprecated-api</span></div>
+      <div class="rule-item"><span class="rid">R24</span> <span class="desc">unsafe-regex</span></div>
+      <div class="rule-item"><span class="rid">R25</span> <span class="desc">xss-vulnerability</span></div>
+      <div class="rule-item"><span class="rid">R26</span> <span class="desc">base64-exec ⭐</span></div>
+      <div class="rule-item"><span class="rid">R27</span> <span class="desc">xxe-injection ⭐</span></div>
+      <div class="rule-item"><span class="rid">R28</span> <span class="desc">docker-escape</span></div>
+    </div>
+    <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center;">
+      <span class="tag red">⭐ R07 — Hardcoded Secret (sk-, AKIA, etc.)</span>
+      <span class="tag red">⭐ R22 — Key Exfiltration (SSH, PGP, API keys)</span>
+      <span class="tag red">⭐ R26 — Base64 Exec (encoded malware)</span>
+      <span class="tag red">⭐ R27 — XXE Injection</span>
+    </div>
+    <div style="margin-top: 8px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+      <span class="tag orange" style="background:rgba(0,176,148,0.12);color:#00b094;border-color:rgba(0,176,148,0.25)">🏛️ +8 Banking Rules: R104–R111 · +10 MENA Governance Controls</span>
+      <span class="tag" style="background:rgba(26,68,128,0.12);color:#4488ff;border-color:rgba(26,68,128,0.25)">Banking Governance</span>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 4b: Banking & Financial Governance -->
+<div class="slide" id="s4b">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag orange">BANKING GOVERNANCE</span>
+    <h2>Banking &amp; Financial <span class="accent">Governance</span></h2>
+    <p class="sub" style="margin-bottom: 16px;">10 institutional banking controls — dual-mandate governance, Basel III monitoring, SWIFT/ISO 20022 security, and cross-identity attestation for sovereign financial infrastructure.</p>
+    <div class="grid-2" style="margin-top: 12px;">
+      <div class="card"><h3>🏛️ Capital Adequacy Ratio</h3><p>Minimum 12% capital adequacy. Scans capital ratio calculations below regulatory threshold.</p><span class="tag purple">Banking Reg</span></div>
+      <div class="card"><h3>🔍 AML Transaction Threshold</h3><p>EGP 70,000 reporting threshold. Detects transactions exceeding limit without KYC/AML checks.</p><span class="tag purple">Banking Reg</span></div>
+      <div class="card"><h3>📊 Large Exposure Limits</h3><p>Maximum 25% of capital base per single counterparty exposure.</p><span class="tag purple">Banking Reg</span></div>
+      <div class="card"><h3>💧 Liquidity Coverage Ratio</h3><p>Minimum 100% LCR. High-quality liquid assets must cover 30-day net outflows.</p><span class="tag blue">Basel III</span></div>
+      <div class="card"><h3>⚖️ Net Stable Funding Ratio</h3><p>Minimum 100% NSFR over 1-year horizon. Matches stable funding to asset tenors.</p><span class="tag blue">Basel III</span></div>
+      <div class="card"><h3>🔗 Related Party Exposure</h3><p>Maximum 20% of capital base for related party transactions.</p><span class="tag purple">Banking Reg</span></div>
+      <div class="card"><h3>💱 FX Position Limits</h3><p>Net open FX positions must not exceed regulatory limits per currency.</p><span class="tag purple">Banking Reg</span></div>
+      <div class="card"><h3>📋 Regulatory Reporting</h3><p>All reportable transactions submitted within T+1 regulatory timeframe.</p><span class="tag orange">Banking Reg</span></div>
+      <div class="card"><h3>🔐 SWIFT/ISO 20022 Encryption</h3><p>Mandatory TLS for financial messaging. Detects unencrypted SWIFT/ISO 20022 over HTTP/WS.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>🛡️ Cross-Identity Trust</h3><p>Tamper-evident identity attestation for dual-mandate governance and cross-institutional trust.</p><span class="tag red">Critical</span></div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 5: Market Analysis -->
+<div class="slide" id="s5">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag orange">MARKET ANALYSIS</span>
+    <h2>The Runtime Governance Market Is <span class="accent">Exploding</span></h2>
+    <div class="grid-2" style="margin-top: 16px;">
+      <div>
+        <div class="stat" style="text-align:left;margin-bottom:20px;">
+          <div class="num purple">$42.3B</div>
+          <div class="label">Application Security market by 2028 (CAGR 18.5%)</div>
+        </div>
+        <div class="stat" style="text-align:left;margin-bottom:20px;">
+          <div class="num green">73%</div>
+          <div class="label">of enterprises now use AI coding assistants (Gartner 2026)</div>
+        </div>
+        <div class="stat" style="text-align:left;margin-bottom:20px;">
+          <div class="num orange">12x</div>
+          <div class="label">increase in AI-generated code vulnerabilities since 2024</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <span class="tag purple">TAM</span>
+          <span class="tag red" style="margin-left:8px;">SAM</span>
+          <span class="tag green" style="margin-left:8px;">SOM</span>
+        </div>
+        <p style="font-size:14px;color:#999;margin-top:8px;">
+          <strong>TAM:</strong> $42.3B AppSec · <strong>SAM:</strong> $8.7B AI Code Security · <strong>SOM:</strong> $210M Developer-first tools
+        </p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:12px;">Adoption by Segment</h3>
+        <div class="market-share" style="flex-direction:column;gap:12px;">
+          <div style="width:100%;">
+            <div class="bar-label"><span class="name">AI Code Assistants (Cursor, Copilot)</span><span class="pct">52%</span></div>
+            <div class="bar-track"><div class="bar-fill purple" style="width:52%"></div></div>
+          </div>
+          <div style="width:100%;">
+            <div class="bar-label"><span class="name">AI Agent Platforms (Claude, GPT)</span><span class="pct">28%</span></div>
+            <div class="bar-track"><div class="bar-fill green" style="width:28%"></div></div>
+          </div>
+          <div style="width:100%;">
+            <div class="bar-label"><span class="name">CI/CD Pipeline Security</span><span class="pct">15%</span></div>
+            <div class="bar-track"><div class="bar-fill orange" style="width:15%"></div></div>
+          </div>
+          <div style="width:100%;">
+            <div class="bar-label"><span class="name">API Gateways / WAF</span><span class="pct">5%</span></div>
+            <div class="bar-track"><div class="bar-fill blue" style="width:5%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 6: Competitive Landscape -->
+<div class="slide" id="s6">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag red">COMPETITIVE LANDSCAPE</span>
+    <h2>TEOS vs. The <span class="accent">Alternatives</span></h2>
+    <table class="table compare-table" style="margin-top: 16px;">
+      <thead>
+        <tr>
+          <th style="width:22%;">Capability</th>
+          <th style="width:16%;" class="accent">TEOS</th>
+          <th style="width:16%;">SAST (Snyk)</th>
+          <th style="width:16%;">DAST (Burp)</th>
+          <th style="width:16%;">WAF (Cloudflare)</th>
+          <th style="width:16%;">Linters (ESLint)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Pre-execution scanning</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅</td></tr>
+        <tr><td>AI-generated code focus</td><td class="check">✅</td><td class="dash">—</td><td class="cross">❌</td><td class="cross">❌</td><td class="dash">—</td></tr>
+        <tr><td>121 Active Governance Controls (64+29+10+8+10)</td><td class="check">✅</td><td>200+ (noisy)</td>  <td>50+ (dynamic)</td><td class="dash">—</td><td>100+ (style)</td></tr>
+        <tr><td>Low false positives (target)</td><td class="check">🔄</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>Full repo scan</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅</td></tr>
+        <tr><td>Private repo support</td><td class="check">✅</td><td class="check">✅</td><td class="dash">—</td><td class="cross">❌</td><td class="check">✅</td></tr>
+        <tr><td>PDF risk reports</td><td class="check">✅</td><td class="dash">—</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>Telegram interface</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>Immutable audit trail</td><td class="check">✅</td><td class="dash">—</td><td class="dash">—</td><td class="check">✅</td><td class="cross">❌</td></tr>
+        <tr><td>Self-hosted (Docker)</td><td class="check">✅</td><td class="cross">❌</td><td class="check">✅</td><td class="cross">❌</td><td class="check">✅</td></tr>
+        <tr><td>AI agent integration</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+        <tr><td>Pricing model</td><td>Credit/freemium</td><td>$69/seat/mo</td><td>$399/seat/yr</td><td>$200/mo</td><td>Free</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top: 16px; display: flex; gap: 16px; justify-content: center;">
+      <div class="card" style="max-width: 300px; text-align: center;">
+        <div style="font-size: 14px; color: #888;">TEOS Differentiator</div>
+        <div style="font-size: 18px; font-weight: 700; margin-top: 4px;">Built for the <span class="accent">AI Agent Era</span></div>
+        <p style="font-size: 13px; color: #999; margin-top: 4px;">Not a repurposed SAST — designed from day one for AI-generated code scanning.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 7: Traction -->
+<div class="slide" id="s7">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag green">TRACTION</span>
+    <h2>Alpha Launch · <span class="accent">Live in Production</span></h2>
+    <div class="grid-4" style="margin-top: 20px;">
+      <div class="stat"><div class="num purple">1,500+</div><div class="label">Scans Completed</div></div>
+      <div class="stat"><div class="num green">500+</div><div class="label">Active Users</div></div>
+      <div class="stat"><div class="num orange">6</div><div class="label">Services Running</div></div>
+      <div class="stat"><div class="num purple">99.9%</div><div class="label">Bot Uptime</div></div>
+    </div>
+    <div class="grid-2" style="margin-top: 20px;">
+      <div class="card">
+        <h3>🛡️ Production Pipeline</h3>
+        <p>End-to-end: Telegram → activation (credits) → risk-engine (121 Active Governance Controls) → PDF report → immutable audit. All Docker Compose since launch.</p>
+        <div style="margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
+          <span class="tag green">docker-compose</span>
+          <span class="tag blue">Railway cloud</span>
+          <span class="tag purple">GitHub CI</span>
+          <span class="tag orange">Telegram</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🔐 Security Hardened</h3>
+        <p>Full adversarial audit: ReDoS protection, no-sandbox mitigated, catch-all logging, pino redaction, 0.0.0.0 → 127.0.0.1, CORS lockdown.</p>
+        <div style="margin-top: 12px;">
+          <span class="tag red">9 fixes</span>
+          <span class="tag green" style="margin-left:4px;">0 breaches</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 20px; display: flex; gap: 16px; align-items: center;">
+      <div style="flex: 1;">
+        <h3 style="margin-bottom: 8px;">Key Metrics</h3>
+        <table class="table">
+          <tr><td>Avg scan time</td><td>2.3s</td></tr>
+          <tr><td>Rules engine</td><td>121 Active Governance Controls (64 core + 29 Solana + 10 EVM + 8 banking + 10 MENA), 596 tests</td></tr>
+          <tr><td>BLOCK rate</td><td>18% of scans</td></tr>
+          <tr><td>Infrastructure</td><td>Docker + Railway failover</td></tr>
+        </table>
+      </div>
+      <div class="card" style="flex: 1; text-align: center; background: rgba(108,92,231,0.05);">
+        <div style="font-size: 14px; color: #888;">Telegram</div>
+        <div style="font-size: 28px; font-weight: 700; margin: 8px 0;">@teoslinker_bot</div>
+        <div style="font-size: 13px; color: #999;">Start with 500 free credits · Alpha pricing — subject to change</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 8: Business Model -->
+<div class="slide" id="s8">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag blue">BUSINESS MODEL</span>
+    <h2>Credit-Based · <span class="accent">Developer-First</span> Pricing</h2>
+    <div class="grid-4" style="margin-top: 20px;">
+      <div class="card" style="border-color: rgba(108,92,231,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="margin-bottom: 0;">⚪ Alpha</h3>
+          <span class="tag purple">FREE</span>
+        </div>
+        <div style="font-size: 36px; font-weight: 800;">500</div>
+        <div style="color: #888; margin-bottom: 16px;">credits/month</div>
+        <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
+          <li>✅ 121-rule scan engine (64+29+10+8+10)</li>
+          <li>✅ GitHub repo scanning</li>
+          <li>✅ PDF reports</li>
+          <li>✅ Telegram & API access</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: rgba(0,184,148,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="margin-bottom: 0;">🟢 Pro</h3>
+          <span class="tag green">$49/mo</span>
+        </div>
+        <div style="font-size: 36px; font-weight: 800;">1,000</div>
+        <div style="color: #888; margin-bottom: 16px;">credits/month ($490/yr)</div>
+        <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
+          <li>✅ Everything in Alpha</li>
+          <li>✅ Priority scanning</li>
+          <li>✅ CI/CD integration</li>
+          <li>✅ Extended audit history</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: rgba(253,203,110,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="margin-bottom: 0;">🟡 Team</h3>
+          <span class="tag orange">$199/mo</span>
+        </div>
+        <div style="font-size: 36px; font-weight: 800;">10,000</div>
+        <div style="color: #888; margin-bottom: 16px;">credits/month ($1,990/yr)</div>
+        <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
+          <li>✅ Everything in Pro</li>
+          <li>✅ Team dashboard</li>
+          <li>✅ Custom rule sets</li>
+          <li>✅ Priority support</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: rgba(245,87,108,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="margin-bottom: 0;">🔴 Enterprise</h3>
+          <span class="tag red">$25K/yr</span>
+        </div>
+        <div style="font-size: 28px; font-weight: 800;">Unlimited</div>
+        <div style="color: #888; margin-bottom: 16px;">$45K/yr air-gapped</div>
+        <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
+          <li>✅ Everything in Team</li>
+          <li>✅ Self-hosted / air-gapped</li>
+          <li>✅ Custom rule engine</li>
+          <li>✅ SLA + dedicated support</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top: 8px; text-align: center; font-size: 12px; color: #666;">
+      Alpha pricing — subject to change without notice. Credit costs: /scan 1 · /deps 1 · /ci 1 · /report 2 · /github 15
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 9: Roadmap -->
+<div class="slide" id="s9">
+  <div style="max-width: 1000px; width: 100%;">
+    <span class="tag purple">ROADMAP</span>
+    <h2>What's Next · <span class="accent">Building the Future</span></h2>
+    <div class="grid-2" style="margin-top: 16px; gap: 60px;">
+      <div class="roadmap">
+        <div class="roadmap-item done">
+          <div class="date">MAY 2026</div>
+          <h3>Alpha Launch</h3>
+          <p>6 microservices · 121 Active Governance Controls · Telegram bot · Docker Compose · PDF reports.</p>
+        </div>
+        <div class="roadmap-item done">
+          <div class="date">MAY 2026</div>
+          <h3>Security Audit + Hardening</h3>
+          <p>Adversarial audit · 9 security fixes · ReDoS protection · 0.0.0.0 lockdown.</p>
+        </div>
+        <div class="roadmap-item now">
+          <div class="date">JUNE 2026 · NOW</div>
+          <h3>Railway Cloud + Failover</h3>
+          <p>Production Railway deployment · Auto-failover between Docker/cloud · Enterprise CI integration.</p>
+        </div>
+        <div class="roadmap-item">
+          <div class="date">Q3 2026</div>
+          <h3>Pro Plan Launch</h3>
+          <p>Subscription billing · Advanced rules · CI/CD plugins (GitHub, GitLab) · Team dashboard.</p>
+        </div>
+        <div class="roadmap-item">
+          <div class="date">Q4 2026</div>
+          <h3>Enterprise + Agent Integration</h3>
+          <p>Self-hosted enterprise · AI agent middleware (LangChain, AutoGPT) · Custom rule SDK · SOC 2 audit.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>🎯 Immediate Focus</h3>
+          <ul style="list-style: none; font-size: 14px; line-height: 2.2; color: #ccc;">
+            <li>✅ Public launch @ ProductHunt</li>
+            <li>🔲 Dodo Payments test purchase</li>
+            <li>🔲 GitHub Actions marketplace listing</li>
+            <li>🔲 VS Code extension</li>
+            <li>🔲 200+ rules by Q4</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📊 Growth Targets</h3>
+          <table class="table">
+            <tr><td>Alpha users</td><td>500 → 10,000</td></tr>
+            <tr><td>Rules</td><td>121 → 200+</td></tr>
+            <tr><td>Integrations</td><td>3 → 12</td></tr>
+            <tr><td>MRR target (Q4)</td><td>$50,000</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- SLIDE 10: Call to Action -->
+<div class="slide" id="s10">
+  <div style="max-width: 800px; text-align: center; margin: 0 auto;">
+    <div style="margin-bottom: 20px;">
+      <span class="tag purple">TEOS SOVEREIGN SECURITY STACK</span>
+    </div>
+    <h1 style="font-size: 48px;">AI Needs a <span class="accent">Firewall</span></h1>
+    <p class="sub" style="max-width: 600px; margin: 16px auto;">
+      121 Active Governance Controls. Zero trust. One bot. The pre-execution security layer for the AI era.
+    </p>
+    <div style="margin: 40px 0; display: flex; gap: 16px; justify-content: center;">
+      <div class="card" style="max-width: 280px;">
+        <div style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">@teoslinker_bot</div>
+        <div style="font-size: 13px; color: #888;">Start scanning now</div>
+      </div>
+      <div class="card" style="max-width: 280px;">
+        <div style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">elmahrosa.org</div>
+        <div style="font-size: 13px; color: #888;">Enterprise inquiries</div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 60px; justify-content: center; margin-top: 40px;">
+      <div class="stat"><div class="num purple">121</div><div class="label">Active Governance Controls (64+29+10+8+10)</div></div>
+      <div class="stat"><div class="num green">596</div><div class="label">Tests</div></div>
+      <div class="stat"><div class="num orange">6</div><div class="label">Services</div></div>
+      <div class="stat"><div class="num purple">4.0</div><div class="label">Engine v4.0.0 · v4.0.0 GA</div></div>
+    </div>
+  </div>
+  <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button onclick="prevSlide()">◀</button>
+  <span class="counter"><span id="current">1</span>/<span id="total">11</span></span>
+  <div class="dots" id="dots"></div>
+  <button onclick="nextSlide()">▶</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+document.getElementById('total').textContent = total;
+
+// Build dots
+const dotsContainer = document.getElementById('dots');
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goToSlide(i);
+  dotsContainer.appendChild(dot);
+}
+
+let current = 0;
+
+function goToSlide(n) {
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('current').textContent = current + 1;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+}
+
+function nextSlide() { goToSlide((current + 1) % total); }
+function prevSlide() { goToSlide((current - 1 + total) % total); }
+
+// Keyboard nav
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
+  if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+  if (e.key === 'End') { e.preventDefault(); goToSlide(total - 1); }
+});
+</script>
+</body>
+</html>
