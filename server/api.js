@@ -1,5 +1,5 @@
 /*
-  TEOS Sentinel Shield v4.0.0 GA — Monetized SaaS + Dodo Billing + Tiered Auth + Supabase Audit
+  TEOS Sentinel Shield v5.0.0 — Monetized SaaS + Dodo Billing + Tiered Auth + Supabase Audit + Modular Engine
   Deployment: Vercel serverless (primary) + Railway (via ws-server) + Hostinger static (site)
   Data store: Upstash Redis (serverless) + Supabase Postgres (audit persistence)
 
@@ -23,6 +23,10 @@ const crypto  = require('crypto');
 const fs      = require('fs');
 const path    = require('path');
 const app     = express();
+
+// ── MODULAR ENGINE (258 rules across 8 engines) ──────────────
+const { runCoreEngine }         = require('../src/engines/core');
+const { getTotalRuleCount }     = require('../lib/ruleRegistry');
 
 // ── CONFIG ──────────────────────────────────────────────────
 const PORT            = process.env.PORT || 3000;
@@ -791,178 +795,12 @@ function saveEventsSync(events) {
   return memStore;
 }
 
-// ── RISK ENGINE (25 deterministic rules) ────────────────────
-const RULES = [
-  { id:'R01', name:'DESTRUCTIVE_SHELL',    sev:'critical', score:100,
-    test: c => /rm\s+-rf|format\s+[a-z]:|deltree/i.test(c),
-    reasons: ['rm -rf permanently destroys all filesystem data','Wiper malware signature detected'] },
-
-  { id:'R02', name:'CHMOD_ESCALATION',     sev:'critical', score:90,
-    test: c => /chmod\s+[0-7]*7{2,}.*\/etc|777.*passwd/i.test(c),
-    reasons: ['chmod 777 on sensitive system files escalates privileges'] },
-
-  { id:'R03', name:'CURL_EXEC_CHAIN',      sev:'critical', score:95,
-    test: c => /curl.+\|\s*(bash|sh)|wget.+\|\s*(bash|sh)/i.test(c),
-    reasons: ['curl/wget piped to shell executes untrusted remote code'] },
-
-  { id:'R04', name:'SECRET_ECHO',          sev:'critical', score:90,
-    test: c => /echo\s+\$[A-Z_]*(KEY|TOKEN|SECRET|PASS|PWD)/i.test(c),
-    reasons: ['Echoing secret environment variable — potential exfiltration'] },
-
-  { id:'R05', name:'ENV_EXFIL',            sev:'critical', score:95,
-    test: c => /\$[A-Z_]*(KEY|SECRET|TOKEN).*(curl|wget|http)/i.test(c),
-    reasons: ['Sending environment secret to external host'] },
-
-  { id:'R06', name:'FORK_BOMB',            sev:'critical', score:100,
-    test: c => /(\:\(\)\{|:\(\))\s*\{.*:\|:/i.test(c),
-    reasons: ['Fork bomb detected — denial of service pattern'] },
-
-  { id:'R07', name:'BASE64_EXEC',          sev:'high',     score:88,
-    test: c => /eval\s*\(\s*atob|base64\s+--decode.*(sh|bash|exec)/i.test(c),
-    reasons: ['Base64-encoded payload executed via eval','Obfuscated execution bypass'] },
-
-  { id:'R08', name:'REVERSE_SHELL',        sev:'critical', score:100,
-    test: c => /nc\s+(-e|--exec)|bash\s+-i\s+>&\s*\/dev\/tcp/i.test(c),
-    reasons: ['Reverse shell connection attempt detected'] },
-
-  { id:'R09', name:'SQL_DESTRUCTION',      sev:'high',     score:75,
-    test: c => /DROP\s+(TABLE|DATABASE|SCHEMA)|TRUNCATE\s+TABLE/i.test(c),
-    reasons: ['SQL DROP command permanently destroys data'] },
-
-  { id:'R10', name:'SQL_INJECTION',        sev:'high',     score:75,
-    test: c => /'\s*(OR|AND)\s+\d=\d|UNION\s+SELECT|1=1/i.test(c),
-    reasons: ['Classic SQL injection pattern detected'] },
-
-  { id:'R11', name:'PATH_TRAVERSAL',       sev:'high',     score:78,
-    test: c => /(\.\.\/){2,}|%2e%2e/i.test(c),
-    reasons: ['Directory traversal detected in file path'] },
-
-  { id:'R12', name:'COMMAND_INJECTION',    sev:'critical', score:92,
-    test: c => /[;&|`]\s*(ls|cat|id|whoami|uname)/i.test(c),
-    reasons: ['OS command injection via user-controlled input'] },
-
-  { id:'R13', name:'PRIVILEGE_ESCALATION', sev:'critical', score:90,
-    test: c => /sudo\s+(su|bash|sh|python|perl)|chmod\s+u\+s/i.test(c),
-    reasons: ['Privilege escalation via sudo or SUID abuse'] },
-
-  { id:'R14', name:'MALICIOUS_PACKAGE',    sev:'high',     score:85,
-    test: c => /event-stream@3\.3\.6|flatmap-stream|ua-parser-js@0\.7\.2[89]/i.test(c),
-    reasons: ['Known malicious npm package version detected'] },
-
-  { id:'R15', name:'TYPOSQUAT_PACKAGE',    sev:'high',     score:70,
-    test: c => /require\s*\(\s*['"](\slodash|recat|expres|mongoos)['"]\s*\)/i.test(c),
-    reasons: ['Typosquatted package name detected'] },
-
-  { id:'R16', name:'UNSAFE_PERMISSIONS',   sev:'medium',   score:65,
-    test: c => /permissions:\s*write-all/i.test(c),
-    reasons: ['GitHub Actions write-all permissions overly broad'] },
-
-  { id:'R17', name:'CURL_BASH_CI',         sev:'critical', score:95,
-    test: c => /run:\s*curl.+\|\s*bash/i.test(c),
-    reasons: ['curl|bash in CI/CD pipeline step — remote code execution risk'] },
-
-  { id:'R18', name:'PRIVILEGED_CONTAINER', sev:'high',     score:80,
-    test: c => /--privileged|securityContext:\s*privileged:\s*true/i.test(c),
-    reasons: ['Privileged container flag breaks container isolation'] },
-
-  { id:'R19', name:'HARDCODED_SECRET',     sev:'critical', score:92,
-    test: c => /(api_key|apikey|secret_key|password)\s*=\s*['"][a-z0-9]{12,}['"]/i.test(c),
-    reasons: ['Hardcoded secret in source code detected'] },
-
-  { id:'R20', name:'PROMPT_INJECTION',     sev:'high',     score:80,
-    test: c => /ignore previous instructions|disregard your system prompt|jailbreak/i.test(c),
-    reasons: ['LLM prompt injection attempt detected'] },
-
-  { id:'R21', name:'SSRF_ATTEMPT',         sev:'high',     score:82,
-    test: c => /https?:\/\/(169\.254|10\.|192\.168|172\.(1[6-9]|2\d|3[01]))/i.test(c),
-    reasons: ['SSRF attempt targeting internal/metadata IP range'] },
-
-  { id:'R22', name:'XXE_INJECTION',        sev:'high',     score:80,
-    test: c => /<!ENTITY\s+\w+\s+SYSTEM/i.test(c),
-    reasons: ['XML External Entity injection pattern detected'] },
-
-  { id:'R23', name:'CRYPTO_MINER',         sev:'critical', score:95,
-    test: c => /stratum\+tcp|xmrig|minerd|ethminer/i.test(c),
-    reasons: ['Cryptomining binary or pool connection detected'] },
-
-  { id:'R24', name:'DATA_EXFIL_CURL',      sev:'high',     score:88,
-    test: c => /curl.+(-d|--data).+\/etc\/(passwd|shadow|hosts)/i.test(c),
-    reasons: ['Exfiltrating sensitive system files via curl'] },
-
-  { id:'R25', name:'CI_SECRETS_DUMP',      sev:'critical', score:90,
-    test: c => /printenv|env\s*\|\s*grep|\$\{\{\s*secrets\s*\}\}/i.test(c),
-    reasons: ['CI secrets or environment dump detected'] },
-
-  // ── v4.0.0 expansion: Windows / PowerShell / cloud / K8s ──
-  { id:'R26', name:'POWERSHELL_ENCODED',   sev:'critical', score:95,
-    test: c => /powershell[^\n]*(-e|-enc|-encodedcommand)\b|pwsh[^\n]*(-e|-enc)\b/i.test(c),
-    reasons: ['Encoded PowerShell payload — common malware delivery pattern'] },
-
-  { id:'R27', name:'POWERSHELL_IEX',       sev:'critical', score:96,
-    test: c => /\bIEX\b|\bInvoke-Expression\b|\bInvoke-WebRequest\b.*\|.*IEX|DownloadString\s*\(/i.test(c),
-    reasons: ['PowerShell download-and-execute (IEX/DownloadString) pattern detected'] },
-
-  { id:'R28', name:'WINDOWS_DESTRUCTIVE',  sev:'critical', score:98,
-    test: c => /\bdel\s+(?:\/[sqf]+\s*)+[a-z]:\\|rmdir\s+\/s\s+\/q|format\s+[a-z]:\s*\/|Remove-Item[\s\S]*-Recurse[\s\S]*-Force/i.test(c),
-    reasons: ['Windows destructive filesystem command detected'] },
-
-  { id:'R29', name:'SENSITIVE_FILE_READ',  sev:'high',     score:82,
-    test: c => /\b(cat|type|Get-Content|less|more)\s+[^\n]*(\/etc\/(passwd|shadow|sudoers)|\\\\windows\\\\system32|id_rsa|\.aws\/credentials|\.env\b)/i.test(c),
-    reasons: ['Reading sensitive system or credential files'] },
-
-  { id:'R30', name:'K8S_DESTRUCTIVE',      sev:'critical', score:94,
-    test: c => /kubectl\s+(delete|drain)\s+(ns|namespace|node)|kubectl\s+delete\s+.*( --force| --grace-period=0)/i.test(c),
-    reasons: ['Kubernetes destructive cluster operation detected'] },
-
-  { id:'R31', name:'CLOUD_DATA_EXFIL',     sev:'high',     score:88,
-    test: c => /aws\s+s3\s+(sync|cp)\s+s3:\/\/|az\s+storage\s+blob\s+download|gsutil\s+-m\s+cp\s+-r/i.test(c),
-    reasons: ['Cloud storage bulk transfer may indicate data exfiltration'] },
-];
-
+// ── RISK ENGINE (modular: 95 core rules + 163 domain rules = 258 total) ──
 function runEngine(command) {
   if (!command || typeof command !== 'string') {
     return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['No command provided'] };
   }
-
-  const cmd = command.trim();
-  if (cmd.length > 10000) {
-    return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['Input exceeds 10KB limit'] };
-  }
-
-  let topHit = null;
-
-  for (const rule of RULES) {
-    if (rule.test(cmd)) {
-      if (!topHit || rule.score > topHit.score) {
-        topHit = { rule, score: rule.score };
-      }
-    }
-  }
-
-  if (topHit) {
-    const verdict = topHit.score >= 80 ? 'BLOCK' : 'WARN';
-    return {
-      verdict,
-      score:    topHit.score,
-      rule:     `${topHit.rule.id}.${topHit.rule.name}`,
-      ruleId:   topHit.rule.id,
-      severity: topHit.rule.sev,
-      reasons:  topHit.rule.reasons,
-      command:  cmd,
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  return {
-    verdict:   'ALLOW',
-    score:     0,
-    rule:      'R00.CLEAN',
-    ruleId:    'R00',
-    severity:  'none',
-    reasons:   [`No threat patterns detected across ${RULES.length} rules`,'Safe to execute'],
-    command:   cmd,
-    timestamp: new Date().toISOString(),
-  };
+  return runCoreEngine(command);
 }
 
 // ── SYNTHETIC SEED DATA (credible operational realism) ──────
@@ -1067,15 +905,15 @@ app.get('/health', async (req, res) => {
 
   res.json({
     status:         overallStatus,
-    engine:         'v4.0.0',
-    rules:          RULES.length,
+    engine:         'v5.0.0',
+    rules:          getTotalRuleCount(),
     uptime:         Math.round(uptime),
     uptimeHuman:    uptime > 86400 ? `${Math.floor(uptime/86400)}d` :
                     uptime > 3600  ? `${Math.floor(uptime/3600)}h` :
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '4.0.0',
+    version:        '5.0.0',
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -1100,9 +938,9 @@ app.get('/health', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: '4.0.0',
-    engine:  'deterministic',
-    rules:   RULES.length,
+    version: '5.0.0',
+    engine:  'modular',
+    rules:   getTotalRuleCount(),
     endpoints: ['/scan','/stats','/events','/events/stream','/audit','/health','/enforce','/ledger/verify','/metrics','/audit/summary','/billing/pricing','/billing/checkout','/webhook/dodo'],
     auth:    'X-API-Key required except /health /stats /billing/pricing /webhook/dodo',
     docs:    'https://github.com/Elmahrosa/teos-sentinel-shield',
@@ -1194,7 +1032,7 @@ app.get('/stats', async (req, res) => {
     allowed,
     blockRate,
     topRules,
-    rulesActive: RULES.length,
+    rulesActive: getTotalRuleCount(),
     generated: new Date().toISOString(),
   });
 });
@@ -1227,7 +1065,7 @@ app.get('/events/stream', (req, res) => {
     'X-Accel-Buffering': 'no',
   });
 
-  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Subscribed to TEOS event stream', tier: req.apiTier, version: '4.0.0' })}\n\n`);
+  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Subscribed to TEOS event stream', tier: req.apiTier, version: '5.0.0' })}\n\n`);
 
   sseClients.add(res);
 
@@ -1269,7 +1107,7 @@ app.get('/audit', async (req, res) => {
     return res.json({
       ...result,
       generated: new Date().toISOString(),
-      engine: 'TEOS Sentinel v4.0.0',
+      engine: 'TEOS Sentinel v5.0.0',
       version: '4.0.0',
     });
   }
@@ -1278,9 +1116,9 @@ app.get('/audit', async (req, res) => {
   const events = await loadEvents();
   res.json({
     generated:   new Date().toISOString(),
-    engine:      'TEOS Sentinel v4.0.0',
+    engine:      'TEOS Sentinel v5.0.0',
     version:     '4.0.0',
-    rulesActive: RULES.length,
+    rulesActive: getTotalRuleCount(),
     totalEvents: events.length,
     events:      events.slice(-200).reverse(),
     store:       'memory',
@@ -1295,7 +1133,7 @@ app.get('/audit/summary', async (req, res) => {
   res.json({
     ...summary,
     generated: new Date().toISOString(),
-    engine: 'TEOS Sentinel v4.0.0',
+    engine: 'TEOS Sentinel v5.0.0',
     version: '4.0.0',
   });
 });
@@ -1332,7 +1170,7 @@ app.post('/enforce', async (req, res) => {
     agentId,
     action: action.trim(),
     timestamp: new Date().toISOString(),
-    engine: 'v4.0.0',
+    engine: 'v5.0.0',
     tier: req.apiTier,
     reqId: req.id,
   };
@@ -1398,7 +1236,7 @@ app.get('/ledger/verify', async (req, res) => {
 
   res.json({
     generated: new Date().toISOString(),
-    engine: 'v4.0.0',
+    engine: 'v5.0.0',
     version: '4.0.0',
     totalEvents: events.length,
     entries: ledger,
@@ -1426,7 +1264,7 @@ app.get('/metrics', async (req, res) => {
   const metrics = {
     teos_engine_info: {
       version: '4.0.0',
-      rules: RULES.length,
+      rules: getTotalRuleCount(),
       store: redis ? 'redis' : 'memory',
       auditStore: supabase ? 'supabase' : 'redis-fallback',
       env: NODE_ENV,
@@ -1437,7 +1275,7 @@ app.get('/metrics', async (req, res) => {
     teos_scans_warned: warned,
     teos_scans_allowed: allowed,
     teos_block_rate_percent: total > 0 ? parseFloat(((blocked / total) * 100).toFixed(1)) : 0,
-    teos_rules_active: RULES.length,
+    teos_rules_active: getTotalRuleCount(),
     teos_rule_hits: ruleCounts,
     teos_timestamp: new Date().toISOString(),
   };
@@ -1504,19 +1342,18 @@ app.use((err, req, res, next) => {
 
 // ── EXPORT (Vercel serverless + Railway) ──────────────────────
 module.exports           = app;
-module.exports.RULES     = RULES;
 module.exports.runEngine = runEngine;
-module.exports.loadEvents = loadEvents;       // async — Redis-aware (use in ws-server)
+module.exports.loadEvents = loadEvents;
 module.exports.loadEventsSync = loadEventsSync;
 module.exports.saveEvent = saveEvent;
 module.exports.redis     = redis;
 module.exports.TIERS     = TIERS;
 module.exports.isUnlimited = isUnlimited;
-module.exports.VERSION   = '4.0.0';
+module.exports.VERSION   = '5.0.0';
 
 // ── START (local dev) ───────────────────────────────────────
 if (require.main === module) {
   app.listen(PORT, () => {
-    log('info', 'TEOS Sentinel Engine v4.0.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory', audit: supabase ? 'supabase' : 'redis-fallback', rules: RULES.length });
+    log('info', 'TEOS Sentinel Engine v5.0.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory', audit: supabase ? 'supabase' : 'redis-fallback', rules: getTotalRuleCount() });
   });
 }
