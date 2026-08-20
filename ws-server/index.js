@@ -1,15 +1,15 @@
 const api          = require('../server/api');
 const app          = api;
-const RULES        = api.RULES;
 const runEngine    = api.runEngine;
 const loadEventsFn = api.loadEvents; // async Redis-aware
+const { getTotalRuleCount } = require('../lib/ruleRegistry');
 const WebSocket    = require('ws');
 const http         = require('http');
 const path         = require('path');
 const fs           = require('fs');
 
 /*
-  TEOS Sentinel Shield v4.0.0 — Unified Server (Railway / Fly.io / Local)
+  TEOS Sentinel Shield v5.0.0 — Unified Server (Railway / Fly.io / Local)
   Express API + WebSocket telemetry + static file serving in one process.
 
   All /api surface is delegated to Express (no path whitelist gaps).
@@ -267,7 +267,7 @@ server.listen(PORT, '0.0.0.0', () => {
     msg:     'TEOS Sentinel unified server started',
     version: VERSION,
     port:    PORT,
-    rules:   RULES ? RULES.length : 0,
+    rules:   getTotalRuleCount(),
     env:     NODE_ENV,
     ws:      true,
     bind:    '0.0.0.0',
