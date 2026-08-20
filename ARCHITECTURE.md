@@ -79,6 +79,8 @@ NODE_ENV=production
 
 ## Deployment Targets
 
+**Canonical deploy source: `Elmahrosa/teos-sentinel-shield` (private) — 2026-08-20**
+
 | Target | Role | Entry |
 |--------|------|--------|
 | **Railway** | API + WS unified | `npm start` → `ws-server/index.js` |
