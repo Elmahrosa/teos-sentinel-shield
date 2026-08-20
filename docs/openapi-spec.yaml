@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: TEOS Sentinel API
   description: Pre-execution enforcement for AI-generated commands. Deterministic policy evaluation before runtime.
-  version: 4.0.0
+  version: 3.0.0
   contact:
     name: TEOS Support
     email: ayman@teosegypt.com
@@ -355,13 +355,13 @@ paths:
                 $ref: '#/components/schemas/HealthResponse'
               example:
                 status: online
-                engine: v2.1
-                rules: 25
+                engine: v3.0.0
+                rules: 103
                 uptime: 86400
                 uptimeHuman: "1 day"
                 env: production
                 time: "2026-05-08T09:59:28.203Z"
-                version: "2.1.0"
+                version: "3.0.0"
                 store: redis
                 eventsCount: 1250
                 sla: "99.95%"
