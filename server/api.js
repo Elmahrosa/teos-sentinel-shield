@@ -25,7 +25,7 @@ const path    = require('path');
 const app     = express();
 
 // ── MODULAR ENGINE (258 rules across 8 engines) ──────────────
-const { runCoreEngine }         = require('../src/engines/core');
+const { executeEngine }         = require('../src/engines/index');
 const { getTotalRuleCount }     = require('../lib/ruleRegistry');
 
 // ── CONFIG ──────────────────────────────────────────────────
@@ -795,12 +795,31 @@ function saveEventsSync(events) {
   return memStore;
 }
 
-// ── RISK ENGINE (modular: 95 core rules + 163 domain rules = 258 total) ──
+// ── RISK ENGINE (modular: 110 core rules via executeEngine) ──
 function runEngine(command) {
   if (!command || typeof command !== 'string') {
     return { verdict:'ERROR', score:0, rule:'R00.CLEAN', reasons:['No command provided'] };
   }
-  return runCoreEngine(command);
+  const result = executeEngine('core', command, { skipCredit: true });
+  // All old fields preserved, new fields additive — no downstream breakage
+  return {
+    verdict:        result.verdict,
+    score:          result.score,
+    rule:           result.rule,
+    ruleId:         result.ruleId || null,
+    severity:       result.severity || 'none',
+    reasons:        result.reasons || [],
+    command:        command,
+    timestamp:      result.timestamp,
+    // New fields (additive)
+    findings:       result.findings || [],
+    auditId:        result.auditId,
+    engineVersion:  result.engineVersion,
+    rulePackVersion: result.rulePackVersion,
+    policyVersion:  result.policyVersion,
+    engine:         result.engine,
+    totalRules:     result.totalRules,
+  };
 }
 
 // ── SYNTHETIC SEED DATA (credible operational realism) ──────
