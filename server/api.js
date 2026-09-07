@@ -67,6 +67,14 @@ try {
       token: process.env.UPSTASH_REDIS_REST_TOKEN,
     });
     console.log('[teos] Upstash Redis connected');
+  } else if (process.env.REDIS_URL) {
+    const Redis = require('ioredis');
+    redis = new Redis(process.env.REDIS_URL, {
+      maxRetriesPerRequest: 3,
+      retryStrategy: (times) => Math.min(times * 100, 3000),
+      lazyConnect: true,
+    });
+    console.log('[teos] Redis connected via ioredis (REDIS_URL)');
   }
 } catch (e) {
   console.warn('[teos] Redis init failed, falling back to memory:', e.message);

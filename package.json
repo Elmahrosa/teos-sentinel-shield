@@ -28,6 +28,7 @@
     "@supabase/supabase-js": "^2.49.1",
     "@upstash/redis": "^1.38.0",
     "dodopayments": "^2.31.1",
+    "ioredis": "^5.11.1",
     "express": "^5.2.1",
     "ws": "^8.20.0"
   }
