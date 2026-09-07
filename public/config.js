@@ -7,7 +7,7 @@
   var SITE = 'https://sentinel.teosegypt.com';
 
   // Railway API backend (agent-code-risk-mcp)
-  var RAILWAY_API = 'https://agent-code-risk-mcp-production-b97d.up.railway.app';
+  var RAILWAY_API = 'https://agent-code-risk-mcp-production.up.railway.app';
 
   global.TEOS_CONFIG = {
     version: '4.0.0',

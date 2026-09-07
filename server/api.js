@@ -563,7 +563,8 @@ const VALID_KEYS = process.env.TEOS_API_KEYS
 
 const KEY_TIER_MAP = {};
 VALID_KEYS.forEach(k => {
-  if (k.includes('-sovereign')) KEY_TIER_MAP[k] = 'sovereign';
+  if (k.includes('-founder')) KEY_TIER_MAP[k] = 'sovereign';
+  else if (k.includes('-sovereign')) KEY_TIER_MAP[k] = 'sovereign';
   else if (k.includes('-enterprise')) KEY_TIER_MAP[k] = 'enterprise';
   else if (k.includes('-team') || k.includes('-pro')) KEY_TIER_MAP[k] = 'team';
   else if (k.includes('-starter')) KEY_TIER_MAP[k] = 'starter';
