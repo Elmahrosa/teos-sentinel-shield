@@ -327,4 +327,5 @@ A release is considered enterprise-ready ONLY if all of the following pass:
 
 ---
 
-*Policy Version: 1.0 · Engine Version: 4.1.0 · Rule Pack: rules-258*
+*Policy Version: 1.0 · Engine Version: 5.0.0 · Rule Pack: rules-258*
+

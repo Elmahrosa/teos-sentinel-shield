@@ -68,7 +68,7 @@ Every evaluation returns:
   "score": 88,
   "auditId": "TOS-...",
   "timestamp": "ISO-8601",
-  "engineVersion": "4.1.0",
+  "engineVersion": "5.0.0",
   "rulePackVersion": "rules-258",
   "policyVersion": "policy-1.0",
   "engine": "Core Security Engine",
@@ -92,7 +92,7 @@ Every evaluation returns:
 
 | Constant | Value | Defined In |
 |----------|-------|------------|
-| `ENGINE_VERSION` | `4.1.0` | `src/engines/index.js` |
+| `ENGINE_VERSION` | `5.0.0` | `src/engines/index.js` |
 | `RULE_PACK_VERSION` | `rules-258` | `src/engines/index.js` |
 | `POLICY_VERSION` | `policy-1.0` | `SCORING_POLICY.md` |
 
@@ -163,9 +163,9 @@ Every evaluation returns:
 - [x] Criteria: deterministic, explainable, reproducible, versioned, auditable, regression tested, policy validated, documentation synced, CI green
 
 ### Phase 11 (New) — Version Unification ✅ DONE
-- [x] `package.json` → `4.1.0`
-- [x] `.version.json` → `4.1.0`
-- [x] `lib/version.js` → `4.1.0`
+- [x] `package.json` → `5.0.0`
+- [x] `.version.json` → `5.0.0`
+- [x] `lib/version.js` → `5.0.0`
 
 ---
 
@@ -223,3 +223,5 @@ All endpoints require `X-API-Key` header.
 | FTP | ⚠️ Fallback only | Risk of updating wrong directory if paths drift |
 
 **Why:** The previous FTP deployment discovered a document-root mismatch — the FTP root did not match Apache's `DocumentRoot`. Git-based deployment eliminates this class of error by using the server's own file resolution.
+
+
