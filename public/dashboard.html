@@ -300,7 +300,9 @@ v4.0.0 GA · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul
 <script>
 const SHIELD_HOST  = 'sentinel.teosegypt.com';
 const API_BASE     = window.location.protocol + '//' + window.location.host;
-const WS_SHIELD    = 'wss://' + SHIELD_HOST + '/ws';
+const WS_SHIELD    = (window.location.host === SHIELD_HOST)
+  ? 'wss://teos-sentinel-shield-production-7f0d.up.railway.app'
+  : 'wss://' + window.location.host + '/ws';
 let allEvents   = [];
 let feedFilter  = 'all';
 let statsData   = { total:0, blocked:0, warned:0, allowed:0 };

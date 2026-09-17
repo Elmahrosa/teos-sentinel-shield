@@ -1,20 +1,33 @@
 /**
- * TEOS Sentinel Shield v4.0.0 GA — public site config
- * Hostinger: edit apiBase after Railway deploy / custom domain attach.
+ * TEOS Sentinel Shield v5.0.0 — public site config
+ * Host-agnostic: served from BOTH sentinel.teosegypt.com (Hostinger static,
+ * /scan /stats /events /health /api/* proxied by proxy.php) and the Railway
+ * domain (real backend, no proxy). Same-origin API calls work on both.
  * Never put SUPABASE_SERVICE_ROLE or TEOS server secrets here.
  */
 (function (global) {
   var SITE = 'https://sentinel.teosegypt.com';
 
-  // Railway API backend (agent-code-risk-mcp)
-  var RAILWAY_API = 'https://agent-code-risk-mcp-production.up.railway.app';
+  // Railway backend (real execution engine)
+  var RAILWAY_WS = 'wss://teos-sentinel-shield-production-7f0d.up.railway.app';
+
+  var hasLocation = typeof global.location !== 'undefined' && global.location;
+  var HOST  = hasLocation ? global.location.host : 'sentinel.teosegypt.com';
+  var PROTO = hasLocation ? global.location.protocol : 'https:';
+
+  // On Hostinger the REST API is same-origin via proxy.php; WebSocket cannot
+  // run on shared hosting, so the live feed points straight at Railway.
+  var ON_HOSTINGER = HOST === 'sentinel.teosegypt.com';
+
+  var apiBase = PROTO + '//' + HOST;
+  var wsUrl   = ON_HOSTINGER ? RAILWAY_WS : apiBase.replace(/^http/, 'ws');
 
   global.TEOS_CONFIG = {
-    version: '4.0.0',
+    version: '5.0.0',
     siteUrl: SITE,
-    apiBase: RAILWAY_API,
-    wsUrl: RAILWAY_API.replace(/^http/, 'ws'),
-    rulesCount: 31,
+    apiBase: apiBase,
+    wsUrl: wsUrl,
+    rulesCount: 258,
     demoApiKey: '',
   };
 

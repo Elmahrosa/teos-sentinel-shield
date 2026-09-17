@@ -8,6 +8,14 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # Prefer index.html
 DirectoryIndex index.html
 
+# ── API reverse proxy → proxy.php → Railway backend ──────────────
+# Lets sentinel.teosegypt.com serve /scan /stats /events /health /api/*
+# on the same origin. Only whitelisted API paths are proxied.
+# NOTE: /ws (WebSocket) is NOT proxied — shared hosting cannot tunnel it;
+# frontends connect the live feed directly to the Railway WebSocket.
+RewriteRule ^(scan|stats|events|health|live|ready|fullreport|ingest|engines)(/.*)?$ proxy.php [L,QSA]
+RewriteRule ^api/(rules|version|audit)(/.*)?$ proxy.php [L,QSA]
+
 # Cache static assets
 <IfModule mod_expires.c>
   ExpiresActive On
