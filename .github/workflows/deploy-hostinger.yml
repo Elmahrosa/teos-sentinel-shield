@@ -1,0 +1,86 @@
+name: Deploy Hostinger (sentinel.teosegypt.com)
+
+# Uploads public/ to Hostinger whenever it changes on main, so a normal
+# `git push` is all it takes to update https://sentinel.teosegypt.com/.
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   HOSTINGER_FTP_SERVER     ftp host, e.g. ftp.teosegypt.com  (no protocol)
+#   HOSTINGER_FTP_USERNAME   FTP account user
+#   HOSTINGER_FTP_PASSWORD   FTP account password
+# Optional repo variable (Settings → Actions → Variables):
+#   HOSTINGER_REMOTE_DIR     remote document root, default /public_html/
+#                            The FTP account often roots at the domain folder;
+#                            set this to match hPanel → Files for the domain.
+#
+# If the secrets are not set the job skips cleanly (no red builds).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/**'
+      - '.github/workflows/deploy-hostinger.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: hostinger-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check FTP secrets configured
+        id: guard
+        env:
+          FTP_SERVER: ${{ secrets.HOSTINGER_FTP_SERVER }}
+        run: |
+          if [ -z "$FTP_SERVER" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::HOSTINGER_FTP_* secrets not set — skipping deploy."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy public/ to Hostinger
+        if: steps.guard.outputs.configured == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.HOSTINGER_FTP_SERVER }}
+          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          server-dir: ${{ vars.HOSTINGER_REMOTE_DIR || '/public_html/' }}
+          local-dir: ./public/
+          # Never wipe remote files we didn't upload; only add/overwrite.
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.DS_Store
+
+      - name: Verify live site
+        if: steps.guard.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /tmp/root.html -w '%{http_code}' https://sentinel.teosegypt.com/ || true)
+            if [ "$code" = "200" ] && grep -q "258 Active Governance Controls" /tmp/root.html; then
+              echo "Root page OK (HTTP $code, v5 content present)."
+              ok=1
+              break
+            fi
+            echo "Attempt $i: HTTP $code — retrying in 10s"
+            sleep 10
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::sentinel.teosegypt.com did not serve v5 content after deploy."
+            exit 1
+          fi
+          echo "--- proxied /health (non-fatal) ---"
+          curl -s -m 20 https://sentinel.teosegypt.com/health || echo "health unavailable (non-fatal)"
