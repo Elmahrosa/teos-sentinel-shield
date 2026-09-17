@@ -10,8 +10,8 @@
     "start": "node ws-server/index.js",
     "dev": "node server/api.js",
     "dev:ws": "node ws-server/index.js",
-    "test": "node test/engine-test.js",
-    "test:engine": "node test/engine-test.js",
+    "test": "node test/expanded-engine-test.js",
+    "test:engine": "node test/expanded-engine-test.js",
     "vercel": "node server/api.js"
   },
   "keywords": [
