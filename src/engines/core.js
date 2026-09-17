@@ -102,7 +102,7 @@ const CORE_RULES = [
   // ── Secrets & Keys (R19, R38) ──
   { id: 'R19', name: 'HARDCODED_SECRET',         sev:'critical', score:93,
     test: c => /(?:api_key|apikey|secret_key|secret|password|passwd|token|auth_token|access_token)\s*[=:]\s*['"][A-Za-z0-9_\-\.]{12,}['"]/i.test(c) ||
-                /(?:sk-[a-zA-Z0-9-]{20,}|sk-proj-[a-zA-Z0-9-]{20,}|ghp_[a-zA-Z0-9-]{36}|gho_[a-zA-Z0-9-]{36}|ghu_[a-zA-Z0-9-]{36}|ghs_[a-zA-Z0-9-]{36}|xox[bpsa]-[a-zA-Z0-9-]{10,})/i.test(c),
+                /(?:sk-[a-zA-Z0-9-]{20,}|sk-proj-[a-zA-Z0-9-]{20,}|github_pat_[a-zA-Z0-9_]{20,}|ghp_[a-zA-Z0-9-]{20,}|gho_[a-zA-Z0-9-]{20,}|ghu_[a-zA-Z0-9-]{20,}|ghs_[a-zA-Z0-9-]{20,}|xox[bpsa]-[a-zA-Z0-9-]{10,})/i.test(c),
     reasons: ['Hardcoded API key, token, or password in source code','Credential exposure in source code'] },
 
   { id: 'R20', name: 'PROMPT_INJECTION',         sev:'high',     score:86,
