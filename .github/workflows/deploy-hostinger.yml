@@ -55,7 +55,7 @@ jobs:
           server: ${{ secrets.HOSTINGER_FTP_SERVER }}
           username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
           password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
-          server-dir: ${{ vars.HOSTINGER_REMOTE_DIR || '/public_html/' }}
+          server-dir: ${{ secrets.HOSTINGER_REMOTE_DIR || vars.HOSTINGER_REMOTE_DIR || '/public_html/' }}
           local-dir: ./public/
           # Never wipe remote files we didn't upload; only add/overwrite.
           dangerous-clean-slate: false
