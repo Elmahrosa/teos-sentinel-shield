@@ -18,7 +18,7 @@ Welcome message with feature overview and activation instructions.
 ```
 /start <activation_secret>
 ```
-Deep-link activation grants 500 credits, tier=tester, expires June 30, 2026.
+Deep-link activation grants 500 credits, tier=tester, with expiration set by the activation service.
 
 ### Status
 ```
@@ -42,7 +42,7 @@ Display account status, tier, credits remaining, and system health.
 | Free | 0 (must activate) | None | $0 |
 | Starter | 1,000 | None | $69/mo |
 | Team | 10,000 | None | $199/mo |
-| Enterprise | Unlimited | None | $25K/yr |
+| Enterprise | Unlimited | None | Custom |
 | Founder | Unlimited | None | Admin-granted |
 
 Credits consumed per action:
@@ -102,7 +102,7 @@ Scan EVM smart contracts for Solidity vulnerabilities.
 ```
 /evm function withdraw() public { msg.sender.call{value: address(this).balance}(""); }
 ```
-**Output:** Findings for EVM-specific rules (10 rules including reentrancy, flash loan, timestamp dependency).
+**Output:** Findings for EVM-specific rules (21 rules including reentrancy, flash loan, timestamp dependency).
 
 ### `/github <url>`
 Scan an entire GitHub repository (costs 15 credits).
@@ -182,7 +182,7 @@ BLOCK verdicts are silently removed. WARN and REVIEW verdicts are flagged with a
 Each scan passes through the TEOS governance engine:
 
 ```
-Input → Deterministic Rules (258) → Heuristic Suspicion (77 patterns) → REVIEW gate → Final Verdict
+Input → Deterministic Rules (258) → REVIEW gate → Final Verdict
 ```
 
 Governance metadata is included in every scan response:

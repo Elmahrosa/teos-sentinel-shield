@@ -55,7 +55,7 @@ tr:hover td{background:var(--panel)}
 <div id="topbar">
   <a class="topbar-logo" href="/"><span>⛊</span> TEOS</a>
   <div class="topbar-sep"></div>
-  <div class="topbar-title">API Reference <small>v4.0.0 GA</small></div>
+  <div class="topbar-title">API Reference <small>v5.0.0</small></div>
   <div class="topbar-right"><span class="topbar-time" id="clock"></span></div>
 </div>
 
@@ -91,7 +91,7 @@ tr:hover td{background:var(--panel)}
   "reasons": ["Remote script piped to shell"],
   "findings": [{ "ruleId": "R03", "name": "CURL_EXEC_CHAIN", "score": 95, "severity": "CRITICAL" }]
 }</pre>
-      <p><span class="tag green">ALLOW</span> <span class="tag amber">WARN</span> <span class="tag red">BLOCK</span> Score range: 0–100. Thresholds: BLOCK ≥ 85, WARN ≥ 40, ALLOW &lt; 40.</p>
+      <p><span class="tag green">ALLOW</span> <span class="tag amber">WARN</span> <span class="tag blue">REVIEW</span> <span class="tag red">BLOCK</span> Score range: 0–100. Thresholds: BLOCK ≥ 85, WARN ≥ 60, REVIEW below 60. Clean input (no rule matched) returns ALLOW with score 0.</p>
     </div>
   </div>
 
@@ -142,14 +142,14 @@ tr:hover td{background:var(--panel)}
     <div class="endpoint-head"><span class="endpoint-method method-get">GET</span><span class="endpoint-path">/health</span><span class="endpoint-desc">Service health and engine metadata</span></div>
     <div class="endpoint-body">
       <pre>{
-  "status": "ok",
-  "service": "teos-sentinel-shield",
-  "engine": "4.0",
-  "version": "4.0.0 GA",
-  "rules": 64,
-  "tests": 596,
-  "heuristicEngine": true,
-  "uptime": 127472
+  "status": "online",
+  "engine": "v5.0.0",
+  "rules": 258,
+  "uptime": 127472,
+  "env": "production",
+  "time": "2026-09-19T16:15:57Z",
+  "version": "5.0.0",
+  "store": "redis"
 }</pre>
     </div>
   </div>
@@ -159,7 +159,7 @@ tr:hover td{background:var(--panel)}
     <div class="endpoint-body">
       <pre>{
   "service": "teos-sentinel-shield",
-  "version": "4.0.0 GA",
+  "version": "5.0.0",
   "environment": "production"
 }</pre>
     </div>

@@ -6,13 +6,12 @@ import { Check } from 'lucide-react';
 
 const DODO = {
   free:              'https://dodo.pe/xm1619v9elp',
-  starter_monthly:   'https://dodo.pe/iba2piggql',
-  starter_annual:    'https://dodo.pe/slkqpsvswlt',
-  team_monthly:      'https://dodo.pe/mz3a54cb2s',
-  team_annual:       'https://dodo.pe/d4fr3ef9qt6',
-  enterprise_monthly:'https://dodo.pe/xn38jipi66d',
-  enterprise_annual: 'https://dodo.pe/kuqery53ove',
-  sovereign:         'https://dodo.pe/uft6rqarbel',
+  starter_monthly:   'https://dodo.pe/teos-starter-monthly-730161',
+  starter_annual:    'https://dodo.pe/teos-starter-annual-730161',
+  team_monthly:      'https://dodo.pe/teos-team-monthly-730161',
+  team_annual:       'https://dodo.pe/teos-team-annual-730161',
+  enterprise:        'mailto:ayman@elmahrosa.org?subject=Enterprise%20Pricing%20%E2%80%94%20TEOS%20Sentinel',
+  sovereign:         'mailto:ayman@elmahrosa.org?subject=Sovereign%20Deployment%20%E2%80%94%20TEOS%20Sentinel',
 };
 
 interface Tier {
@@ -95,10 +94,10 @@ const TIERS: Tier[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    monthlyPrice: '$499',
-    annualPrice: '$4,990',
-    annualEffective: '$415.83 / mo',
-    setup: '$5,000',
+    monthlyPrice: 'Custom',
+    annualPrice: 'Custom',
+    annualEffective: '',
+    setup: '$0',
     scans: 'Unlimited',
     rpm: '600',
     features: [
@@ -108,14 +107,14 @@ const TIERS: Tier[] = [
       'Dedicated onboarding',
       'SLA guarantee',
     ],
-    monthlyLink: DODO.enterprise_monthly,
-    annualLink: DODO.enterprise_annual,
-    ctaLabel: 'Subscribe',
+    monthlyLink: DODO.enterprise,
+    annualLink: DODO.enterprise,
+    ctaLabel: 'Contact us',
   },
 ];
 
 const SOVEREIGN_ADDONS = [
-  '+$10K additional site',
+  'Additional sites',
   'Custom rule authoring',
   'On-site deployment',
   'Support SLA',
@@ -151,7 +150,7 @@ function Price({ value, sub }: { value: string; sub?: string }) {
 
 function TierCard({ tier, annual, index }: { tier: Tier; annual: boolean; index: number }) {
   const price = annual ? tier.annualPrice : tier.monthlyPrice;
-  const priceSub = tier.id === 'free'
+  const priceSub = price === 'Custom' ? '' : tier.id === 'free'
     ? 'forever'
     : annual
     ? '/year'
@@ -318,9 +317,9 @@ export default function PricingTable() {
               Sovereign
             </p>
             <p className="text-2xl font-semibold text-white">
-              $25,000
+              Custom
               <span className="text-sm text-[rgba(240,237,232,0.45)] font-normal ml-2">
-                / year &middot; air-gapped
+                &middot; quoted per deployment
               </span>
             </p>
             <p className="text-xs text-[rgba(240,237,232,0.45)] mt-1">
@@ -343,7 +342,7 @@ export default function PricingTable() {
             rel="noopener noreferrer"
             className="shrink-0 text-sm font-medium px-6 py-3 rounded-xl border border-[rgba(255,255,255,0.12)] text-white hover:bg-[rgba(255,255,255,0.06)] transition-colors whitespace-nowrap"
           >
-            Purchase license
+            Request deployment
           </a>
         </motion.div>
 

@@ -1,9 +1,9 @@
 {
   "description": "Sample audit log showing TEOS Sentinel verdict records",
-  "engine": "TEOS Sentinel v2.0",
+  "engine": "TEOS Sentinel v5.0.0",
   "schema": {
     "id":        "unix timestamp (unique event ID)",
-    "verdict":   "BLOCK | WARN | ALLOW",
+    "verdict":   "BLOCK | WARN | REVIEW | ALLOW",
     "score":     "0-100 integer risk score",
     "rule":      "RXX.RULE_NAME - matched rule identifier",
     "ruleId":    "RXX - short rule ID",
@@ -29,7 +29,7 @@
     {
       "id": 1746614400002,
       "verdict": "WARN",
-      "score": 75,
+      "score": 78,
       "rule": "R10.SQL_INJECTION",
       "ruleId": "R10",
       "severity": "high",
@@ -45,7 +45,7 @@
       "rule": "R00.CLEAN",
       "ruleId": "R00",
       "severity": "none",
-      "reasons": ["No threat patterns detected across 25 rules", "Safe to execute"],
+      "reasons": ["No threat patterns detected across 258 rules", "Safe to execute"],
       "command": "console.log('hello')",
       "type": "code",
       "timestamp": "2026-05-07T12:02:00.003Z"

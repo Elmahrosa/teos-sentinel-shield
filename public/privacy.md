@@ -1,12 +1,12 @@
 # Privacy Policy
 
-**Effective Date:** May 8, 2026  
+**Effective Date:** May 8, 2026
 **Last Updated:** July 26, 2026
 
 ## 1. Data Controller
 
-TEOS Sovereign ("we", "us", "our")  
-Alexandria, Egypt  
+TEOS Sovereign ("we", "us", "our")
+Alexandria, Egypt
 Contact: privacy@teos-sentinel.io
 
 ## 2. Data We Collect
@@ -80,7 +80,7 @@ We process data solely for:
 - Right to object to processing
 
 ### 7.3 Exercising Your Rights
-Contact: privacy@teos-sentinel.io  
+Contact: privacy@teos-sentinel.io
 Response time: Within 30 days
 
 ## 8. Security Measures
@@ -88,7 +88,7 @@ Response time: Within 30 days
 - All data encrypted in transit (TLS 1.3)
 - Deterministic rule engine (no ML/AI model training on your data)
 - No cross-customer data sharing
-- SHA-256 hash chain for audit log integrity
+- SHA-256 fingerprinting for audit log verification
 - Rate limiting to prevent abuse
 - Input sanitization and payload size limits (64KB max)
 
@@ -116,5 +116,5 @@ This policy is governed by Egyptian law. Disputes shall be resolved in Alexandri
 
 ---
 
-**Document Version:** 1.1 (GA v4.0.0)  
+**Document Version:** 1.2 (v5.0.0)
 **Review Cycle:** Annual or upon material change

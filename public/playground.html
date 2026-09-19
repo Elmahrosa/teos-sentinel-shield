@@ -7,7 +7,7 @@
   <title>TEOS Sovereign Sentinel — Live Decision Playground</title>
   <meta name="description" content="Submit a simulated AI action and watch the TEOS governance engine evaluate it in real time. Try predefined scenarios or write your own.">
   <meta property="og:title" content="TEOS Sovereign Sentinel — Live Decision Playground">
-  <meta property="og:description" content="Watch the TEOS governance engine evaluate AI actions before execution. 121 controls. 4 verdicts. Real time.">
+  <meta property="og:description" content="Watch the TEOS governance engine evaluate AI actions before execution. 258 controls. 8 engines. 4 verdicts. Real time.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sentinel.teosegypt.com/playground.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,10 +107,6 @@
     .finding-body { flex: 1; font-size: 13px; }
     .finding-body .finding-rule { font-family: var(--font-m); font-size: 11px; color: var(--gold-dim); }
     .finding-body .finding-snip { font-family: var(--font-m); font-size: 11px; color: var(--alabaster-dim); margin-top: 4px; background: var(--kohl-input); padding: 4px 8px; border-radius: 4px; word-break: break-all; }
-
-    .signals-section { display: flex; flex-wrap: wrap; gap: 8px; }
-    .signal-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--kohl-raised); border: 1px solid var(--border-2); border-radius: 20px; font-family: var(--font-m); font-size: 10px; color: var(--alabaster-dim); }
-    .signal-chip .sig-score { color: var(--gold); font-weight: 600; }
 
     .reasoning-box { background: var(--kohl-raised); border: 1px solid var(--border-1); border-radius: 8px; padding: 16px; }
     .reasoning-box h4 { font-family: var(--font-m); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--alabaster-dim); margin-bottom: 8px; }
@@ -257,14 +253,14 @@
       <li><a href="index.html#demo">Demo</a></li>
       <li><a href="playground.html" style="color:var(--gold);">Playground</a></li>
       <li><a href="dashboard.html">SOC Dashboard</a></li>
-      <li><a href="rules.html">121 Controls</a></li>
+      <li><a href="rules.html">258 Controls</a></li>
     </ul>
   </nav>
 
   <div class="status-bar">
-    <div class="s-item"><div class="s-dot"></div>v4.0.0 GA · Engine v4.0.0</div>
+    <div class="s-item"><div class="s-dot"></div>v5.0.0 · Engine v5.0.0</div>
     <div class="s-item"><div class="s-dot"></div>Live Decision Playground</div>
-    <div class="s-item"><div class="s-dot"></div>121 Active Governance Controls</div>
+    <div class="s-item"><div class="s-dot"></div>258 Active Governance Controls · 8 Engines</div>
   </div>
 
   <div class="hero">
@@ -280,7 +276,7 @@
       <label for="codeInput">Code / Command / Prompt</label>
       <textarea id="codeInput" placeholder="Paste code, command, or AI action to evaluate…" spellcheck="false"></textarea>
       <div class="editor-actions">
-        <button class="btn-run" id="runBtn" disabled title="Available in v4.0.1">▶ Run Evaluation</button>
+        <button class="btn-run" id="runBtn" disabled>▶ Run Evaluation</button>
         <button class="btn-clear" id="clearBtn">Clear</button>
       </div>
       <div class="error-msg" id="errorMsg"></div>
@@ -339,8 +335,6 @@
           <div class="compliance-grid" id="complianceGrid"></div>
         </div>
 
-        <div class="signals-section" id="signalsSection"></div>
-
         <div class="reasoning-box" id="reasoningBox">
           <h4>Reasoning</h4>
           <div id="reasoningList"></div>
@@ -368,11 +362,11 @@
         <a href="index.html">Home</a>
         <a href="playground.html">Playground</a>
         <a href="dashboard.html">SOC Dashboard</a>
-        <a href="rules.html">121 Controls</a>
+<a href="rules.html">258 Controls</a>
         <a href="https://github.com/Elmahrosa/teos-sovereign-security-stack" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
     </div>
-    <div class="foot-bottom">v4.0.0 GA · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul 2026 · 121 Active Governance Controls · 596 total tests · Built in Alexandria, Egypt</div>
+    <div class="foot-bottom">v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · Built in Alexandria, Egypt</div>
   </footer>
 
   <script>
@@ -896,43 +890,264 @@ sudo ls /root  # sudo with ls (not an admin command)` },
     ];
 
     const RULE_MAP = {
-      'R01': { ctrl: 'Ctrl-01', label: 'DESTRUCTIVE_SHELL', desc: 'Unauthorized shell execution attempt' },
-      'R02': { ctrl: 'Ctrl-02', label: 'CRYPTO_MINER', desc: 'Cryptocurrency mining pattern detected' },
-      'R03': { ctrl: 'Ctrl-03', label: 'DATA_DESTRUCTION', desc: 'Destructive data operation' },
-      'R04': { ctrl: 'Ctrl-04', label: 'SECRET_ECHO', desc: 'Secret exposed in echo/output' },
-      'R05': { ctrl: 'Ctrl-05', label: 'PRIVILEGE_ESCALATION', desc: 'Privilege escalation attempt' },
-      'R06': { ctrl: 'Ctrl-06', label: 'PERSISTENCE_MECHANISM', desc: 'Persistence mechanism detected' },
-      'R07': { ctrl: 'Ctrl-07', label: 'HARDCODED_SECRET', desc: 'Hardcoded credential in source' },
-      'R08': { ctrl: 'Ctrl-08', label: 'REMOTE_ACCESS', desc: 'Unauthorized remote access tool' },
-      'R09': { ctrl: 'Ctrl-09', label: 'CODE_OBFUSCATION', desc: 'Obfuscated code execution' },
-      'R10': { ctrl: 'Ctrl-10', label: 'INSIDER_THREAT', desc: 'Insider threat indicator' },
-      'R11': { ctrl: 'Ctrl-11', label: 'PATH_TRAVERSAL', desc: 'Directory traversal attack' },
-      'R12': { ctrl: 'Ctrl-12', label: 'COMMAND_INJECTION', desc: 'Shell command injection' },
-      'R13': { ctrl: 'Ctrl-13', label: 'DLL_HIJACKING', desc: 'DLL/library hijacking' },
-      'R14': { ctrl: 'Ctrl-14', label: 'UNSAFE_EXEC', desc: 'Unsafe exec() evaluation' },
-      'R15': { ctrl: 'Ctrl-15', label: 'SENSITIVE_API', desc: 'Sensitive API key exposure' },
-      'R16': { ctrl: 'Ctrl-16', label: 'SQL_INJECTION', desc: 'SQL injection pattern' },
-      'R17': { ctrl: 'Ctrl-17', label: 'LDAP_INJECTION', desc: 'LDAP injection attack' },
-      'R18': { ctrl: 'Ctrl-18', label: 'XXE_INJECTION', desc: 'XML external entity injection' },
-      'R19': { ctrl: 'Ctrl-19', label: 'SSRF', desc: 'Server-side request forgery' },
-      'R20': { ctrl: 'Ctrl-20', label: 'SERIALIZATION_ATTACK', desc: 'Insecure deserialization' },
-      'R21': { ctrl: 'Ctrl-21', label: 'PROMPT_INJECTION', desc: 'Prompt injection attempt' },
-      'R22': { ctrl: 'Ctrl-22', label: 'KEY_EXFIL', desc: 'Key exfiltration via network' },
-      'R23': { ctrl: 'Ctrl-23', label: 'SUPPLY_CHAIN', desc: 'Supply chain integrity violation' },
-      'R24': { ctrl: 'Ctrl-24', label: 'MCP_ABUSE', desc: 'MCP protocol abuse detected' },
-      'R25': { ctrl: 'Ctrl-25', label: 'CONFIG_TAMPER', desc: 'Governance configuration tampering' },
-      'R104': { ctrl: 'Ctrl-26', label: 'LEDGER_MANIPULATION', desc: 'Ledger/balance manipulation' },
-      'R105': { ctrl: 'Ctrl-27', label: 'SWIFT_UNENCRYPTED', desc: 'Unencrypted SWIFT/ISO 20022 transport' },
-      'R106': { ctrl: 'Ctrl-28', label: 'FIX_CLEARTEXT', desc: 'FIX protocol cleartext credentials' },
-      'R107': { ctrl: 'Ctrl-29', label: 'FRONT_RUNNING', desc: 'Algorithmic front-running pattern' },
-      'R108': { ctrl: 'Ctrl-30', label: 'RESERVE_KEY_LEAK', desc: 'Sovereign reserve key leakage' },
-      'R109': { ctrl: 'Ctrl-31', label: 'CROSS_ID_SILENT_TRUST', desc: 'Cross-identity silent trust binding' },
-      'R110': { ctrl: 'Ctrl-32', label: 'UNASSIGNED_DISPUTE', desc: 'Unassigned dispute escalation' },
-      'R111': { ctrl: 'Ctrl-33', label: 'PCI_FRA_CONTAMINATION', desc: 'PCI/FRA data contamination' },
-      'R34': { ctrl: 'Ctrl-34', label: 'ADMIN_ELEVATION', desc: 'Admin elevation with package/system command' },
-      'R35': { ctrl: 'Ctrl-35', label: 'PKG_MANAGER_REMOVE', desc: 'Destructive package removal command' },
-      'R36': { ctrl: 'Ctrl-36', label: 'FILESYSTEM_ADMIN', desc: 'Filesystem admin operation detected' },
-      'R37': { ctrl: 'Ctrl-37', label: 'SERVICE_ADMIN', desc: 'Service/network admin operation detected' },
+      'R01': { ctrl: 'Ctrl-01', label: 'DESTRUCTIVE_SHELL', desc: 'rm -rf on system-critical path — permanent filesystem destruction' },
+      'R02': { ctrl: 'Ctrl-02', label: 'CHMOD_ESCALATION', desc: 'chmod 777 on sensitive system files escalates privileges' },
+      'R03': { ctrl: 'Ctrl-03', label: 'CURL_EXEC_CHAIN', desc: 'curl/wget piped to shell executes untrusted remote code' },
+      'R04': { ctrl: 'Ctrl-04', label: 'SECRET_ECHO', desc: 'Echoing secret environment variable — potential exfiltration' },
+      'R05': { ctrl: 'Ctrl-05', label: 'ENV_EXFIL', desc: 'Sending environment secret to external host' },
+      'R06': { ctrl: 'Ctrl-06', label: 'FORK_BOMB', desc: 'Fork bomb detected — denial of service pattern' },
+      'R07': { ctrl: 'Ctrl-07', label: 'BASE64_EXEC', desc: 'Base64-encoded payload executed via eval' },
+      'R08': { ctrl: 'Ctrl-08', label: 'REVERSE_SHELL', desc: 'Reverse shell connection attempt detected' },
+      'R09': { ctrl: 'Ctrl-09', label: 'SQL_DESTRUCTION', desc: 'SQL DROP command permanently destroys data' },
+      'R10': { ctrl: 'Ctrl-10', label: 'SQL_INJECTION', desc: 'SQL injection pattern detected' },
+      'R11': { ctrl: 'Ctrl-11', label: 'PATH_TRAVERSAL', desc: 'Directory traversal detected — arbitrary file read possible' },
+      'R12': { ctrl: 'Ctrl-12', label: 'COMMAND_INJECTION', desc: 'OS command injection — command chained after separator' },
+      'R13': { ctrl: 'Ctrl-13', label: 'PRIVILEGE_ESCALATION', desc: 'Privilege escalation via sudo or SUID abuse' },
+      'R14': { ctrl: 'Ctrl-14', label: 'MALICIOUS_PACKAGE', desc: 'Known malicious npm package version detected' },
+      'R15': { ctrl: 'Ctrl-15', label: 'TYPOSQUAT_PACKAGE', desc: 'Typosquatted package name detected — potential supply chain attack' },
+      'R16': { ctrl: 'Ctrl-16', label: 'UNSAFE_PERMISSIONS', desc: 'GitHub Actions write-all permissions overly broad' },
+      'R17': { ctrl: 'Ctrl-17', label: 'CURL_BASH_CI', desc: 'curl|bash in CI/CD pipeline — remote code execution risk' },
+      'R18': { ctrl: 'Ctrl-18', label: 'PRIVILEGED_CONTAINER', desc: 'Privileged container flag breaks container isolation' },
+      'R19': { ctrl: 'Ctrl-19', label: 'HARDCODED_SECRET', desc: 'Hardcoded API key, token, or password in source code' },
+      'R20': { ctrl: 'Ctrl-20', label: 'PROMPT_INJECTION', desc: 'LLM prompt injection attempt detected' },
+      'R21': { ctrl: 'Ctrl-21', label: 'SSRF_ATTEMPT', desc: 'SSRF attempt targeting internal/metadata IP range' },
+      'R22': { ctrl: 'Ctrl-22', label: 'XXE_INJECTION', desc: 'XML External Entity injection pattern detected' },
+      'R23': { ctrl: 'Ctrl-23', label: 'CRYPTO_MINER', desc: 'Cryptomining binary or pool connection detected' },
+      'R24': { ctrl: 'Ctrl-24', label: 'DATA_EXFIL_CURL', desc: 'Exfiltrating sensitive system files via curl' },
+      'R25': { ctrl: 'Ctrl-25', label: 'CI_SECRETS_DUMP', desc: 'CI secrets or environment variable dump detected' },
+      'R41': { ctrl: 'Ctrl-26', label: 'XSS_REFLECTED', desc: 'Reflected XSS — unescaped user input injected into HTML' },
+      'R42': { ctrl: 'Ctrl-27', label: 'XSS_STORED', desc: 'Stored XSS — unsanitized input written to DOM' },
+      'R43': { ctrl: 'Ctrl-28', label: 'RCE_EVAL', desc: 'eval() or new Function() with dynamic input — arbitrary code execution' },
+      'R44': { ctrl: 'Ctrl-29', label: 'EXEC_COMMAND', desc: 'shell execution via exec() — arbitrary command execution' },
+      'R45': { ctrl: 'Ctrl-30', label: 'SHELL_EXECUTION', desc: 'Python shell execution — arbitrary command injection risk' },
+      'R46': { ctrl: 'Ctrl-31', label: 'DESERIALIZATION', desc: 'Unsafe deserialization — remote code execution via serialized payload' },
+      'R47': { ctrl: 'Ctrl-32', label: 'DOCKER_ESCAPE', desc: 'Docker escape via host resources' },
+      'R48': { ctrl: 'Ctrl-33', label: 'K8S_ESCALATION', desc: 'Kubernetes privilege escalation attempt' },
+      'R49': { ctrl: 'Ctrl-34', label: 'RANSOMWARE_ENCRYPT', desc: 'Ransomware-like encryption + deletion pattern' },
+      'R50': { ctrl: 'Ctrl-35', label: 'RANSOMWARE_NOTE', desc: 'Ransomware note detected — extortion message' },
+      'R51': { ctrl: 'Ctrl-36', label: 'CREDENTIAL_THEFT', desc: 'Credential theft tool or pattern detected' },
+      'R52': { ctrl: 'Ctrl-37', label: 'PCI_DSS_LEAKAGE', desc: 'PCI DSS leakage — sensitive card data in source/log' },
+      'R53': { ctrl: 'Ctrl-38', label: 'PII_LEAKAGE', desc: 'PII leakage — personal identifiable information exposed' },
+      'R54': { ctrl: 'Ctrl-39', label: 'IDENTITY_LEAKAGE', desc: 'Identity data leakage — personal information in logs or responses' },
+      'R55': { ctrl: 'Ctrl-40', label: 'NETWORK_SCAN', desc: 'Network scanning detected — reconnaissance activity' },
+      'R56': { ctrl: 'Ctrl-41', label: 'PORT_SCAN', desc: 'Port scanning detected — service enumeration' },
+      'R57': { ctrl: 'Ctrl-42', label: 'DNS_TUNNEL', desc: 'DNS tunneling tool detected — data exfiltration via DNS queries' },
+      'R58': { ctrl: 'Ctrl-43', label: 'PROXY_CHAIN', desc: 'Proxy chain tool detected — anonymous access attempt' },
+      'R59': { ctrl: 'Ctrl-44', label: 'WIRESHARK_SNIFF', desc: 'Packet capture tool detected — network traffic interception' },
+      'R60': { ctrl: 'Ctrl-45', label: 'ARP_SPOOF', desc: 'ARP spoofing tool detected — MITM attack capability' },
+      'R61': { ctrl: 'Ctrl-46', label: 'LDAP_INJECTION', desc: 'LDAP injection — directory service query manipulation' },
+      'R62': { ctrl: 'Ctrl-47', label: 'XPATH_INJECTION', desc: 'XPath injection — XML query manipulation' },
+      'R63': { ctrl: 'Ctrl-48', label: 'NOSQL_INJECTION', desc: 'NoSQL injection — MongoDB operator injection' },
+      'R64': { ctrl: 'Ctrl-49', label: 'PROTOTYPE_POLLUTION', desc: 'Prototype pollution — object property injection vulnerability' },
+      'R65': { ctrl: 'Ctrl-50', label: 'SMUGGLING_HEADER', desc: 'HTTP request smuggling — header manipulation detected' },
+      'R66': { ctrl: 'Ctrl-51', label: 'INSECURE_COOKIE', desc: 'Insecure cookie — missing HttpOnly or Secure flags' },
+      'R67': { ctrl: 'Ctrl-52', label: 'CSP_BYPASS', desc: 'CSP bypass via unsafe-inline and unsafe-eval combination' },
+      'R68': { ctrl: 'Ctrl-53', label: 'CORS_MISCONFIG', desc: 'CORS misconfiguration — wildcard origin with credentials enabled' },
+      'R69': { ctrl: 'Ctrl-54', label: 'WEAK_CRYPTO', desc: 'Weak cryptographic algorithm — use SHA-256 or stronger' },
+      'R70': { ctrl: 'Ctrl-55', label: 'HARDCODED_IV', desc: 'Hardcoded IV — cryptographic initialization vector should be random and unique' },
+      'R71': { ctrl: 'Ctrl-56', label: 'CLOUD_KEY_LEAK', desc: 'Cloud provider secret key or access key exposed' },
+      'R72': { ctrl: 'Ctrl-57', label: 'OPEN_S3_BUCKET', desc: 'Potential S3 bucket policy grants public access — data exposure risk' },
+      'R73': { ctrl: 'Ctrl-58', label: 'IAM_OVERPRIVILEGED', desc: 'IAM policy with wildcard Action or Resource — overprivileged role' },
+      'R74': { ctrl: 'Ctrl-59', label: 'INSECURE_PROTOCOL', desc: 'Non-HTTPS URL to external service — unencrypted communication' },
+      'R75': { ctrl: 'Ctrl-60', label: 'INJECTION_MONGO', desc: 'MongoDB injection via $where operator — potential data leak' },
+      'R76': { ctrl: 'Ctrl-61', label: 'WSL_MALWARE', desc: 'WSL used to execute shell commands — potential malware activity on Windows' },
+      'R77': { ctrl: 'Ctrl-62', label: 'REGISTRY_TAMPER', desc: 'Windows Registry modification — persistence mechanism' },
+      'R78': { ctrl: 'Ctrl-63', label: 'SERVICE_INSTALL', desc: 'Windows service installation — potential persistence via service' },
+      'R79': { ctrl: 'Ctrl-64', label: 'SCHEDULED_TASK', desc: 'Scheduled task creation — potential persistence mechanism' },
+      'R80': { ctrl: 'Ctrl-65', label: 'POWERSHELL_ENCODED', desc: 'PowerShell encoded command — obfuscated execution' },
+      'R81': { ctrl: 'Ctrl-66', label: 'REFLECTION_ABUSE', desc: 'Reflection-based code loading — potentially malicious assembly loading' },
+      'R82': { ctrl: 'Ctrl-67', label: 'DLL_INJECTION', desc: 'DLL/process injection pattern — remote code execution in another process' },
+      'R83': { ctrl: 'Ctrl-68', label: 'KEYLOGGER', desc: 'Keylogger pattern — keyboard input capture' },
+      'R84': { ctrl: 'Ctrl-69', label: 'SCREEN_CAPTURE', desc: 'Screen capture pattern — potential data exfiltration via screenshots' },
+      'R85': { ctrl: 'Ctrl-70', label: 'WEBSOCKET_EXFIL', desc: 'WebSocket exfiltration — data sent to external WebSocket endpoint' },
+      'R86': { ctrl: 'Ctrl-71', label: 'BROKEN_ACCESS_CONTROL', desc: 'Broken access control — admin endpoint accessible without authentication' },
+      'R87': { ctrl: 'Ctrl-72', label: 'CRYPTO_FAILURE', desc: 'Cryptographic failure — weak or obsolete encryption/hashing for sensitive data' },
+      'R88': { ctrl: 'Ctrl-73', label: 'INSECURE_DESIGN', desc: 'Insecure design — trusting user/client-side controls for security decisions' },
+      'R89': { ctrl: 'Ctrl-74', label: 'SECURITY_MISCONFIG', desc: 'Security misconfiguration — debug/verbose mode exposes internals' },
+      'R90': { ctrl: 'Ctrl-75', label: 'VULN_COMPONENT', desc: 'Known vulnerable component referenced — associated with high-profile CVE' },
+      'R91': { ctrl: 'Ctrl-76', label: 'AUTH_BYPASS', desc: 'Authentication bypass — setting session/authentication state to true without validation' },
+      'R92': { ctrl: 'Ctrl-77', label: 'IDOR', desc: 'Insecure Direct Object Reference — access control missing on ID-based endpoint' },
+      'R93': { ctrl: 'Ctrl-78', label: 'LOG_INJECTION', desc: 'Log injection — unsanitized input written to logs (log forging)' },
+      'R94': { ctrl: 'Ctrl-79', label: 'SMTP_INJECTION', desc: 'SMTP injection — email header injection via user input' },
+      'R95': { ctrl: 'Ctrl-80', label: 'HOST_HEADER_INJECTION', desc: 'Host header injection — redirect poisoning via untrusted host header' },
+      'R96': { ctrl: 'Ctrl-81', label: 'SSTI_VULN', desc: 'Server-Side Template Injection — user input in template expression' },
+      'R97': { ctrl: 'Ctrl-82', label: 'SSO_WEAKNESS', desc: 'SSO/Auth weakness — authentication verification disabled' },
+      'R98': { ctrl: 'Ctrl-83', label: 'API_SEC_BYPASS', desc: 'API security bypass — endpoint exposed without authentication' },
+      'R99': { ctrl: 'Ctrl-84', label: 'CSP_BYPASS', desc: 'CSP bypass via unsafe directives or wildcard targets' },
+      'R100': { ctrl: 'Ctrl-85', label: 'NOSQL_INJECTION', desc: 'NoSQL injection — MongoDB operator injection via user input' },
+      'R101': { ctrl: 'Ctrl-86', label: 'LDAP_INJECTION', desc: 'LDAP injection — unescaped user input in LDAP query' },
+      'R102': { ctrl: 'Ctrl-87', label: 'XXE_VULNERABILITY', desc: 'XML External Entity (XXE) — unsecured XML parser' },
+      'R103': { ctrl: 'Ctrl-88', label: 'RACE_CONDITION', desc: 'Race condition — check-then-act pattern without lock/mutex' },
+      'R104': { ctrl: 'Ctrl-89', label: 'PATH_TRAVERSAL', desc: 'Path traversal — user input in file read/write without sanitization' },
+      'R105': { ctrl: 'Ctrl-90', label: 'WEAK_RNG', desc: 'Weak random number generation — Math.random() used for security-critical value' },
+      'R106': { ctrl: 'Ctrl-91', label: 'FILE_UPLOAD_DANGER', desc: 'Unrestricted file upload — no type/size validation' },
+      'R107': { ctrl: 'Ctrl-92', label: 'HTTP_ONLY_COOKIE', desc: 'Insecure cookie configuration — httpOnly/secure/sameSite disabled' },
+      'R108': { ctrl: 'Ctrl-93', label: 'GRAPHQL_INTROSPECT', desc: 'GraphQL introspection enabled in production — schema disclosure risk' },
+      'R109': { ctrl: 'Ctrl-94', label: 'OPEN_CORS', desc: 'Dangerous CORS — wildcard origin with credentials enabled' },
+      'R110': { ctrl: 'Ctrl-95', label: 'LEAKED_STACK_TRACE', desc: 'Stack trace leaked to client — information disclosure' },
+      'B01': { ctrl: 'Ctrl-96', label: 'LEDGER_DIRECT_MUTATION', desc: 'Direct ledger mutation bypasses atomic transaction hooks' },
+      'B02': { ctrl: 'Ctrl-97', label: 'RESERVE_BYPASS', desc: 'Reserve requirement bypass attempt — systemic risk' },
+      'B03': { ctrl: 'Ctrl-98', label: 'DOUBLE_SPEND_LOGIC', desc: 'Double-spend protection disabled — funds can be spent twice' },
+      'B04': { ctrl: 'Ctrl-99', label: 'SETTLEMENT_MANIPULATION', desc: 'Settlement manipulation — rounding/truncation can create or destroy value' },
+      'B05': { ctrl: 'Ctrl-100', label: 'SWIFT_UNENCRYPTED', desc: 'SWIFT/ISO 20022 message over unencrypted transport — PCI DSS violation' },
+      'B06': { ctrl: 'Ctrl-101', label: 'SWIFT_AUTH_BYPASS', desc: 'SWIFT authentication bypassed — unauthorized payment messages possible' },
+      'B07': { ctrl: 'Ctrl-102', label: 'SWIFT_SIGNATURE_WEAK', desc: 'Weak cryptographic algorithm for SWIFT message signing — downgrade attack risk' },
+      'B08': { ctrl: 'Ctrl-103', label: 'FIX_CLEARTEXT_LOGIN', desc: 'FIX protocol login with cleartext credentials — account takeover risk' },
+      'B09': { ctrl: 'Ctrl-104', label: 'FIX_SEQUENCE_RESET', desc: 'FIX sequence number reset — possible message replay or insertion attack' },
+      'B10': { ctrl: 'Ctrl-105', label: 'FIX_DROP_COPY', desc: 'FIX Drop Copy session — no execution — informational only' },
+      'B11': { ctrl: 'Ctrl-106', label: 'AML_SCREENING_BYPASS', desc: 'AML/sanctions screening bypassed — regulatory violation' },
+      'B12': { ctrl: 'Ctrl-107', label: 'KYC_DOCUMENT_FORGERY', desc: 'KYC document verification bypassed — identity fraud enabled' },
+      'B13': { ctrl: 'Ctrl-108', label: 'PEP_SCREENING_BYPASS', desc: 'PEP (Politically Exposed Person) screening bypassed' },
+      'B14': { ctrl: 'Ctrl-109', label: 'SANCTIONS_LIST_MANIPULATION', desc: 'Sanctions list manipulation — screening integrity compromised' },
+      'B15': { ctrl: 'Ctrl-110', label: 'PCI_CARD_DATA_STORAGE', desc: 'PCI DSS violation: storing full PAN/CVV — prohibited' },
+      'B16': { ctrl: 'Ctrl-111', label: 'PCI_TRACK_DATA', desc: 'PCI DSS prohibited: magnetic stripe track data storage' },
+      'B17': { ctrl: 'Ctrl-112', label: 'PCI_UNENCRYPTED_TRANSMISSION', desc: 'PCI DSS: cardholder data transmitted unencrypted over cleartext transport' },
+      'B18': { ctrl: 'Ctrl-113', label: 'ROUNDING_ATTACK', desc: 'Currency rounding logic — systematic rounding attack where fractions accumulate' },
+      'B19': { ctrl: 'Ctrl-114', label: 'FEE_MANIPULATION', desc: 'Fee manipulation pattern — hidden fee inflation or arbitrary surcharge' },
+      'B20': { ctrl: 'Ctrl-115', label: 'RECURRING_PAYMENT_FRAUD', desc: 'Recurring payment without explicit consent — unauthorized billing pattern' },
+      'B21': { ctrl: 'Ctrl-116', label: 'CHARGEBACK_AVOIDANCE', desc: 'Chargeback avoidance logic — preventing legitimate customer disputes' },
+      'B22': { ctrl: 'Ctrl-117', label: 'SEGREGATION_OF_DUTIES', desc: 'Segregation of duties violation — same actor creates and approves payment' },
+      'B23': { ctrl: 'Ctrl-118', label: 'AUDIT_LOG_TAMPERING', desc: 'Audit log tampering — destroying evidence of financial transactions' },
+      'B24': { ctrl: 'Ctrl-119', label: 'LEDGER_FABRICATION', desc: 'Ledger fabrication — backdating or future-dating transaction entries' },
+      'B25': { ctrl: 'Ctrl-120', label: 'PII_CROSS_BOUNDARY', desc: 'Cross-border PII transfer without anonymization — sovereignty violation' },
+      'B26': { ctrl: 'Ctrl-121', label: 'FEDERATED_HSM_BYPASS', desc: 'Federated HSM ticket verification bypassed — unauthorized card access' },
+      'B27': { ctrl: 'Ctrl-122', label: 'BIC_SWIFT_CODE_MANIPULATION', desc: 'BIC/SWIFT code manipulation — payment routing to wrong institution' },
+      'B28': { ctrl: 'Ctrl-123', label: 'IBAN_VALIDATION_BYPASS', desc: 'IBAN validation bypass — allows invalid account routing' },
+      'B29': { ctrl: 'Ctrl-124', label: 'SAR_FILING_BYPASS', desc: 'Suspicious Activity Report (SAR) filing bypassed — FinCEN violation' },
+      'B30': { ctrl: 'Ctrl-125', label: 'REGULATORY_REPORT_MANIPULATION', desc: 'Regulatory report manipulation — false reporting to central bank' },
+      'B31': { ctrl: 'Ctrl-126', label: 'CAPITAL_RESERVE_CALCULATION', desc: 'Capital reserve requirement calculation manipulation' },
+      'B32': { ctrl: 'Ctrl-127', label: 'INTEREST_CALCULATION_FRAUD', desc: 'Interest/profit rate calculation manipulation — value extraction fraud' },
+      'S01': { ctrl: 'Ctrl-128', label: 'ANCHOR_UNCHECKED_ACCOUNT', desc: 'Unchecked account — attacker can pass arbitrary account data' },
+      'S02': { ctrl: 'Ctrl-129', label: 'ANCHOR_SIGNER_SAFETY', desc: 'Signer not properly validated — unauthorized state modification possible' },
+      'S03': { ctrl: 'Ctrl-130', label: 'ANCHOR_SEED_CONSTRAINT', desc: 'PDA seed constraint without bump seed — deterministic PDA derivation missing' },
+      'S04': { ctrl: 'Ctrl-131', label: 'CPI_UNCHECKED', desc: 'CPI without checking returned program ID — arbitrary program invocation risk' },
+      'S05': { ctrl: 'Ctrl-132', label: 'CPI_SIGNER_SEED_EXPOSURE', desc: 'CPI signer seeds leaked via logging — privilege escalation risk' },
+      'S06': { ctrl: 'Ctrl-133', label: 'CPI_PRIVILEGE_ESCALATION', desc: 'Privilege escalation via CPI — missing PDA signer seeds for authority' },
+      'S07': { ctrl: 'Ctrl-134', label: 'PDA_FRONT_RUNNING', desc: 'PDA derived from user input — front-running attack on address creation' },
+      'S08': { ctrl: 'Ctrl-135', label: 'PDA_OWNERSHIP_CHECK', desc: 'Missing PDA ownership check — attacker can use arbitrary account' },
+      'S09': { ctrl: 'Ctrl-136', label: 'MISSING_AUTHORITY_CHECK', desc: 'Authority check missing — unauthorized state access possible' },
+      'S10': { ctrl: 'Ctrl-137', label: 'CLOSE_ACCOUNT_SAFETY', desc: 'Account closure without verifying destination authority — rent theft risk' },
+      'S11': { ctrl: 'Ctrl-138', label: 'DELEGATE_AUTHORITY_ABUSE', desc: 'Delegating authority to arbitrary user without verification' },
+      'S12': { ctrl: 'Ctrl-139', label: 'ARITHMETIC_OVERFLOW', desc: 'Integer overflow possible — use checked arithmetic or SafeMath' },
+      'S13': { ctrl: 'Ctrl-140', label: 'UNCHECKED_MATH', desc: 'Unchecked math operations — potential overflow/underflow' },
+      'S14': { ctrl: 'Ctrl-141', label: 'SPL_TOKEN_BURN', desc: 'Token burn without authority verification — unauthorized supply reduction' },
+      'S15': { ctrl: 'Ctrl-142', label: 'SPL_MINT_AUTHORITY', desc: 'Mint authority set to arbitrary account — unlimited token minting' },
+      'S16': { ctrl: 'Ctrl-143', label: 'SPL_FREEZE_AUTHORITY', desc: 'Freeze authority disabled — cannot freeze malicious token holders' },
+      'S17': { ctrl: 'Ctrl-144', label: 'ACCOUNT_DATA_MUTATION', desc: 'Account data mutated without validation — data corruption risk' },
+      'S18': { ctrl: 'Ctrl-145', label: 'ACCOUNT_REINIT', desc: 'Account reinitialization attack — attacker reinitializes existing account' },
+      'S19': { ctrl: 'Ctrl-146', label: 'COMPUTE_BUDGET_EXCEED', desc: 'Compute budget exceeded — transaction may fail or be expensive' },
+      'S20': { ctrl: 'Ctrl-147', label: 'INSTRUCTION_ORDERING', desc: 'Instruction ordering assumption — transactions may be reordered' },
+      'S21': { ctrl: 'Ctrl-148', label: 'ACCOUNT_DISCRIMINATOR', desc: 'Account deserialized without discriminator check — type confusion attack' },
+      'S22': { ctrl: 'Ctrl-149', label: 'PROGRAM_UPGRADE_AUTHORITY', desc: 'Upgrade authority unset or set to arbitrary account — program can be upgraded by anyone' },
+      'S23': { ctrl: 'Ctrl-150', label: 'CLOCK_DEPENDENCY', desc: 'Clock/slot dependency without tolerance — validator manipulation risk' },
+      'S24': { ctrl: 'Ctrl-151', label: 'ACCOUNT_LENTH_CHECK', desc: 'Missing account data length check — deserialization OOB access' },
+      'S25': { ctrl: 'Ctrl-152', label: 'TOKEN_ACCOUNT_MISMATCH', desc: 'Token account/mint/owner mismatch not verified — token confusion attack' },
+      'S26': { ctrl: 'Ctrl-153', label: 'LAMPORT_MANIPULATION', desc: 'Lamport manipulation without proper checks — fund theft risk' },
+      'S27': { ctrl: 'Ctrl-154', label: 'SYSTEM_PROGRAM_ABUSE', desc: 'System program invocation without signer verification — unauthorized SOL movement' },
+      'S28': { ctrl: 'Ctrl-155', label: 'ACCOUNT_CLOSURE_DRAIN', desc: 'Account closure sends rent lamports to caller — rent extraction attack' },
+      'S29': { ctrl: 'Ctrl-156', label: 'CROSS_PROGRAM_INVOKE_WRONG', desc: 'Cross-program invocation without verifying program ID — CPI confusion' },
+      'E01': { ctrl: 'Ctrl-157', label: 'REENTRANCY', desc: 'Reentrancy vulnerability — external call before state update' },
+      'E02': { ctrl: 'Ctrl-158', label: 'REENTRANCY_GUARD_MISSING', desc: 'Reentrancy guard missing on withdraw/claim function' },
+      'E03': { ctrl: 'Ctrl-159', label: 'CROSS_FUNCTION_REENTRANCY', desc: 'Cross-function reentrancy — multiple functions share state without reentrancy protection' },
+      'E04': { ctrl: 'Ctrl-160', label: 'DELEGATECALL_UNCHECKED', desc: 'Unchecked delegatecall — arbitrary code execution in caller context' },
+      'E05': { ctrl: 'Ctrl-161', label: 'DELEGATECALL_LOOP', desc: 'Delegatecall in loop — mass storage corruption risk' },
+      'E06': { ctrl: 'Ctrl-162', label: 'INTEGER_OVERFLOW', desc: 'Integer overflow/underflow vulnerability — use Solidity 0.8+ or SafeMath' },
+      'E07': { ctrl: 'Ctrl-163', label: 'UNCHECKED_MATH_BLOCK', desc: 'Unchecked math block with financial operations — silent overflow/underflow' },
+      'E08': { ctrl: 'Ctrl-164', label: 'OWNER_CHECK_MISSING', desc: 'Missing owner/access control on privileged function' },
+      'E09': { ctrl: 'Ctrl-165', label: 'TX_ORIGIN_AUTH', desc: 'tx.origin used for authentication — phishing vulnerability' },
+      'E10': { ctrl: 'Ctrl-166', label: 'TIMELOCK_BYPASS', desc: 'Timelock bypass detected — governance protection overridden' },
+      'E11': { ctrl: 'Ctrl-167', label: 'FLASH_LOAN_CHECK', desc: 'Flash loan without balance verification — price manipulation risk' },
+      'E12': { ctrl: 'Ctrl-168', label: 'TIMESTAMP_DEPENDENCY', desc: 'Block.timestamp dependency — miner manipulation ±15 seconds' },
+      'E13': { ctrl: 'Ctrl-169', label: 'GAS_DEPENDENCY', desc: 'Gas-dependent logic — manipulation via gas price/limit' },
+      'E14': { ctrl: 'Ctrl-170', label: 'UNINITIALIZED_STORAGE', desc: 'Uninitialized storage — anyone can initialize contract and become owner' },
+      'E15': { ctrl: 'Ctrl-171', label: 'SELFDESTRUCT', desc: 'Selfdestruct detected — contract can be destroyed, all funds lost' },
+      'E16': { ctrl: 'Ctrl-172', label: 'INSECURE_RANDOMNESS', desc: 'Insecure randomness — miner-controlled block hash used for randomness' },
+      'E17': { ctrl: 'Ctrl-173', label: 'DEFAULT_VISIBILITY', desc: 'Function with default visibility — may be called by anyone' },
+      'E18': { ctrl: 'Ctrl-174', label: 'ARBITRARY_JUMP', desc: 'Arbitrary jump in assembly — control flow hijacking risk' },
+      'E19': { ctrl: 'Ctrl-175', label: 'DOS_WITH_REVERT', desc: 'Unbounded loop over dynamic array — gas exhaustion DoS' },
+      'E20': { ctrl: 'Ctrl-176', label: 'DOS_WITH_PUSH', desc: 'Array push in loop — gas cost grows unbounded' },
+      'E21': { ctrl: 'Ctrl-177', label: 'ADDRESS_LIST_PHISHING', desc: 'Unlimited token approval to hardcoded address — phishing risk' },
+      'D01': { ctrl: 'Ctrl-178', label: 'KNOWN_VULNERABLE_DEP', desc: 'Known vulnerable dependency detected — refer to CVE for impact' },
+      'D02': { ctrl: 'Ctrl-179', label: 'MALICIOUS_PACKAGE_NAME', desc: 'Known malicious package name (typosquat or hijacked)' },
+      'D03': { ctrl: 'Ctrl-180', label: 'TYPOSQUAT_DEPENDENCY', desc: 'Typosquatted package name — opens supply chain attack' },
+      'D04': { ctrl: 'Ctrl-181', label: 'DEPENDENCY_CONFUSION', desc: 'Dependency confusion — internal package name with public registry wildcard version' },
+      'D05': { ctrl: 'Ctrl-182', label: 'PINNED_DEPENDENCIES', desc: 'Unpinned dependencies — supply chain drift allows malicious updates' },
+      'D06': { ctrl: 'Ctrl-183', label: 'EXEC_IN_POSTINSTALL', desc: 'Postinstall script executes shell commands — supply chain attack vector' },
+      'D07': { ctrl: 'Ctrl-184', label: 'REGISTRY_MISCONFIG', desc: 'Non-HTTPS or suspicious registry — MITM supply chain attack risk' },
+      'D08': { ctrl: 'Ctrl-185', label: 'HARDCODED_TOKEN_IN_DEPS', desc: 'Hardcoded token in dependency URL — credential exposure' },
+      'C01': { ctrl: 'Ctrl-186', label: 'CI_SCRIPT_INJECTION', desc: 'CI script injection — event payload concatenated into shell command' },
+      'C02': { ctrl: 'Ctrl-187', label: 'CI_SECRET_IN_SCRIPT', desc: 'CI script exposes secrets — secrets accessible in shell execution' },
+      'C03': { ctrl: 'Ctrl-188', label: 'CI_PIPED_INSTALL', desc: 'Pipe-to-shell in CI — arbitrary remote code execution' },
+      'C04': { ctrl: 'Ctrl-189', label: 'CI_WRITE_ALL_PERMS', desc: 'Write-all permissions grant excessive access to repository' },
+      'C05': { ctrl: 'Ctrl-190', label: 'CI_WRITE_PERMISSIONS_CONTENTS', desc: 'Contents write permission on default — allows malicious commit push' },
+      'C06': { ctrl: 'Ctrl-191', label: 'CI_PERMISSIONS_MISSING', desc: 'No explicit permissions block — defaults may be too broad' },
+      'C07': { ctrl: 'Ctrl-192', label: 'CI_ACTIONS_BRANCH_MAIN', desc: 'Action pinned to mutable branch — supply chain risk from branch force-push' },
+      'C08': { ctrl: 'Ctrl-193', label: 'CI_ACTIONS_UNPINNED', desc: 'Action not pinned to hash or semver — supply chain risk' },
+      'C09': { ctrl: 'Ctrl-194', label: 'CI_ACTIONS_SELF_HOSTED', desc: 'Self-hosted runner — security responsibility on your infrastructure' },
+      'C10': { ctrl: 'Ctrl-195', label: 'CI_CREDENTIAL_CHECKOUT', desc: 'Git checkout with persist-credentials=true — token accessible to post-job scripts' },
+      'C11': { ctrl: 'Ctrl-196', label: 'CI_TOKEN_ENVIRONMENT', desc: 'Token exposed as environment variable — accessible to all steps' },
+      'C12': { ctrl: 'Ctrl-197', label: 'CI_SHALLOW_CHECKOUT', desc: 'Shallow checkout (fetch-depth: 0) fetches full history — may be unnecessary' },
+      'C13': { ctrl: 'Ctrl-198', label: 'CI_REF_CHECKOUT', desc: 'PR checkout with user-controlled ref — possible code injection' },
+      'C14': { ctrl: 'Ctrl-199', label: 'CI_ENVIRONMENT_PROD', desc: 'Deploy to production environment without review — bypasses change control' },
+      'C15': { ctrl: 'Ctrl-200', label: 'CI_DEBUG_ENABLED', desc: 'Debug mode enabled — secrets may be exposed in runner logs' },
+      'C16': { ctrl: 'Ctrl-201', label: 'CI_CHECKOUT_ALL_HISTORY', desc: 'Full git history checkout — reduces efficiency, increases attack surface' },
+      'C17': { ctrl: 'Ctrl-202', label: 'CI_MATRIX_INJECTION', desc: 'Matrix variable sourced from event payload — injection via matrix param' },
+      'C18': { ctrl: 'Ctrl-203', label: 'CI_SELF_HOSTED_UNRESTRICTED', desc: 'Self-hosted runner without label restriction — any workflow uses it' },
+      'C19': { ctrl: 'Ctrl-204', label: 'CI_UPLOAD_ARTIFACT_SENSITIVE', desc: 'Sensitive file uploaded as artifact — credential exposure risk' },
+      'C20': { ctrl: 'Ctrl-205', label: 'CI_ARTIFACT_RETENTION', desc: 'Long artifact retention period — increased exposure window' },
+      'C21': { ctrl: 'Ctrl-206', label: 'CI_OIDC_DISABLED', desc: 'OIDC not configured for cloud access — long-lived credentials instead' },
+      'C22': { ctrl: 'Ctrl-207', label: 'CI_IF_CONDITION_INJECTION', desc: 'Condition based on event payload — injection via crafted event data' },
+      'C23': { ctrl: 'Ctrl-208', label: 'CI_GIT_CONFIG_EXPOSURE', desc: 'Git config changes in CI — identity spoofing in commits' },
+      'T01': { ctrl: 'Ctrl-209', label: 'UNLIMITED_MINT', desc: 'Unlimited mint — supply can be inflated to zero value' },
+      'T02': { ctrl: 'Ctrl-210', label: 'SUPPLY_MANIPULATION', desc: 'Total supply directly manipulated — bypasses mint/burn accounting' },
+      'T03': { ctrl: 'Ctrl-211', label: 'SUPPLY_CAP', desc: 'No supply cap — token can be minted indefinitely' },
+      'T04': { ctrl: 'Ctrl-212', label: 'RENOUNCE_OWNERSHIP', desc: 'Ownership renounced to zero address — no contract admin possible' },
+      'T05': { ctrl: 'Ctrl-213', label: 'OWNERSHIP_TRANSFER', desc: 'Ownership transferrable without two-factor or timelock — single-key risk' },
+      'T06': { ctrl: 'Ctrl-214', label: 'MULTI_OWNER_MISSING', desc: 'Single owner — single point of failure, no multisig fallback' },
+      'T07': { ctrl: 'Ctrl-215', label: 'LIQUIDITY_LOCK_ABSENT', desc: 'Liquidity not locked — rug pull: LP tokens can be withdrawn anytime' },
+      'T08': { ctrl: 'Ctrl-216', label: 'LIQUIDITY_REMOVAL', desc: 'Immediate liquidity removal without delay — rug pull vector' },
+      'T09': { ctrl: 'Ctrl-217', label: 'HONEYPOT_SELL_RESTRICTED', desc: 'Sell function restricted — honeypot: users can buy but not sell' },
+      'T10': { ctrl: 'Ctrl-218', label: 'HONEYPOT_FEE_STRUCTURE', desc: 'Excessive sell fee — honeypot pattern: buy is cheap, sell is prohibitively expensive' },
+      'T11': { ctrl: 'Ctrl-219', label: 'TAX_MANIPULATION', desc: 'Tax rate adjustable by anyone — can set to 100% and trap funds' },
+      'T12': { ctrl: 'Ctrl-220', label: 'TAX_CHANGE_DELAY', desc: 'Tax can be changed instantly — no user notice period' },
+      'T13': { ctrl: 'Ctrl-221', label: 'OWNER_CONCENTRATION', desc: 'Owner controls majority supply — price manipulation risk' },
+      'T14': { ctrl: 'Ctrl-222', label: 'CONCENTRATED_HOLDING', desc: 'Team holds large allocation — potential for coordinated dump' },
+      'T15': { ctrl: 'Ctrl-223', label: 'PROXY_UPGRADE_UNRESTRICTED', desc: 'Proxy upgrade unrestricted — contract can be replaced with malicious logic' },
+      'T16': { ctrl: 'Ctrl-224', label: 'PROXY_ADMIN_CHANGE', desc: 'Proxy admin transferrable without restriction — proxy can be hijacked' },
+      'T17': { ctrl: 'Ctrl-225', label: 'BLACKLIST_MANIPULATION', desc: 'Broad blacklist power — can freeze all holders and centralize control' },
+      'T18': { ctrl: 'Ctrl-226', label: 'BLACKLIST_ADD_UNRESTRICTED', desc: 'Anyone can add to blacklist — griefing attack vector' },
+      'T19': { ctrl: 'Ctrl-227', label: 'REFLECTION_MANIPULATION', desc: 'Reward calculation can be manipulated — team can exclude from redistribution' },
+      'T20': { ctrl: 'Ctrl-228', label: 'REFLECTION_EXCLUSION', desc: 'Owner excluded from reflection — skewed reward distribution' },
+      'T21': { ctrl: 'Ctrl-229', label: 'PAUSE_UNRESTRICTED', desc: 'Pause/unpause unrestricted — trade can be frozen arbitrarily' },
+      'T22': { ctrl: 'Ctrl-230', label: 'SWAP_MIN_OUTPUT', desc: 'Minimum output set to zero — MEV sandwich attack: receive nothing' },
+      'T23': { ctrl: 'Ctrl-231', label: 'SWAP_DEADLINE_MISSING', desc: 'Deadline missing — stale swap execution at unfavorable price' },
+      'T24': { ctrl: 'Ctrl-232', label: 'UNVERIFIED_FACTORY', desc: 'Unverified factory address — fake pair with malicious token' },
+      'T25': { ctrl: 'Ctrl-233', label: 'FALSE_PAIR', desc: 'Anyone can create trading pair — counterfeit token pairs possible' },
+      'DD01': { ctrl: 'Ctrl-234', label: 'ANONYMOUS_TEAM', desc: 'Anonymous team — no accountability, high rug pull risk' },
+      'DD02': { ctrl: 'Ctrl-235', label: 'SINGLE_SIG_OWNER', desc: 'Single signer ownership — single point of compromise, no recovery path' },
+      'DD03': { ctrl: 'Ctrl-236', label: 'UNRESTRICTED_UPGRADE', desc: 'Upgradeable contract with single-key upgrade — rug pull vector' },
+      'DD04': { ctrl: 'Ctrl-237', label: 'UNLOCKED_LIQUIDITY', desc: 'Liquidity not locked or lock expired — immediate rug pull possible' },
+      'DD05': { ctrl: 'Ctrl-238', label: 'LP_TOKEN_BURN_ABSENT', desc: 'LP tokens not burned or locked — creator can drain liquidity' },
+      'DD06': { ctrl: 'Ctrl-239', label: 'LIQUIDITY_TIMELOCK', desc: 'Liquidity lock duration too short — rug pull after lock expires' },
+      'DD07': { ctrl: 'Ctrl-240', label: 'UNLIMITED_MINT_AUTHORITY', desc: 'Unrestricted mint authority held by single account — infinite inflation' },
+      'DD08': { ctrl: 'Ctrl-241', label: 'OWNER_SUPPLY_CONCENTRATION', desc: 'Owner holds majority supply — price manipulation on any sell' },
+      'DD09': { ctrl: 'Ctrl-242', label: 'HONEYPOT_SELL_BLOCK', desc: 'Sell blocked for non-owners — honeypot: users cannot exit positions' },
+      'DD10': { ctrl: 'Ctrl-243', label: 'HONEYPOT_MAX_SELL', desc: 'Maximum sell amount extremely small — honeypot: users cannot exit' },
+      'DD11': { ctrl: 'Ctrl-244', label: 'SELL_TAX_HIGH', desc: 'Sell tax significantly higher than buy tax — honeypot pattern' },
+      'DD12': { ctrl: 'Ctrl-245', label: 'NO_KYC_TEAM', desc: 'No KYC-verified team — no legal accountability' },
+      'DD13': { ctrl: 'Ctrl-246', label: 'NO_AUDIT', desc: 'No security audit — undiscovered vulnerabilities likely' },
+      'DD14': { ctrl: 'Ctrl-247', label: 'AUDIT_FABRICATED', desc: 'Fabricated audit report — false security assurance' },
+      'DD15': { ctrl: 'Ctrl-248', label: 'UNFAIR_ALLOCATION', desc: 'Unfair allocation — team/insiders hold excessive supply' },
+      'DD16': { ctrl: 'Ctrl-249', label: 'NO_VESTING_TEAM', desc: 'Team tokens without vesting — immediate dump possible on TGE' },
+      'DD17': { ctrl: 'Ctrl-250', label: 'SHORT_VESTING', desc: 'Short vesting period — team can dump quickly after TGE' },
+      'DD18': { ctrl: 'Ctrl-251', label: 'TRADING_PAUSE_UNRESTRICTED', desc: 'Trading can be paused by anyone — market manipulation risk' },
+      'DD19': { ctrl: 'Ctrl-252', label: 'BLACKLIST_ALL', desc: 'Mass blacklist capability — all holders can be frozen instantly' },
+      'DD20': { ctrl: 'Ctrl-253', label: 'MAX_WALLET', desc: 'Maximum wallet limit extremely low — restricts normal trading' },
+      'DD21': { ctrl: 'Ctrl-254', label: 'LOW_SOCIAL_ENGAGEMENT', desc: 'Low social engagement — potential lack of community support' },
+      'DD22': { ctrl: 'Ctrl-255', label: 'NO_WHITEPAPER', desc: 'No whitepaper or documentation — lack of project substance' },
+      'DD23': { ctrl: 'Ctrl-256', label: 'PAST_RUG_CHECK', desc: 'Team associated with past rug pull or scam project' },
+      'DD24': { ctrl: 'Ctrl-257', label: 'CLONED_PROJECT', desc: 'Cloned/forked project without meaningful changes — copycat risk' },
+      'DD25': { ctrl: 'Ctrl-258', label: 'IMPERSONATION', desc: 'Impersonation of known project or brand — likely scam' },
     };
 
     const SEVERITY_STYLES = {
@@ -947,7 +1162,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       return 'Not provided by runtime';
     }
 
-    function buildRiskSteps(verdict, findings, signals) {
+    function buildRiskSteps(verdict, findings) {
       const steps = [];
       if (findings.length > 0) {
         findings.forEach((f, i) => {
@@ -957,10 +1172,6 @@ sudo ls /root  # sudo with ls (not an admin command)` },
           const sev = f.severity || 'unknown';
           const rec = f.recommendation || 'Not provided by runtime';
           steps.push({ num: i + 1, title: 'Rule ' + label, detail: (f.message || f.description || 'Governance control triggered') + ' — Severity: ' + sev + '. Recommendation: ' + rec });
-        });
-      } else if (signals.length > 0) {
-        signals.forEach((s, i) => {
-          steps.push({ num: i + 1, title: 'Heuristic Signal: ' + (s.category || 'Unknown'), detail: 'Signal score: ' + (typeof s.score === 'number' ? s.score + '/100' : 'Not provided by runtime') });
         });
       } else {
         steps.push({ num: 1, title: 'No Issues Detected', detail: 'Not provided by runtime' });
@@ -981,7 +1192,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       const entries = [
         { time: base - 120, label: 'Payload Submitted', cls: 'tl-done' },
         { time: base - 80, label: 'Governance Engine Started', cls: 'tl-done' },
-        { time: base - 40, label: '121 Controls Evaluated', cls: 'tl-done' },
+        { time: base - 40, label: '258 Controls Evaluated', cls: 'tl-done' },
       ];
       if (findingCount > 0) {
         entries.push({ time: base - 20, label: findingCount + ' Control(s) Triggered', cls: 'tl-active' });
@@ -1013,7 +1224,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       if (uniqueIds.length === 0) {
         const fallbackMsg = document.createElement('div');
         fallbackMsg.style.cssText = 'font-size:12px;color:var(--alabaster-dim);grid-column:1/-1;padding:8px 0;';
-        fallbackMsg.textContent = 'No applicable compliance mappings — all 121 controls passed.';
+        fallbackMsg.textContent = 'No applicable compliance mappings — all 258 controls passed.';
         container.replaceChildren(fallbackMsg);
         return;
       }
@@ -1068,9 +1279,9 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       const riskCls = score >= 70 ? 'mx-critical' : score >= 40 ? 'mx-high' : score >= 20 ? 'mx-medium' : 'mx-low';
       const cards = [
         { label: 'Overall Risk', val: riskLevel, cls: riskCls, note: 'Based on ' + findings.length + ' triggered controls' },
-        { label: 'Controls Triggered', val: findings.length + '/121', cls: findings.length > 0 ? 'mx-high' : 'mx-low', note: 'Active governance controls' },
+        { label: 'Controls Triggered', val: findings.length + '/258', cls: findings.length > 0 ? 'mx-high' : 'mx-low', note: 'Active governance controls' },
         { label: 'Severity Distribution', val: (critical > 0 ? critical + 'C ' : '') + (high > 0 ? high + 'H ' : '') + (medium > 0 ? medium + 'M ' : '') + (low > 0 ? low + 'L' : 'None'), cls: critical > 0 ? 'mx-critical' : high > 0 ? 'mx-high' : 'mx-low', note: 'Critical / High / Medium / Low' },
-        { label: 'Evaluation Coverage', val: findings.length > 0 ? 'Partial' : 'Full', cls: findings.length > 0 ? 'mx-medium' : 'mx-low', note: '121 controls evaluated' },
+        { label: 'Evaluation Coverage', val: findings.length > 0 ? 'Partial' : 'Full', cls: findings.length > 0 ? 'mx-medium' : 'mx-low', note: '258 controls evaluated' },
       ];
       cards.forEach(c => {
         const el = document.createElement('div');
@@ -1097,7 +1308,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         { label: 'Verdict', val: verdict, highlight: verdict !== 'ALLOW' },
         { label: 'Risk Level', val: riskLevel, highlight: score >= 40 },
         { label: 'Risk Score', val: score + '/100', highlight: score > 0 },
-        { label: 'Controls Triggered', val: findingsLength + ' of 121', highlight: findingsLength > 0 },
+        { label: 'Controls Triggered', val: findingsLength + ' of 258', highlight: findingsLength > 0 },
         { label: 'Evaluation Time', val: elapsed + 'ms', highlight: false },
         { label: 'Engine Version', val: 'v' + engineVer, highlight: false },
       ];
@@ -1126,7 +1337,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
     const PROCESSING_STAGES = [
       { step: 0, label: 'Submitting Payload...', minMs: 200, maxMs: 400 },
       { step: 1, label: 'Running Governance Engine...', minMs: 300, maxMs: 500 },
-      { step: 2, label: 'Evaluating 121 System Controls...', minMs: 400, maxMs: 700 },
+      { step: 2, label: 'Evaluating 258 System Controls...', minMs: 400, maxMs: 700 },
       { step: 3, label: 'Generating Verdict...', minMs: 300, maxMs: 600 }
     ];
 
@@ -1138,7 +1349,6 @@ sudo ls /root  # sudo with ls (not an admin command)` },
     const verdictContent = document.getElementById('verdictContent');
     const verdictBadge = document.getElementById('verdictBadge');
     const statsRow = document.getElementById('statsRow');
-    const signalsSection = document.getElementById('signalsSection');
     const reasoningList = document.getElementById('reasoningList');
     const findingsList = document.getElementById('findingsList');
     const pipeline = document.getElementById('pipeline');
@@ -1149,7 +1359,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
     // Startup element validation — fail fast if any required element is missing
     const REQUIRED_ELEMENTS = [
       'codeInput', 'runBtn', 'clearBtn', 'errorMsg', 'placeholder',
-      'verdictContent', 'verdictBadge', 'statsRow', 'signalsSection',
+      'verdictContent', 'verdictBadge', 'statsRow',
       'reasoningList', 'findingsList', 'pipeline', 'rawJson', 'rawJsonPre',
       'scenarioBar'
     ];
@@ -1317,9 +1527,8 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       const verdict = (data.verdict || 'ERROR').toUpperCase();
       const score = typeof data.score === 'number' ? data.score : 0;
       const findings = Array.isArray(data.findings) ? data.findings : [];
-      const signals = Array.isArray(data.signals) ? data.signals : [];
       const summary = data.summary || {};
-      const engineVer = data.engineVersion || '4.0.0';
+      const engineVer = data.engineVersion || '5.0.0';
 
       // Guard: required DOM elements
       if (!findingsList) {
@@ -1327,9 +1536,6 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       }
       if (!reasoningList) {
         console.error('[TEOS Playground] Missing required element: #reasoningList');
-      }
-      if (!signalsSection) {
-        console.error('[TEOS Playground] Missing required element: #signalsSection');
       }
 
       // Verdict badge
@@ -1373,21 +1579,6 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         });
       }
 
-      // Signals
-      signalsSection.replaceChildren();
-      if (signals.length > 0) {
-        signals.forEach(sig => {
-          const chip = document.createElement('span');
-          chip.className = 'signal-chip';
-          chip.textContent = sig.category + ' ';
-          const scSpan = document.createElement('span');
-          scSpan.className = 'sig-score';
-          scSpan.textContent = typeof sig.score === 'number' ? sig.score : '?';
-          chip.appendChild(scSpan);
-          signalsSection.appendChild(chip);
-        });
-      }
-
       // Reasoning — backend-driven
       reasoningList.replaceChildren();
       if (findings.length > 0) {
@@ -1405,25 +1596,13 @@ sudo ls /root  # sudo with ls (not an admin command)` },
           div.replaceChildren(rIcon, document.createTextNode(' ' + (prefix + desc + rec)));
           reasoningList.appendChild(div);
         });
-      } else if (signals.length > 0) {
-        signals.forEach(s => {
-          const div = document.createElement('div');
-          div.className = 'reason-item';
-          const cat = s.category || 'Unknown signal';
-          const sc = typeof s.score === 'number' ? s.score + '/100' : 'Not provided by runtime';
-          const rIcon2 = document.createElement('span');
-          rIcon2.className = 'r-icon';
-          rIcon2.textContent = '🔍';
-          div.replaceChildren(rIcon2, document.createTextNode(' Suspicion signal: ' + cat + ' (' + sc + ')'));
-          reasoningList.appendChild(div);
-        });
       } else {
         const div = document.createElement('div');
         div.className = 'reason-item';
         const arrowIcon = document.createElement('span');
         arrowIcon.className = 'r-icon';
         arrowIcon.textContent = '→';
-        div.replaceChildren(arrowIcon, document.createTextNode(' No findings or signals returned by runtime.'));
+        div.replaceChildren(arrowIcon, document.createTextNode(' No findings returned by runtime.'));
         reasoningList.appendChild(div);
       }
 
@@ -1461,7 +1640,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         const noFindings = document.createElement('div');
         noFindings.className = 'finding-item';
         noFindings.style.cssText = 'color:var(--alabaster-dim);font-size:13px;';
-        noFindings.textContent = 'No findings — code passed all 121 governance controls.';
+        noFindings.textContent = 'No findings — code passed all 258 governance controls.';
         findingsList.replaceChildren(noFindings);
       }
 
@@ -1495,7 +1674,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       } else {
         const noControls = document.createElement('div');
         noControls.style.cssText = 'font-size:12px;color:var(--alabaster-dim);padding:8px 0;';
-        noControls.textContent = 'No controls triggered — all 121 governance controls passed.';
+        noControls.textContent = 'No controls triggered — all 258 governance controls passed.';
         triggeredList.replaceChildren(noControls);
       }
 
@@ -1541,7 +1720,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         return;
       }
       stepContainer.replaceChildren();
-      const steps = buildRiskSteps(verdict, findings, signals);
+      const steps = buildRiskSteps(verdict, findings);
       steps.forEach(s => {
         const el = document.createElement('div');
         el.className = 'reason-step';
@@ -1585,12 +1764,11 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       const verdict = (lastResult.verdict || 'ERROR').toUpperCase();
       const score = typeof lastResult.score === 'number' ? lastResult.score : 0;
       const findings = Array.isArray(lastResult.findings) ? lastResult.findings : [];
-      const signals = Array.isArray(lastResult.signals) ? lastResult.signals : [];
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
       const code = codeInput.value;
       const confidence = 'Not provided by runtime';
-      const steps = buildRiskSteps(verdict, findings, signals);
+      const steps = buildRiskSteps(verdict, findings);
 
       let findingsRows = '';
       let criticalCount = 0, highCount = 0, mediumCount = 0, lowCount = 0;
@@ -1652,7 +1830,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         '.footer .f-seal{font-size:14px;color:#c9981e;font-weight:700}' +
         '</style></head><body>' +
         '<div class="report-header">' +
-        '<div><h1>TEOS Sovereign Sentinel</h1><div class="subtitle">Executive Security Audit Report — v4.0.0 GA · Engine v4.0.0 · 121 Governance Controls</div></div>' +
+        '<div><h1>TEOS Sovereign Sentinel</h1><div class="subtitle">Executive Security Audit Report — v5.0.0 · Engine v5.0.0 · 258 Governance Controls</div></div>' +
         '<div class="seal">◈ <strong>Elmahrosa International</strong><br>Institutional Compliance Division<br>Report ID: TEOS-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + '-' + Math.random().toString(36).slice(2,8).toUpperCase() + '</div>' +
         '</div>' +
         '<div class="exec-summary">' +
@@ -1660,10 +1838,9 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         '<div class="risk-badge ' + riskLevel.toLowerCase() + '" style="margin-bottom:12px;">' + (verdict === 'ALLOW' ? '✅' : verdict === 'WARN' ? '⚠️' : verdict === 'REVIEW' ? '🔵' : '🛑') + ' ' + verdict + ' — Risk Score: ' + score + '/100</div>' +
         '<p><strong>Date:</strong> ' + dateStr + '</p>' +
         '<p><strong>Overall Risk Level:</strong> <span style="color:' + riskColor + ';font-weight:700;">' + riskLevel + '</span></p>' +
-        '<p><strong>Controls Triggered:</strong> ' + findings.length + ' of 121 active governance controls</p>' +
-        '<p><strong>Heuristic Signals:</strong> ' + signals.length + ' suspicion signal(s) detected</p>' +
+        '<p><strong>Controls Triggered:</strong> ' + findings.length + ' of 258 active governance controls</p>' +
         '<p><strong>Confidence:</strong> ' + confidence + '</p>' +
-        '<p><strong>Engine:</strong> v4.0.0 GA (Engine v4.0.0) · ' + (findings.length > 0 ? 'Deterministic + Heuristic analysis applied' : 'All 121 controls cleared — no threats detected') + '</p>' +
+        '<p><strong>Engine:</strong> v5.0.0 (Engine v5.0.0) · ' + (findings.length > 0 ? 'Deterministic analysis applied' : 'All 258 controls cleared — no threats detected') + '</p>' +
         '</div>' +
         '<h3 style="font-size:14px;color:#1a1a2e;border-bottom:1px solid #eee;padding-bottom:6px;">Business-Impact Risk Matrix</h3>' +
         '<div class="matrix-grid">' +
@@ -1682,7 +1859,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
         '</div></div>' +
         '</div>' +
         '<h3 style="font-size:14px;color:#1a1a2e;border-bottom:1px solid #eee;padding-bottom:6px;margin-top:20px;">Findings & Triggered Controls</h3>' +
-        '<table><thead><tr><th>Control</th><th>Rule</th><th>Severity</th><th>Description</th></tr></thead><tbody>' + (findingsRows || '<tr><td colspan="4" style="color:#999;text-align:center;padding:20px;">No findings — input passed all 121 governance controls.</td></tr>') + '</tbody></table>' +
+        '<table><thead><tr><th>Control</th><th>Rule</th><th>Severity</th><th>Description</th></tr></thead><tbody>' + (findingsRows || '<tr><td colspan="4" style="color:#999;text-align:center;padding:20px;">No findings — input passed all 258 governance controls.</td></tr>') + '</tbody></table>' +
         '<h3 style="font-size:14px;color:#1a1a2e;border-bottom:1px solid #eee;padding-bottom:6px;margin-top:20px;">Reasoning Process</h3>' +
         stepsHtml +
         '<h3 style="font-size:14px;color:#1a1a2e;border-bottom:1px solid #eee;padding-bottom:6px;margin-top:20px;">Scanned Input</h3>' +
@@ -1693,13 +1870,12 @@ sudo ls /root  # sudo with ls (not an admin command)` },
           const ruleId = f.rule || f.ruleId || '';
           const ri = RULE_MAP[ruleId];
           return '<li><strong>' + (ri ? ri.ctrl + ' — ' + ri.desc : 'Issue ' + (i+1)) + ':</strong> Review and sanitize the flagged pattern. Apply input validation, parameterized queries, or allowlist-based filtering as appropriate. Escalate to security team for policy review.</li>';
-        }).join('') : '<li><strong>No remediation required:</strong> Input passed all 121 governance controls. Continue monitoring per standard security procedures.</li>') +
-        (signals.length > 0 ? '<li><strong>Heuristic signals present (' + signals.length + '):</strong> Although no deterministic rule triggered, review the suspicion signals and consider updating governance policies to address the detected patterns.</li>' : '') +
+        }).join('') : '<li><strong>No remediation required:</strong> Input passed all 258 governance controls. Continue monitoring per standard security procedures.</li>') +
         '<li><strong>Governance policy review:</strong> Ensure runtime policies reflect current organizational risk tolerance. Review triggered control configurations.</li>' +
         '</ol>' +
         '<div class="footer">' +
         '<div class="f-seal">◈ Elmahrosa International — Institutional Compliance Division</div>' +
-        '<p style="margin:8px 0 0 0;">TEOS Sovereign Sentinel · v4.0.0 GA · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul 2026 · 121 Active Governance Controls · 596 total tests<br>' +
+        '<p style="margin:8px 0 0 0;">TEOS Sovereign Sentinel · v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls<br>' +
         'Report ID: TEOS-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + '-' + Math.random().toString(36).slice(2,8).toUpperCase() + '<br>' +
         'Built in Alexandria, Egypt · This report is a simulated evaluation for demonstration purposes.</p>' +
         '</div></body></html>';
@@ -1708,7 +1884,7 @@ sudo ls /root  # sudo with ls (not an admin command)` },
       win.document.close();
     });
 
-    // Ctrl+Enter to run — disabled in v4.0.0 GA, enable in v4.0.1
+    // Ctrl+Enter to run — currently disabled
     // codeInput.addEventListener('keydown', (e) => {
     //   if (e.key === 'Enter' && e.ctrlKey) {
     //     e.preventDefault();

@@ -1,8 +1,9 @@
 {
-  "version": "4.0.0",
+  "version": "5.0.0",
   "engine": "TEOS Sentinel Shield",
-  "published": "2026-07-26T03:22:32.783Z",
-  "total_rules": 31,
+  "published": "2026-09-19T17:12:48.478Z",
+  "total_rules": 258,
+  "total_engines": 8,
   "rules": [
     {
       "id": "R01",
@@ -10,9 +11,11 @@
       "severity": "critical",
       "score": 100,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "rm -rf permanently destroys all filesystem data",
-        "Wiper malware signature detected"
+        "rm -rf on system-critical path — permanent filesystem destruction",
+        "Wiper malware signature detected",
+        "Disk destruction command detected"
       ]
     },
     {
@@ -21,8 +24,10 @@
       "severity": "critical",
       "score": 90,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "chmod 777 on sensitive system files escalates privileges"
+        "chmod 777 on sensitive system files escalates privileges",
+        "World-writable permissions on system-critical path"
       ]
     },
     {
@@ -31,8 +36,10 @@
       "severity": "critical",
       "score": 95,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "curl/wget piped to shell executes untrusted remote code"
+        "curl/wget piped to shell executes untrusted remote code",
+        "Remote code execution via pipe-to-shell pattern"
       ]
     },
     {
@@ -41,8 +48,10 @@
       "severity": "critical",
       "score": 90,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Echoing secret environment variable — potential exfiltration"
+        "Echoing secret environment variable — potential exfiltration",
+        "Credential leakage via stdout"
       ]
     },
     {
@@ -51,8 +60,10 @@
       "severity": "critical",
       "score": 95,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Sending environment secret to external host"
+        "Sending environment secret to external host",
+        "Credential exfiltration via outbound request"
       ]
     },
     {
@@ -61,8 +72,10 @@
       "severity": "critical",
       "score": 100,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Fork bomb detected — denial of service pattern"
+        "Fork bomb detected — denial of service pattern",
+        "Resource exhaustion denial of service"
       ]
     },
     {
@@ -71,9 +84,10 @@
       "severity": "high",
       "score": 88,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
         "Base64-encoded payload executed via eval",
-        "Obfuscated execution bypass"
+        "Obfuscated code execution bypassing static analysis"
       ]
     },
     {
@@ -82,38 +96,46 @@
       "severity": "critical",
       "score": 100,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Reverse shell connection attempt detected"
+        "Reverse shell connection attempt detected",
+        "Outbound shell connection to attacker-controlled host"
       ]
     },
     {
       "id": "R09",
       "name": "SQL_DESTRUCTION",
       "severity": "high",
-      "score": 75,
+      "score": 78,
       "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "SQL DROP command permanently destroys data"
+        "SQL DROP command permanently destroys data",
+        "Destructive database operation detected"
       ]
     },
     {
       "id": "R10",
       "name": "SQL_INJECTION",
       "severity": "high",
-      "score": 75,
+      "score": 78,
       "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Classic SQL injection pattern detected"
+        "SQL injection pattern detected",
+        "Database query manipulation via string concatenation"
       ]
     },
     {
       "id": "R11",
       "name": "PATH_TRAVERSAL",
       "severity": "high",
-      "score": 78,
+      "score": 80,
       "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Directory traversal detected in file path"
+        "Directory traversal detected — arbitrary file read possible",
+        "Path traversal escaping restricted directory"
       ]
     },
     {
@@ -122,38 +144,45 @@
       "severity": "critical",
       "score": 92,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "OS command injection via user-controlled input"
+        "OS command injection — command chained after separator",
+        "Arbitrary command execution via injection"
       ]
     },
     {
       "id": "R13",
       "name": "PRIVILEGE_ESCALATION",
       "severity": "critical",
-      "score": 90,
+      "score": 92,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Privilege escalation via sudo or SUID abuse"
+        "Privilege escalation via sudo or SUID abuse",
+        "Unauthorized privilege elevation attempt"
       ]
     },
     {
       "id": "R14",
       "name": "MALICIOUS_PACKAGE",
       "severity": "high",
-      "score": 85,
+      "score": 88,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Known malicious npm package version detected"
+        "Known malicious npm package version detected",
+        "Supply chain attack via compromised package"
       ]
     },
     {
       "id": "R15",
       "name": "TYPOSQUAT_PACKAGE",
       "severity": "high",
-      "score": 70,
+      "score": 75,
       "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Typosquatted package name detected"
+        "Typosquatted package name detected — potential supply chain attack"
       ]
     },
     {
@@ -162,8 +191,10 @@
       "severity": "medium",
       "score": 65,
       "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "GitHub Actions write-all permissions overly broad"
+        "GitHub Actions write-all permissions overly broad",
+        "Excessive CI/CD permissions"
       ]
     },
     {
@@ -172,58 +203,70 @@
       "severity": "critical",
       "score": 95,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "curl|bash in CI/CD pipeline step — remote code execution risk"
+        "curl|bash in CI/CD pipeline — remote code execution risk",
+        "Untrusted code execution in build pipeline"
       ]
     },
     {
       "id": "R18",
       "name": "PRIVILEGED_CONTAINER",
       "severity": "high",
-      "score": 80,
-      "verdict": "BLOCK",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Privileged container flag breaks container isolation"
+        "Privileged container flag breaks container isolation",
+        "Container escape via privileged mode"
       ]
     },
     {
       "id": "R19",
       "name": "HARDCODED_SECRET",
       "severity": "critical",
-      "score": 92,
+      "score": 93,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Hardcoded secret in source code detected"
+        "Hardcoded API key, token, or password in source code",
+        "Credential exposure in source code"
       ]
     },
     {
       "id": "R20",
       "name": "PROMPT_INJECTION",
       "severity": "high",
-      "score": 80,
+      "score": 86,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "LLM prompt injection attempt detected"
+        "LLM prompt injection attempt detected",
+        "AI system prompt compromise attempt"
       ]
     },
     {
       "id": "R21",
       "name": "SSRF_ATTEMPT",
       "severity": "high",
-      "score": 82,
+      "score": 86,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "SSRF attempt targeting internal/metadata IP range"
+        "SSRF attempt targeting internal/metadata IP range",
+        "Server-side request forgery to internal services"
       ]
     },
     {
       "id": "R22",
       "name": "XXE_INJECTION",
       "severity": "high",
-      "score": 80,
-      "verdict": "BLOCK",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
       "reasons": [
-        "XML External Entity injection pattern detected"
+        "XML External Entity injection pattern detected",
+        "XXE — file disclosure or SSRF via XML parser"
       ]
     },
     {
@@ -232,88 +275,2629 @@
       "severity": "critical",
       "score": 95,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Cryptomining binary or pool connection detected"
+        "Cryptomining binary or pool connection detected",
+        "Unauthorized cryptocurrency mining"
       ]
     },
     {
       "id": "R24",
       "name": "DATA_EXFIL_CURL",
       "severity": "high",
-      "score": 88,
+      "score": 89,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Exfiltrating sensitive system files via curl"
+        "Exfiltrating sensitive system files via curl",
+        "Data exfiltration via network tool"
       ]
     },
     {
       "id": "R25",
       "name": "CI_SECRETS_DUMP",
       "severity": "critical",
-      "score": 90,
+      "score": 92,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "CI secrets or environment dump detected"
+        "CI secrets or environment variable dump detected",
+        "Secrets exposure via environment dump"
       ]
     },
     {
-      "id": "R26",
-      "name": "POWERSHELL_ENCODED",
-      "severity": "critical",
-      "score": 95,
+      "id": "R41",
+      "name": "XSS_REFLECTED",
+      "severity": "high",
+      "score": 85,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Encoded PowerShell payload — common malware delivery pattern"
+        "Reflected XSS — unescaped user input injected into HTML",
+        "Cross-site scripting: arbitrary JavaScript execution"
       ]
     },
     {
-      "id": "R27",
-      "name": "POWERSHELL_IEX",
+      "id": "R42",
+      "name": "XSS_STORED",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Stored XSS — unsanitized input written to DOM",
+        "Persistent cross-site scripting via innerHTML"
+      ]
+    },
+    {
+      "id": "R43",
+      "name": "RCE_EVAL",
       "severity": "critical",
       "score": 96,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "PowerShell download-and-execute (IEX/DownloadString) pattern detected"
+        "eval() or new Function() with dynamic input — arbitrary code execution",
+        "Code injection via eval-like patterns"
       ]
     },
     {
-      "id": "R28",
-      "name": "WINDOWS_DESTRUCTIVE",
+      "id": "R44",
+      "name": "EXEC_COMMAND",
       "severity": "critical",
-      "score": 98,
+      "score": 95,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Windows destructive filesystem command detected"
+        "shell execution via exec() — arbitrary command execution",
+        "OS command execution via Node.js child_process"
       ]
     },
     {
-      "id": "R29",
-      "name": "SENSITIVE_FILE_READ",
-      "severity": "high",
-      "score": 82,
-      "verdict": "BLOCK",
-      "reasons": [
-        "Reading sensitive system or credential files"
-      ]
-    },
-    {
-      "id": "R30",
-      "name": "K8S_DESTRUCTIVE",
-      "severity": "critical",
-      "score": 94,
-      "verdict": "BLOCK",
-      "reasons": [
-        "Kubernetes destructive cluster operation detected"
-      ]
-    },
-    {
-      "id": "R31",
-      "name": "CLOUD_DATA_EXFIL",
+      "id": "R45",
+      "name": "SHELL_EXECUTION",
       "severity": "high",
       "score": 88,
       "verdict": "BLOCK",
+      "engine": "Core Security Engine",
       "reasons": [
-        "Cloud storage bulk transfer may indicate data exfiltration"
+        "Python shell execution — arbitrary command injection risk"
+      ]
+    },
+    {
+      "id": "R46",
+      "name": "DESERIALIZATION",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Unsafe deserialization — remote code execution via serialized payload"
+      ]
+    },
+    {
+      "id": "R47",
+      "name": "DOCKER_ESCAPE",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Docker escape via host resources",
+        "Container breakout via privileged mounts"
+      ]
+    },
+    {
+      "id": "R48",
+      "name": "K8S_ESCALATION",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Kubernetes privilege escalation attempt",
+        "Excessive K8s permissions requested"
+      ]
+    },
+    {
+      "id": "R49",
+      "name": "RANSOMWARE_ENCRYPT",
+      "severity": "critical",
+      "score": 99,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Ransomware-like encryption + deletion pattern",
+        "Data extortion via file encryption"
+      ]
+    },
+    {
+      "id": "R50",
+      "name": "RANSOMWARE_NOTE",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Ransomware note detected — extortion message",
+        "Ransomware demands and payment instructions"
+      ]
+    },
+    {
+      "id": "R51",
+      "name": "CREDENTIAL_THEFT",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Credential theft tool or pattern detected",
+        "Credential harvesting utility"
+      ]
+    },
+    {
+      "id": "R52",
+      "name": "PCI_DSS_LEAKAGE",
+      "severity": "critical",
+      "score": 98,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "PCI DSS leakage — sensitive card data in source/log",
+        "Payment card industry data breach risk"
+      ]
+    },
+    {
+      "id": "R53",
+      "name": "PII_LEAKAGE",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "PII leakage — personal identifiable information exposed",
+        "Privacy data exposure risk"
+      ]
+    },
+    {
+      "id": "R54",
+      "name": "IDENTITY_LEAKAGE",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Identity data leakage — personal information in logs or responses"
+      ]
+    },
+    {
+      "id": "R55",
+      "name": "NETWORK_SCAN",
+      "severity": "medium",
+      "score": 68,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Network scanning detected — reconnaissance activity"
+      ]
+    },
+    {
+      "id": "R56",
+      "name": "PORT_SCAN",
+      "severity": "medium",
+      "score": 65,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Port scanning detected — service enumeration"
+      ]
+    },
+    {
+      "id": "R57",
+      "name": "DNS_TUNNEL",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "DNS tunneling tool detected — data exfiltration via DNS queries"
+      ]
+    },
+    {
+      "id": "R58",
+      "name": "PROXY_CHAIN",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Proxy chain tool detected — anonymous access attempt"
+      ]
+    },
+    {
+      "id": "R59",
+      "name": "WIRESHARK_SNIFF",
+      "severity": "medium",
+      "score": 66,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Packet capture tool detected — network traffic interception"
+      ]
+    },
+    {
+      "id": "R60",
+      "name": "ARP_SPOOF",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "ARP spoofing tool detected — MITM attack capability"
+      ]
+    },
+    {
+      "id": "R61",
+      "name": "LDAP_INJECTION",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "LDAP injection — directory service query manipulation"
+      ]
+    },
+    {
+      "id": "R62",
+      "name": "XPATH_INJECTION",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "XPath injection — XML query manipulation"
+      ]
+    },
+    {
+      "id": "R63",
+      "name": "NOSQL_INJECTION",
+      "severity": "high",
+      "score": 83,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "NoSQL injection — MongoDB operator injection"
+      ]
+    },
+    {
+      "id": "R64",
+      "name": "PROTOTYPE_POLLUTION",
+      "severity": "critical",
+      "score": 91,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Prototype pollution — object property injection vulnerability"
+      ]
+    },
+    {
+      "id": "R65",
+      "name": "SMUGGLING_HEADER",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "HTTP request smuggling — header manipulation detected"
+      ]
+    },
+    {
+      "id": "R66",
+      "name": "INSECURE_COOKIE",
+      "severity": "medium",
+      "score": 68,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Insecure cookie — missing HttpOnly or Secure flags"
+      ]
+    },
+    {
+      "id": "R67",
+      "name": "CSP_BYPASS",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "CSP bypass via unsafe-inline and unsafe-eval combination"
+      ]
+    },
+    {
+      "id": "R68",
+      "name": "CORS_MISCONFIG",
+      "severity": "medium",
+      "score": 66,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "CORS misconfiguration — wildcard origin with credentials enabled"
+      ]
+    },
+    {
+      "id": "R69",
+      "name": "WEAK_CRYPTO",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Weak cryptographic algorithm — use SHA-256 or stronger"
+      ]
+    },
+    {
+      "id": "R70",
+      "name": "HARDCODED_IV",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Hardcoded IV — cryptographic initialization vector should be random and unique"
+      ]
+    },
+    {
+      "id": "R71",
+      "name": "CLOUD_KEY_LEAK",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Cloud provider secret key or access key exposed",
+        "Cloud credential exposure — account takeover risk"
+      ]
+    },
+    {
+      "id": "R72",
+      "name": "OPEN_S3_BUCKET",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Potential S3 bucket policy grants public access — data exposure risk"
+      ]
+    },
+    {
+      "id": "R73",
+      "name": "IAM_OVERPRIVILEGED",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "IAM policy with wildcard Action or Resource — overprivileged role"
+      ]
+    },
+    {
+      "id": "R74",
+      "name": "INSECURE_PROTOCOL",
+      "severity": "high",
+      "score": 78,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Non-HTTPS URL to external service — unencrypted communication"
+      ]
+    },
+    {
+      "id": "R75",
+      "name": "INJECTION_MONGO",
+      "severity": "critical",
+      "score": 90,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "MongoDB injection via $where operator — potential data leak"
+      ]
+    },
+    {
+      "id": "R76",
+      "name": "WSL_MALWARE",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "WSL used to execute shell commands — potential malware activity on Windows"
+      ]
+    },
+    {
+      "id": "R77",
+      "name": "REGISTRY_TAMPER",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Windows Registry modification — persistence mechanism"
+      ]
+    },
+    {
+      "id": "R78",
+      "name": "SERVICE_INSTALL",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Windows service installation — potential persistence via service"
+      ]
+    },
+    {
+      "id": "R79",
+      "name": "SCHEDULED_TASK",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Scheduled task creation — potential persistence mechanism"
+      ]
+    },
+    {
+      "id": "R80",
+      "name": "POWERSHELL_ENCODED",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "PowerShell encoded command — obfuscated execution"
+      ]
+    },
+    {
+      "id": "R81",
+      "name": "REFLECTION_ABUSE",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Reflection-based code loading — potentially malicious assembly loading"
+      ]
+    },
+    {
+      "id": "R82",
+      "name": "DLL_INJECTION",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "DLL/process injection pattern — remote code execution in another process"
+      ]
+    },
+    {
+      "id": "R83",
+      "name": "KEYLOGGER",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Keylogger pattern — keyboard input capture"
+      ]
+    },
+    {
+      "id": "R84",
+      "name": "SCREEN_CAPTURE",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Screen capture pattern — potential data exfiltration via screenshots"
+      ]
+    },
+    {
+      "id": "R85",
+      "name": "WEBSOCKET_EXFIL",
+      "severity": "high",
+      "score": 83,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "WebSocket exfiltration — data sent to external WebSocket endpoint"
+      ]
+    },
+    {
+      "id": "R86",
+      "name": "BROKEN_ACCESS_CONTROL",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Broken access control — admin endpoint accessible without authentication"
+      ]
+    },
+    {
+      "id": "R87",
+      "name": "CRYPTO_FAILURE",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Cryptographic failure — weak or obsolete encryption/hashing for sensitive data"
+      ]
+    },
+    {
+      "id": "R88",
+      "name": "INSECURE_DESIGN",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Insecure design — trusting user/client-side controls for security decisions"
+      ]
+    },
+    {
+      "id": "R89",
+      "name": "SECURITY_MISCONFIG",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Security misconfiguration — debug/verbose mode exposes internals"
+      ]
+    },
+    {
+      "id": "R90",
+      "name": "VULN_COMPONENT",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Known vulnerable component referenced — associated with high-profile CVE"
+      ]
+    },
+    {
+      "id": "R91",
+      "name": "AUTH_BYPASS",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Authentication bypass — setting session/authentication state to true without validation"
+      ]
+    },
+    {
+      "id": "R92",
+      "name": "IDOR",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Insecure Direct Object Reference — access control missing on ID-based endpoint"
+      ]
+    },
+    {
+      "id": "R93",
+      "name": "LOG_INJECTION",
+      "severity": "medium",
+      "score": 68,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Log injection — unsanitized input written to logs (log forging)"
+      ]
+    },
+    {
+      "id": "R94",
+      "name": "SMTP_INJECTION",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "SMTP injection — email header injection via user input"
+      ]
+    },
+    {
+      "id": "R95",
+      "name": "HOST_HEADER_INJECTION",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Host header injection — redirect poisoning via untrusted host header"
+      ]
+    },
+    {
+      "id": "R96",
+      "name": "SSTI_VULN",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Server-Side Template Injection — user input in template expression"
+      ]
+    },
+    {
+      "id": "R97",
+      "name": "SSO_WEAKNESS",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "SSO/Auth weakness — authentication verification disabled"
+      ]
+    },
+    {
+      "id": "R98",
+      "name": "API_SEC_BYPASS",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "API security bypass — endpoint exposed without authentication"
+      ]
+    },
+    {
+      "id": "R99",
+      "name": "CSP_BYPASS",
+      "severity": "medium",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "CSP bypass via unsafe directives or wildcard targets"
+      ]
+    },
+    {
+      "id": "R100",
+      "name": "NOSQL_INJECTION",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "NoSQL injection — MongoDB operator injection via user input"
+      ]
+    },
+    {
+      "id": "R101",
+      "name": "LDAP_INJECTION",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "LDAP injection — unescaped user input in LDAP query"
+      ]
+    },
+    {
+      "id": "R102",
+      "name": "XXE_VULNERABILITY",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "XML External Entity (XXE) — unsecured XML parser"
+      ]
+    },
+    {
+      "id": "R103",
+      "name": "RACE_CONDITION",
+      "severity": "high",
+      "score": 83,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Race condition — check-then-act pattern without lock/mutex"
+      ]
+    },
+    {
+      "id": "R104",
+      "name": "PATH_TRAVERSAL",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Path traversal — user input in file read/write without sanitization"
+      ]
+    },
+    {
+      "id": "R105",
+      "name": "WEAK_RNG",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Weak random number generation — Math.random() used for security-critical value"
+      ]
+    },
+    {
+      "id": "R106",
+      "name": "FILE_UPLOAD_DANGER",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Unrestricted file upload — no type/size validation"
+      ]
+    },
+    {
+      "id": "R107",
+      "name": "HTTP_ONLY_COOKIE",
+      "severity": "medium",
+      "score": 75,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Insecure cookie configuration — httpOnly/secure/sameSite disabled"
+      ]
+    },
+    {
+      "id": "R108",
+      "name": "GRAPHQL_INTROSPECT",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "GraphQL introspection enabled in production — schema disclosure risk"
+      ]
+    },
+    {
+      "id": "R109",
+      "name": "OPEN_CORS",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Dangerous CORS — wildcard origin with credentials enabled"
+      ]
+    },
+    {
+      "id": "R110",
+      "name": "LEAKED_STACK_TRACE",
+      "severity": "medium",
+      "score": 68,
+      "verdict": "WARN",
+      "engine": "Core Security Engine",
+      "reasons": [
+        "Stack trace leaked to client — information disclosure"
+      ]
+    },
+    {
+      "id": "B01",
+      "name": "LEDGER_DIRECT_MUTATION",
+      "severity": "critical",
+      "score": 98,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Direct ledger mutation bypasses atomic transaction hooks",
+        "Double-entry bookkeeping violation — audit trail broken"
+      ]
+    },
+    {
+      "id": "B02",
+      "name": "RESERVE_BYPASS",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Reserve requirement bypass attempt — systemic risk",
+        "Regulatory reserve ratio violation detected"
+      ]
+    },
+    {
+      "id": "B03",
+      "name": "DOUBLE_SPEND_LOGIC",
+      "severity": "critical",
+      "score": 99,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Double-spend protection disabled — funds can be spent twice",
+        "Nonce reuse or absence enables replay attacks"
+      ]
+    },
+    {
+      "id": "B04",
+      "name": "SETTLEMENT_MANIPULATION",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Settlement manipulation — rounding/truncation can create or destroy value",
+        "Manual override of settlement process detected"
+      ]
+    },
+    {
+      "id": "B05",
+      "name": "SWIFT_UNENCRYPTED",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "SWIFT/ISO 20022 message over unencrypted transport — PCI DSS violation",
+        "Financial message integrity compromised by cleartext transmission"
+      ]
+    },
+    {
+      "id": "B06",
+      "name": "SWIFT_AUTH_BYPASS",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "SWIFT authentication bypassed — unauthorized payment messages possible",
+        "SWIFT FIN message without cryptographic authentication"
+      ]
+    },
+    {
+      "id": "B07",
+      "name": "SWIFT_SIGNATURE_WEAK",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Weak cryptographic algorithm for SWIFT message signing — downgrade attack risk"
+      ]
+    },
+    {
+      "id": "B08",
+      "name": "FIX_CLEARTEXT_LOGIN",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "FIX protocol login with cleartext credentials — account takeover risk",
+        "FIX session credentials transmitted without encryption"
+      ]
+    },
+    {
+      "id": "B09",
+      "name": "FIX_SEQUENCE_RESET",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "FIX sequence number reset — possible message replay or insertion attack"
+      ]
+    },
+    {
+      "id": "B10",
+      "name": "FIX_DROP_COPY",
+      "severity": "medium",
+      "score": 65,
+      "verdict": "WARN",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "FIX Drop Copy session — no execution — informational only"
+      ]
+    },
+    {
+      "id": "B11",
+      "name": "AML_SCREENING_BYPASS",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "AML/sanctions screening bypassed — regulatory violation",
+        "Funds transfer executed without mandatory compliance checks"
+      ]
+    },
+    {
+      "id": "B12",
+      "name": "KYC_DOCUMENT_FORGERY",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "KYC document verification bypassed — identity fraud enabled"
+      ]
+    },
+    {
+      "id": "B13",
+      "name": "PEP_SCREENING_BYPASS",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "PEP (Politically Exposed Person) screening bypassed"
+      ]
+    },
+    {
+      "id": "B14",
+      "name": "SANCTIONS_LIST_MANIPULATION",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Sanctions list manipulation — screening integrity compromised"
+      ]
+    },
+    {
+      "id": "B15",
+      "name": "PCI_CARD_DATA_STORAGE",
+      "severity": "critical",
+      "score": 98,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "PCI DSS violation: storing full PAN/CVV — prohibited",
+        "Card data storage without tokenization — regulatory liability"
+      ]
+    },
+    {
+      "id": "B16",
+      "name": "PCI_TRACK_DATA",
+      "severity": "critical",
+      "score": 99,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "PCI DSS prohibited: magnetic stripe track data storage"
+      ]
+    },
+    {
+      "id": "B17",
+      "name": "PCI_UNENCRYPTED_TRANSMISSION",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "PCI DSS: cardholder data transmitted unencrypted over cleartext transport"
+      ]
+    },
+    {
+      "id": "B18",
+      "name": "ROUNDING_ATTACK",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Currency rounding logic — systematic rounding attack where fractions accumulate",
+        "Salami slicing pattern — small amounts diverted from many transactions"
+      ]
+    },
+    {
+      "id": "B19",
+      "name": "FEE_MANIPULATION",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Fee manipulation pattern — hidden fee inflation or arbitrary surcharge"
+      ]
+    },
+    {
+      "id": "B20",
+      "name": "RECURRING_PAYMENT_FRAUD",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Recurring payment without explicit consent — unauthorized billing pattern"
+      ]
+    },
+    {
+      "id": "B21",
+      "name": "CHARGEBACK_AVOIDANCE",
+      "severity": "high",
+      "score": 83,
+      "verdict": "WARN",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Chargeback avoidance logic — preventing legitimate customer disputes"
+      ]
+    },
+    {
+      "id": "B22",
+      "name": "SEGREGATION_OF_DUTIES",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Segregation of duties violation — same actor creates and approves payment"
+      ]
+    },
+    {
+      "id": "B23",
+      "name": "AUDIT_LOG_TAMPERING",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Audit log tampering — destroying evidence of financial transactions"
+      ]
+    },
+    {
+      "id": "B24",
+      "name": "LEDGER_FABRICATION",
+      "severity": "critical",
+      "score": 99,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Ledger fabrication — backdating or future-dating transaction entries"
+      ]
+    },
+    {
+      "id": "B25",
+      "name": "PII_CROSS_BOUNDARY",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Cross-border PII transfer without anonymization — sovereignty violation"
+      ]
+    },
+    {
+      "id": "B26",
+      "name": "FEDERATED_HSM_BYPASS",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Federated HSM ticket verification bypassed — unauthorized card access"
+      ]
+    },
+    {
+      "id": "B27",
+      "name": "BIC_SWIFT_CODE_MANIPULATION",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "BIC/SWIFT code manipulation — payment routing to wrong institution"
+      ]
+    },
+    {
+      "id": "B28",
+      "name": "IBAN_VALIDATION_BYPASS",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "IBAN validation bypass — allows invalid account routing"
+      ]
+    },
+    {
+      "id": "B29",
+      "name": "SAR_FILING_BYPASS",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Suspicious Activity Report (SAR) filing bypassed — FinCEN violation"
+      ]
+    },
+    {
+      "id": "B30",
+      "name": "REGULATORY_REPORT_MANIPULATION",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Regulatory report manipulation — false reporting to central bank"
+      ]
+    },
+    {
+      "id": "B31",
+      "name": "CAPITAL_RESERVE_CALCULATION",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Capital reserve requirement calculation manipulation"
+      ]
+    },
+    {
+      "id": "B32",
+      "name": "INTEREST_CALCULATION_FRAUD",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Banking Compliance Engine",
+      "reasons": [
+        "Interest/profit rate calculation manipulation — value extraction fraud"
+      ]
+    },
+    {
+      "id": "S01",
+      "name": "ANCHOR_UNCHECKED_ACCOUNT",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Unchecked account — attacker can pass arbitrary account data",
+        "Use #[account(..)] constraint instead of UncheckedAccount"
+      ]
+    },
+    {
+      "id": "S02",
+      "name": "ANCHOR_SIGNER_SAFETY",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Signer not properly validated — unauthorized state modification possible"
+      ]
+    },
+    {
+      "id": "S03",
+      "name": "ANCHOR_SEED_CONSTRAINT",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "PDA seed constraint without bump seed — deterministic PDA derivation missing"
+      ]
+    },
+    {
+      "id": "S04",
+      "name": "CPI_UNCHECKED",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "CPI without checking returned program ID — arbitrary program invocation risk"
+      ]
+    },
+    {
+      "id": "S05",
+      "name": "CPI_SIGNER_SEED_EXPOSURE",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "CPI signer seeds leaked via logging — privilege escalation risk"
+      ]
+    },
+    {
+      "id": "S06",
+      "name": "CPI_PRIVILEGE_ESCALATION",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Privilege escalation via CPI — missing PDA signer seeds for authority"
+      ]
+    },
+    {
+      "id": "S07",
+      "name": "PDA_FRONT_RUNNING",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "PDA derived from user input — front-running attack on address creation"
+      ]
+    },
+    {
+      "id": "S08",
+      "name": "PDA_OWNERSHIP_CHECK",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Missing PDA ownership check — attacker can use arbitrary account"
+      ]
+    },
+    {
+      "id": "S09",
+      "name": "MISSING_AUTHORITY_CHECK",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Authority check missing — unauthorized state access possible"
+      ]
+    },
+    {
+      "id": "S10",
+      "name": "CLOSE_ACCOUNT_SAFETY",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Account closure without verifying destination authority — rent theft risk"
+      ]
+    },
+    {
+      "id": "S11",
+      "name": "DELEGATE_AUTHORITY_ABUSE",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Delegating authority to arbitrary user without verification"
+      ]
+    },
+    {
+      "id": "S12",
+      "name": "ARITHMETIC_OVERFLOW",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Integer overflow possible — use checked arithmetic or SafeMath"
+      ]
+    },
+    {
+      "id": "S13",
+      "name": "UNCHECKED_MATH",
+      "severity": "medium",
+      "score": 75,
+      "verdict": "WARN",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Unchecked math operations — potential overflow/underflow"
+      ]
+    },
+    {
+      "id": "S14",
+      "name": "SPL_TOKEN_BURN",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Token burn without authority verification — unauthorized supply reduction"
+      ]
+    },
+    {
+      "id": "S15",
+      "name": "SPL_MINT_AUTHORITY",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Mint authority set to arbitrary account — unlimited token minting"
+      ]
+    },
+    {
+      "id": "S16",
+      "name": "SPL_FREEZE_AUTHORITY",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Freeze authority disabled — cannot freeze malicious token holders"
+      ]
+    },
+    {
+      "id": "S17",
+      "name": "ACCOUNT_DATA_MUTATION",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Account data mutated without validation — data corruption risk"
+      ]
+    },
+    {
+      "id": "S18",
+      "name": "ACCOUNT_REINIT",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Account reinitialization attack — attacker reinitializes existing account"
+      ]
+    },
+    {
+      "id": "S19",
+      "name": "COMPUTE_BUDGET_EXCEED",
+      "severity": "medium",
+      "score": 65,
+      "verdict": "WARN",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Compute budget exceeded — transaction may fail or be expensive"
+      ]
+    },
+    {
+      "id": "S20",
+      "name": "INSTRUCTION_ORDERING",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Instruction ordering assumption — transactions may be reordered"
+      ]
+    },
+    {
+      "id": "S21",
+      "name": "ACCOUNT_DISCRIMINATOR",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Account deserialized without discriminator check — type confusion attack"
+      ]
+    },
+    {
+      "id": "S22",
+      "name": "PROGRAM_UPGRADE_AUTHORITY",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Upgrade authority unset or set to arbitrary account — program can be upgraded by anyone"
+      ]
+    },
+    {
+      "id": "S23",
+      "name": "CLOCK_DEPENDENCY",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Clock/slot dependency without tolerance — validator manipulation risk"
+      ]
+    },
+    {
+      "id": "S24",
+      "name": "ACCOUNT_LENTH_CHECK",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Missing account data length check — deserialization OOB access"
+      ]
+    },
+    {
+      "id": "S25",
+      "name": "TOKEN_ACCOUNT_MISMATCH",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Token account/mint/owner mismatch not verified — token confusion attack"
+      ]
+    },
+    {
+      "id": "S26",
+      "name": "LAMPORT_MANIPULATION",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Lamport manipulation without proper checks — fund theft risk"
+      ]
+    },
+    {
+      "id": "S27",
+      "name": "SYSTEM_PROGRAM_ABUSE",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "System program invocation without signer verification — unauthorized SOL movement"
+      ]
+    },
+    {
+      "id": "S28",
+      "name": "ACCOUNT_CLOSURE_DRAIN",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Account closure sends rent lamports to caller — rent extraction attack"
+      ]
+    },
+    {
+      "id": "S29",
+      "name": "CROSS_PROGRAM_INVOKE_WRONG",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Solana Security Engine",
+      "reasons": [
+        "Cross-program invocation without verifying program ID — CPI confusion"
+      ]
+    },
+    {
+      "id": "E01",
+      "name": "REENTRANCY",
+      "severity": "critical",
+      "score": 98,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Reentrancy vulnerability — external call before state update",
+        "CEI (Checks-Effects-Interactions) pattern violated"
+      ]
+    },
+    {
+      "id": "E02",
+      "name": "REENTRANCY_GUARD_MISSING",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Reentrancy guard missing on withdraw/claim function"
+      ]
+    },
+    {
+      "id": "E03",
+      "name": "CROSS_FUNCTION_REENTRANCY",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Cross-function reentrancy — multiple functions share state without reentrancy protection"
+      ]
+    },
+    {
+      "id": "E04",
+      "name": "DELEGATECALL_UNCHECKED",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Unchecked delegatecall — arbitrary code execution in caller context",
+        "Storage corruption via delegatecall to untrusted contract"
+      ]
+    },
+    {
+      "id": "E05",
+      "name": "DELEGATECALL_LOOP",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Delegatecall in loop — mass storage corruption risk"
+      ]
+    },
+    {
+      "id": "E06",
+      "name": "INTEGER_OVERFLOW",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Integer overflow/underflow vulnerability — use Solidity 0.8+ or SafeMath"
+      ]
+    },
+    {
+      "id": "E07",
+      "name": "UNCHECKED_MATH_BLOCK",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Unchecked math block with financial operations — silent overflow/underflow"
+      ]
+    },
+    {
+      "id": "E08",
+      "name": "OWNER_CHECK_MISSING",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Missing owner/access control on privileged function"
+      ]
+    },
+    {
+      "id": "E09",
+      "name": "TX_ORIGIN_AUTH",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "tx.origin used for authentication — phishing vulnerability"
+      ]
+    },
+    {
+      "id": "E10",
+      "name": "TIMELOCK_BYPASS",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Timelock bypass detected — governance protection overridden"
+      ]
+    },
+    {
+      "id": "E11",
+      "name": "FLASH_LOAN_CHECK",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Flash loan without balance verification — price manipulation risk"
+      ]
+    },
+    {
+      "id": "E12",
+      "name": "TIMESTAMP_DEPENDENCY",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Block.timestamp dependency — miner manipulation ±15 seconds"
+      ]
+    },
+    {
+      "id": "E13",
+      "name": "GAS_DEPENDENCY",
+      "severity": "medium",
+      "score": 65,
+      "verdict": "WARN",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Gas-dependent logic — manipulation via gas price/limit"
+      ]
+    },
+    {
+      "id": "E14",
+      "name": "UNINITIALIZED_STORAGE",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Uninitialized storage — anyone can initialize contract and become owner"
+      ]
+    },
+    {
+      "id": "E15",
+      "name": "SELFDESTRUCT",
+      "severity": "critical",
+      "score": 99,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Selfdestruct detected — contract can be destroyed, all funds lost"
+      ]
+    },
+    {
+      "id": "E16",
+      "name": "INSECURE_RANDOMNESS",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Insecure randomness — miner-controlled block hash used for randomness"
+      ]
+    },
+    {
+      "id": "E17",
+      "name": "DEFAULT_VISIBILITY",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Function with default visibility — may be called by anyone"
+      ]
+    },
+    {
+      "id": "E18",
+      "name": "ARBITRARY_JUMP",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Arbitrary jump in assembly — control flow hijacking risk"
+      ]
+    },
+    {
+      "id": "E19",
+      "name": "DOS_WITH_REVERT",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Unbounded loop over dynamic array — gas exhaustion DoS"
+      ]
+    },
+    {
+      "id": "E20",
+      "name": "DOS_WITH_PUSH",
+      "severity": "medium",
+      "score": 74,
+      "verdict": "WARN",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Array push in loop — gas cost grows unbounded"
+      ]
+    },
+    {
+      "id": "E21",
+      "name": "ADDRESS_LIST_PHISHING",
+      "severity": "medium",
+      "score": 68,
+      "verdict": "WARN",
+      "engine": "EVM Security Engine",
+      "reasons": [
+        "Unlimited token approval to hardcoded address — phishing risk"
+      ]
+    },
+    {
+      "id": "D01",
+      "name": "KNOWN_VULNERABLE_DEP",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Known vulnerable dependency detected — refer to CVE for impact"
+      ]
+    },
+    {
+      "id": "D02",
+      "name": "MALICIOUS_PACKAGE_NAME",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Known malicious package name (typosquat or hijacked)"
+      ]
+    },
+    {
+      "id": "D03",
+      "name": "TYPOSQUAT_DEPENDENCY",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Typosquatted package name — opens supply chain attack"
+      ]
+    },
+    {
+      "id": "D04",
+      "name": "DEPENDENCY_CONFUSION",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Dependency confusion — internal package name with public registry wildcard version"
+      ]
+    },
+    {
+      "id": "D05",
+      "name": "PINNED_DEPENDENCIES",
+      "severity": "medium",
+      "score": 65,
+      "verdict": "WARN",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Unpinned dependencies — supply chain drift allows malicious updates"
+      ]
+    },
+    {
+      "id": "D06",
+      "name": "EXEC_IN_POSTINSTALL",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Postinstall script executes shell commands — supply chain attack vector"
+      ]
+    },
+    {
+      "id": "D07",
+      "name": "REGISTRY_MISCONFIG",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Non-HTTPS or suspicious registry — MITM supply chain attack risk"
+      ]
+    },
+    {
+      "id": "D08",
+      "name": "HARDCODED_TOKEN_IN_DEPS",
+      "severity": "critical",
+      "score": 91,
+      "verdict": "BLOCK",
+      "engine": "Dependency Engine",
+      "reasons": [
+        "Hardcoded token in dependency URL — credential exposure"
+      ]
+    },
+    {
+      "id": "C01",
+      "name": "CI_SCRIPT_INJECTION",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "CI script injection — event payload concatenated into shell command",
+        "Attacker-controlled branch/tag name can execute arbitrary commands"
+      ]
+    },
+    {
+      "id": "C02",
+      "name": "CI_SECRET_IN_SCRIPT",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "CI script exposes secrets — secrets accessible in shell execution",
+        "Secret leakage via echo/print in CI pipeline"
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "CI_PIPED_INSTALL",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Pipe-to-shell in CI — arbitrary remote code execution",
+        "Use pinned container images instead of inline scripts"
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "CI_WRITE_ALL_PERMS",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Write-all permissions grant excessive access to repository",
+        "Limit permissions to specific scopes (contents: read, issues: write)"
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "CI_WRITE_PERMISSIONS_CONTENTS",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Contents write permission on default — allows malicious commit push"
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "CI_PERMISSIONS_MISSING",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "No explicit permissions block — defaults may be too broad"
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "CI_ACTIONS_BRANCH_MAIN",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Action pinned to mutable branch — supply chain risk from branch force-push"
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "CI_ACTIONS_UNPINNED",
+      "severity": "medium",
+      "score": 68,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Action not pinned to hash or semver — supply chain risk"
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "CI_ACTIONS_SELF_HOSTED",
+      "severity": "medium",
+      "score": 62,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Self-hosted runner — security responsibility on your infrastructure"
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "CI_CREDENTIAL_CHECKOUT",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Git checkout with persist-credentials=true — token accessible to post-job scripts"
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "CI_TOKEN_ENVIRONMENT",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Token exposed as environment variable — accessible to all steps"
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "CI_SHALLOW_CHECKOUT",
+      "severity": "low",
+      "score": 40,
+      "verdict": "REVIEW",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Shallow checkout (fetch-depth: 0) fetches full history — may be unnecessary"
+      ]
+    },
+    {
+      "id": "C13",
+      "name": "CI_REF_CHECKOUT",
+      "severity": "high",
+      "score": 78,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "PR checkout with user-controlled ref — possible code injection"
+      ]
+    },
+    {
+      "id": "C14",
+      "name": "CI_ENVIRONMENT_PROD",
+      "severity": "medium",
+      "score": 66,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Deploy to production environment without review — bypasses change control"
+      ]
+    },
+    {
+      "id": "C15",
+      "name": "CI_DEBUG_ENABLED",
+      "severity": "medium",
+      "score": 65,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Debug mode enabled — secrets may be exposed in runner logs"
+      ]
+    },
+    {
+      "id": "C16",
+      "name": "CI_CHECKOUT_ALL_HISTORY",
+      "severity": "low",
+      "score": 35,
+      "verdict": "REVIEW",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Full git history checkout — reduces efficiency, increases attack surface"
+      ]
+    },
+    {
+      "id": "C17",
+      "name": "CI_MATRIX_INJECTION",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Matrix variable sourced from event payload — injection via matrix param"
+      ]
+    },
+    {
+      "id": "C18",
+      "name": "CI_SELF_HOSTED_UNRESTRICTED",
+      "severity": "medium",
+      "score": 74,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Self-hosted runner without label restriction — any workflow uses it"
+      ]
+    },
+    {
+      "id": "C19",
+      "name": "CI_UPLOAD_ARTIFACT_SENSITIVE",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Sensitive file uploaded as artifact — credential exposure risk"
+      ]
+    },
+    {
+      "id": "C20",
+      "name": "CI_ARTIFACT_RETENTION",
+      "severity": "medium",
+      "score": 60,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Long artifact retention period — increased exposure window"
+      ]
+    },
+    {
+      "id": "C21",
+      "name": "CI_OIDC_DISABLED",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "OIDC not configured for cloud access — long-lived credentials instead"
+      ]
+    },
+    {
+      "id": "C22",
+      "name": "CI_IF_CONDITION_INJECTION",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Condition based on event payload — injection via crafted event data"
+      ]
+    },
+    {
+      "id": "C23",
+      "name": "CI_GIT_CONFIG_EXPOSURE",
+      "severity": "medium",
+      "score": 64,
+      "verdict": "WARN",
+      "engine": "CI/CD Pipeline Engine",
+      "reasons": [
+        "Git config changes in CI — identity spoofing in commits"
+      ]
+    },
+    {
+      "id": "T01",
+      "name": "UNLIMITED_MINT",
+      "severity": "critical",
+      "score": 98,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Unlimited mint — supply can be inflated to zero value",
+        "Mint authority unset or missing cap — infinite inflation possible"
+      ]
+    },
+    {
+      "id": "T02",
+      "name": "SUPPLY_MANIPULATION",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Total supply directly manipulated — bypasses mint/burn accounting"
+      ]
+    },
+    {
+      "id": "T03",
+      "name": "SUPPLY_CAP",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "No supply cap — token can be minted indefinitely"
+      ]
+    },
+    {
+      "id": "T04",
+      "name": "RENOUNCE_OWNERSHIP",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Ownership renounced to zero address — no contract admin possible",
+        "Irreversible — cannot add liquidity, pause, or upgrade"
+      ]
+    },
+    {
+      "id": "T05",
+      "name": "OWNERSHIP_TRANSFER",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Ownership transferrable without two-factor or timelock — single-key risk"
+      ]
+    },
+    {
+      "id": "T06",
+      "name": "MULTI_OWNER_MISSING",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Single owner — single point of failure, no multisig fallback"
+      ]
+    },
+    {
+      "id": "T07",
+      "name": "LIQUIDITY_LOCK_ABSENT",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Liquidity not locked — rug pull: LP tokens can be withdrawn anytime"
+      ]
+    },
+    {
+      "id": "T08",
+      "name": "LIQUIDITY_REMOVAL",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Immediate liquidity removal without delay — rug pull vector"
+      ]
+    },
+    {
+      "id": "T09",
+      "name": "HONEYPOT_SELL_RESTRICTED",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Sell function restricted — honeypot: users can buy but not sell"
+      ]
+    },
+    {
+      "id": "T10",
+      "name": "HONEYPOT_FEE_STRUCTURE",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Excessive sell fee — honeypot pattern: buy is cheap, sell is prohibitively expensive"
+      ]
+    },
+    {
+      "id": "T11",
+      "name": "TAX_MANIPULATION",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Tax rate adjustable by anyone — can set to 100% and trap funds"
+      ]
+    },
+    {
+      "id": "T12",
+      "name": "TAX_CHANGE_DELAY",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Tax can be changed instantly — no user notice period"
+      ]
+    },
+    {
+      "id": "T13",
+      "name": "OWNER_CONCENTRATION",
+      "severity": "high",
+      "score": 83,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Owner controls majority supply — price manipulation risk"
+      ]
+    },
+    {
+      "id": "T14",
+      "name": "CONCENTRATED_HOLDING",
+      "severity": "medium",
+      "score": 74,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Team holds large allocation — potential for coordinated dump"
+      ]
+    },
+    {
+      "id": "T15",
+      "name": "PROXY_UPGRADE_UNRESTRICTED",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Proxy upgrade unrestricted — contract can be replaced with malicious logic",
+        "UUPS initialization missing — attacker can become proxy admin"
+      ]
+    },
+    {
+      "id": "T16",
+      "name": "PROXY_ADMIN_CHANGE",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Proxy admin transferrable without restriction — proxy can be hijacked"
+      ]
+    },
+    {
+      "id": "T17",
+      "name": "BLACKLIST_MANIPULATION",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Broad blacklist power — can freeze all holders and centralize control"
+      ]
+    },
+    {
+      "id": "T18",
+      "name": "BLACKLIST_ADD_UNRESTRICTED",
+      "severity": "high",
+      "score": 82,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Anyone can add to blacklist — griefing attack vector"
+      ]
+    },
+    {
+      "id": "T19",
+      "name": "REFLECTION_MANIPULATION",
+      "severity": "high",
+      "score": 80,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Reward calculation can be manipulated — team can exclude from redistribution"
+      ]
+    },
+    {
+      "id": "T20",
+      "name": "REFLECTION_EXCLUSION",
+      "severity": "medium",
+      "score": 74,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Owner excluded from reflection — skewed reward distribution"
+      ]
+    },
+    {
+      "id": "T21",
+      "name": "PAUSE_UNRESTRICTED",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Pause/unpause unrestricted — trade can be frozen arbitrarily"
+      ]
+    },
+    {
+      "id": "T22",
+      "name": "SWAP_MIN_OUTPUT",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Minimum output set to zero — MEV sandwich attack: receive nothing"
+      ]
+    },
+    {
+      "id": "T23",
+      "name": "SWAP_DEADLINE_MISSING",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Deadline missing — stale swap execution at unfavorable price"
+      ]
+    },
+    {
+      "id": "T24",
+      "name": "UNVERIFIED_FACTORY",
+      "severity": "high",
+      "score": 78,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Unverified factory address — fake pair with malicious token"
+      ]
+    },
+    {
+      "id": "T25",
+      "name": "FALSE_PAIR",
+      "severity": "medium",
+      "score": 76,
+      "verdict": "WARN",
+      "engine": "Token Intelligence Engine",
+      "reasons": [
+        "Anyone can create trading pair — counterfeit token pairs possible"
+      ]
+    },
+    {
+      "id": "DD01",
+      "name": "ANONYMOUS_TEAM",
+      "severity": "critical",
+      "score": 94,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Anonymous team — no accountability, high rug pull risk"
+      ]
+    },
+    {
+      "id": "DD02",
+      "name": "SINGLE_SIG_OWNER",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Single signer ownership — single point of compromise, no recovery path"
+      ]
+    },
+    {
+      "id": "DD03",
+      "name": "UNRESTRICTED_UPGRADE",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Upgradeable contract with single-key upgrade — rug pull vector"
+      ]
+    },
+    {
+      "id": "DD04",
+      "name": "UNLOCKED_LIQUIDITY",
+      "severity": "critical",
+      "score": 95,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Liquidity not locked or lock expired — immediate rug pull possible"
+      ]
+    },
+    {
+      "id": "DD05",
+      "name": "LP_TOKEN_BURN_ABSENT",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "LP tokens not burned or locked — creator can drain liquidity"
+      ]
+    },
+    {
+      "id": "DD06",
+      "name": "LIQUIDITY_TIMELOCK",
+      "severity": "high",
+      "score": 84,
+      "verdict": "WARN",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Liquidity lock duration too short — rug pull after lock expires"
+      ]
+    },
+    {
+      "id": "DD07",
+      "name": "UNLIMITED_MINT_AUTHORITY",
+      "severity": "critical",
+      "score": 97,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Unrestricted mint authority held by single account — infinite inflation"
+      ]
+    },
+    {
+      "id": "DD08",
+      "name": "OWNER_SUPPLY_CONCENTRATION",
+      "severity": "high",
+      "score": 88,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Owner holds majority supply — price manipulation on any sell"
+      ]
+    },
+    {
+      "id": "DD09",
+      "name": "HONEYPOT_SELL_BLOCK",
+      "severity": "critical",
+      "score": 98,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Sell blocked for non-owners — honeypot: users cannot exit positions"
+      ]
+    },
+    {
+      "id": "DD10",
+      "name": "HONEYPOT_MAX_SELL",
+      "severity": "high",
+      "score": 86,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Maximum sell amount extremely small — honeypot: users cannot exit"
+      ]
+    },
+    {
+      "id": "DD11",
+      "name": "SELL_TAX_HIGH",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Sell tax significantly higher than buy tax — honeypot pattern"
+      ]
+    },
+    {
+      "id": "DD12",
+      "name": "NO_KYC_TEAM",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "No KYC-verified team — no legal accountability"
+      ]
+    },
+    {
+      "id": "DD13",
+      "name": "NO_AUDIT",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "No security audit — undiscovered vulnerabilities likely"
+      ]
+    },
+    {
+      "id": "DD14",
+      "name": "AUDIT_FABRICATED",
+      "severity": "critical",
+      "score": 93,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Fabricated audit report — false security assurance"
+      ]
+    },
+    {
+      "id": "DD15",
+      "name": "UNFAIR_ALLOCATION",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Unfair allocation — team/insiders hold excessive supply"
+      ]
+    },
+    {
+      "id": "DD16",
+      "name": "NO_VESTING_TEAM",
+      "severity": "high",
+      "score": 85,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Team tokens without vesting — immediate dump possible on TGE"
+      ]
+    },
+    {
+      "id": "DD17",
+      "name": "SHORT_VESTING",
+      "severity": "medium",
+      "score": 72,
+      "verdict": "WARN",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Short vesting period — team can dump quickly after TGE"
+      ]
+    },
+    {
+      "id": "DD18",
+      "name": "TRADING_PAUSE_UNRESTRICTED",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Trading can be paused by anyone — market manipulation risk"
+      ]
+    },
+    {
+      "id": "DD19",
+      "name": "BLACKLIST_ALL",
+      "severity": "critical",
+      "score": 92,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Mass blacklist capability — all holders can be frozen instantly"
+      ]
+    },
+    {
+      "id": "DD20",
+      "name": "MAX_WALLET",
+      "severity": "medium",
+      "score": 70,
+      "verdict": "WARN",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Maximum wallet limit extremely low — restricts normal trading"
+      ]
+    },
+    {
+      "id": "DD21",
+      "name": "LOW_SOCIAL_ENGAGEMENT",
+      "severity": "medium",
+      "score": 64,
+      "verdict": "WARN",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Low social engagement — potential lack of community support"
+      ]
+    },
+    {
+      "id": "DD22",
+      "name": "NO_WHITEPAPER",
+      "severity": "medium",
+      "score": 66,
+      "verdict": "WARN",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "No whitepaper or documentation — lack of project substance"
+      ]
+    },
+    {
+      "id": "DD23",
+      "name": "PAST_RUG_CHECK",
+      "severity": "high",
+      "score": 89,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Team associated with past rug pull or scam project"
+      ]
+    },
+    {
+      "id": "DD24",
+      "name": "CLONED_PROJECT",
+      "severity": "high",
+      "score": 87,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Cloned/forked project without meaningful changes — copycat risk"
+      ]
+    },
+    {
+      "id": "DD25",
+      "name": "IMPERSONATION",
+      "severity": "critical",
+      "score": 96,
+      "verdict": "BLOCK",
+      "engine": "Due Diligence Engine",
+      "reasons": [
+        "Impersonation of known project or brand — likely scam"
       ]
     }
   ]

@@ -1,4 +1,4 @@
-# TEOS Sentinel Shield v4.0.0 GA — Hostinger
+# TEOS Sentinel Shield v5.0.0 — Hostinger
 # COMPLETE SITE REPLACE — force HTTPS + security headers
 
 RewriteEngine On
@@ -13,7 +13,7 @@ DirectoryIndex index.html
 # on the same origin. Only whitelisted API paths are proxied.
 # NOTE: /ws (WebSocket) is NOT proxied — shared hosting cannot tunnel it;
 # frontends connect the live feed directly to the Railway WebSocket.
-RewriteRule ^(scan|stats|events|health|live|ready|fullreport|ingest|engines)(/.*)?$ proxy.php [L,QSA]
+RewriteRule ^(scan|stats|events|health|live|ready|fullreport|ingest|engines|enforce)(/.*)?$ proxy.php [L,QSA]
 RewriteRule ^api/(rules|version|audit)(/.*)?$ proxy.php [L,QSA]
 
 # Cache static assets

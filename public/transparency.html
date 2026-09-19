@@ -108,8 +108,8 @@ footer a:hover{text-decoration:underline}
   <h1>Execution Control Infrastructure<br>for <em>Autonomous Systems</em></h1>
   <p>Every decision logged. Every rule inspectable. Every verdict reproducible. TEOS Sentinel is a deterministic, auditable governance engine — not a black box.</p>
   <div class="hero-badges">
-    <span class="hero-badge cyan">25 Deterministic Rules</span>
-    <span class="hero-badge green">BLOCK / WARN / ALLOW</span>
+    <span class="hero-badge cyan">258 Deterministic Rules</span>
+    <span class="hero-badge green">BLOCK / WARN / REVIEW / ALLOW</span>
     <span class="hero-badge">Publicly Auditable</span>
     <span class="hero-badge">JSON Schema</span>
     <span class="hero-badge">No ML Black Box</span>
@@ -121,23 +121,23 @@ footer a:hover{text-decoration:underline}
 <!-- ENGINE OVERVIEW -->
 <div class="section">
   <div class="section-label">01 / Engine Architecture</div>
-  <h2>Deterministic Rule Engine v2.4</h2>
-  <p>TEOS Sentinel uses a purely deterministic regex-based rule engine. No ML inference. No probabilistic verdicts. Every rule is a named, versioned, publicly inspectable pattern with explicit severity and scoring. The same input will always produce the same output — guaranteeing reproducibility for audit and compliance.</p>
+  <h2>Deterministic Rule Engine v5.0.0</h2>
+  <p>TEOS Sentinel uses a purely deterministic regex/AST-based rule engine. No ML inference. No probabilistic verdicts. Every rule is a named, versioned, publicly inspectable pattern with explicit severity and scoring. The same input will always produce the same output — guaranteeing reproducibility for audit and compliance.</p>
 
   <div class="code-block">
     <span class="code-block-label">Engine Flow</span>INPUT: command string
   &darr;
-SCAN: 25 named rules (regex patterns)
+SCAN: 258 named rules across 8 engines (Core 95, Banking 32, Solana 29, EVM 21, Dependency 8, CI/CD 23, Token Intelligence 25, Due Diligence 25)
   &darr;
 SCORE: highest-severity match wins (0-100)
   &darr;
-VERDICT: BLOCK (>=80) | WARN (40-79) | ALLOW (0-39)
+VERDICT: BLOCK (&gt;=85) | WARN (60-84) | REVIEW (&lt;60, low-severity rule) | ALLOW (no rule matched, score 0)
   &darr;
 OUTPUT: { verdict, score, rule, severity, reasons, timestamp }
   &darr;
-PERSIST: appended to events.json (rotating, max 500)</div>
+PERSIST: audit store (rotating, max 10,000 — replay via /api/audit/:auditId)</div>
 
-  <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;margin-top:32px">All 25 Rules</h3>
+  <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;margin-top:32px">Core Rule Samples (25 of 95)</h3>
   <div class="rule-list" id="rule-list"></div>
 </div>
 
@@ -172,11 +172,11 @@ PERSIST: appended to events.json (rotating, max 500)</div>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/rules.json</span></div>
-      <p>Static machine-readable rule definitions. 31 rules with regex patterns, severity levels, scores, and categories.</p>
+      <p>Static machine-readable rule definitions. 258 rules with severity levels, scores, engines, and reasons.</p>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/test-cases.json</span></div>
-      <p>37 attack simulation test cases with expected verdicts. Use to validate engine correctness.</p>
+      <p>Attack simulation test cases with expected verdicts. Sample set for validating engine correctness.</p>
     </div>
     <div class="api-card">
       <div class="api-card-head"><span class="api-method method-get">GET</span><span class="api-path">/audit-example.json</span></div>
@@ -233,8 +233,8 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:16px">
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Deterministic</h4><p>Same input always produces the same output. No randomness. No model drift. Fully reproducible for auditors.</p></div>
-    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 31 rules, 37 test cases, and audit schemas are available as static JSON. Anyone can verify engine behavior.</p></div>
-    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Event Persisted</h4><p>Every scan decision is logged with timestamp, rule, score, and verdict. Rotating store capped at 500 entries.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Publicly Inspectable</h4><p>All 258 rules (machine-readable at /rules.json), test cases, and audit records are available as static JSON. Anyone can verify engine behavior.</p></div>
+    <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Event Persisted</h4><p>Every scan decision is logged with timestamp, rule, score, and verdict. In-memory audit store capped at 10,000 entries, replayable via /api/audit/:auditId.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Export Ready</h4><p>Audit logs exportable as CSV or JSON. Compatible with SIEM ingestion and compliance review workflows.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">No ML Dependency</h4><p>Zero ML inference. No training data, no model weights, no probabilistic outputs. Pure pattern matching.</p></div>
     <div class="api-card"><h4 style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--cyan)">Versioned Engine</h4><p>Engine version reported in every endpoint. Rule updates are additive — existing patterns are never silently changed.</p></div>
@@ -268,7 +268,7 @@ PERSIST: appended to events.json (rotating, max 500)</div>
 </div>
 
 <footer>
-  TEOS Sentinel Shield v2.4 &middot; Execution Control Infrastructure for Autonomous Systems<br>
+  TEOS Sentinel Shield v5.0.0 &middot; Execution Control Infrastructure for Autonomous Systems<br>
   <a href="index.html">Command Center</a> &middot;
   <a href="dashboard.html">SOC Dashboard</a> &middot;
   <a href="replay.html">Forensic Replay</a> &middot;
@@ -286,23 +286,23 @@ const RULES_DATA=[
   {id:'R06',name:'FORK_BOMB',sev:'critical',score:100,desc:'Fork bomb denial-of-service pattern'},
   {id:'R07',name:'BASE64_EXEC',sev:'high',score:88,desc:'Base64-encoded payload executed via eval'},
   {id:'R08',name:'REVERSE_SHELL',sev:'critical',score:100,desc:'Netcat / bash reverse shell connection'},
-  {id:'R09',name:'SQL_DESTRUCTION',sev:'high',score:85,desc:'DROP TABLE, DROP DATABASE, TRUNCATE'},
-  {id:'R10',name:'SQL_INJECTION',sev:'high',score:75,desc:'Classic SQL injection patterns'},
-  {id:'R11',name:'PATH_TRAVERSAL',sev:'high',score:78,desc:'Directory traversal in file access'},
+  {id:'R09',name:'SQL_DESTRUCTION',sev:'high',score:78,desc:'DROP TABLE, DROP DATABASE, TRUNCATE'},
+  {id:'R10',name:'SQL_INJECTION',sev:'high',score:78,desc:'Classic SQL injection patterns'},
+  {id:'R11',name:'PATH_TRAVERSAL',sev:'high',score:80,desc:'Directory traversal in file access'},
   {id:'R12',name:'COMMAND_INJECTION',sev:'critical',score:92,desc:'OS command injection via user input'},
-  {id:'R13',name:'PRIVILEGE_ESCALATION',sev:'critical',score:90,desc:'sudo su / SUID abuse'},
-  {id:'R14',name:'MALICIOUS_PACKAGE',sev:'high',score:85,desc:'Known malicious npm package versions'},
-  {id:'R15',name:'TYPOSQUAT_PACKAGE',sev:'high',score:70,desc:'Typosquatted package names'},
+  {id:'R13',name:'PRIVILEGE_ESCALATION',sev:'critical',score:92,desc:'sudo su / SUID abuse'},
+  {id:'R14',name:'MALICIOUS_PACKAGE',sev:'high',score:88,desc:'Known malicious npm package versions'},
+  {id:'R15',name:'TYPOSQUAT_PACKAGE',sev:'high',score:75,desc:'Typosquatted package names'},
   {id:'R16',name:'UNSAFE_PERMISSIONS',sev:'medium',score:65,desc:'GitHub Actions write-all permissions'},
   {id:'R17',name:'CURL_BASH_CI',sev:'critical',score:95,desc:'curl|bash in CI/CD pipeline steps'},
-  {id:'R18',name:'PRIVILEGED_CONTAINER',sev:'high',score:80,desc:'Docker --privileged flag in CI'},
-  {id:'R19',name:'HARDCODED_SECRET',sev:'critical',score:92,desc:'Hardcoded secrets in source code'},
-  {id:'R20',name:'PROMPT_INJECTION',sev:'high',score:80,desc:'LLM prompt injection attempts'},
-  {id:'R21',name:'SSRF_ATTEMPT',sev:'high',score:82,desc:'SSRF targeting internal IP ranges'},
-  {id:'R22',name:'XXE_INJECTION',sev:'high',score:80,desc:'XML External Entity injection'},
+  {id:'R18',name:'PRIVILEGED_CONTAINER',sev:'high',score:82,desc:'Docker --privileged flag in CI'},
+  {id:'R19',name:'HARDCODED_SECRET',sev:'critical',score:93,desc:'Hardcoded secrets in source code'},
+  {id:'R20',name:'PROMPT_INJECTION',sev:'high',score:86,desc:'LLM prompt injection attempts'},
+  {id:'R21',name:'SSRF_ATTEMPT',sev:'high',score:86,desc:'SSRF targeting internal IP ranges'},
+  {id:'R22',name:'XXE_INJECTION',sev:'high',score:82,desc:'XML External Entity injection'},
   {id:'R23',name:'CRYPTO_MINER',sev:'critical',score:95,desc:'Cryptomining binary or pool connection'},
-  {id:'R24',name:'DATA_EXFIL_CURL',sev:'high',score:88,desc:'Exfiltrating system files via curl'},
-  {id:'R25',name:'CI_SECRETS_DUMP',sev:'critical',score:90,desc:'CI secrets or full env dump'},
+  {id:'R24',name:'DATA_EXFIL_CURL',sev:'high',score:89,desc:'Exfiltrating system files via curl'},
+  {id:'R25',name:'CI_SECRETS_DUMP',sev:'critical',score:92,desc:'CI secrets or full env dump'},
 ];
 
 document.getElementById('rule-list').innerHTML=RULES_DATA.map(r=>

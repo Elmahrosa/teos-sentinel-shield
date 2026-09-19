@@ -12,7 +12,7 @@
   <title>TEOS Sovereign Sentinel | Pre-Execution Runtime Governance</title>
   <meta name="description" content="TEOS Sovereign Sentinel is a deterministic runtime governance platform that evaluates code and AI agent actions before execution using policy-based governance controls, audit trails, and threat isolation workflows.">
   <meta property="og:title" content="TEOS Sovereign Sentinel — Pre-Execution Runtime Governance">
-  <meta property="og:description" content="TEOS evaluates AI-generated code, repositories, dependencies, and workflows before execution. 258 Active Governance Controls. 4 verdicts. 1325 total tests. v5.0.0 (Engine v5.0.0).">
+  <meta property="og:description" content="TEOS evaluates AI-generated code, repositories, dependencies, and workflows before execution. 258 Active Governance Controls. 4 verdicts. 1325 tests. v5.0.0 (Engine v5.0.0).">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sentinel.teosegypt.com/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2379,7 +2379,7 @@
       </iframe>
     </div>
     <p style="margin-top: 20px; font-family: var(--font-m); font-size: 12px; color: var(--alabaster-dim);">
-      Runtime governance · 258 controls · 4 verdicts · 1325 total tests
+      Runtime governance · 258 controls · 4 verdicts · 1325 tests
     </p>
   </section>
 
@@ -2399,12 +2399,12 @@
       <div style="flex:1;min-width:280px;max-width:400px;background:var(--kohl-card);border:1px solid var(--border-2);border-radius:12px;padding:32px 24px;text-align:center;">
         <div style="font-size:36px;margin-bottom:12px;">🔍</div>
         <h3 style="font-family:var(--font-d);font-size:16px;color:var(--gold);margin-bottom:8px;">Live API Integration</h3>
-        <p style="font-size:13px;color:var(--alabaster-dim);margin-bottom:16px;">Every evaluation runs against the live TEOS risk engine. Real verdicts, real findings, real signals.</p>
+        <p style="font-size:13px;color:var(--alabaster-dim);margin-bottom:16px;">Every evaluation runs against the live TEOS risk engine. Real verdicts, real findings, real rule matches.</p>
       </div>
       <div style="flex:1;min-width:280px;max-width:400px;background:var(--kohl-card);border:1px solid var(--border-2);border-radius:12px;padding:32px 24px;text-align:center;">
         <div style="font-size:36px;margin-bottom:12px;">📊</div>
         <h3 style="font-family:var(--font-d);font-size:16px;color:var(--gold);margin-bottom:8px;">Full Verdict Display</h3>
-        <p style="font-size:13px;color:var(--alabaster-dim);margin-bottom:16px;">Verdict badge, risk score, triggered controls, heuristic signals, reasoning, findings table, JSON export.</p>
+        <p style="font-size:13px;color:var(--alabaster-dim);margin-bottom:16px;">Verdict badge, risk score, triggered controls, reasoning, findings table, matched patterns, JSON export.</p>
       </div>
     </div>
     <a href="playground.html" target="_blank" rel="noopener noreferrer" class="btn-alpha-cta" style="margin-top:32px;display:inline-flex;">⚡ Open Live Decision Playground →</a>
@@ -2433,13 +2433,13 @@
         <div class="verdict-card vc-review">
           <div class="verdict-icon">🔵</div>
           <div class="verdict-name">Review</div>
-          <p class="verdict-desc">New in v5.0.0. Heuristic suspicion score 60–100 but no deterministic rule fired. Human review required.</p>
-          <div class="verdict-trigger">Triggers: unknown patterns, suspicious context, heuristic flags</div>
+          <p class="verdict-desc">Deterministic score 60–100. Execution flagged for human review before proceeding.</p>
+          <div class="verdict-trigger">Triggers: risky patterns, suspicious context, elevated risk scoring</div>
         </div>
         <div class="verdict-card vc-allow">
           <div class="verdict-icon">✅</div>
           <div class="verdict-name">Allow</div>
-          <p class="verdict-desc">No threat patterns detected. Heuristic score below threshold. Safe to execute. Logged to audit trail.</p>
+          <p class="verdict-desc">No threat patterns detected. Deterministic score below threshold. Safe to execute. Logged to audit trail.</p>
           <div class="verdict-trigger">Triggers: clean code, standard commands, validated operations</div>
         </div>
       </div>
@@ -2469,15 +2469,15 @@
         <div class="term">
           <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><span class="term-tag">Review — New in v4</span></div>
           <div class="term-body">
-            <div><span class="tp">›</span> <span class="tc">/scan curl api.unknown.io/run</span></div>
+            <div><span class="tp">›</span> <span class="tc">/scan/ci fetch-depth: 1</span></div>
             <div class="tm">analyzing...</div>
             <div>&nbsp;</div>
-            <div class="trv">🔵 REVIEW — 62/100</div>
-            <div class="tr">Heuristic: unknown endpoint + exec pattern</div>
-            <div class="tr">↳ No rule matched. Suspicion score 62/100.</div>
+            <div class="trv">🔵 REVIEW — 40/100</div>
+            <div class="tr">Rule: C12.CI_SHALLOW_CHECKOUT</div>
+            <div class="tr">↳ Low-severity rule matched. Score below WARN threshold.</div>
             <div class="tr">↳ Human review required before execution.</div>
           </div>
-          <div class="term-verdict"><span class="vp vp-review">REVIEW</span><span class="vr">heuristic · score 62</span></div>
+          <div class="term-verdict"><span class="vp vp-review">REVIEW</span><span class="vr">C12 · score 40</span></div>
         </div>
         <div class="term">
           <div class="term-bar"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div><span class="term-tag">Allowed</span></div>
@@ -2511,21 +2511,21 @@
         </div>
         <div class="arch-step">
           <div class="arch-n">Layer 2</div>
-          <div class="arch-icon">🧠</div>
-          <div class="arch-title">Heuristic Detection</div>
-          <p class="arch-desc">77 suspicion patterns score unknown threats 0–100. Catches what rules miss.</p>
+          <div class="arch-icon">⚙️</div>
+          <div class="arch-title">8 Engine Coverage</div>
+          <p class="arch-desc">Core, banking, Solana, EVM, dependency, CI/CD, token intelligence, and due diligence.</p>
         </div>
         <div class="arch-step">
           <div class="arch-n">Layer 3</div>
           <div class="arch-icon">🔵</div>
-          <div class="arch-title">Review Verdict</div>
-          <p class="arch-desc">Score ≥60 with no rule match → human review required. Nothing silently allowed.</p>
+          <div class="arch-title">Verdict Assignment</div>
+          <p class="arch-desc">Score ≥85 BLOCK, ≥60 WARN, else REVIEW. Low-severity rule matches route to human review.</p>
         </div>
         <div class="arch-step">
           <div class="arch-n">Layer 4</div>
           <div class="arch-icon">📋</div>
           <div class="arch-title">Audit Trail Logger</div>
-          <p class="arch-desc">SHA-256 chained logs. Every decision immutable. Tamper-evident. Export-ready.</p>
+          <p class="arch-desc">SHA-256 fingerprinted event log. Every verdict replay-verifiable. Export-ready.</p>
         </div>
         <div class="arch-step">
           <div class="arch-n">Layer 5</div>
@@ -2535,7 +2535,7 @@
         </div>
       </div>
       <div style="text-align:center;margin-top:32px;color:#8899aa;font-size:14px">
-        <strong style="color:#c0d0e0">Industry Governance Modules:</strong> Banking Governance Shield · MENA Governance Shield · Web3 Governance Shield · AI Runtime Governance Shield
+        <strong style="color:#c0d0e0">Industry Governance Modules:</strong> Banking Governance Shield · Web3 Governance Shield · Supply-Chain Governance Shield · AI Runtime Governance Shield
       </div>
     </div>
   </section>
@@ -2544,13 +2544,13 @@
   <div class="wrap-alt">
     <div class="wrap" style="padding-top: 96px; padding-bottom: 96px;">
       <div class="s-label reveal">Audit Trail & Compliance</div>
-      <h2 class="s-title reveal">Every decision.<br><span class="gold">Immutable.</span></h2>
-      <p class="s-sub reveal">SHA-256 chained logs. Enterprise-grade accountability. Regulatory-ready audit exports.</p>
+      <h2 class="s-title reveal">Every decision.<br><span class="gold">Verified.</span></h2>
+      <p class="s-sub reveal">SHA-256 fingerprinted events. Every verdict replay-verifiable via the audit store. Export-ready.</p>
       <div class="audit-grid reveal">
         <div class="audit-item">
           <div class="audit-icon">🔒</div>
-          <div class="audit-label">Immutable Logs</div>
-          <p class="audit-desc">SHA-256 chained. Tamper-evident. Every verdict recorded permanently.</p>
+          <div class="audit-label">Replayable Logs</div>
+          <p class="audit-desc">SHA-256 fingerprinted. Every verdict recorded and replayable on demand.</p>
         </div>
         <div class="audit-item">
           <div class="audit-icon">✅</div>
@@ -2565,7 +2565,7 @@
         <div class="audit-item">
           <div class="audit-icon">🏛️</div>
           <div class="audit-label">Regulatory Aligned</div>
-          <p class="audit-desc">MENA sovereign architecture. Banking governance controls, audit trail, and policy enforcement. Audit exports available.</p>
+          <p class="audit-desc">Banking governance controls, audit trail, and policy enforcement. Audit exports available.</p>
         </div>
         <div class="audit-item">
           <div class="audit-icon">🏢</div>
@@ -2629,33 +2629,6 @@
     </div>
   </div>
 
-  <!-- MENA Regional Compliance -->
-  <section id="mena-governance" style="padding-top:64px;padding-bottom:64px;background:var(--bg-alt);">
-    <div class="wrap">
-      <div class="s-label reveal">MENA Regional Compliance</div>
-      <h2 class="s-title reveal">RFM / NIK Zero-Trust Framework.<br><span class="gold">Sovereign by Design.</span></h2>
-      <p class="s-sub reveal">Banking compliance rules for Central Bank digital payments, settlement integrity, and national identity verification — purpose-built for MENA financial infrastructure.</p>
-      <div class="v4-grid reveal" style="margin-top:48px;">
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>RFM-001 · Settlement Mutation</strong>Post-signature account field reassignment detection — prevents ledger manipulation after cryptographic verification.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>RFM-002 · Idempotency Bypass</strong>Detects disabled settlement idempotency checks that could allow duplicate processing.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>RFM-003 · Open Banking Scope</strong>Write verb execution without validated consent — blocks aggregation scope violations.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>RFM-004 · Field Reassignment</strong>Account target modification post-transaction signing — detects settlement tampering.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>RFM-005 · Scope Escalation</strong>Aggregation read scope escalated to write without re-authentication.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>NIK-001 · Stubbed Verification</strong>Digital identity verification hard-coded to return true — blocks national ID bypass.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>NIK-002 · Missing Verification</strong>Signature constructed but never passed to verification logic.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>NIK-003 · Short-Circuited Verify</strong>Verification OR-chained with true literal — cryptographic check bypassed.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>NIK-004 · Flag-Based KYC Bypass</strong>Identity check skipped via environment flag without audit logging.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>NIK-005 · Silent Identity Bypass</strong>Auth branch proceeds without identity check and lacks audit telemetry.</div></div>
-      </div>
-      <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:16px;justify-content:center;">
-        <span style="background:rgba(0,200,83,0.1);color:var(--green);border:1px solid rgba(0,200,83,0.3);padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;">Banking Governance Controls</span>
-        <span style="background:rgba(100,150,255,0.1);color:var(--blue);border:1px solid rgba(100,150,255,0.3);padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;">Zero-Trust Settlement</span>
-        <span style="background:rgba(255,200,0,0.1);color:var(--gold);border:1px solid rgba(255,200,0,0.3);padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;">National ID Integrity</span>
-        <span style="background:rgba(255,100,100,0.1);color:var(--red);border:1px solid rgba(255,100,100,0.3);padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;">Pre-Execution BLOCK</span>
-      </div>
-    </div>
-  </section>
-
   <!-- Banking & Financial Governance -->
   <section class="feature-section" id="banking-governance" style="padding:60px 20px;max-width:1200px;margin:0 auto">
     <div style="background:linear-gradient(135deg,#0d1b2a 0%,#0a1628 100%);border:1px solid #1a3050;border-radius:12px;padding:36px;max-width:900px;margin:0 auto">
@@ -2687,7 +2660,7 @@
         <thead>
           <tr>
             <th>Capability</th>
-            <th class="ours">𓂀 TEOS Sovereign Sentinel v4</th>
+            <th class="ours">𓂀 TEOS Sovereign Sentinel v5.0.0</th>
             <th>GitGuardian</th>
             <th>Snyk</th>
             <th>Checkmarx</th>
@@ -2709,15 +2682,15 @@
             <td><span class="cn">❌ No</span></td>
           </tr>
           <tr>
-            <td>Heuristic suspicion scoring</td>
-            <td class="ours"><span class="cy">✅ 77 patterns</span></td>
+            <td>Deterministic rule matching</td>
+            <td class="ours"><span class="cy">✅ 258 rules</span></td>
             <td><span class="cn">❌ No</span></td>
-            <td><span class="cn">❌ No</span></td>
-            <td><span class="cp">⚠️ Limited</span></td>
+            <td><span class="cn">⚠️ Limited</span></td>
+            <td><span class="cn">⚠️ Limited</span></td>
           </tr>
           <tr>
             <td>Solana / EVM native rules</td>
-            <td class="ours"><span class="cy">✅ 39 rules</span></td>
+            <td class="ours"><span class="cy">✅ 50 rules</span></td>
             <td><span class="cn">❌ No</span></td>
             <td><span class="cn">❌ No</span></td>
             <td><span class="cn">❌ No</span></td>
@@ -2768,7 +2741,7 @@
         <details class="faq-item"><summary>Is my code sent to an external API?</summary><p>Yes &mdash; the CLI, desktop app, and extensions send code to the TEOS risk engine for scanning. No code is stored after scanning. Self-hosted deployments available on Enterprise.</p></details>
         <details class="faq-item"><summary>How is TEOS different from a linter?</summary><p>Linters check syntax and style. TEOS checks security, supply-chain risk, Solana/EVM safety, and prompt injection &mdash; things a linter cannot detect.</p></details>
         <details class="faq-item"><summary>What AI model commands are available?</summary><p>/claude, /llama3, /qwen, and /openai &mdash; each routes your scan through a different AI model for analysis. Credit costs vary by model.</p></details>
-        <details class="faq-item"><summary>Will pricing change after the beta?</summary><p>Yes. Every tier listed under "RC Price" is temporary. At General Availability, Free moves to a 25-scan/month cap, Pro becomes $49/mo, Team becomes $199/mo, and Enterprise moves from custom pilot pricing to $25K&ndash;$50K/yr. RC registrants keep a discounted rate on Pro and Team for 12 months after GA.</p></details>
+        <details class="faq-item"><summary>Will pricing change after the beta?</summary><p>Yes. Every tier listed under "RC Price" is temporary. At General Availability, Free moves to a 25-scan/month cap, Pro becomes $49/mo, Team becomes $199/mo, and Enterprise stays custom — always quoted per deployment. RC registrants keep a discounted rate on Pro and Team for 12 months after GA.</p></details>
       </div>
     </div>
   </section>
@@ -2856,39 +2829,39 @@
     </div>
   </div>
 
-  <!-- What's New v4 -->
+  <!-- What's New -->
   <section id="v4">
     <div class="wrap">
       <div class="s-label reveal">What's New</div>
       <h2 class="s-title reveal">v5.0.0 — <span class="gold">The Foundation Update.</span></h2>
-      <p class="s-sub reveal">Every major gap from the v3 audit addressed. Heuristics, REVIEW verdict, Solana intelligence, and auto-detection — all shipped.</p>
+      <p class="s-sub reveal">Deterministic rules, REVIEW verdict, 8 scan engines, 258 controls, and auto-detection — all shipped.</p>
       <div class="v4-grid reveal">
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Review Verdict Engine</strong>Heuristic score ≥60 triggers human review. Nothing silently passes as ALLOW.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Heuristic Suspicion Engine</strong>77 patterns across 7 signal categories. Scores unknown threats 0–100.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Auto Detection Engine</strong>85%+ confidence content routing. Paste anything — engine identifies and routes.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>/scan-solana Command</strong>New alias for Solana scanning. Faster access to 29 dedicated rules.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Review Verdict</strong>Low-severity deterministic rule matches (score &lt;60) route to human review. Nothing silently passes as ALLOW.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Replay Verification</strong>GET /api/audit/:auditId returns the full evaluation record from the audit store.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Rule Registry API</strong>GET /api/rules exposes metadata — id, name, severity, score, status — for all 258 controls.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Named Engine /scan/:engine</strong>Core, banking, solana, evm, deps, ci, token-intelligence, due-diligence.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Solana Token Intelligence</strong>Full TOKEN OVERVIEW, OWNERSHIP, AUTHORITY, CONCENTRATION in PDF reports.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Enhanced PDF Reports</strong>Professional executive summary. Full audit trail. Enterprise-ready format.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Audit Trail & Feedback</strong>Immutable SHA-256 chained logs. FP/FN feedback loop for continuous improvement.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Audit Trail & Feedback</strong>Replay-verifiable SHA-256 fingerprinted events. FP/FN feedback loop for continuous improvement.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Beta Dashboard</strong>Registration, analytics, metrics, scan history — all in the Command Center.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Performance & Stability</strong>Token Bucket rate limiter. Circuit Breaker. Redis cache with memory fallback.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Performance & Stability</strong>Redis-backed tiered rate limiting with memory fallback on cold start and Redis failure.</div></div>
       </div>
     </div>
   </section>
 
-  <!-- Government & Enterprise Pilot Portal -->
+  <!-- Enterprise & Sovereign Deployments -->
   <section id="pilot-portal" style="padding-top:96px;padding-bottom:64px;">
     <div class="wrap">
       <div class="s-label reveal">Enterprise & Government</div>
-      <h2 class="s-title reveal">Sovereign Pilot Portal.<br><span class="gold">Multi-Tenant Security.</span></h2>
-      <p class="s-sub reveal">7 tenants live. Per-tenant login, activation lifecycle, 3-month pilot windows. Built for MENA sovereign deployment.</p>
+      <h2 class="s-title reveal">Sovereign Deployments.<br><span class="gold">Institution-Grade Security.</span></h2>
+      <p class="s-sub reveal">Built in Alexandria, Egypt — from Egypt to the world. Dedicated tenant isolation, activation lifecycle, and flexible pilot windows for regulated institutions worldwide.</p>
       <div class="v4-grid reveal">
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Multi-Tenant Login Gate</strong>7 tenants: Uganda, Egypt, UAE, KSA, Qatar, US, Solana Foundation. Universal admin credentials.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Sovereign Deployment</strong>Dedicated tenant isolation for governments, banks, and regulated enterprises.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Activation Lifecycle</strong>First-login triggers activation service. Credit ledger dormant until tenant authenticates.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>3-Month Pilot Windows</strong>Per-country start dates with auto-expiry. Uganda (Jun 21), MENA (Jul 1), US (Aug 1).</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Flexible Pilot Windows</strong>Institution-specific pilot rollout with auto-expiry — no geographic tie.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>CORS-Free Deployment</strong>PHP proxy on Hostinger forwards scans to Railway. No CORS issues. Zero config.</div></div>
         <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Law Over Code</strong>Deterministic 258 Active Governance Controls. Human-in-the-loop. No autonomous execution.</div></div>
-        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Enterprise Outreach</strong>Verified contact database for Solana Foundation, MCIT Egypt, TDRA UAE, CST KSA, CRA Qatar, CISA US.</div></div>
+        <div class="v4-item"><span class="v4-check">✓</span><div class="v4-text"><strong>Institutional Outreach</strong>Engagement program for regulators, banks, and enterprises worldwide.</div></div>
       </div>
       <div style="text-align:center;margin-top:32px;">
         <a href="transparency.html" class="btn" target="_blank" rel="noopener noreferrer">View Transparency Dashboard →</a>
@@ -2913,7 +2886,7 @@
         <div class="foot-brand">𓂀 TEOS Sovereign Sentinel</div>
         <p class="foot-desc">
           Built in Alexandria, Egypt<br>
-v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
+v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 tests<br>
            Claude Code · MCP · Enterprise AI Governance
          </p>
          <div class="foot-cpn">Claude Partner Network — Registered Member · Elmahrosa International</div>
@@ -2968,7 +2941,7 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Elmahrosa International · Alexandria, Egypt · v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 total tests</span>
+      <span>© 2026 Elmahrosa International · Alexandria, Egypt · v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 tests</span>
       <span>Registered Member · Claude Partner Network by Anthropic</span>
     </div>
   </footer>
@@ -2977,21 +2950,21 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
   <div class="ticker-wrap">
     <div class="ticker-inner">
       <span class="tick"><span class="t-block">🛑 BLOCK</span>rm -rf / · R01.DESTRUCTIVE_SHELL · 100/100</span>
-      <span class="tick"><span class="t-warn">⚠️ WARN</span>DROP TABLE users; · R09.SQL_INJECTION · 75/100</span>
-      <span class="tick"><span class="t-review">🔵 REVIEW</span>curl https://api.unknown.io/run · suspicion 62/100</span>
+      <span class="tick"><span class="t-warn">⚠️ WARN</span>DROP TABLE users; · R09.SQL_DESTRUCTION · 78/100</span>
+      <span class="tick"><span class="t-review">🔵 REVIEW</span>/scan/ci fetch-depth: 1 · C12.CI_SHALLOW_CHECKOUT · 40/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>console.log("hello") · R00.CLEAN · 0/100</span>
       <span class="tick"><span class="t-block">🛑 BLOCK</span>eval(atob("...")) · R07.BASE64_EXEC · 88/100</span>
-      <span class="tick"><span class="t-review">🔵 REVIEW</span>npm install unknown-pkg@latest · suspicion 55/100</span>
-      <span class="tick"><span class="t-block">🛑 BLOCK</span>chmod 777 /etc/passwd · R02.CHMOD_ESC · 90/100</span>
+      <span class="tick"><span class="t-review">🔵 REVIEW</span>/scan/ci fetch-depth: 0 · C16.CI_CHECKOUT_ALL_HISTORY · 35/100</span>
+      <span class="tick"><span class="t-block">🛑 BLOCK</span>chmod 777 /etc/passwd · R02.CHMOD_ESCALATION · 90/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>git status · R00.CLEAN · 0/100</span>
       <!-- Duplicate for seamless loop -->
       <span class="tick"><span class="t-block">🛑 BLOCK</span>rm -rf / · R01.DESTRUCTIVE_SHELL · 100/100</span>
-      <span class="tick"><span class="t-warn">⚠️ WARN</span>DROP TABLE users; · R09.SQL_INJECTION · 75/100</span>
-      <span class="tick"><span class="t-review">🔵 REVIEW</span>curl https://api.unknown.io/run · suspicion 62/100</span>
+      <span class="tick"><span class="t-warn">⚠️ WARN</span>DROP TABLE users; · R09.SQL_DESTRUCTION · 78/100</span>
+      <span class="tick"><span class="t-review">🔵 REVIEW</span>/scan/ci fetch-depth: 1 · C12.CI_SHALLOW_CHECKOUT · 40/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>console.log("hello") · R00.CLEAN · 0/100</span>
       <span class="tick"><span class="t-block">🛑 BLOCK</span>eval(atob("...")) · R07.BASE64_EXEC · 88/100</span>
-      <span class="tick"><span class="t-review">🔵 REVIEW</span>npm install unknown-pkg@latest · suspicion 55/100</span>
-      <span class="tick"><span class="t-block">🛑 BLOCK</span>chmod 777 /etc/passwd · R02.CHMOD_ESC · 90/100</span>
+      <span class="tick"><span class="t-review">🔵 REVIEW</span>/scan/ci fetch-depth: 0 · C16.CI_CHECKOUT_ALL_HISTORY · 35/100</span>
+      <span class="tick"><span class="t-block">🛑 BLOCK</span>chmod 777 /etc/passwd · R02.CHMOD_ESCALATION · 90/100</span>
       <span class="tick"><span class="t-allow">✅ ALLOW</span>git status · R00.CLEAN · 0/100</span>
     </div>
   </div>
@@ -3011,7 +2984,7 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
         <li>✓ Self-hosted on Railway & pm2 local</li>
         <li>✓ Every deploy pre-scanned</li>
         <li>✓ 0 unsafe commands shipped</li>
-        <li>✓ Immutable audit trail</li>
+        <li>✓ Replay-verifiable audit trail</li>
         <li>✓ Engine v5.0.0 live</li>
       </ul>
       <small class="cz-note">Built in Alexandria, Egypt · Elmahrosa International · teostech.online</small>
@@ -3024,7 +2997,7 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
       <div>
         <div class="s-label reveal" style="color: rgba(176, 144, 255, 0.7);">RC Program</div>
         <h2 class="s-title reveal" style="color: #b090ff;">Be among the<br>first testers.</h2>
-        <p class="s-sub reveal" style="color: rgba(176, 144, 255, 0.7); margin-bottom: 0;">Limited access. Real product. Your feedback shapes v4.2.</p>
+        <p class="s-sub reveal" style="color: rgba(176, 144, 255, 0.7); margin-bottom: 0;">Limited access. Real product. Your feedback shapes the next release.</p>
         <div class="alpha-goals reveal" style="margin-top: 40px;">
           <div class="alpha-goal">
             <div class="ag-n">10+</div>
@@ -3037,7 +3010,7 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
             <div class="ag-sub">Evidence</div>
           </div>
           <div class="alpha-goal">
-            <div class="ag-n">v4.2</div>
+            <div class="ag-n">v5.x</div>
             <div class="ag-l">Next Release</div>
             <div class="ag-sub">Data-Driven</div>
           </div>
@@ -3194,9 +3167,9 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325/1325 tests<br>
           </div>
           <div class="price-block">
             <div class="price-block-label">After RC / GA</div>
-            <div class="plan-price"><span class="price-n-sm">$25K–$50K</span><span class="price-p">/yr</span></div>
+            <div class="plan-price"><span class="price-n-sm">Custom</span><span class="price-p">per deployment</span></div>
           </div>
-          <p class="plan-tag">MENA sovereign / institutional deployments.</p>
+          <p class="plan-tag">Institutional / sovereign deployments.</p>
           <ul class="plan-feats">
             <li>Dedicated deployment</li>
             <li>Custom policy engine</li>

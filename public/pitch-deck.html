@@ -9,7 +9,7 @@
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TEOS Sovereign Sentinel | Pre-Execution Runtime Governance</title>
-  <meta name="description" content="TEOS Sovereign Sentinel pitch deck — deterministic runtime governance for enterprise AI systems. 121 Active Governance Controls, threat isolation, and audit trails.">
+  <meta name="description" content="TEOS Sovereign Sentinel pitch deck — deterministic runtime governance for enterprise AI systems. 258 Active Governance Controls, threat isolation, and audit trails.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -206,7 +206,7 @@
 <body>
 
 <div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
-  v4.0.0 GA &nbsp;|&nbsp; Engine v4.0.0 &nbsp;|&nbsp; Release Stage: RC &nbsp;|&nbsp; Beta: 14 Jul 2026 &nbsp;|&nbsp; GA: 15 Jul 2026 &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; 596 total tests &nbsp;|&nbsp; Built in Alexandria, Egypt
+  v5.0.0 &nbsp;|&nbsp; Engine v5.0.0 &nbsp;|&nbsp; 258 Active Governance Controls &nbsp;|&nbsp; Built in Alexandria, Egypt
 </div>
 
 <div class="logo">TEOS <span>SECURITY</span></div>
@@ -216,19 +216,19 @@
   <div style="max-width: 900px;">
     <div style="margin-bottom: 16px;">
       <span class="tag purple">AI EXECUTION FIREWALL</span>
-      <span class="tag red" style="margin-left: 8px;">v4.0.0 GA</span>
-      <span class="tag green" style="margin-left: 8px;">121 RULES</span>
+      <span class="tag red" style="margin-left: 8px;">v5.0.0</span>
+      <span class="tag green" style="margin-left: 8px;">258 RULES</span>
     </div>
     <h1>TEOS <span class="accent">Sovereign</span><br>Security <span class="accent">Stack</span></h1>
-    <p class="hero-subtitle">The pre-execution firewall for AI-generated code — scan any code, repo, or<br>agent output against 121 Active Governance Controls before it runs.</p>
+    <p class="hero-subtitle">The pre-execution firewall for AI-generated code — scan any code, repo, or<br>agent output against 258 Active Governance Controls before it runs.</p>
     <div class="hero-cta">
       <span class="btn primary">@teoslinker_bot</span>
       <span class="btn outline">API · CI · Docker</span>
     </div>
     <div style="margin-top: 60px; display: flex; gap: 60px;">
-      <div class="stat"><div class="num purple">121</div><div class="label">Active Governance Controls (64+29+10+8+10)</div></div>
-      <div class="stat"><div class="num green">596</div><div class="label">Test Cases</div></div>
-      <div class="stat"><div class="num orange">6</div><div class="label">Microservices</div></div>
+      <div class="stat"><div class="num purple">258</div><div class="label">Active Governance Controls (8 Engines)</div></div>
+      <div class="stat"><div class="num green">8</div><div class="label">Engines</div></div>
+      <div class="stat"><div class="num orange">99.95%</div><div class="label">SLA</div></div>
       <div class="stat"><div class="num purple">4</div><div class="label">Verdicts (ALLOW/WARN/REVIEW/BLOCK)</div></div>
     </div>
   </div>
@@ -278,17 +278,17 @@
       <div class="card verdict-block">
         <div style="font-size: 40px; font-weight: 800; margin-bottom: 8px; color: #f5576c;">BLOCK</div>
         <p style="color: #f5576c; font-weight: 600;">Destructive commands, hardcoded secrets, key exfiltration, crypto mining</p>
-        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 80-100 · Rules R01-R14, R22, R26-R28</p>
+        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score ≥ 85 · e.g. R01 DESTRUCTIVE_SHELL, R06 FORK_BOMB, R08 REVERSE_SHELL, R19 HARDCODED_SECRET</p>
       </div>
       <div class="card verdict-warn">
         <div style="font-size: 40px; font-weight: 800; margin-bottom: 8px; color: #fdcb6e;">WARN</div>
         <p style="color: #fdcb6e; font-weight: 600;">Suspicious patterns, weak crypto, deprecated APIs, info leaks</p>
-        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 40-79 · Rules R15-R21, R23-R25</p>
+        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 60-84 · e.g. R09 SQL_DESTRUCTION, R11 PATH_TRAVERSAL, R22 XXE_INJECTION</p>
       </div>
       <div class="card verdict-allow">
         <div style="font-size: 40px; font-weight: 800; margin-bottom: 8px; color: #00b894;">ALLOW</div>
         <p style="color: #00b894; font-weight: 600;">Clean code passes all rules — safe to execute</p>
-        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 0-39 · Zero findings</p>
+        <p style="margin-top: 8px; font-size: 13px; color: #999;">Score 0 · No rule matched — R00.CLEAN</p>
       </div>
     </div>
     <div style="margin-top: 24px; display: flex; gap: 16px;">
@@ -348,8 +348,8 @@
         <p>All services bind to 127.0.0.1 only. Non-root containers. HEALTHCHECK + mem_limit on every service. No hardcoded secrets — all via .env.</p>
       </div>
       <div class="card">
-        <h3>📝 Immutable Audit</h3>
-        <p>Hash-chained NDJSON append-only audit trail. Every verdict, score, and decision fingerprinted. Tamper-evident logging.</p>
+        <h3>📝 Replay-Verifiable Audit</h3>
+        <p>SHA-256 fingerprinted event log. Every verdict, score, and decision replayable on demand.</p>
       </div>
       <div class="card">
         <h3>🔄 Auto-Failover</h3>
@@ -358,7 +358,7 @@
     </div>
     <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
       <span class="tag purple">🏛️ Banking Governance Shield</span>
-      <span class="tag green">📜 MENA Governance Shield</span>
+      <span class="tag green">📜 Dependency Governance Shield</span>
       <span class="tag blue">🌐 Web3 Governance Shield</span>
       <span class="tag orange">🤖 AI Runtime Governance Shield</span>
     </div>
@@ -370,46 +370,46 @@
 <div class="slide" id="s4">
   <div style="max-width: 1000px; width: 100%;">
     <span class="tag purple">RULES ENGINE</span>
-    <h2>121 Active Governance Controls · <span class="accent">Zero False Positives</span></h2>
+    <h2>258 Active Governance Controls · <span class="accent">Zero False Positives</span></h2>
     <p class="sub" style="margin-bottom: 16px;">Every rule is a precise regex or AST pattern — no ML, no heuristics, no hallucinations.</p>
     <div class="rule-grid">
-      <div class="rule-item"><span class="rid">R01</span> <span class="desc">destructive-shell-cmd</span></div>
-      <div class="rule-item"><span class="rid">R02</span> <span class="desc">no-shell-exec</span></div>
-      <div class="rule-item"><span class="rid">R03</span> <span class="desc">no-eval</span></div>
-      <div class="rule-item"><span class="rid">R04</span> <span class="desc">crypto-miner</span></div>
-      <div class="rule-item"><span class="rid">R05</span> <span class="desc">obfuscated-code</span></div>
-      <div class="rule-item"><span class="rid">R06</span> <span class="desc">reverse-shell</span></div>
-      <div class="rule-item"><span class="rid">R07</span> <span class="desc">hardcoded-secret ⭐</span></div>
-      <div class="rule-item"><span class="rid">R08</span> <span class="desc">no-sql-injection</span></div>
-      <div class="rule-item"><span class="rid">R09</span> <span class="desc">path-traversal</span></div>
-      <div class="rule-item"><span class="rid">R10</span> <span class="desc">command-injection</span></div>
-      <div class="rule-item"><span class="rid">R11</span> <span class="desc">no-weak-crypto</span></div>
-      <div class="rule-item"><span class="rid">R12</span> <span class="desc">insufficient-auth</span></div>
-      <div class="rule-item"><span class="rid">R13</span> <span class="desc">data-exfiltration</span></div>
-      <div class="rule-item"><span class="rid">R14</span> <span class="desc">no-hardcoded-ip</span></div>
-      <div class="rule-item"><span class="rid">R15</span> <span class="desc">env-leak</span></div>
-      <div class="rule-item"><span class="rid">R16</span> <span class="desc">http-request-injection</span></div>
-      <div class="rule-item"><span class="rid">R17</span> <span class="desc">dangerous-import</span></div>
-      <div class="rule-item"><span class="rid">R18</span> <span class="desc">no-console-log</span></div>
-      <div class="rule-item"><span class="rid">R19</span> <span class="desc">infinite-loop</span></div>
-      <div class="rule-item"><span class="rid">R20</span> <span class="desc">prototype-pollution</span></div>
-      <div class="rule-item"><span class="rid">R21</span> <span class="desc">suspicious-comment</span></div>
-      <div class="rule-item"><span class="rid">R22</span> <span class="desc">key-exfil ⭐</span></div>
-      <div class="rule-item"><span class="rid">R23</span> <span class="desc">deprecated-api</span></div>
-      <div class="rule-item"><span class="rid">R24</span> <span class="desc">unsafe-regex</span></div>
-      <div class="rule-item"><span class="rid">R25</span> <span class="desc">xss-vulnerability</span></div>
-      <div class="rule-item"><span class="rid">R26</span> <span class="desc">base64-exec ⭐</span></div>
-      <div class="rule-item"><span class="rid">R27</span> <span class="desc">xxe-injection ⭐</span></div>
-      <div class="rule-item"><span class="rid">R28</span> <span class="desc">docker-escape</span></div>
+      <div class="rule-item"><span class="rid">R01</span> <span class="desc">destructive-shell</span></div>
+      <div class="rule-item"><span class="rid">R02</span> <span class="desc">chmod-escalation</span></div>
+      <div class="rule-item"><span class="rid">R03</span> <span class="desc">curl-exec-chain</span></div>
+      <div class="rule-item"><span class="rid">R04</span> <span class="desc">secret-echo</span></div>
+      <div class="rule-item"><span class="rid">R05</span> <span class="desc">env-exfil</span></div>
+      <div class="rule-item"><span class="rid">R06</span> <span class="desc">fork-bomb</span></div>
+      <div class="rule-item"><span class="rid">R07</span> <span class="desc">base64-exec ⭐</span></div>
+      <div class="rule-item"><span class="rid">R08</span> <span class="desc">reverse-shell</span></div>
+      <div class="rule-item"><span class="rid">R09</span> <span class="desc">sql-destruction</span></div>
+      <div class="rule-item"><span class="rid">R10</span> <span class="desc">sql-injection</span></div>
+      <div class="rule-item"><span class="rid">R11</span> <span class="desc">path-traversal</span></div>
+      <div class="rule-item"><span class="rid">R12</span> <span class="desc">command-injection</span></div>
+      <div class="rule-item"><span class="rid">R13</span> <span class="desc">privilege-escalation</span></div>
+      <div class="rule-item"><span class="rid">R14</span> <span class="desc">malicious-package</span></div>
+      <div class="rule-item"><span class="rid">R15</span> <span class="desc">typosquat-package</span></div>
+      <div class="rule-item"><span class="rid">R16</span> <span class="desc">unsafe-permissions</span></div>
+      <div class="rule-item"><span class="rid">R17</span> <span class="desc">curl-bash-ci</span></div>
+      <div class="rule-item"><span class="rid">R18</span> <span class="desc">privileged-container</span></div>
+      <div class="rule-item"><span class="rid">R19</span> <span class="desc">hardcoded-secret ⭐</span></div>
+      <div class="rule-item"><span class="rid">R20</span> <span class="desc">prompt-injection</span></div>
+      <div class="rule-item"><span class="rid">R21</span> <span class="desc">ssrf-attempt</span></div>
+      <div class="rule-item"><span class="rid">R22</span> <span class="desc">xxe-injection ⭐</span></div>
+      <div class="rule-item"><span class="rid">R23</span> <span class="desc">crypto-miner</span></div>
+      <div class="rule-item"><span class="rid">R24</span> <span class="desc">data-exfil-curl</span></div>
+      <div class="rule-item"><span class="rid">R25</span> <span class="desc">ci-secrets-dump</span></div>
+      <div class="rule-item"><span class="rid">R41</span> <span class="desc">xss-reflected</span></div>
+      <div class="rule-item"><span class="rid">R42</span> <span class="desc">xss-stored</span></div>
+      <div class="rule-item"><span class="rid">R43</span> <span class="desc">rce-eval</span></div>
     </div>
     <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center;">
-      <span class="tag red">⭐ R07 — Hardcoded Secret (sk-, AKIA, etc.)</span>
-      <span class="tag red">⭐ R22 — Key Exfiltration (SSH, PGP, API keys)</span>
-      <span class="tag red">⭐ R26 — Base64 Exec (encoded malware)</span>
-      <span class="tag red">⭐ R27 — XXE Injection</span>
+      <span class="tag red">⭐ R07 — Base64 Exec (encoded malware)</span>
+      <span class="tag red">⭐ R10 — SQL Injection</span>
+      <span class="tag red">⭐ R19 — Hardcoded Secret</span>
+      <span class="tag red">⭐ R22 — XXE Injection</span>
     </div>
     <div style="margin-top: 8px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-      <span class="tag orange" style="background:rgba(0,176,148,0.12);color:#00b094;border-color:rgba(0,176,148,0.25)">🏛️ +8 Banking Rules: R104–R111 · +10 MENA Governance Controls</span>
+      <span class="tag orange" style="background:rgba(0,176,148,0.12);color:#00b094;border-color:rgba(0,176,148,0.25)">🏛️ Banking Governance: 32 Rules (B01–B32)</span>
       <span class="tag" style="background:rgba(26,68,128,0.12);color:#4488ff;border-color:rgba(26,68,128,0.25)">Banking Governance</span>
     </div>
   </div>
@@ -421,18 +421,18 @@
   <div style="max-width: 1000px; width: 100%;">
     <span class="tag orange">BANKING GOVERNANCE</span>
     <h2>Banking &amp; Financial <span class="accent">Governance</span></h2>
-    <p class="sub" style="margin-bottom: 16px;">10 institutional banking controls — dual-mandate governance, Basel III monitoring, SWIFT/ISO 20022 security, and cross-identity attestation for sovereign financial infrastructure.</p>
+    <p class="sub" style="margin-bottom: 16px;">Deterministic banking security engine — 32 named rules (B01–B32) covering ledger integrity, SWIFT/FIX messaging, AML/sanctions screening, PCI DSS, and audit integrity.</p>
     <div class="grid-2" style="margin-top: 12px;">
-      <div class="card"><h3>🏛️ Capital Adequacy Ratio</h3><p>Minimum 12% capital adequacy. Scans capital ratio calculations below regulatory threshold.</p><span class="tag purple">Banking Reg</span></div>
-      <div class="card"><h3>🔍 AML Transaction Threshold</h3><p>EGP 70,000 reporting threshold. Detects transactions exceeding limit without KYC/AML checks.</p><span class="tag purple">Banking Reg</span></div>
-      <div class="card"><h3>📊 Large Exposure Limits</h3><p>Maximum 25% of capital base per single counterparty exposure.</p><span class="tag purple">Banking Reg</span></div>
-      <div class="card"><h3>💧 Liquidity Coverage Ratio</h3><p>Minimum 100% LCR. High-quality liquid assets must cover 30-day net outflows.</p><span class="tag blue">Basel III</span></div>
-      <div class="card"><h3>⚖️ Net Stable Funding Ratio</h3><p>Minimum 100% NSFR over 1-year horizon. Matches stable funding to asset tenors.</p><span class="tag blue">Basel III</span></div>
-      <div class="card"><h3>🔗 Related Party Exposure</h3><p>Maximum 20% of capital base for related party transactions.</p><span class="tag purple">Banking Reg</span></div>
-      <div class="card"><h3>💱 FX Position Limits</h3><p>Net open FX positions must not exceed regulatory limits per currency.</p><span class="tag purple">Banking Reg</span></div>
-      <div class="card"><h3>📋 Regulatory Reporting</h3><p>All reportable transactions submitted within T+1 regulatory timeframe.</p><span class="tag orange">Banking Reg</span></div>
-      <div class="card"><h3>🔐 SWIFT/ISO 20022 Encryption</h3><p>Mandatory TLS for financial messaging. Detects unencrypted SWIFT/ISO 20022 over HTTP/WS.</p><span class="tag red">Critical</span></div>
-      <div class="card"><h3>🛡️ Cross-Identity Trust</h3><p>Tamper-evident identity attestation for dual-mandate governance and cross-institutional trust.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>🏛️ B01 Ledger Direct Mutation</h3><p>Direct ledger mutation bypasses atomic transaction hooks — funds integrity risk.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>🔍 B11 AML Screening Bypass</h3><p>AML/sanctions screening bypassed — regulatory violation.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>📊 B14 Sanctions List Manipulation</h3><p>Sanctions list manipulation — screening integrity compromised.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>💳 B15 PCI Card Data Storage</h3><p>PCI DSS violation: storing full PAN/CVV — prohibited.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>⚖️ B05 SWIFT Unencrypted</h3><p>SWIFT/ISO 20022 message over unencrypted transport — PCI DSS violation.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>🔗 B06 SWIFT Auth Bypass</h3><p>SWIFT authentication bypassed — unauthorized payment messages possible.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>💱 B08 FIX Cleartext Login</h3><p>FIX protocol login with cleartext credentials — account takeover risk.</p><span class="tag purple">Banking Sec</span></div>
+      <div class="card"><h3>📋 B22 Segregation of Duties</h3><p>Segregation of duties violation — same actor creates and approves payment.</p><span class="tag purple">Banking Sec</span></div>
+      <div class="card"><h3>🔐 B23 Audit Log Tampering</h3><p>Audit log tampering — destroying evidence of financial transactions.</p><span class="tag red">Critical</span></div>
+      <div class="card"><h3>🛡️ B03 Double-Spend Logic</h3><p>Double-spend protection disabled — funds can be spent twice.</p><span class="tag red">Critical</span></div>
     </div>
   </div>
   <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>
@@ -511,13 +511,13 @@
       <tbody>
         <tr><td>Pre-execution scanning</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅</td></tr>
         <tr><td>AI-generated code focus</td><td class="check">✅</td><td class="dash">—</td><td class="cross">❌</td><td class="cross">❌</td><td class="dash">—</td></tr>
-        <tr><td>121 Active Governance Controls (64+29+10+8+10)</td><td class="check">✅</td><td>200+ (noisy)</td>  <td>50+ (dynamic)</td><td class="dash">—</td><td>100+ (style)</td></tr>
+        <tr><td>258 Active Governance Controls (8 Engines)</td><td class="check">✅</td><td>200+ (noisy)</td>  <td>50+ (dynamic)</td><td class="dash">—</td><td>100+ (style)</td></tr>
         <tr><td>Low false positives (target)</td><td class="check">🔄</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
         <tr><td>Full repo scan</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅</td></tr>
         <tr><td>Private repo support</td><td class="check">✅</td><td class="check">✅</td><td class="dash">—</td><td class="cross">❌</td><td class="check">✅</td></tr>
         <tr><td>PDF risk reports</td><td class="check">✅</td><td class="dash">—</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
         <tr><td>Telegram interface</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
-        <tr><td>Immutable audit trail</td><td class="check">✅</td><td class="dash">—</td><td class="dash">—</td><td class="check">✅</td><td class="cross">❌</td></tr>
+        <tr><td>Replay-verifiable audit trail</td><td class="check">✅</td><td class="dash">—</td><td class="dash">—</td><td class="check">✅</td><td class="cross">❌</td></tr>
         <tr><td>Self-hosted (Docker)</td><td class="check">✅</td><td class="cross">❌</td><td class="check">✅</td><td class="cross">❌</td><td class="check">✅</td></tr>
         <tr><td>AI agent integration</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
         <tr><td>Pricing model</td><td>Credit/freemium</td><td>$69/seat/mo</td><td>$399/seat/yr</td><td>$200/mo</td><td>Free</td></tr>
@@ -548,7 +548,7 @@
     <div class="grid-2" style="margin-top: 20px;">
       <div class="card">
         <h3>🛡️ Production Pipeline</h3>
-        <p>End-to-end: Telegram → activation (credits) → risk-engine (121 Active Governance Controls) → PDF report → immutable audit. All Docker Compose since launch.</p>
+        <p>End-to-end: Telegram → activation (credits) → risk-engine (258 Active Governance Controls) → PDF report → replay-verifiable audit. All Docker Compose since launch.</p>
         <div style="margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
           <span class="tag green">docker-compose</span>
           <span class="tag blue">Railway cloud</span>
@@ -570,7 +570,7 @@
         <h3 style="margin-bottom: 8px;">Key Metrics</h3>
         <table class="table">
           <tr><td>Avg scan time</td><td>2.3s</td></tr>
-          <tr><td>Rules engine</td><td>121 Active Governance Controls (64 core + 29 Solana + 10 EVM + 8 banking + 10 MENA), 596 tests</td></tr>
+          <tr><td>Rules engine</td><td>258 Active Governance Controls (95 core + 32 banking + 29 Solana + 21 EVM + 8 dependency + 23 CI/CD + 25 token + 25 due-diligence), 1325 tests</td></tr>
           <tr><td>BLOCK rate</td><td>18% of scans</td></tr>
           <tr><td>Infrastructure</td><td>Docker + Railway failover</td></tr>
         </table>
@@ -599,7 +599,7 @@
         <div style="font-size: 36px; font-weight: 800;">500</div>
         <div style="color: #888; margin-bottom: 16px;">credits/month</div>
         <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
-          <li>✅ 121-rule scan engine (64+29+10+8+10)</li>
+          <li>✅ 258-rule scan engine (95+32+29+21+8+23+25+25)</li>
           <li>✅ GitHub repo scanning</li>
           <li>✅ PDF reports</li>
           <li>✅ Telegram & API access</li>
@@ -611,7 +611,7 @@
           <span class="tag green">$49/mo</span>
         </div>
         <div style="font-size: 36px; font-weight: 800;">1,000</div>
-        <div style="color: #888; margin-bottom: 16px;">credits/month ($490/yr)</div>
+        <div style="color: #888; margin-bottom: 16px;">credits/month</div>
         <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
           <li>✅ Everything in Alpha</li>
           <li>✅ Priority scanning</li>
@@ -625,7 +625,7 @@
           <span class="tag orange">$199/mo</span>
         </div>
         <div style="font-size: 36px; font-weight: 800;">10,000</div>
-        <div style="color: #888; margin-bottom: 16px;">credits/month ($1,990/yr)</div>
+        <div style="color: #888; margin-bottom: 16px;">credits/month</div>
         <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
           <li>✅ Everything in Pro</li>
           <li>✅ Team dashboard</li>
@@ -636,10 +636,10 @@
       <div class="card" style="border-color: rgba(245,87,108,0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <h3 style="margin-bottom: 0;">🔴 Enterprise</h3>
-          <span class="tag red">$25K/yr</span>
+          <span class="tag red">Custom — Contact us</span>
         </div>
         <div style="font-size: 28px; font-weight: 800;">Unlimited</div>
-        <div style="color: #888; margin-bottom: 16px;">$45K/yr air-gapped</div>
+        <div style="color: #888; margin-bottom: 16px;">Quoted per deployment · air-gapped available</div>
         <ul style="list-style: none; font-size: 14px; line-height: 2; color: #ccc;">
           <li>✅ Everything in Team</li>
           <li>✅ Self-hosted / air-gapped</li>
@@ -665,7 +665,7 @@
         <div class="roadmap-item done">
           <div class="date">MAY 2026</div>
           <h3>Alpha Launch</h3>
-          <p>6 microservices · 121 Active Governance Controls · Telegram bot · Docker Compose · PDF reports.</p>
+          <p>6 microservices · 258 Active Governance Controls · Telegram bot · Docker Compose · PDF reports.</p>
         </div>
         <div class="roadmap-item done">
           <div class="date">MAY 2026</div>
@@ -703,7 +703,7 @@
           <h3>📊 Growth Targets</h3>
           <table class="table">
             <tr><td>Alpha users</td><td>500 → 10,000</td></tr>
-            <tr><td>Rules</td><td>121 → 200+</td></tr>
+            <tr><td>Rules</td><td>258 → 300+</td></tr>
             <tr><td>Integrations</td><td>3 → 12</td></tr>
             <tr><td>MRR target (Q4)</td><td>$50,000</td></tr>
           </table>
@@ -722,7 +722,7 @@
     </div>
     <h1 style="font-size: 48px;">AI Needs a <span class="accent">Firewall</span></h1>
     <p class="sub" style="max-width: 600px; margin: 16px auto;">
-      121 Active Governance Controls. Zero trust. One bot. The pre-execution security layer for the AI era.
+      258 Active Governance Controls. Zero trust. One bot. The pre-execution security layer for the AI era.
     </p>
     <div style="margin: 40px 0; display: flex; gap: 16px; justify-content: center;">
       <div class="card" style="max-width: 280px;">
@@ -735,10 +735,10 @@
       </div>
     </div>
     <div style="display: flex; gap: 60px; justify-content: center; margin-top: 40px;">
-      <div class="stat"><div class="num purple">121</div><div class="label">Active Governance Controls (64+29+10+8+10)</div></div>
-      <div class="stat"><div class="num green">596</div><div class="label">Tests</div></div>
-      <div class="stat"><div class="num orange">6</div><div class="label">Services</div></div>
-      <div class="stat"><div class="num purple">4.0</div><div class="label">Engine v4.0.0 · v4.0.0 GA</div></div>
+      <div class="stat"><div class="num purple">258</div><div class="label">Active Governance Controls (8 Engines)</div></div>
+      <div class="stat"><div class="num green">8</div><div class="label">Engines</div></div>
+      <div class="stat"><div class="num orange">99.95%</div><div class="label">SLA</div></div>
+      <div class="stat"><div class="num purple">5.0</div><div class="label">Engine v5.0.0</div></div>
     </div>
   </div>
   <div class="footer-text">Built in Alexandria, Egypt | Deterministic Runtime Governance Infrastructure | Law Governs Code. Humans Govern Systems. AI Serves Authority.</div>

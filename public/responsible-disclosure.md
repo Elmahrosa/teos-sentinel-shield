@@ -23,7 +23,7 @@ This policy covers:
 - Rate limiting bypass
 - Supply chain compromise (rule injection, test case manipulation)
 - Denial of service affecting enforcement availability
-- Cryptographic weaknesses in audit hash chain
+- Cryptographic weaknesses in audit log hashing/fingerprinting
 
 ## What Is NOT Covered
 
@@ -84,10 +84,10 @@ With your consent, we will recognize security researchers in our Hall of Fame pa
 
 ## Questions?
 
-Contact: security@teos-sentinel.io  
+Contact: security@teos-sentinel.io
 PGP Key: Available at `/pgp-key.txt`
 
 ---
 
-**Document Version:** 1.1 (GA v4.0.0)  
+**Document Version:** 1.2 (v5.0.0)
 **Last Updated:** July 26, 2026

@@ -64,29 +64,25 @@ tr:hover td{background:var(--panel)}
 
 <div class="hero">
   <h1><em>Live</em> Service Monitoring</h1>
-  <p>Real-time health, response times, and resource utilization across the TEOS Sentinel ecosystem.</p>
+  <p>Health, response times, and resource utilization across the TEOS Sentinel ecosystem. Service status and metrics refresh from the live API where available.</p>
 </div>
 
 <div class="section">
   <div class="section-label">Service Health</div>
   <h2>Infrastructure Status</h2>
-  <p>Current state of all production services.</p>
+  <p>Current state of all production services (representative — confirm live status via <code>/health</code>).</p>
   <div class="service-grid" id="serviceGrid">
     <div class="service-card">
       <div class="status-row"><span class="name">Risk Engine (MCP)</span><span class="status status-up">● Online</span></div>
-      <div class="detail">Response: ~310ms · Memory: 75MB RSS</div>
+      <div class="detail">Verdict engine · 258 rules · 8 engines</div>
     </div>
     <div class="service-card">
       <div class="status-row"><span class="name">Sentinel Shield API</span><span class="status status-up">● Online</span></div>
-      <div class="detail">Response: ~292ms · Memory: 86MB RSS</div>
-    </div>
-    <div class="service-card">
-      <div class="status-row"><span class="name">Activation Service</span><span class="status status-up">● Online</span></div>
-      <div class="detail">Response: ~292ms · Memory: 86MB RSS</div>
+      <div class="detail">REST endpoints · audit store · rate limiting</div>
     </div>
     <div class="service-card">
       <div class="status-row"><span class="name">TEOS Bot</span><span class="status status-up">● Online</span></div>
-      <div class="detail">Response: ~823ms</div>
+      <div class="detail">@teoslinker_bot · scan commands</div>
     </div>
   </div>
 </div>
@@ -94,12 +90,12 @@ tr:hover td{background:var(--panel)}
 <div class="section">
   <div class="section-label">Key Metrics</div>
   <h2>Performance Overview</h2>
-  <p>Aggregate metrics across all services for the current reporting window.</p>
+  <p>Aggregate metrics for the product surface. Uptime and latency figures are indicative of the current deployment.</p>
   <div class="metrics-grid">
-    <div class="metric-card cyan"><div class="value">121</div><div class="label">Governance Rules</div></div>
-    <div class="metric-card green"><div class="value">596</div><div class="label">Total Tests</div></div>
-    <div class="metric-card amber"><div class="value">310ms</div><div class="label">Avg Response Time</div></div>
-    <div class="metric-card purple"><div class="value">99.7%</div><div class="label">Uptime (30d)</div></div>
+    <div class="metric-card cyan"><div class="value">258</div><div class="label">Governance Rules</div></div>
+    <div class="metric-card green"><div class="value">1325</div><div class="label">Passing Tests</div></div>
+    <div class="metric-card amber"><div class="value">8</div><div class="label">Scan Engines</div></div>
+    <div class="metric-card purple"><div class="value">4</div><div class="label">Verdict Types</div></div>
   </div>
 </div>
 

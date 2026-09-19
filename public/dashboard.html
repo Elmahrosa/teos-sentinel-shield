@@ -153,7 +153,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <body>
 
 <div style="background:#0a1628;color:#00e5ff;text-align:center;padding:10px 20px;font-family:'Courier New',monospace;font-size:13px;border-bottom:1px solid #00e5ff33;position:sticky;top:0;z-index:9999">
-  Built in Alexandria, Egypt &nbsp;|&nbsp; 121 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; Pre-Execution Policy Enforcement &nbsp;|&nbsp; Banking • FinTech • Sovereign DPI
+  Built in Alexandria, Egypt &nbsp;|&nbsp; 258 Active Governance Controls &nbsp;|&nbsp; Claude Code &amp; MCP Ready &nbsp;|&nbsp; Pre-Execution Policy Enforcement &nbsp;|&nbsp; Banking • FinTech • Sovereign DPI
 </div>
 
 <div id="topbar">
@@ -182,8 +182,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <div class="left-section">
       <span class="left-label">Engine Info</span>
       <div style="padding:0 8px;font-family:var(--mono);font-size:10px;color:var(--muted2);line-height:2">
-        <div>Version: <span style="color:var(--cyan);" id="eng-version">v4</span></div>
-        <div>Rules: <span style="color:var(--white);" id="eng-rules">121</span></div>
+        <div>Version: <span style="color:var(--cyan);" id="eng-version">v5.0.0</span></div>
+        <div>Rules: <span style="color:var(--white);" id="eng-rules">258</span></div>
         <div>Engine: <span style="color:var(--green)">Deterministic</span></div>
         <div id="engine-uptime">Uptime: --</div>
         <div>API: <span id="api-mode" style="color:var(--amber)">REST</span></div>
@@ -293,7 +293,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 <footer style="border-top:1px solid var(--border);padding:16px 20px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--muted2);background:var(--bg2);flex-shrink:0">
   Built in Alexandria, Egypt<br>
-v4.0.0 GA · Engine v4.0.0 · Release Stage: RC · RC: 14 Jul 2026 · GA: 15 Jul 2026 · 121 Active Governance Controls · 596 total tests<br>
+v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls<br>
    Claude Code · MCP · Enterprise AI Governance
 </footer>
 
@@ -389,16 +389,16 @@ connectWS();
 
 /* ── MOCK DATA (demo event feed) ─────────────────────────── */
 const MOCK_RULES = [
-  { id:'R07', name:'HARDCODED_SECRET', sev:'critical' },
-  { id:'R22', name:'KEY_EXFIL', sev:'critical' },
-  { id:'R26', name:'BASE64_EXEC', sev:'high' },
-  { id:'R27', name:'XXE_INJECTION', sev:'high' },
-  { id:'R31', name:'SQL_INJECTION', sev:'high' },
-  { id:'R44', name:'AUTH_BYPASS', sev:'critical' },
-  { id:'R52', name:'DOCKER_ESCAPE', sev:'high' },
-  { id:'R63', name:'REVERSE_SHELL', sev:'critical' },
-  { id:'R71', name:'CORS_MISCONFIG', sev:'medium' },
-  { id:'R85', name:'WEAK_CRYPTO', sev:'medium' },
+  { id:'R01', name:'DESTRUCTIVE_SHELL', sev:'critical' },
+  { id:'R07', name:'BASE64_EXEC', sev:'high' },
+  { id:'R08', name:'REVERSE_SHELL', sev:'critical' },
+  { id:'R09', name:'SQL_DESTRUCTION', sev:'high' },
+  { id:'R10', name:'SQL_INJECTION', sev:'high' },
+  { id:'R22', name:'XXE_INJECTION', sev:'high' },
+  { id:'R47', name:'DOCKER_ESCAPE', sev:'critical' },
+  { id:'R69', name:'WEAK_CRYPTO', sev:'high' },
+  { id:'R86', name:'BROKEN_ACCESS_CONTROL', sev:'critical' },
+  { id:'R91', name:'AUTH_BYPASS', sev:'critical' },
 ];
 const MOCK_SAFE_CMDS = [
   'ls -la','SELECT * FROM users WHERE id = 1','const x = 1',
@@ -497,8 +497,8 @@ async function checkHealth(){
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     document.getElementById('engine-uptime').textContent='Uptime: '+(d.uptimeHuman||'--');
-    document.getElementById('eng-version').textContent='v4.0.0 GA';
-    document.getElementById('eng-rules').textContent=d.rules||'25';
+    document.getElementById('eng-version').textContent='v5.0.0';
+    document.getElementById('eng-rules').textContent=d.rules||'258';
     document.getElementById('api-mode').textContent='WS';
     document.getElementById('api-mode').style.color='var(--green)';
   }catch(e){

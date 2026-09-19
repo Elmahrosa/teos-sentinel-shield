@@ -7,7 +7,7 @@ const crypto    = require('crypto');
 const fs        = require('fs');
 const path      = require('path');
 
-const VERSION  = '4.0.0';
+const VERSION  = '5.0.0';
 const API_URL  = process.env.TEOS_API_URL || 'https://sentinel.teosegypt.com';
 const API_KEY  = process.env.TEOS_API_KEY || process.env.X_API_KEY || '';
 const LOG_FILE = path.join(process.env.TEOS_LOG_DIR || process.cwd(), '.teos-enforcement.log');

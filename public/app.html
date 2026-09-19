@@ -48,10 +48,10 @@
     <label for="scanInput">Paste code, transaction data, or banking contract for governance scanning:</label>
     <textarea class="scan-input" id="scanInput" placeholder="Paste Solidity, transaction data, or banking governance code here...">// Banking governance example
 function processTransfer(amount, from, to) {
-  // AML threshold check at EGP 70,000
-  if (amount > 70000) require(kycVerified, "AML threshold exceeded");
-  // Large exposure limit: 25% of capital
-  require(amount <= capitalBase * 0.25, "Exposure limit exceeded");
+  // Detect: B01 LEDGER_DIRECT_MUTATION — direct ledger write without atomic hook
+  db.ledger[tx.id] = { from: from, to: to, amount: amount };
+  // Detect: B22 SEGREGATION_OF_DUTIES — same actor creates and approves payment
+  approvals[tx.id] = { approvedBy: from };
   executeTransfer(from, to, amount);
 }</textarea>
     <div class="action-bar">
@@ -64,24 +64,24 @@ function processTransfer(amount, from, to) {
 
   <div class="scan-card">
     <h2>🏛️ Banking Governance Controls</h2>
-    <p style="font-size:12px;color:var(--alabaster-dim);margin-bottom:12px">8 Banking-Focused Governance Controls — click BANKING_DEMO above to run a mock assessment against all 8 controls simultaneously.</p>
+    <p style="font-size:12px;color:var(--alabaster-dim);margin-bottom:12px">Banking Security Engine — 32 rules (B01–B32). Run the BANKING_DEMO above for a sample assessment across real banking rule detections (B01, B08, B11, B14, B15, B18, B22, B23).</p>
     <div class="banking-rules">
-      <div class="banking-rule" id="rule1"><h4><span class="status-dot" id="dot1"></span>Capital Adequacy Ratio</h4><div class="desc">Minimum 12% capital adequacy. Scans for capital ratio calculations below threshold.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule" id="rule2"><h4><span class="status-dot" id="dot2"></span>AML Transaction Threshold</h4><div class="desc">EGP 70,000 reporting threshold. Detects transactions exceeding limit without KYC/AML checks.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule" id="rule3"><h4><span class="status-dot" id="dot3"></span>Large Exposure Limits</h4><div class="desc">Maximum 25% of capital base per single counterparty exposure.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule" id="rule4"><h4><span class="status-dot" id="dot4"></span>Liquidity Coverage Ratio</h4><div class="desc">Minimum 100% LCR. High-quality liquid assets must cover 30-day net outflows.</div><span class="tag tag-info">Basel III</span></div>
-      <div class="banking-rule" id="rule5"><h4><span class="status-dot" id="dot5"></span>Net Stable Funding Ratio</h4><div class="desc">Minimum 100% NSFR. Available stable funding must exceed required stable funding over 1 year.</div><span class="tag tag-info">Basel III</span></div>
-      <div class="banking-rule" id="rule6"><h4><span class="status-dot" id="dot6"></span>Related Party Exposure</h4><div class="desc">Maximum 20% of capital base for related party transactions.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule" id="rule7"><h4><span class="status-dot" id="dot7"></span>FX Position Limits</h4><div class="desc">Net open FX positions must not exceed regulatory limits per currency.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule" id="rule8"><h4><span class="status-dot" id="dot8"></span>Regulatory Reporting</h4><div class="desc">All reportable transactions must be submitted within regulatory timeframe (T+1).</div><span class="tag tag-info">Banking Reg</span></div>
+      <div class="banking-rule" id="rule1"><h4><span class="status-dot" id="dot1"></span>B01 LEDGER_DIRECT_MUTATION</h4><div class="desc">Direct ledger mutation bypasses atomic transaction hooks — funds integrity risk.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule" id="rule2"><h4><span class="status-dot" id="dot2"></span>B08 FIX_CLEARTEXT_LOGIN</h4><div class="desc">FIX protocol login with cleartext credentials — account takeover risk.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule" id="rule3"><h4><span class="status-dot" id="dot3"></span>B11 AML_SCREENING_BYPASS</h4><div class="desc">AML/sanctions screening bypassed — regulatory violation.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule" id="rule4"><h4><span class="status-dot" id="dot4"></span>B14 SANCTIONS_LIST_MANIPULATION</h4><div class="desc">Sanctions list manipulation — screening integrity compromised.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule" id="rule5"><h4><span class="status-dot" id="dot5"></span>B15 PCI_CARD_DATA_STORAGE</h4><div class="desc">PCI DSS violation: storing full PAN/CVV — prohibited.</div><span class="tag tag-info">PCI DSS</span></div>
+      <div class="banking-rule" id="rule6"><h4><span class="status-dot" id="dot6"></span>B18 ROUNDING_ATTACK</h4><div class="desc">Currency rounding logic — systematic rounding attack where fractions accumulate.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule" id="rule7"><h4><span class="status-dot" id="dot7"></span>B22 SEGREGATION_OF_DUTIES</h4><div class="desc">Segregation of duties violation — same actor creates and approves payment.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule" id="rule8"><h4><span class="status-dot" id="dot8"></span>B23 AUDIT_LOG_TAMPERING</h4><div class="desc">Audit log tampering — destroying evidence of financial transactions.</div><span class="tag tag-info">Banking Sec</span></div>
     </div>
   </div>
 
   <div class="scan-card">
     <h2>📊 Governance Summary</h2>
     <div class="summary-grid">
-      <div class="summary-card"><div class="num" style="color:var(--green)">8</div><div class="lbl">Banking Rules</div></div>
-      <div class="summary-card"><div class="num" style="color:var(--gold)">121</div><div class="lbl">Active Governance Controls</div></div>
+      <div class="summary-card"><div class="num" style="color:var(--green)">32</div><div class="lbl">Banking Rules</div></div>
+      <div class="summary-card"><div class="num" style="color:var(--gold)">258</div><div class="lbl">Active Governance Controls</div></div>
       <div class="summary-card"><div class="num" style="color:var(--blue)">100%</div><div class="lbl">Pass Rate</div></div>
       <div class="summary-card"><div class="num" style="color:var(--alabaster)">v5.0.0</div><div class="lbl">Engine Version (Engine v5.0.0)</div></div>
     </div>
@@ -89,25 +89,25 @@ function processTransfer(amount, from, to) {
 
   <div class="scan-card" id="banking-governance-section">
     <h2>🏦 Banking &amp; Financial Governance</h2>
-    <p style="font-size:12px;color:var(--alabaster-dim);margin-bottom:12px">10 institutional banking controls — dual-mandate governance, Basel III monitoring, SWIFT/ISO 20022 encryption, and cross-identity attestation.</p>
+    <p style="font-size:12px;color:var(--alabaster-dim);margin-bottom:12px">Deterministic banking security scanning — ledger integrity, SWIFT/FIX messaging, AML/sanctions screening, PCI DSS, segregation of duties, and audit integrity.</p>
     <div class="banking-rules">
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot1"></span>Capital Adequacy Ratio</h4><div class="desc">Minimum 12% capital adequacy. Scans capital ratio calculations below regulatory threshold.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot2"></span>AML Transaction Threshold</h4><div class="desc">EGP 70,000 reporting threshold. Detects transactions exceeding limit without KYC/AML checks.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot3"></span>Large Exposure Limits</h4><div class="desc">Maximum 25% of capital base per single counterparty exposure.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot4"></span>Liquidity Coverage Ratio</h4><div class="desc">Minimum 100% LCR. High-quality liquid assets cover 30-day net outflows.</div><span class="tag tag-info">Basel III</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot5"></span>Net Stable Funding Ratio</h4><div class="desc">Minimum 100% NSFR over 1-year horizon. Matches stable funding to asset tenors.</div><span class="tag tag-info">Basel III</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot6"></span>Related Party Exposure</h4><div class="desc">Maximum 20% of capital base for related party transactions.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot7"></span>FX Position Limits</h4><div class="desc">Net open FX positions must not exceed regulatory limits per currency.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot8"></span>Regulatory Reporting</h4><div class="desc">All reportable transactions submitted within T+1 regulatory timeframe.</div><span class="tag tag-info">Banking Reg</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot9"></span>SWIFT/ISO 20022 Encryption</h4><div class="desc">Mandatory TLS for financial messaging. Detects unencrypted SWIFT/ISO 20022 over HTTP/WS.</div><span class="tag tag-red">Critical</span></div>
-      <div class="banking-rule"><h4><span class="status-dot" id="gdot10"></span>Cross-Identity Trust Attestation</h4><div class="desc">Tamper-evident identity attestation for cross-institutional trust and dual-mandate governance.</div><span class="tag tag-red">Critical</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot1"></span>B01 LEDGER_DIRECT_MUTATION</h4><div class="desc">Direct ledger mutation bypasses atomic transaction hooks — funds integrity risk.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot2"></span>B03 DOUBLE_SPEND_LOGIC</h4><div class="desc">Double-spend protection disabled — funds can be spent twice.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot3"></span>B05 SWIFT_UNENCRYPTED</h4><div class="desc">SWIFT/ISO 20022 message over unencrypted transport — PCI DSS violation.</div><span class="tag tag-red">Critical</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot4"></span>B06 SWIFT_AUTH_BYPASS</h4><div class="desc">SWIFT authentication bypassed — unauthorized payment messages possible.</div><span class="tag tag-red">Critical</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot5"></span>B08 FIX_CLEARTEXT_LOGIN</h4><div class="desc">FIX protocol login with cleartext credentials — account takeover risk.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot6"></span>B11 AML_SCREENING_BYPASS</h4><div class="desc">AML/sanctions screening bypassed — regulatory violation.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot7"></span>B14 SANCTIONS_LIST_MANIPULATION</h4><div class="desc">Sanctions list manipulation — screening integrity compromised.</div><span class="tag tag-red">Critical</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot8"></span>B15 PCI_CARD_DATA_STORAGE</h4><div class="desc">PCI DSS violation: storing full PAN/CVV — prohibited.</div><span class="tag tag-red">Critical</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot9"></span>B22 SEGREGATION_OF_DUTIES</h4><div class="desc">Segregation of duties violation — same actor creates and approves payment.</div><span class="tag tag-info">Banking Sec</span></div>
+      <div class="banking-rule"><h4><span class="status-dot" id="gdot10"></span>B23 AUDIT_LOG_TAMPERING</h4><div class="desc">Audit log tampering — destroying evidence of financial transactions.</div><span class="tag tag-red">Critical</span></div>
     </div>
   </div>
 </div>
 
 <footer style="padding:32px 24px;text-align:center;font-size:12px;color:#8e8878;border-top:1px solid #18152a;font-family:'JetBrains Mono',monospace">
   Built in Alexandria, Egypt<br>
-v5.0.0 · Engine v5.0.0 · Release Stage: GA · 258 Active Governance Controls · 1325 total tests<br>
+v5.0.0 · Engine v5.0.0 · Release Stage: GA · 258 Active Governance Controls · 1325 tests<br>
    Claude Code · MCP · Enterprise AI Governance
 </footer>
 
@@ -143,9 +143,9 @@ function runScan(){
   addResultLine('<span style="color:var(--gold)">🔍 Scanning via '+API_BASE+'...</span>');
   fetch(API_BASE+'/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code})})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-    .then(function(d){var v=d.verdict||'ALLOW';var s=d.score||0;var icon=v==='BLOCK'?'🔴':v==='WARN'?'⚠️':v==='REVIEW'?'🔎':'✅';addResultLine('<span style="color:'+(v==='BLOCK'?'var(--red)':v==='WARN'?'var(--amber)':v==='REVIEW'?'var(--blue)':'var(--green)')+'">'+icon+' '+v+' — Risk Score: '+s+'/100</span>');if(d.findings&&d.findings.length){d.findings.forEach(function(f){addResultLine('<span style="color:var(--alabaster-dim)">   Rule: '+(f.id||f.rule||'?')+' — '+(f.description||f.message||'')+'</span>')})};addResultLine('<span style="color:var(--alabaster-dim)">   Engine: v5.0.0 (Engine v5.0.0) · 258 Active Governance Controls · 95 Core · 32 Banking · 29 Solana · 21 EVM · 8 Dependency · 23 CI/CD · 25 Token Intel · 25 Due Diligence · 8 engines · 1325 total tests</span>')})
+    .then(function(d){var v=d.verdict||'ALLOW';var s=d.score||0;var icon=v==='BLOCK'?'🔴':v==='WARN'?'⚠️':v==='REVIEW'?'🔎':'✅';addResultLine('<span style="color:'+(v==='BLOCK'?'var(--red)':v==='WARN'?'var(--amber)':v==='REVIEW'?'var(--blue)':'var(--green)')+'">'+icon+' '+v+' — Risk Score: '+s+'/100</span>');if(d.findings&&d.findings.length){d.findings.forEach(function(f){addResultLine('<span style="color:var(--alabaster-dim)">   Rule: '+(f.id||f.rule||'?')+' — '+(f.description||f.message||'')+'</span>')})};addResultLine('<span style="color:var(--alabaster-dim)">   Engine: v5.0.0 (Engine v5.0.0) · 258 Active Governance Controls · 95 Core · 32 Banking · 29 Solana · 21 EVM · 8 Dependency · 23 CI/CD · 25 Token Intel · 25 Due Diligence · 8 engines · 1325 tests</span>')})
     .catch(function(e){addResultLine('<span style="color:var(--red)">❌ Scan failed: '+e.message+'</span>');addResultLine('<span style="color:var(--alabaster-dim)">   Falling back to demo mode</span>');runBankingDemo()});
 }
-  function runBankingDemo(){var rb=document.getElementById('resultBox');if(!rb){console.warn('runBankingDemo: #resultBox not found');return}console.log('runBankingDemo: clearing #resultBox');rb.innerHTML='';rb.classList.add('show');addResultLine('<span style="color:var(--gold)">🏛️ BANKING_DEMO — Running governance assessment...</span>');addResultLine('');var rules=[{id:1,name:'Capital Adequacy Ratio',pass:true,detail:'Minimum 12% — Current: 14.2% ✅'},{id:2,name:'AML Transaction Threshold',pass:true,detail:'EGP 70,000 threshold — No transactions exceed limit ✅'},{id:3,name:'Large Exposure Limits',pass:true,detail:'Max 25% capital — Current: 18.7% ✅'},{id:4,name:'Liquidity Coverage Ratio',pass:true,detail:'Min 100% LCR — Current: 145% ✅'},{id:5,name:'Net Stable Funding Ratio',pass:true,detail:'Min 100% NSFR — Current: 112% ✅'},{id:6,name:'Related Party Exposure',pass:true,detail:'Max 20% capital — Current: 12.3% ✅'},{id:7,name:'FX Position Limits',pass:true,detail:'All FX positions within regulatory limits ✅'},{id:8,name:'Regulatory Reporting',pass:true,detail:'All reports submitted within T+1 timeframe ✅'}];var passed=0;rules.forEach(function(r){setTimeout(function(){if(r.pass){addResultLine('<span style="color:var(--green)">✅ PASS — '+r.name+'</span>');addResultLine('<span style="color:var(--alabaster-dim)">    '+r.detail+'</span>');passed++;var d=document.getElementById('dot'+r.id);if(d){d.className='status-dot green'}}else{addResultLine('<span style="color:var(--red)">❌ FAIL — '+r.name+'</span>')}},r.id*300)});setTimeout(function(){addResultLine('');addResultLine('<span style="color:var(--green)">✅ 8/8 Banking controls PASSED</span>');addResultLine('<span style="color:var(--alabaster-dim)">   Governance score: 100/100 · v5.0.0 (Engine v5.0.0)</span>');addResultLine('<span style="color:var(--alabaster-dim)">   Audit logged</span>')},3500)}
+  function runBankingDemo(){var rb=document.getElementById('resultBox');if(!rb){console.warn('runBankingDemo: #resultBox not found');return}console.log('runBankingDemo: clearing #resultBox');rb.innerHTML='';rb.classList.add('show');addResultLine('<span style="color:var(--gold)">⚙️ DEMO SAMPLE — Illustrative scan showing banking engine rules (not a live engine result)</span>');addResultLine('');var rules=[{id:1,name:'B01.LEDGER_DIRECT_MUTATION',verdict:'BLOCK',score:98,detail:'Direct ledger mutation detected — blocked prepayment via engine rule'},{id:2,name:'B14.SANCTIONS_LIST_MANIPULATION',verdict:'BLOCK',score:96,detail:'Sanctions list manipulation pattern detected — blocked'},{id:3,name:'B11.AML_SCREENING_BYPASS',verdict:'BLOCK',score:97,detail:'AML screening bypass pattern detected — blocked'},{id:4,name:'B15.PCI_CARD_DATA_STORAGE',verdict:'BLOCK',score:98,detail:'Card data storage outside PCI controls — blocked'},{id:5,name:'B18.ROUNDING_ATTACK',verdict:'BLOCK',score:85,detail:'Rounding manipulation pattern detected — blocked'},{id:6,name:'B08.FIX_CLEARTEXT_LOGIN',verdict:'BLOCK',score:96,detail:'Cleartext credentials on FIX transport — blocked'},{id:7,name:'B22.SEGREGATION_OF_DUTIES',verdict:'BLOCK',score:93,detail:'Segregation-of-duties violation pattern — blocked'},{id:8,name:'B23.AUDIT_LOG_TAMPERING',verdict:'BLOCK',score:95,detail:'Audit log tampering pattern detected — blocked'}];rules.forEach(function(r){setTimeout(function(){addResultLine('<span style="color:var(--red)">🔴 '+r.verdict+' — '+r.name+' · '+r.score+'/100</span>');addResultLine('<span style="color:var(--alabaster-dim)">    '+r.detail+'</span>');var d=document.getElementById('dot'+r.id);if(d){d.className='status-dot green'}},r.id*300)});setTimeout(function(){addResultLine('');addResultLine('<span style="color:var(--alabaster-dim)">   Demo sample shows real banking engine rules (B01–B32) · Verdicts follow engine thresholds: BLOCK ≥ 85</span>');addResultLine('<span style="color:var(--alabaster-dim)">   v5.0.0 (Engine v5.0.0) · 258 rules · Deterministic</span>');addResultLine('<span style="color:var(--alabaster-dim)">   Connect to a live engine to run a real scan</span>')},3500)}
 </script>
 </body></html>

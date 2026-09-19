@@ -53,7 +53,7 @@ tr:hover td{background:var(--panel)}
 <div id="topbar">
   <a class="topbar-logo" href="/"><span>⛊</span> TEOS</a>
   <div class="topbar-sep"></div>
-  <div class="topbar-title">Architecture Guide <small>v4.0.0 GA</small></div>
+  <div class="topbar-title">Architecture Guide <small>v5.0.0</small></div>
   <div class="topbar-right"><span class="topbar-time" id="clock"></span></div>
 </div>
 
@@ -74,8 +74,8 @@ tr:hover td{background:var(--panel)}
                            │                      │
                            ▼                      ▼
                     <span class="hl4">┌──────────┐</span>     <span class="hl">┌──────────────┐</span>
-                    <span class="hl4">│ Upstash  │</span>     <span class="hl">│   27 Rules   │</span>
-                    <span class="hl4">│ Redis    │</span>     <span class="hl">│ + Heuristics │</span>
+                    <span class="hl4">│ Upstash  │</span>     <span class="hl">│  258 Rules   │</span>
+                    <span class="hl4">│ Redis    │</span>     <span class="hl">│  8 Engines   │</span>
                     <span class="hl4">└──────────┘</span>     <span class="hl">└──────────────┘</span>
                            │
                            ▼
@@ -99,7 +99,7 @@ tr:hover td{background:var(--panel)}
     </div>
     <div class="component-card">
       <div class="name">Risk Engine (MCP)</div>
-      <div class="desc">Deterministic risk classification engine with 27 named rules across 8 categories. Supports code/shell, CI/CD, and dependency scanning. Model Context Protocol interface for AI agent integration.</div>
+      <div class="desc">Deterministic risk classification engine with 258 named rules across 8 engines (Core, Banking, Solana, EVM, Dependency, CI/CD, Token Intelligence, Due Diligence). Supports code/shell, financial, blockchain, dependency, and CI/CD scanning. Model Context Protocol interface for AI agent integration.</div>
       <div class="tech">TypeScript · Express · Regex Engine · Prometheus Metrics</div>
     </div>
     <div class="component-card">
@@ -133,9 +133,8 @@ tr:hover td{background:var(--panel)}
     <li><strong>Client Request</strong> — Code is submitted via API (REST/Telegram/MCP)</li>
     <li><strong>Authentication</strong> — Sentinel API validates API key and checks rate limits via Upstash Redis</li>
     <li><strong>Credit Check</strong> — Activation service verifies available credits for the requester's tier</li>
-    <li><strong>Deterministic Scan</strong> — Risk Engine matches input against 27 named rules (regex-based, 8 categories)</li>
-    <li><strong>Heuristic Analysis</strong> — Additional suspicion scoring via heuristic engine (7 signals)</li>
-    <li><strong>Verdict Assembly</strong> — Combined deterministic + heuristic result: ALLOW / WARN / BLOCK with score 0–100</li>
+    <li><strong>Deterministic Scan</strong> — Risk Engine matches input against 258 named rules across 8 engines (Core 95, Banking 32, Solana 29, EVM 21, Dependency 8, CI/CD 23, Token Intelligence 25, Due Diligence 25)</li>
+    <li><strong>Verdict Assembly</strong> — Highest matched rule score determines verdict: BLOCK ≥ 85, WARN ≥ 60, REVIEW below 60. No rule matched returns ALLOW with score 0.</li>
     <li><strong>Audit Logging</strong> — Structured audit entry written to Supabase Postgres and NDJSON file</li>
     <li><strong>Billing Event</strong> — Credit consumed via activation service; Dodo Payments webhook for subscription plans</li>
     <li><strong>Response</strong> — Verdict, score, matched rules, and reasons returned to client</li>
@@ -145,17 +144,17 @@ tr:hover td{background:var(--panel)}
 <div class="section">
   <div class="section-label">Rule Categories</div>
   <h2>Deterministic Rules</h2>
-  <p>The engine comprises 27 named rules organized into 8 security categories. Each rule has a fixed risk score and severity level. The maximum matched rule score determines the verdict (BLOCK ≥ 85, WARN ≥ 40).</p>
+  <p>The engine comprises 258 named rules organized into 8 engines. Each rule has a fixed risk score and severity level. The highest matched rule score determines the verdict (BLOCK ≥ 85, WARN ≥ 60, REVIEW below 60).</p>
   <table>
-    <tr><th>Category</th><th>Rules</th><th>Example Patterns</th></tr>
-    <tr><td style="color:var(--red)">Shell Commands</td><td>R01–R03, R06, R08, R13</td><td>rm -rf, chmod 777, fork bomb, reverse shell, sudo abuse</td></tr>
-    <tr><td style="color:var(--red)">Secrets</td><td>R04, R05, R07, R19</td><td>echo $SECRET, env exfil, hardcoded keys, tokens</td></tr>
-    <tr><td style="color:var(--amber)">SQL Injection</td><td>R09, R10</td><td>DROP TABLE, UNION SELECT, OR 1=1, SQL comments</td></tr>
-    <tr><td style="color:var(--cyan)">Supply Chain</td><td>R14, R15</td><td>Known malicious packages, typosquatted names</td></tr>
-    <tr><td style="color:var(--amber)">CI/CD</td><td>R16, R17, R18, R25</td><td>write-all permissions, curl|bash, privileged containers</td></tr>
-    <tr><td style="color:var(--purple)">Network</td><td>R21, R22</td><td>SSRF to metadata endpoints, SSH key exfil</td></tr>
-    <tr><td style="color:var(--red)">Malware</td><td>R23, R24</td><td>Cryptominers, data exfiltration via curl/nc</td></tr>
-    <tr><td style="color:var(--amber)">Other</td><td>R11, R12, R20, R26, R27</td><td>Path traversal, command injection, prompt injection, base64 exec, XXE</td></tr>
+    <tr><th>Engine</th><th>Rules</th><th>Example Patterns</th></tr>
+    <tr><td style="color:var(--red)">Core Security</td><td>95</td><td>rm -rf /, chmod 777, fork bomb, reverse shell, SQL injection, base64 exec, path traversal, secrets</td></tr>
+    <tr><td style="color:var(--red)">Banking Governance</td><td>32</td><td>ledger mutation, reserve bypass, SWIFT/FIX, AML/KYC bypass, PEP, PCI card data</td></tr>
+    <tr><td style="color:var(--purple)">Solana</td><td>29</td><td>mint authority, anchor/BPF program vulnerabilities, PDA, transfer hooks</td></tr>
+    <tr><td style="color:var(--purple)">EVM</td><td>21</td><td>reentrancy, selfdestruct, flash loans, centralization risks</td></tr>
+    <tr><td style="color:var(--cyan)">Dependency</td><td>8</td><td>malicious packages, CVE database, typosquatted names</td></tr>
+    <tr><td style="color:var(--amber)">CI/CD</td><td>23</td><td>write-all permissions, shallow checkout, secrets dump, privileged containers</td></tr>
+    <tr><td style="color:var(--cyan)">Token Intelligence</td><td>25</td><td>mint authority null, supply manipulation, honeypot, tax manipulation</td></tr>
+    <tr><td style="color:var(--amber)">Due Diligence</td><td>25</td><td>anonymous team, rug-pull signals, audit absence, KYC verification</td></tr>
   </table>
 </div>
 

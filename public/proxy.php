@@ -29,6 +29,7 @@ $ALLOWED_PREFIXES = array(
     'fullreport',
     'ingest',
     'engines',
+    'enforce',
     'api/rules',
     'api/version',
     'api/audit',

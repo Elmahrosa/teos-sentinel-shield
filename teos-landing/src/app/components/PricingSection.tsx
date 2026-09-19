@@ -6,13 +6,12 @@ import { Check } from 'lucide-react';
 
 const LINKS = {
   free:               'https://dodo.pe/xm1619v9elp',
-  starter_monthly:    'https://dodo.pe/iba2piggql',
-  starter_annual:     'https://dodo.pe/slkqpsvswlt',
-  team_monthly:       'https://dodo.pe/mz3a54cb2s',
-  team_annual:        'https://dodo.pe/d4fr3ef9qt6',
-  enterprise_monthly: 'https://dodo.pe/xn38jipi66d',
-  enterprise_annual:  'https://dodo.pe/kuqery53ove',
-  sovereign:          'https://dodo.pe/uft6rqarbel',
+  starter_monthly:    'https://dodo.pe/teos-starter-monthly-730161',
+  starter_annual:     'https://dodo.pe/teos-starter-annual-730161',
+  team_monthly:       'https://dodo.pe/teos-team-monthly-730161',
+  team_annual:        'https://dodo.pe/teos-team-annual-730161',
+  enterprise:         'mailto:ayman@elmahrosa.org?subject=Enterprise%20Pricing%20%E2%80%94%20TEOS%20Sentinel',
+  sovereign:          'mailto:ayman@elmahrosa.org?subject=Sovereign%20Deployment%20%E2%80%94%20TEOS%20Sentinel',
 } as const;
 
 const TIERS = [
@@ -83,10 +82,10 @@ const TIERS = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    monthly: '$499',
-    annual: '$4,990',
-    annualNote: '$415.83/mo effective',
-    setup: '$5,000',
+    monthly: 'Custom',
+    annual: 'Custom',
+    annualNote: '',
+    setup: null,
     scans: 'Unlimited',
     rpm: '600',
     features: [
@@ -96,9 +95,9 @@ const TIERS = [
       'Dedicated account manager',
       'Compliance reports + audit exports',
     ],
-    cta: 'Subscribe \u2192',
-    ctaMonthly: LINKS.enterprise_monthly,
-    ctaAnnual: LINKS.enterprise_annual,
+    cta: 'Contact us \u2192',
+    ctaMonthly: LINKS.enterprise,
+    ctaAnnual: LINKS.enterprise,
     featured: false,
     badge: null,
   },
@@ -253,14 +252,14 @@ export default function PricingSection() {
               <span className="text-[10px] font-semibold bg-amber/15 text-amber border border-amber/20 px-2 py-0.5 rounded-full">AIR-GAPPED \u00B7 ON-PREM</span>
             </div>
             <p className="text-2xl font-semibold text-white">
-              $25,000
-              <span className="text-sm text-muted font-normal ml-2">/year \u00B7 annual license</span>
+              Custom
+              <span className="text-sm text-muted font-normal ml-2">\u00B7 quoted per deployment</span>
             </p>
             <p className="text-xs text-muted mt-1">
               Unlimited scans \u00B7 unlimited RPM \u00B7 zero external network calls \u00B7 on-prem audit storage
             </p>
             <div className="flex flex-wrap gap-2 mt-3">
-              {['+$10K/additional site', 'Custom rules', 'On-site deployment', 'Support SLA', 'Source escrow'].map((a) => (
+              {['Additional sites', 'Custom rules', 'On-site deployment', 'Support SLA', 'Source escrow'].map((a) => (
                 <span key={a} className="text-[10px] text-muted border border-[rgba(255,255,255,0.07)] rounded-full px-2.5 py-0.5">{a}</span>
               ))}
             </div>
@@ -271,7 +270,7 @@ export default function PricingSection() {
             rel="noopener noreferrer"
             className="shrink-0 text-sm font-medium px-6 py-3 rounded-xl border border-amber/30 text-amber hover:bg-amber/10 transition-colors whitespace-nowrap"
           >
-            {'\u{1F1EA}\u{1F1EC} \u{1F1E6}\u{1F1EA} \u{1F1F8}\u{1F1E6}'} Request Sovereign License \u2192
+            {'\u{1F1EA}\u{1F1EC} \u{1F1E6}\u{1F1EA} \u{1F1F8}\u{1F1E6}'} Request Sovereign Deployment \u2192
           </a>
         </motion.div>
 
