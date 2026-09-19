@@ -3,6 +3,7 @@
 // Run: node test/determinism-test.js
 // CI must fail if any determinism check fails.
 
+const assert = require('assert');
 const { executeEngine } = require('../src/engines/index');
 
 let passed = 0;
@@ -12,12 +13,6 @@ const ITERATIONS = 1000;
 function test(name, fn) {
   try { fn(); passed++; console.log(`  ✅ ${name}`); }
   catch (e) { failed++; console.error(`  ❌ ${name}: ${e.message}`); }
-}
-
-function assertEqual(a, b, msg) {
-  if (JSON.stringify(a) !== JSON.stringify(b)) {
-    throw new Error(`${msg}: expected ${JSON.stringify(b)}, got ${JSON.stringify(a)}`);
-  }
 }
 
 console.log('\n═══════════════════════════════════════════');
@@ -32,9 +27,9 @@ test('ALLOW: identical output across iterations', () => {
   const first = executeEngine('core', input);
   for (let i = 0; i < ITERATIONS; i++) {
     const result = executeEngine('core', input);
-    assertEqual(result.verdict, first.verdict, 'verdict mismatch');
-    assertEqual(result.score, first.score, 'score mismatch');
-    assertEqual(result.findings.length, first.findings.length, 'findings count mismatch');
+    assert.deepStrictEqual(result.verdict, first.verdict, 'verdict mismatch');
+    assert.deepStrictEqual(result.score, first.score, 'score mismatch');
+    assert.deepStrictEqual(result.findings.length, first.findings.length, 'findings count mismatch');
   }
 });
 
@@ -45,11 +40,11 @@ test('BLOCK: identical output across iterations', () => {
   const first = executeEngine('core', input);
   for (let i = 0; i < ITERATIONS; i++) {
     const result = executeEngine('core', input);
-    assertEqual(result.verdict, first.verdict, 'verdict mismatch');
-    assertEqual(result.score, first.score, 'score mismatch');
-    assertEqual(result.findings.length, first.findings.length, 'findings count mismatch');
-    assertEqual(result.highestRule, first.highestRule, 'highestRule mismatch');
-    assertEqual(result.highestRuleScore, first.highestRuleScore, 'highestRuleScore mismatch');
+    assert.deepStrictEqual(result.verdict, first.verdict, 'verdict mismatch');
+    assert.deepStrictEqual(result.score, first.score, 'score mismatch');
+    assert.deepStrictEqual(result.findings.length, first.findings.length, 'findings count mismatch');
+    assert.deepStrictEqual(result.highestRule, first.highestRule, 'highestRule mismatch');
+    assert.deepStrictEqual(result.highestRuleScore, first.highestRuleScore, 'highestRuleScore mismatch');
   }
 });
 
@@ -60,9 +55,9 @@ test('WARN: identical output across iterations', () => {
   const first = executeEngine('core', input);
   for (let i = 0; i < ITERATIONS; i++) {
     const result = executeEngine('core', input);
-    assertEqual(result.verdict, first.verdict, 'verdict mismatch');
-    assertEqual(result.score, first.score, 'score mismatch');
-    assertEqual(result.findings.length, first.findings.length, 'findings count mismatch');
+    assert.deepStrictEqual(result.verdict, first.verdict, 'verdict mismatch');
+    assert.deepStrictEqual(result.score, first.score, 'score mismatch');
+    assert.deepStrictEqual(result.findings.length, first.findings.length, 'findings count mismatch');
   }
 });
 
@@ -73,9 +68,9 @@ test('VERSION: identical version fields', () => {
   const first = executeEngine('core', input);
   for (let i = 0; i < ITERATIONS; i++) {
     const result = executeEngine('core', input);
-    assertEqual(result.engineVersion, first.engineVersion, 'engineVersion mismatch');
-    assertEqual(result.rulePackVersion, first.rulePackVersion, 'rulePackVersion mismatch');
-    assertEqual(result.policyVersion, first.policyVersion, 'policyVersion mismatch');
+    assert.deepStrictEqual(result.engineVersion, first.engineVersion, 'engineVersion mismatch');
+    assert.deepStrictEqual(result.rulePackVersion, first.rulePackVersion, 'rulePackVersion mismatch');
+    assert.deepStrictEqual(result.policyVersion, first.policyVersion, 'policyVersion mismatch');
   }
 });
 
@@ -86,7 +81,7 @@ test('ORDER: identical findings array order', () => {
   const first = executeEngine('core', input);
   for (let i = 0; i < ITERATIONS; i++) {
     const result = executeEngine('core', input);
-    assertEqual(
+    assert.deepStrictEqual(
       result.findings.map(f => f.ruleId),
       first.findings.map(f => f.ruleId),
       'findings order or contents changed'
@@ -105,9 +100,9 @@ for (const eng of ENGINES) {
     const first = executeEngine(eng, input);
     for (let i = 0; i < 100; i++) { // 100× for cross-engine to keep total runtime reasonable
       const result = executeEngine(eng, input);
-      assertEqual(result.verdict, first.verdict, `verdict mismatch at iter ${i}`);
-      assertEqual(result.score, first.score, `score mismatch at iter ${i}`);
-      assertEqual(result.findings.length, first.findings.length, `findings count mismatch at iter ${i}`);
+      assert.deepStrictEqual(result.verdict, first.verdict, `verdict mismatch at iter ${i}`);
+      assert.deepStrictEqual(result.score, first.score, `score mismatch at iter ${i}`);
+      assert.deepStrictEqual(result.findings.length, first.findings.length, `findings count mismatch at iter ${i}`);
     }
   });
 }
@@ -119,8 +114,8 @@ test('ERROR: identical output for invalid input', () => {
   const first = executeEngine('core', input);
   for (let i = 0; i < ITERATIONS; i++) {
     const result = executeEngine('core', input);
-    assertEqual(result.verdict, first.verdict, 'verdict mismatch');
-    assertEqual(result.score, first.score, 'score mismatch');
+    assert.deepStrictEqual(result.verdict, first.verdict, 'verdict mismatch');
+    assert.deepStrictEqual(result.score, first.score, 'score mismatch');
   }
 });
 
@@ -136,8 +131,7 @@ test('VERSION on ERROR: unknown engine', () => {
 // ── Summary ──
 console.log(`\n═══════════════════════════════════════════`);
 console.log(`  Total: ${passed + failed}`);
-console.log(`  Passed: ${passed}`);
-console.log(`  Failed: ${failed}`);
+console.log(`  ${passed} passed, ${failed} failed`);
 console.log(`═══════════════════════════════════════════\n`);
 
 process.exit(failed > 0 ? 1 : 0);
