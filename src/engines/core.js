@@ -55,7 +55,7 @@ const CORE_RULES = [
 
   { id: 'R11', name: 'PATH_TRAVERSAL',           sev:'high',     score:80,
     test: c => {
-      if (!/(\.\.\/){2,}|(\.\.\\){2,}|%2e%2e/i.test(c)) return false;
+      if (!/(\.\.\/|(\.\.\\)|%2e%2e)/i.test(c)) return false;
       const lower = c.toLowerCase().trim();
       if (/^[\w_]+\s*=\s*["']?[^"'\n]*\.\.\//.test(lower)) return false;
       if (/^(export|local)\s+[\w_]+\s*=\s*["']?[^"'\n]*\.\.\//.test(lower)) return false;
@@ -478,7 +478,7 @@ function runCoreEngine(input, options = {}) {
 
   for (let i = 0; i < CORE_RULES.length; i++) {
     const rule = CORE_RULES[i];
-    if (i % 10 === 0 && isBudgetExceeded(startMs)) break;
+    if (isBudgetExceeded(startMs)) break;
     try {
       if (rule.test(ruleInput)) {
         triggered.push(rule);

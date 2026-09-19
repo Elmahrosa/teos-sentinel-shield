@@ -181,7 +181,7 @@ function runBankingEngine(input, options = {}) {
 
   for (let i = 0; i < BANKING_RULES.length; i++) {
     const rule = BANKING_RULES[i];
-    if (i % 10 === 0 && isBudgetExceeded(startMs)) break;
+    if (isBudgetExceeded(startMs)) break;
     try {
       if (rule.test(ruleInput)) {
         triggered.push(rule);
