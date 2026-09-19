@@ -18,7 +18,7 @@ Welcome message with feature overview and activation instructions.
 ```
 /start <activation_secret>
 ```
-Deep-link activation grants 500 credits, tier=tester, with expiration set by the activation service.
+Deep-link activation grants 5 free credits, tier=tester, with expiration set by the activation service.
 
 ### Status
 ```
@@ -40,14 +40,13 @@ Display account status, tier, credits remaining, and system health.
 |------|-------|--------|
 | Starter ($29/mo · $290/yr) | https://dodo.pe/teos-starter-monthly-730161 | https://dodo.pe/teos-starter-annual-730161 |
 | Team ($149/mo · $1,490/yr) | https://dodo.pe/teos-team-monthly-730161 | https://dodo.pe/teos-team-annual-730161 |
-| Team Setup (one-time) | — | https://dodo.pe/teos-team-setup-730161 |
 | Enterprise | mailto:ayman@teosegypt.com | Custom |
 
 ## Credit System
 
 | Tier | Credits | Daily Limit | Price | Checkout |
 |------|---------|-------------|-------|----------|
-| Alpha Tester | 500 | None | Free | — |
+| Alpha Tester | 5 | None | Free | — |
 | Free | 0 (must activate) | None | $0 | — |
 | Starter | 1,000 | None | $29/mo | https://dodo.pe/teos-starter-monthly-730161 |
 | Team | 10,000 | None | $149/mo | https://dodo.pe/teos-team-monthly-730161 |

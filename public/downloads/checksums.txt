@@ -1,5 +1,5 @@
 # TEOS Sentinel Shield v5.0.0 GA — SHA-256 checksums
-# Generated: 2026-09-19T17:37:28Z
+# Generated: 2026-09-19T18:40:00Z
 # Site: https://sentinel.teosegypt.com
 
 # downloads/
@@ -14,6 +14,6 @@ d4290465880803c0be676ef1039fa653dd552c0a86f2056fab3e756fe3cae82c *privacy.md
 5034ff5d8815087a7e83a8075a56a2bbfe9fd4e0db6d7f70b5d06687fd2fd84d *responsible-disclosure.md
 c9f9ee94645097e19ab51f1194df47632e2fe7aa1978de583f08082d1b5b1b56 *security.txt
 b21c76e850778dc5dff1941d74ee037f1977ef4daa94a01b7e7baa152acd887e *config.js
-024031d5d902a28966ffb5f02d386c386fc7105302ecfb83e9a1a62460d25fa7 *index.html
-c8c22af723d19ea664728df57cbbccc144d8f5b336095bdc1c4d7d4e0ffd962f *sentinel.html
+a1143c6bf074697d043594b9fa74d6e54924e307617ee47e1367a4c2849b26e7 *index.html
+f6c83b824a007801a9adbcee0f4447d14d2ba4f44ec502ee260e018893c277f3 *sentinel.html
 0d7e82cddedc8c1b2c3461ddc5d8de2208450047bd21609af4d792f29858b9d7 *dashboard.html

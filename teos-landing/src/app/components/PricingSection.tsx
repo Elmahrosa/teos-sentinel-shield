@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 const LINKS = {
-  free:               'https://dodo.pe/xm1619v9elp',
+  free:               'https://t.me/teoslinker_bot',
   starter_monthly:    'https://dodo.pe/teos-starter-monthly-730161',
   starter_annual:     'https://dodo.pe/teos-starter-annual-730161',
   team_monthly:       'https://dodo.pe/teos-team-monthly-730161',
   team_annual:        'https://dodo.pe/teos-team-annual-730161',
-  enterprise:         'mailto:ayman@elmahrosa.org?subject=Enterprise%20Pricing%20%E2%80%94%20TEOS%20Sentinel',
-  sovereign:          'mailto:ayman@elmahrosa.org?subject=Sovereign%20Deployment%20%E2%80%94%20TEOS%20Sentinel',
+  enterprise:         'mailto:ayman@teosegypt.com?subject=Enterprise%20Pricing%20%E2%80%94%20TEOS%20Sentinel',
+  sovereign:          'mailto:ayman@teosegypt.com?subject=Sovereign%20Deployment%20%E2%80%94%20TEOS%20Sentinel',
 } as const;
 
 const TIERS = [
@@ -22,7 +22,7 @@ const TIERS = [
     annual: '$0',
     annualNote: '',
     setup: null,
-    scans: '50 / mo',
+    scans: '5 / mo',
     rpm: '5',
     features: [
       'Core threat rules (R01\u2013R10)',
@@ -30,7 +30,7 @@ const TIERS = [
       'ALLOW / WARN / BLOCK verdicts',
       'Community support',
     ],
-    cta: 'Try Free \u2192',
+    cta: 'Start in Telegram \u2192',
     ctaMonthly: LINKS.free,
     ctaAnnual: LINKS.free,
     featured: false,
@@ -41,12 +41,12 @@ const TIERS = [
     name: 'Starter',
     monthly: '$29',
     annual: '$290',
-    annualNote: '$24.17/mo effective',
+    annualNote: '',
     setup: '$500',
     scans: '5,000 / mo',
     rpm: '30',
     features: [
-      'All 25 threat rules',
+      'All 258 threat rules',
       'CLI + API + GitHub Actions',
       '5K scans / month',
       'Email support',
@@ -62,7 +62,7 @@ const TIERS = [
     name: 'Team',
     monthly: '$149',
     annual: '$1,490',
-    annualNote: '$124.17/mo effective',
+    annualNote: '',
     setup: '$2,000',
     scans: '50,000 / mo',
     rpm: '150',
@@ -134,19 +134,6 @@ export default function PricingSection() {
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${annual ? 'translate-x-5' : 'translate-x-0'}`} />
           </button>
           <span className={`text-sm transition-colors ${annual ? 'text-white' : 'text-muted'}`}>Annual</span>
-          <AnimatePresence>
-            {annual && (
-              <motion.span
-                key="save"
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                className="text-[10px] font-semibold bg-green-dim text-green border border-[rgba(34,197,94,0.3)] px-2.5 py-1 rounded-full"
-              >
-                2 months free
-              </motion.span>
-            )}
-          </AnimatePresence>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

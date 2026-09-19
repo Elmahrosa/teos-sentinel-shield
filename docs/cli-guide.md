@@ -225,10 +225,10 @@ teos help
 
 | Tier | Daily Limit | Monthly Credits | Price |
 |------|-------------|-----------------|-------|
-| Free | 5 scans | — | $0 |
-| Starter | Unlimited | 1,000 | $69/mo |
-| Team | Unlimited | 10,000 | $199/mo |
-| Enterprise | Unlimited | Unlimited | $25K/yr |
+| Free | 5 scans | 5 | $0 |
+| Starter | Unlimited | 1,000 | $29/mo |
+| Team | Unlimited | 10,000 | $149/mo |
+| Enterprise | Unlimited | Unlimited | $499/mo |
 
 ## Security
 

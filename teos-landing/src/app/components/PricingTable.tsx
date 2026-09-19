@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 const DODO = {
-  free:              'https://dodo.pe/xm1619v9elp',
   starter_monthly:   'https://dodo.pe/teos-starter-monthly-730161',
   starter_annual:    'https://dodo.pe/teos-starter-annual-730161',
   team_monthly:      'https://dodo.pe/teos-team-monthly-730161',
   team_annual:       'https://dodo.pe/teos-team-annual-730161',
-  enterprise:        'mailto:ayman@elmahrosa.org?subject=Enterprise%20Pricing%20%E2%80%94%20TEOS%20Sentinel',
-  sovereign:         'mailto:ayman@elmahrosa.org?subject=Sovereign%20Deployment%20%E2%80%94%20TEOS%20Sentinel',
+  free:              'https://t.me/teoslinker_bot',
+  enterprise:        'mailto:ayman@teosegypt.com?subject=Enterprise%20Pricing%20%E2%80%94%20TEOS%20Sentinel',
+  sovereign:         'mailto:ayman@teosegypt.com?subject=Sovereign%20Deployment%20%E2%80%94%20TEOS%20Sentinel',
 };
 
 interface Tier {
@@ -39,23 +39,23 @@ const TIERS: Tier[] = [
     annualPrice: '$0',
     annualEffective: '',
     setup: '$0',
-    scans: '50 / mo',
+    scans: '5 / mo',
     rpm: '5',
     features: [
       'ALLOW / WARN / BLOCK verdicts',
-      '25-rule deterministic engine',
+      '258-rule deterministic engine',
       'Basic audit log',
     ],
     monthlyLink: DODO.free,
     annualLink: DODO.free,
-    ctaLabel: 'Get started',
+    ctaLabel: 'Start in Telegram',
   },
   {
     id: 'starter',
     name: 'Starter',
     monthlyPrice: '$29',
     annualPrice: '$290',
-    annualEffective: '$24.17 / mo',
+    annualEffective: '',
     setup: '$500',
     scans: '5,000 / mo',
     rpm: '30',
@@ -74,7 +74,7 @@ const TIERS: Tier[] = [
     name: 'Team',
     monthlyPrice: '$149',
     annualPrice: '$1,490',
-    annualEffective: '$124.17 / mo',
+    annualEffective: '',
     setup: '$2,000',
     scans: '50,000 / mo',
     rpm: '150',

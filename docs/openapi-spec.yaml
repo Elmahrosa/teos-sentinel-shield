@@ -694,17 +694,13 @@ components:
 
 x-rate-limits:
   Starter:
-    monthly: 50
-    concurrent: 1
-    price: "$9/month"
-  Builder:
-    monthly: 400
-    concurrent: 5
-    price: "$39/month"
-  Pro:
-    monthly: 1000
-    concurrent: 25
-    price: "$99/month"
+    monthly: 5000
+    concurrent: 30
+    price: "$29/month"
+  Team:
+    monthly: 50000
+    concurrent: 150
+    price: "$149/month"
   Enterprise:
     monthly: "unlimited"
     concurrent: "unlimited"

@@ -58,7 +58,7 @@ Expected result: **BLOCK (90-100/100)**
 | AI model scans | 5 credits each |
 | `/status` | Free |
 
-Beta testers: **200 credits**. Expires: **June 30, 2026**.
+Activations: **5 free credits per ID**. Expires: **June 30, 2026**.
 
 ## 5. Next Steps
 

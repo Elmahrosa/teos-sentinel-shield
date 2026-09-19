@@ -45,7 +45,7 @@ let webhookFailed    = 0;
 
 // rpm/rpd of -1 or 0 means unlimited (never trip that bucket)
 const TIERS = {
-  free:       { rpm: 5,    rpd: 100,   label: 'Free',       scans: 50,     price: 0 },
+  free:      { rpm: 5,    rpd: 100,   label: 'Free',       scans: 5,      price: 0 },
   starter:    { rpm: 30,   rpd: 5000,  label: 'Starter',    scans: 5000,   price: 29 },
   team:       { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 149 },
   pro:        { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 149 }, // alias of team
@@ -138,7 +138,7 @@ const DODO_PRODUCTS = {
 };
 
 const TIER_PRICING = {
-  free:      { setup: 0,       monthly: 0,       annual: 0,       label: 'Free',      scans: 50,       rpm: 5 },
+  free:      { setup: 0,       monthly: 0,       annual: 0,       label: 'Free',      scans: 5,        rpm: 5 },
   starter:   { setup: 50000,   monthly: 2900,     annual: 29000,    label: 'Starter',   scans: 5000,     rpm: 30 },
   team:      { setup: 200000,  monthly: 14900,    annual: 149000,   label: 'Team',      scans: 50000,    rpm: 150 },
   enterprise:{ setup: 500000,  monthly: 49900,    annual: 499000,   label: 'Enterprise',scans: -1,       rpm: 600 },
