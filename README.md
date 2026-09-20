@@ -412,6 +412,63 @@ Technical enforcement should not be interpreted as a claim of automatic regulato
 
 ---
 
+# GitHub Action
+
+TEOS Sentinel Shield ships as a zero-dependency JavaScript GitHub Action
+(`node24`) so CI/CD pipelines can gate any step on a deterministic verdict
+before it executes.
+
+```yaml
+- name: Gate step with TEOS Sentinel Shield
+  uses: Elmahrosa/teos-sentinel-shield@v5.1.0
+  with:
+    api-key: ${{ secrets.TEOS_API_KEY }}
+    scan-target: 'npm run build'
+```
+
+The run fails (exit 1) whenever the engine returns a `BLOCK` verdict or when
+the scan API is unreachable (fail-closed by default) — the step after it never
+executes.
+
+## Inputs
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `api-key` | yes | — | `x-api-key` for the TEOS Sentinel Shield API. |
+| `scan-target` | yes | `.` | Command, code file, script, or directory to inspect. |
+| `api-url` | no | `https://teos-sentinel-shield-production-7f0d.up.railway.app` | Base URL of the scan API. |
+| `api-path` | no | `/scan` | Endpoint path that accepts the scan payload (POST). |
+| `fail-open` | no | `false` | `true` = pass when the API is unreachable (not recommended). |
+
+## Outputs
+
+| Output | Description |
+| --- | --- |
+| `verdict` | `ALLOW`, `WARN`, `REVIEW`, or `BLOCK`. |
+| `risk-score` | Risk score (0–100) from the engine. |
+| `rule-id` | Highest-severity rule that matched. |
+
+## Verdict behavior
+
+| Verdict | Action run |
+| --- | --- |
+| `ALLOW` | Pass. |
+| `WARN` | Pass, with a warning annotation. |
+| `REVIEW` | Pass, with a notice annotation. |
+| `BLOCK` | Fail (`exit 1`) — downstream steps are skipped. |
+| `ERROR` / unknown / API unreachable | Fail closed (`exit 1`) unless `fail-open: 'true'`. |
+
+## Building
+
+```bash
+npm run build:action   # ncc bundles src/action.js -> dist/index.js
+```
+
+The compiled `dist/index.js` is committed so the action runs natively on the
+GitHub Actions runner with no dependency install at execution time.
+
+---
+
 # License
 
 **TESL v2.0 — TEOS Sovereign License**

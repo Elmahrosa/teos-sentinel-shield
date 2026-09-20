@@ -12,7 +12,8 @@
     "dev:ws": "node ws-server/index.js",
     "test": "node test/expanded-engine-test.js",
     "test:engine": "node test/expanded-engine-test.js",
-    "vercel": "node server/api.js"
+    "vercel": "node server/api.js",
+    "build:action": "ncc build src/action.js -o dist"
   },
   "keywords": [
     "ai-security",
@@ -31,5 +32,8 @@
     "ioredis": "^5.11.1",
     "express": "^5.2.1",
     "ws": "^8.20.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.3"
   }
 }

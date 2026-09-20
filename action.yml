@@ -1,0 +1,50 @@
+name: 'TEOS Sentinel Shield Guard'
+description: >-
+  Deterministic pre-execution runtime security and governance engine for CI/CD
+  pipelines. Scans a command, script, or directory against 258 deterministic
+  rules before execution and fails the run on a BLOCK verdict.
+author: 'Elmahrosa International'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  api-key:
+    description: >-
+      The x-api-key required to authenticate with the TEOS Sentinel Shield
+      production API endpoint.
+    required: true
+  scan-target:
+    description: >-
+      The command, code file, script, or directory path to inspect before
+      execution.
+    required: true
+    default: '.'
+  api-url:
+    description: >-
+      Base URL of the TEOS Sentinel Shield scan API.
+    required: false
+    default: 'https://teos-sentinel-shield-production-7f0d.up.railway.app'
+  api-path:
+    description: >-
+      Endpoint path that accepts the scan payload (POST).
+    required: false
+    default: '/scan'
+  fail-open:
+    description: >-
+      If "true", pass the run when the scan API is unreachable. Defaults to
+      fail-closed (BLOCK) for security.
+    required: false
+    default: 'false'
+
+outputs:
+  verdict:
+    description: 'The deterministic verdict: ALLOW, WARN, REVIEW, or BLOCK.'
+  risk-score:
+    description: 'Risk score (0-100) returned by the deterministic engine.'
+  rule-id:
+    description: 'The highest-severity rule that matched the scan target.'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
