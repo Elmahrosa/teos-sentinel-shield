@@ -2214,26 +2214,12 @@
       .cmd-grid { grid-template-columns: 1fr; }
     }
 
-    /* ── PRICING TIER LABELS (new) ── */
-    .pricing-toggle-note {
-      display: inline-flex; align-items: center; gap: 8px;
-      border: 1px solid rgba(96, 64, 192, 0.3);
-      background: rgba(96, 64, 192, 0.07);
-      padding: 8px 16px; margin-bottom: 40px;
-      font-family: var(--font-m); font-size: 11px; color: #b090ff;
-      letter-spacing: 0.04em;
-    }
-    .plan-beta-tag, .plan-post-tag {
+    /* ── PRICING TIER LABELS ── */
+    .plan-post-tag {
       display: inline-block;
       font-family: var(--font-m); font-size: 9px; letter-spacing: 0.1em;
       text-transform: uppercase; padding: 3px 9px; border-radius: 1px;
       margin-bottom: 14px;
-    }
-    .plan-beta-tag {
-      background: rgba(96, 64, 192, 0.15); color: #b090ff;
-      border: 1px solid rgba(96, 64, 192, 0.3);
-    }
-    .plan-post-tag {
       background: rgba(255,255,255,0.04); color: var(--alabaster-f);
       border: 1px solid var(--border-2);
     }
@@ -2244,15 +2230,7 @@
       letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
     }
     .price-n-sm { font-family: var(--font-d); font-weight: 900; font-size: 28px; color: var(--gold); letter-spacing: -0.02em; }
-    .price-n-strike { font-family: var(--font-d); font-weight: 700; font-size: 16px; color: var(--alabaster-f); text-decoration: line-through; margin-right: 6px; }
     .plan.plan-featured { border-color: var(--gold-dim); box-shadow: 0 0 0 1px rgba(201,152,30,0.15); }
-    .plan-badge-founding {
-      position: absolute; top: -1px; right: -1px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-      color: var(--kohl); font-family: var(--font-d); font-weight: 700;
-      font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 5px 12px;
-    }
     .pricing-grid-4 {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: none;
     }
@@ -2261,11 +2239,6 @@
     }
     @media (max-width: 640px) {
       .pricing-grid-4 { grid-template-columns: 1fr; }
-    }
-    .pricing-disclaimer {
-      margin-top: 28px; padding: 18px 24px; border-left: 3px solid var(--gold-dim);
-      background: rgba(201,152,30,0.03); max-width: 900px;
-      font-family: var(--font-b); font-size: 11px; color: var(--alabaster-dim); line-height: 1.7;
     }
 
 </style>
@@ -2741,7 +2714,7 @@
         <details class="faq-item"><summary>Is my code sent to an external API?</summary><p>Yes &mdash; the CLI, desktop app, and extensions send code to the TEOS risk engine for scanning. No code is stored after scanning. Self-hosted deployments available on Enterprise.</p></details>
         <details class="faq-item"><summary>How is TEOS different from a linter?</summary><p>Linters check syntax and style. TEOS checks security, supply-chain risk, Solana/EVM safety, and prompt injection &mdash; things a linter cannot detect.</p></details>
         <details class="faq-item"><summary>What AI model commands are available?</summary><p>/claude, /llama3, /qwen, and /openai &mdash; each routes your scan through a different AI model for analysis. Credit costs vary by model.</p></details>
-        <details class="faq-item"><summary>Will pricing change after the beta?</summary><p>Every tier listed under "RC Price" is temporary. At General Availability, Free moves to a 5-credit/month cap, Starter becomes $29/mo, Team becomes $149/mo, and Enterprise stays custom — always quoted per deployment.</p></details>
+        <details class="faq-item"><summary>Will pricing change after the beta?</summary><p>Pricing is locked for General Availability: Free stays at $0 with a 5-credit/month cap, Starter is $29/mo, Team is $199/mo ($1,990/yr billed annually), and Enterprise stays custom — always quoted per deployment.</p></details>
       </div>
     </div>
   </section>
@@ -3084,46 +3057,31 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 tests<br>
   <section id="pricing">
     <div class="wrap">
       <div class="s-label reveal">Pricing</div>
-      <h2 class="s-title reveal">Beta pricing now.<br><span class="gold">Standard pricing at GA.</span></h2>
-      <p class="s-sub reveal">Every tier is free to use during Release Candidate. Prices below take effect at General Availability.</p>
-
-      <div class="pricing-toggle-note reveal">🟣 All 4 tiers below show <strong>Beta (now)</strong> vs <strong>After RC / GA</strong> pricing — every tier's price will change at GA.</div>
+      <h2 class="s-title reveal">Locked pricing.<br><span class="gold">No gimmicks. No anchor prices.</span></h2>
+      <p class="s-sub reveal">One price per tier. Annual billing available for Team. Enterprise pricing is always quoted per deployment.</p>
 
       <div class="pricing-grid-4 reveal">
 
         <div class="plan">
-          <span class="plan-beta-tag">RC · Now</span>
           <div class="plan-name">🟦 Free</div>
           <div class="price-block">
-            <div class="price-block-label">RC Price</div>
-            <div class="plan-price"><span class="price-n-sm">$0</span></div>
+            <div class="plan-price"><span class="price-n-sm">$0</span><span class="price-p">/month</span></div>
           </div>
-          <div class="price-block">
-            <div class="price-block-label">After RC / GA</div>
-            <div class="plan-price"><span class="price-n-sm">$0</span><span class="price-p">/mo</span></div>
-          </div>
-          <p class="plan-tag">Always-free tier. Usage caps apply at GA.</p>
+          <p class="plan-tag">Always-free tier.</p>
           <ul class="plan-feats">
-            <li>Beta: all 8 engines, no cap</li>
-            <li>GA: 5 credits / month</li>
+            <li>5 credits / month</li>
             <li>4 verdicts incl. REVIEW</li>
             <li>Telegram bot access</li>
             <li>Community support</li>
           </ul>
-          <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-plan btn-alpha-plan">Join Release Candidate →</a>
+          <a href="https://t.me/teoslinker_bot" target="_blank" rel="noopener noreferrer" class="btn-plan btn-alpha-plan">Start in Telegram →</a>
         </div>
 
         <div class="plan plan-featured">
           <span class="plan-post-tag">Most Popular</span>
-          <span class="plan-beta-tag">RC · Now</span>
           <div class="plan-name">🟨 Starter</div>
           <div class="price-block">
-            <div class="price-block-label">RC Price</div>
-            <div class="plan-price"><span class="price-n-sm">$0</span><span class="price-p">during RC</span></div>
-          </div>
-          <div class="price-block">
-            <div class="price-block-label">After RC / GA</div>
-            <div class="plan-price"><span class="price-n-sm">$29</span><span class="price-p">/mo</span></div>
+            <div class="plan-price"><span class="price-n-sm">$29</span><span class="price-p">/month</span></div>
           </div>
           <p class="plan-tag">For developers running regular scans.</p>
           <ul class="plan-feats">
@@ -3137,15 +3095,10 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 tests<br>
         </div>
 
         <div class="plan">
-          <span class="plan-beta-tag">RC · Pilot Access</span>
           <div class="plan-name">🟪 Team</div>
           <div class="price-block">
-            <div class="price-block-label">RC Price</div>
-            <div class="plan-price"><span class="price-n-sm">$0</span><span class="price-p">pilot</span></div>
-          </div>
-          <div class="price-block">
-            <div class="price-block-label">After RC / GA</div>
-            <div class="plan-price"><span class="price-n-sm">$149</span><span class="price-p">/mo</span></div>
+            <div class="plan-price"><span class="price-n-sm">$199</span><span class="price-p">/month</span></div>
+            <div class="price-block-label" style="margin-top:6px;">Or <a href="https://dodo.pe/teos-team-annual-730161" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">$1,990 / year</a> billed annually</div>
           </div>
           <p class="plan-tag">For small teams sharing scan credits and review queues.</p>
           <ul class="plan-feats">
@@ -3159,14 +3112,8 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 tests<br>
         </div>
 
         <div class="plan">
-          <span class="plan-post-tag">Custom Pilot Pricing</span>
           <div class="plan-name">🟧 Enterprise</div>
           <div class="price-block">
-            <div class="price-block-label">RC Price</div>
-            <div class="plan-price"><span class="price-n-sm">Custom</span><span class="price-p">pilot</span></div>
-          </div>
-          <div class="price-block">
-            <div class="price-block-label">After RC / GA</div>
             <div class="plan-price"><span class="price-n-sm">Custom</span><span class="price-p">per deployment</span></div>
           </div>
           <p class="plan-tag">Institutional / sovereign deployments.</p>
@@ -3177,13 +3124,9 @@ v5.0.0 · Engine v5.0.0 · 258 Active Governance Controls · 1325 tests<br>
             <li>Full audit log export</li>
             <li>SLA + named support</li>
           </ul>
-          <a href="mailto:ayman@elmahrosa.org" class="btn-plan btn-free">Contact for Pilot →</a>
+          <a href="mailto:ayman@teosegypt.com" class="btn-plan btn-free">Contact Sales</a>
         </div>
 
-      </div>
-
-      <div class="pricing-disclaimer reveal">
-        ⚠️ <strong>RC pricing notice:</strong> Release Candidate is free across every tier so testers can fully exercise the product. All prices shown under "After RC / GA" are current targets and may change before General Availability. Enterprise pricing is always quoted per deployment.
       </div>
     </div>
   </section>

@@ -39,7 +39,7 @@ Display account status, tier, credits remaining, and system health.
 | Tier | Monthly | Annual |
 |------|-------|--------|
 | Starter ($29/mo · $290/yr) | https://dodo.pe/teos-starter-monthly-730161 | https://dodo.pe/teos-starter-annual-730161 |
-| Team ($149/mo · $1,490/yr) | https://dodo.pe/teos-team-monthly-730161 | https://dodo.pe/teos-team-annual-730161 |
+| Team ($199/mo · $1,990/yr) | https://dodo.pe/teos-team-monthly-730161 | https://dodo.pe/teos-team-annual-730161 |
 | Enterprise | mailto:ayman@teosegypt.com | Custom |
 
 ## Credit System
@@ -49,7 +49,7 @@ Display account status, tier, credits remaining, and system health.
 | Alpha Tester | 5 | None | Free | — |
 | Free | 0 (must activate) | None | $0 | — |
 | Starter | 1,000 | None | $29/mo | https://dodo.pe/teos-starter-monthly-730161 |
-| Team | 10,000 | None | $149/mo | https://dodo.pe/teos-team-monthly-730161 |
+| Team | 10,000 | None | $199/mo | https://dodo.pe/teos-team-monthly-730161 |
 | Enterprise | Unlimited | None | Custom | mailto:ayman@teosegypt.com |
 | Founder | Unlimited | None | Admin-granted | — |
 

@@ -227,8 +227,8 @@ teos help
 |------|-------------|-----------------|-------|
 | Free | 5 scans | 5 | $0 |
 | Starter | Unlimited | 1,000 | $29/mo |
-| Team | Unlimited | 10,000 | $149/mo |
-| Enterprise | Unlimited | Unlimited | $499/mo |
+| Team | Unlimited | 10,000 | $199/mo |
+| Enterprise | Unlimited | Unlimited | Custom |
 
 ## Security
 

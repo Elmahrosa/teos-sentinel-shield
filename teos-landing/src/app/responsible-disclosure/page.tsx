@@ -77,27 +77,6 @@ export default function ResponsibleDisclosurePage() {
           </section>
 
           <section>
-            <h2 className="text-white text-[16px] font-[700] mb-3">Bug Bounty Tiers</h2>
-            <div className="border border-[rgba(255,255,255,0.08)] rounded-sm overflow-hidden">
-              <table className="w-full text-[12px]">
-                <thead>
-                  <tr className="border-b border-[rgba(255,255,255,0.08)]">
-                    <th className="text-left p-3 text-white font-[600]">Severity</th>
-                    <th className="text-left p-3 text-white font-[600]">Reward</th>
-                    <th className="text-left p-3 text-white font-[600]">Examples</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-[rgba(255,255,255,0.05)]"><td className="p-3 text-red">Critical</td><td className="p-3">$500</td><td className="p-3">RCE, auth bypass, data leak</td></tr>
-                  <tr className="border-b border-[rgba(255,255,255,0.05)]"><td className="p-3 text-amber">High</td><td className="p-3">$250</td><td className="p-3">Privilege escalation, rule injection</td></tr>
-                  <tr className="border-b border-[rgba(255,255,255,0.05)]"><td className="p-3">Medium</td><td className="p-3">$100</td><td className="p-3">Rate limit bypass, partial data exposure</td></tr>
-                  <tr><td className="p-3">Low</td><td className="p-3">$50</td><td className="p-3">Informational, missing controls without exploit</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section>
             <h2 className="text-white text-[16px] font-[700] mb-3">Safe Harbor</h2>
             <p>If you follow this policy, we will not pursue legal action, report you to law enforcement, or send cease-and-desist letters. With your permission, we will acknowledge your contribution.</p>
           </section>

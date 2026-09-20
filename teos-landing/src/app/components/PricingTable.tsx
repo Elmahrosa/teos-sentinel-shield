@@ -72,8 +72,8 @@ const TIERS: Tier[] = [
   {
     id: 'team',
     name: 'Team',
-    monthlyPrice: '$149',
-    annualPrice: '$1,490',
+    monthlyPrice: '$199',
+    annualPrice: '$1,990',
     annualEffective: '',
     setup: '$2,000',
     scans: '50,000 / mo',

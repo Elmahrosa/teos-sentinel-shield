@@ -217,7 +217,7 @@ paths:
       summary: Query enforcement audit log
       description: |
         Retrieve paginated audit history. Filter by verdict, rule ID, date range, or risk score.
-        Enterprise tier required for raw audit access. Starter/Builder tiers get summary stats only.
+        Enterprise tier required for raw audit access. Starter/Team tiers get summary stats only.
       operationId: getAuditLog
       parameters:
         - name: verdict
@@ -700,7 +700,7 @@ x-rate-limits:
   Team:
     monthly: 50000
     concurrent: 150
-    price: "$149/month"
+    price: "$199/month"
   Enterprise:
     monthly: "unlimited"
     concurrent: "unlimited"

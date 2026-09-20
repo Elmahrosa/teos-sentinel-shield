@@ -47,8 +47,8 @@ let webhookFailed    = 0;
 const TIERS = {
   free:      { rpm: 5,    rpd: 100,   label: 'Free',       scans: 5,      price: 0 },
   starter:    { rpm: 30,   rpd: 5000,  label: 'Starter',    scans: 5000,   price: 29 },
-  team:       { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 149 },
-  pro:        { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 149 }, // alias of team
+  team:       { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 199 },
+  pro:        { rpm: 150,  rpd: 50000, label: 'Team',       scans: 50000,  price: 199 }, // alias of team
   enterprise: { rpm: 600,  rpd: -1,    label: 'Enterprise', scans: -1,     price: 499 },
   sovereign:  { rpm: -1,   rpd: -1,    label: 'Sovereign',  scans: -1,     price: 25000 },
 };
@@ -140,7 +140,7 @@ const DODO_PRODUCTS = {
 const TIER_PRICING = {
   free:      { setup: 0,       monthly: 0,       annual: 0,       label: 'Free',      scans: 5,        rpm: 5 },
   starter:   { setup: 50000,   monthly: 2900,     annual: 29000,    label: 'Starter',   scans: 5000,     rpm: 30 },
-  team:      { setup: 200000,  monthly: 14900,    annual: 149000,   label: 'Team',      scans: 50000,    rpm: 150 },
+  team:      { setup: 200000,  monthly: 19900,    annual: 199000,   label: 'Team',      scans: 50000,    rpm: 150 },
   enterprise:{ setup: 500000,  monthly: 49900,    annual: 499000,   label: 'Enterprise',scans: -1,       rpm: 600 },
   sovereign: { setup: 0,        monthly: 0,        annual: 2500000, label: 'Sovereign', scans: -1,       rpm: -1 },
 };
@@ -1331,8 +1331,13 @@ app.post('/billing/checkout', async (req, res) => {
 
 // GET /billing/pricing — get all pricing tiers and products
 app.get('/billing/pricing', (req, res) => {
+  const tiers = { ...TIER_PRICING };
+  // Enterprise is quoted per deployment — never a fixed monthly Dodo price.
+  if (tiers.enterprise) {
+    tiers.enterprise = { ...tiers.enterprise, setup: 0, monthly: 'Custom', annual: 'Custom' };
+  }
   res.json({
-    tiers: TIER_PRICING,
+    tiers,
     products: Object.keys(DODO_PRODUCTS).filter(k => DODO_PRODUCTS[k]).map(k => ({ key: k, configured: true })),
     currency: 'USD',
     generated: new Date().toISOString(),

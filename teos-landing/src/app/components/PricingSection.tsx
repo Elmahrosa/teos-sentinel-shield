@@ -60,8 +60,8 @@ const TIERS = [
   {
     id: 'team',
     name: 'Team',
-    monthly: '$149',
-    annual: '$1,490',
+    monthly: '$199',
+    annual: '$1,990',
     annualNote: '',
     setup: '$2,000',
     scans: '50,000 / mo',

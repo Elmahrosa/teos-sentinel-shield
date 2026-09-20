@@ -57,19 +57,6 @@ Include in your report:
 | Fix deployment | Within 30 days (critical: 7 days) |
 | Public disclosure | After fix, with researcher consent |
 
-## Bug Bounty Tiers
-
-We offer monetary rewards for valid, previously unreported vulnerabilities:
-
-| Severity | Reward | Examples |
-|----------|--------|----------|
-| Critical | $500 | RCE, auth bypass, data leak |
-| High | $250 | Privilege escalation, rule injection |
-| Medium | $100 | Rate limit bypass, partial data exposure |
-| Low | $50 | Informational, missing controls without exploit |
-
-**Note:** Bounties are paid at our discretion based on impact, quality of report, and first-to-report status.
-
 ## Safe Harbor
 
 If you follow this policy, we will:
