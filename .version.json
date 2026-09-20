@@ -1,6 +1,6 @@
 {
   "service": "teos-sentinel-shield",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "commit": "main",
   "buildTime": "2026-06-05T00:00:00Z"
 }
