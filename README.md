@@ -14,6 +14,11 @@ Deterministic AI runtime security middleware that sits between AI-generated acti
 
 ---
 
+## Version Architecture
+
+- **Core engine:** v5.0.0 GA (258 rules, hosted scan API)
+- **GitHub Action:** v5.1.0 (zero-dependency node24 wrapper)
+
 ## What This Is
 
 TEOS Sentinel Shield is execution-control infrastructure for autonomous AI systems.
