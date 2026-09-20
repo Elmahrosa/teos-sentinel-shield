@@ -1,8 +1,5 @@
 name: 'TEOS Sentinel Shield Guard'
-description: >-
-  Deterministic pre-execution runtime security and governance engine for CI/CD
-  pipelines. Scans a command, script, or directory against 258 deterministic
-  rules before execution and fails the run on a BLOCK verdict.
+description: 'Deterministic pre-execution runtime security and governance engine for automated CI/CD pipelines.'
 author: 'Elmahrosa International'
 branding:
   icon: 'shield'
