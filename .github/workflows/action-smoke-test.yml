@@ -6,6 +6,9 @@ on:
 
 jobs:
   smoke:
+    # Runs the built action against the live TEOS Sentinel Shield engine.
+    # Requires the TEOS_TEST_API_KEY secret; if it is missing or rotated, this
+    # job fails loudly on commit — treat that as an alert, not as an ignore.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,14 +19,12 @@ jobs:
       - run: npm ci
       - run: npm run build:action
       - name: Gate a benign command
-        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         id: benign
         uses: ./
         with:
           api-key: ${{ secrets.TEOS_TEST_API_KEY }}
           scan-target: 'npm run build'
       - name: Confirm BLOCK fails the run
-        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         id: blocked
         continue-on-error: true
         uses: ./
@@ -31,8 +32,6 @@ jobs:
           api-key: ${{ secrets.TEOS_TEST_API_KEY }}
           scan-target: 'rm -rf /etc'
       - name: Assert blocked step failed
-        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         run: test "${{ steps.blocked.outcome }}" = "failure"
       - name: Show verdict output
-        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         run: echo "benign verdict=${{ steps.benign.outputs.verdict }} score=${{ steps.benign.outputs.risk-score }}"
