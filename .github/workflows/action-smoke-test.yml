@@ -6,8 +6,6 @@ on:
 
 jobs:
   smoke:
-    # Requires the TEOS_TEST_API_KEY secret; skipped until it is configured.
-    if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,12 +16,14 @@ jobs:
       - run: npm ci
       - run: npm run build:action
       - name: Gate a benign command
+        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         id: benign
         uses: ./
         with:
           api-key: ${{ secrets.TEOS_TEST_API_KEY }}
           scan-target: 'npm run build'
       - name: Confirm BLOCK fails the run
+        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         id: blocked
         continue-on-error: true
         uses: ./
@@ -31,6 +31,8 @@ jobs:
           api-key: ${{ secrets.TEOS_TEST_API_KEY }}
           scan-target: 'rm -rf /etc'
       - name: Assert blocked step failed
+        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         run: test "${{ steps.blocked.outcome }}" = "failure"
       - name: Show verdict output
+        if: ${{ secrets.TEOS_TEST_API_KEY != '' }}
         run: echo "benign verdict=${{ steps.benign.outputs.verdict }} score=${{ steps.benign.outputs.risk-score }}"
