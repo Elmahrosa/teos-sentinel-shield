@@ -18,3 +18,5 @@ jobs:
         with:
           api-key: ${{ secrets.TEOS_TEST_API_KEY }}
           scan-target: ${{ inputs.scan-target }}
+      - name: Post-guard echo (skipped when the gate BLOCKs)
+        run: echo "RUN-AFTER-SENTINEL-GUARD"
