@@ -476,13 +476,13 @@ GitHub Actions runner with no dependency install at execution time.
 
 # License
 
-**TESL v2.0 — TEOS Sovereign License**
+**TEOS Egypt Sovereign License (TESL)**
 
-TEOS Sentinel Shield is governed by the applicable TEOS Sovereign License and associated constitutional governance framework.
+TEOS Sentinel Shield is governed by the TEOS Egypt Sovereign License (TESL) and associated constitutional governance framework.
 
 It is not released under MIT or Apache licensing.
 
-See the repository's authoritative license files for the current legal terms.
+See the repository's authoritative LICENSE file for the exact terms. This repository is source-available, not open source.
 
 ---
 
