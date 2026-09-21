@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proof: TEOS Sentinel Shield Guard v5.1.0</title>
+<meta name="description" content="Two real GitHub Actions runs (BLOCK and ALLOW), the test suites, and the stated limits of TEOS Sentinel Shield Guard.">
+<meta property="og:site_name" content="TEOS Sentinel Shield Guard">
+<meta property="og:title" content="Proof: TEOS Sentinel Shield Guard v5.1.0">
+<meta property="og:description" content="Two real GitHub Actions runs (BLOCK and ALLOW), the test suites, and the stated limits of TEOS Sentinel Shield Guard.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sentinel.teosegypt.com/proof/">
+<meta property="og:image" content="https://sentinel.teosegypt.com/proof/social.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Proof: TEOS Sentinel Shield Guard v5.1.0">
+<meta name="twitter:description" content="Two real GitHub Actions runs (BLOCK and ALLOW), the test suites, and the stated limits of TEOS Sentinel Shield Guard.">
+<meta name="twitter:image" content="https://sentinel.teosegypt.com/proof/social.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1836; --panel:#12224a; --line:#2a3c6e;
+  --text:#ece6d3; --muted:#a9b0c6; --gold:#e0b04a;
+  --block:#e2645a; --allow:#5fbf8f;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:1rem}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.65 "Source Sans 3",system-ui,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+main{max-width:64rem;margin:0 auto;padding:3rem 1.25rem 4rem}
+h1,h2{font-family:"Source Serif 4",Georgia,serif;font-weight:700;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,5vw,3.25rem);color:var(--gold);max-width:18ch}
+h2{font-size:1.5rem;margin:3.5rem 0 .75rem}
+p{max-width:64ch;margin:.5rem 0}
+a{color:var(--gold);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.lede{font-size:1.2rem;color:var(--muted);margin-top:1.25rem}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.5rem}
+@media(max-width:780px){.pair{grid-template-columns:1fr}}
+.run{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:4px;padding:1.1rem 1.1rem 1rem;min-width:0}
+.run.block{border-left-color:var(--block)}
+.run.allow{border-left-color:var(--allow)}
+.run h3{font:600 1.05rem "Source Sans 3",sans-serif;margin:0 0 .25rem}
+.run .what{color:var(--muted);font-size:.98rem;margin:0 0 .75rem}
+pre{margin:0;overflow-x:auto;font:400 .84rem/1.6 "IBM Plex Mono",ui-monospace,monospace;background:#091229;border:1px solid var(--line);border-radius:3px;padding:.8rem}
+.result{margin:.85rem 0 0;font-weight:600}
+.block .result span{color:var(--block)}
+.allow .result span{color:var(--allow)}
+.note{color:var(--muted);font-size:.95rem}
+dl{margin:1rem 0 0;max-width:64ch}
+dt{font-weight:600;margin-top:1.1rem;color:var(--gold)}
+dd{margin:.15rem 0 0}
+.fig{margin-top:1rem}
+.fig img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:3px}
+footer{margin-top:4rem;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+</style>
+</head>
+<body>
+<main>
+<h1>What TEOS Sentinel Shield Guard did, and what it doesn't do</h1>
+<p class="lede">Two real GitHub Actions runs, the test suites behind them, and the limits you should know before you add it to a pipeline. Action v5.1.0, engine v5.0.0.</p>
+
+<h2>A destructive command is blocked, and the next step never runs</h2>
+<p>Each run below is a manual workflow in the public repository. The Action scans a command string. The string is never executed.</p>
+
+<div class="pair">
+  <section class="run block" aria-labelledby="r1">
+    <h3 id="r1">Run 35546953078: rm -rf /</h3>
+    <p class="what">A guard step scans the command. A step after it prints a message and should be skipped. Log excerpt; the full log is in the screenshot.</p>
+    <pre>[TEOS] Scanning "rm -rf /" against https://…up.railway.app/scan
+[TEOS] BLOCK — execution denied.
+[TEOS]   Rule:   R01
+[TEOS]   Score:  100/100
+[TEOS]     • rm -rf on system-critical path —
+[TEOS]       permanent filesystem destruction
+[TEOS]     • Wiper malware signature detected</pre>
+    <p class="result">Guard step: <span>failure</span>. Post-guard echo: <span>skipped</span>.</p>
+    <p class="note"><a href="https://github.com/Elmahrosa/teos-sentinel-shield/actions/runs/35546953078">Open the run on GitHub</a></p>
+  </section>
+
+  <section class="run allow" aria-labelledby="r2">
+    <h3 id="r2">Run 35547184654: npm run build</h3>
+    <p class="what">Same workflow with an ordinary build command. It should pass, and the following step should run.</p>
+    <pre>[TEOS] Scanning "npm run build" against https://…up.railway.app/scan
+[TEOS] ALLOW — execution cleared.
+RUN-AFTER-SENTINEL-GUARD</pre>
+    <p class="result">All steps: <span>success</span>. Post-guard echo: <span>ran</span>.</p>
+    <p class="note"><a href="https://github.com/Elmahrosa/teos-sentinel-shield/actions/runs/35547184654">Open the run on GitHub</a></p>
+  </section>
+</div>
+
+<p class="note">GitHub shows workflow logs only to signed-in users, so the excerpts above are copied from the runs. Screenshots of the full logs go here:</p>
+<!-- Add after capturing while signed in:
+<div class="fig"><img src="proof-block.png" alt="GitHub Actions log: guard step failed with BLOCK, post-guard echo skipped"></div>
+<div class="fig"><img src="proof-allow.png" alt="GitHub Actions log: guard step passed with ALLOW, post-guard echo ran"></div>
+-->
+
+<h2>Tests in the repository</h2>
+<p><code>test/rule-grid-test.js</code> runs 16 cases and <code>test/verdict-matrix.js</code> runs 32 cases. Both pass with exit code 0 in the maintainer's run. They exercise a grid of rule categories and the verdict logic. They are not a separate test of each of the 258 rules.</p>
+
+<h2>The live service</h2>
+<p>The scan API reports its own status at <a href="https://teos-sentinel-shield-production-7f0d.up.railway.app/health">/health</a>: engine version, rule count (258), and the state of Redis. The engine is v5.0.0. The GitHub Action that calls it is v5.1.0, which is a separate version number.</p>
+
+<h2>Run the same check yourself</h2>
+<p>Add this to a workflow with <code>workflow_dispatch</code>. It needs an API key stored as the secret <code>TEOS_API_KEY</code>.</p>
+<pre>- uses: Elmahrosa/teos-sentinel-shield@v5.1.0
+  with:
+    api-key: ${{ secrets.TEOS_API_KEY }}
+    scan-target: 'rm -rf /'
+- run: echo "THIS MUST NEVER PRINT"</pre>
+
+<h2>Before you rely on it</h2>
+<dl>
+  <dt>It calls a hosted API</dt>
+  <dd>The Action sends your <code>scan-target</code> text to the scan service and needs an API key. Keep secrets out of the scanned string.</dd>
+  <dt>It fails closed</dt>
+  <dd>If the API can't be reached, the step fails and later steps are skipped. Setting <code>fail-open: 'true'</code> reverses that, and we don't recommend it.</dd>
+  <dt>It is a gate, not an interceptor</dt>
+  <dd>The Action judges the string you give it and fails the job on BLOCK. It does not watch commands that run elsewhere in your pipeline.</dd>
+  <dt>Free tier limits</dt>
+  <dd>The free tier allows 100 requests per day. Beyond that the API returns HTTP 429 and the step fails. Paid tiers raise the limit.</dd>
+  <dt>Audit storage</dt>
+  <dd>Verdict records are stored in Redis. PostgreSQL was not configured at the last health check.</dd>
+  <dt>Deterministic by design</dt>
+  <dd>Verdicts come from fixed rules, not a language model. The same input and rule set are designed to give the same verdict.</dd>
+  <dt>License and certification</dt>
+  <dd>The code is under the TEOS Egypt Sovereign License (TESL), not MIT or Apache. Read the LICENSE file in the repository for the exact terms. The Action is not certified by GitHub, and we make no claim of regulatory certification.</dd>
+</dl>
+
+<footer>Built by Elmahrosa International in Alexandria, Egypt. Law Over Code.</footer>
+</main>
+</body>
+</html>
