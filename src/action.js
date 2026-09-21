@@ -173,10 +173,10 @@ async function main() {
 
   if (httpStatus === 429) {
     const isQuota = (json.error || '').includes('day')
-      || /(day|quota|credit)/i.test(String(json.message || ''));
+      || /(day|quota)/i.test(String(json.message || ''));
     if (isQuota) {
-      fail(`Credits/quota exhausted (HTTP 429): ${json.message || 'daily scan quota exceeded.'}`);
-      fail('Free tier includes 5 scans per ID; upgrade your plan for higher limits.');
+      fail(`Daily request limit reached (HTTP 429): ${json.message || 'daily request quota exceeded.'}`);
+      fail('Free tier allows 100 requests/day; upgrade your plan for higher limits.');
     } else {
       fail(`Rate limited (HTTP 429): ${json.message || 'request quota exceeded.'} - retry shortly.`);
     }
