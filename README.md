@@ -425,7 +425,7 @@ before it executes.
 
 ```yaml
 - name: Gate step with TEOS Sentinel Shield
-  uses: Elmahrosa/teos-sentinel-shield@v5.1.0
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.0   # production: pin the full commit SHA instead
   with:
     api-key: ${{ secrets.TEOS_API_KEY }}
     scan-target: 'npm run build'
@@ -462,6 +462,39 @@ executes.
 | `REVIEW` | Pass, with a notice annotation. |
 | `BLOCK` | Fail (`exit 1`) — downstream steps are skipped. |
 | `ERROR` / unknown / API unreachable | Fail closed (`exit 1`) unless `fail-open: 'true'`. |
+
+
+### Recommended workflow setup
+
+```yaml
+permissions: {}            # the action needs no token permissions
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      # Production: pin the full commit SHA and omit `api-url`.
+      - uses: Elmahrosa/teos-sentinel-shield@<full-commit-sha>
+        with:
+          api-key: ${{ secrets.TEOS_API_KEY }}
+          scan-target: 'npm run build'
+```
+
+| Input             | Default | Description                                                    |
+| ----------------- | ------- | -------------------------------------------------------------- |
+| `timeout-seconds` | `15`    | Per-request timeout, clamped to 10–60.                         |
+
+### What is sent to the API
+
+The action sends **only** the `scan-target` string plus GitHub context (`repository`, `sha`, `ref`, `workflow`, `actor`, `runnerOs`) to the scan API. It does **not** read or upload file contents. Because `scan-target` leaves the runner:
+
+- Never interpolate secrets into it. As a **best-effort** safety net, the action refuses to send a target that matches known credential formats (GitHub, AWS, Slack, Google, GitLab, npm, Stripe, `sk-` keys, JWTs, Bearer credentials, private-key blocks), the `api-key` itself, or a high-entropy string, and fails the step instead. It is a denylist: it does **not** catch every secret (for example plain hex keys or short passwords). Treat it as a last line of defence, not a guarantee.
+- Untrusted text (`scan-target`, API response fields) is sanitised before it reaches logs, annotations, step summaries or step outputs. `ruleId` must be a plain identifier and `score` is clamped to 0-100; a response that breaks the contract is reported as `ERROR` and fails the step.
+- `api-url` must be `https` and either the default endpoint or an origin listed in the `TEOS_APPROVED_API_URLS` environment variable (comma-separated; set it at org level).
+
+### Availability behaviour
+
+Network errors and HTTP 502/503/504 are retried once, then fail closed. `fail-open: 'true'` passes without a verdict, emits a `::error::` annotation, sets `verdict=UNVERIFIED`, and is **ignored on protected branches**. Do not use it in release workflows.
 
 ## Building
 
