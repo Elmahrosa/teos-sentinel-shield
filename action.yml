@@ -19,7 +19,9 @@ inputs:
     default: '.'
   api-url:
     description: >-
-      Base URL of the TEOS Sentinel Shield scan API.
+      Base URL of the TEOS Sentinel Shield scan API. Must be https and either
+      the default endpoint or an origin listed in the TEOS_APPROVED_API_URLS
+      environment variable. Production workflows should omit this input.
     required: false
     default: 'https://teos-sentinel-shield-production-7f0d.up.railway.app'
   api-path:
@@ -30,13 +32,19 @@ inputs:
   fail-open:
     description: >-
       If "true", pass the run when the scan API is unreachable. Defaults to
-      fail-closed (BLOCK) for security.
+      fail-closed (BLOCK) for security. Emits an error annotation when used
+      and is ignored on protected branches.
     required: false
     default: 'false'
+  timeout-seconds:
+    description: >-
+      Per-request timeout in seconds (clamped to 10-60).
+    required: false
+    default: '15'
 
 outputs:
   verdict:
-    description: 'The deterministic verdict: ALLOW, WARN, REVIEW, or BLOCK.'
+    description: 'The deterministic verdict: ALLOW, WARN, REVIEW, or BLOCK (UNVERIFIED when fail-open skipped the scan).'
   risk-score:
     description: 'Risk score (0-100) returned by the deterministic engine.'
   rule-id:
