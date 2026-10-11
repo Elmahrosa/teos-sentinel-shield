@@ -17,7 +17,7 @@ Deterministic AI runtime security middleware that sits between AI-generated acti
 ## Version Architecture
 
 - **Core engine:** v5.0.0 GA (258 rules, hosted scan API)
-- **GitHub Action:** v5.2.3 (zero-dependency node24; local + remote modes)
+- **GitHub Action:** v5.2.4 (zero-dependency node24; local + remote modes)
 
 ## Zero-Exfiltration Local Mode
 
@@ -32,7 +32,7 @@ your runner**:
 
 ```yaml
 - name: Gate step with TEOS Sentinel Shield (local)
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.3
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.4
   with:
     mode: local
     engine: core   # core | ci | deps | banking | solana | evm | tokenIntel | dueDiligence
@@ -174,8 +174,22 @@ The production release contains:
 
 ```text
 258 total security rules
-6 security analysis engines
+8 security analysis engines
 ```
+
+| Engine | Rules | Focus |
+| --- | --- | --- |
+| `core` (default) | 95 | Execution, shell, and code-execution risk |
+| `banking` | 32 | Banking and financial-transaction compliance |
+| `solana` | 29 | Solana program and on-chain risk |
+| `evm` | 21 | EVM smart-contract risk |
+| `ci` | 23 | CI/CD pipeline risk |
+| `tokenIntel` | 25 | Token intelligence |
+| `dueDiligence` | 25 | Due-diligence review |
+| `deps` (`dependency`) | 8 | Dependency and CVE risk |
+| **Total** | **258** | |
+
+The GitHub Action selects any pack **locally** with the `engine:` input — all packs run in-process on the runner, with no network call and no API key. The hosted `POST /scan` endpoint evaluates with the **core** pack; call `GET /engines` to list the available engines, their credit cost, and their current rule counts.
 
 The engines are designed to identify different classes of execution and application security risk.
 
@@ -455,14 +469,14 @@ before it executes.
 ```yaml
 # Local mode — runs inside the runner, no API key, no network
 - name: Gate step with TEOS Sentinel Shield (local)
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.3
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.4
   with:
     mode: local
     scan-target: 'npm run build'
 
 # Remote mode — calls the hosted API (production: pin the full commit SHA instead)
 - name: Gate step with TEOS Sentinel Shield (remote)
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.3
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.4
   with:
     mode: remote
     api-key: ${{ secrets.TEOS_API_KEY }}

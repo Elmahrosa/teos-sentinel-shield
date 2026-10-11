@@ -1,5 +1,21 @@
 # Changelog
 
+## v5.2.4 (2026-10-11)
+
+### Added
+- `scripts/smoke-scan.ps1` and `scripts/smoke-scan.sh` — sovereign live smoke
+  tests against the scan API: `ALLOW` (clean) and `BLOCK` (destructive /
+  exec-chain / secret-echo) cases. Exits non-zero on any verdict mismatch so it
+  can gate CI or a release. Reads the API key from the environment
+  (`TEOS_API_KEY`) only — never hardcoded. Current result: **7/7 PASS**.
+
+### Docs
+- Corrected the engine count in the Marketplace README from **6** to the
+  authoritative **8** reported live by `GET /engines`, and added a per-engine
+  rule table (core 95, banking 32, solana 29, evm 21, ci 23, tokenIntel 25,
+  dueDiligence 25, deps 8 = 258).
+- Action examples bumped to `@v5.2.4`.
+
 ## v5.2.3 (2026-10-11)
 
 ### Security
