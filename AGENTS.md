@@ -1,6 +1,6 @@
 # TEOS Sentinel — AI Builder Instructions
 
-This file contains the complete implementation plan and architecture reference for AI-assisted development of TEOS Sentinel Shield v4.2.
+This file contains the complete implementation plan and architecture reference for AI-assisted development of TEOS Sentinel Shield v5.1.0.
 
 ---
 
@@ -18,7 +18,7 @@ node scripts/enterprise-gate.js  # 9-criteria acceptance gate
 
 | Command | What It Does | CI Gate |
 |---------|-------------|---------|
-| `npm start` | Start modular server (src/server/) | — |
+| `npm start` | Start production server (`ws-server/index.js` → `server/api.js`) | — |
 | `npm run dev:ws` | Start WS+Express unified server (ws-server/) | — |
 | `npm run ci` | Policy validation + determinism tests | YES |
 | `npm run test:all` | Full test suite (all engines + integration) | YES |
@@ -30,22 +30,24 @@ node scripts/enterprise-gate.js  # 9-criteria acceptance gate
 
 ## Architecture
 
-### Two Server Paths
+### Server
 
-| Server | Entry | File | Used By |
-|--------|-------|------|---------|
-| Modular Express | `npm start` | `src/server/index.js` | Railway, local dev |
-| Unified WS+Express | `npm run dev:ws` | `ws-server/index.js` → `server/api.js` | WS connections |
+There is a **single** server implementation: `server/api.js` (Express routes + SSE).
+It is started by:
 
-Both serve the same engine but have separate route handlers. Changes must be replicated to both:
-- **Modular routes:** `src/server/routes/*.js`
-- **Monolithic routes:** `server/api.js` (lines 764–978)
+| Command | Entry point | Notes |
+|---------|-------------|-------|
+| `npm start` | `ws-server/index.js` → `server/api.js` | Production (Railway) |
+| `npm run dev` | `server/api.js` | Local dev |
+
+> `src/server/` does **not** exist. All HTTP route handlers live in `server/api.js`.
+> The engine itself is shared and lives in `src/engines/`.
 
 ### Core Engine Architecture
 
 ```
 src/engines/index.js (orchestrator)
-  ├── core.js          — 110 rules (R01–R110)
+  ├── core.js          — 95 rules (R01–R110; deprecated rules retired)
   ├── banking.js       — 32 rules (B01–B32)
   ├── solana.js        — 29 rules (S01–S29)
   ├── evm.js           — 21 rules (E01–E21)
@@ -68,7 +70,7 @@ Every evaluation returns:
   "score": 88,
   "auditId": "TOS-...",
   "timestamp": "ISO-8601",
-  "engineVersion": "5.0.0",
+  "engineVersion": "5.1.0",
   "rulePackVersion": "rules-258",
   "policyVersion": "policy-1.0",
   "engine": "Core Security Engine",
@@ -92,7 +94,7 @@ Every evaluation returns:
 
 | Constant | Value | Defined In |
 |----------|-------|------------|
-| `ENGINE_VERSION` | `5.0.0` | `src/engines/index.js` |
+| `ENGINE_VERSION` | `5.1.0` | `package.json` (read at runtime by `src/engines/index.js`; `server/api.js` does the same) |
 | `RULE_PACK_VERSION` | `rules-258` | `src/engines/index.js` |
 | `POLICY_VERSION` | `policy-1.0` | `SCORING_POLICY.md` |
 
@@ -163,9 +165,10 @@ Every evaluation returns:
 - [x] Criteria: deterministic, explainable, reproducible, versioned, auditable, regression tested, policy validated, documentation synced, CI green
 
 ### Phase 11 (New) — Version Unification ✅ DONE
-- [x] `package.json` → `5.0.0`
-- [x] `.version.json` → `5.0.0`
-- [x] `lib/version.js` → `5.0.0`
+- [x] `package.json` → `5.1.0` (**single source of truth**)
+- [x] `.version.json` → `5.1.0`
+- [x] `lib/version.js` → reads `package.json` at runtime
+- [x] `server/api.js` reads the version from `package.json` (no hardcoded literals; `/health`, `/engines`, `/audit`, `/ledger/verify` all report the live version)
 
 ---
 
@@ -174,7 +177,7 @@ Every evaluation returns:
 1. **Never change the max-score model.** `finalScore = max(triggeredRules[].score)` is immutable.
 2. **Never add randomness.** Rule test functions must be pure: `(input: string) => boolean`.
 3. **Never remove a rule.** Rules are deprecated in place with `@deprecated` annotation.
-4. **Both server paths must be updated.** Changes to engine responses need updates in `src/server/routes/` AND `server/api.js`.
+4. **There is one server.** All HTTP routes live in `server/api.js`; the engine lives in `src/engines/`. Update both when changing engine responses.
 5. **Always run the enterprise gate** before finalizing: `node scripts/enterprise-gate.js`.
 6. **Keep RULE_CATALOG.md in sync.** Regenerate after adding/modifying rules: `node scripts/generate-catalog.js > docs/RULE_CATALOG.md`.
 
@@ -182,22 +185,26 @@ Every evaluation returns:
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/` | Service info + available endpoints |
-| GET | `/live` | Liveness probe |
-| GET | `/ready` | Readiness probe |
+| GET | `/` | Service info + available endpoints (serves the landing page to browsers) |
 | GET | `/health` | Full health check |
+| POST | `/scan` | Deterministic multi-engine scan (`{ "command": "..." }`) |
+| GET | `/engines` | Engines, rule counts, credit costs, live engine version |
 | GET | `/stats` | Aggregate scan statistics |
 | GET | `/events` | Recent scan events (max 500) |
-| POST | `/scan` | Legacy single-engine scan |
-| POST | `/scan/:engine` | Named engine scan (core, banking, solana, evm, deps, ci, token-intelligence, due-diligence) |
-| POST | `/fullreport` | Combined dueDiligence + tokenIntel |
-| GET | `/engines` | List available engines with credit costs |
-| GET | `/api/rules` | Rule registry (metadata only) |
-| GET | `/api/audit/:auditId` | Replay verification from audit store |
-| GET | `/api/version` | Engine version info |
-| POST | `/ingest` | External event ingestion |
+| GET | `/events/stream` | SSE event stream (auth required) |
+| GET | `/audit` | Audit log query (JSON/CSV export) |
+| GET | `/audit/summary` | Aggregated audit statistics |
+| POST | `/enforce` | Runtime enforcement decision |
+| GET | `/ledger/verify` | Tamper-evident ledger verification |
+| GET | `/metrics` | Prometheus-style metrics |
+| POST | `/billing/checkout` | Dodo checkout session |
+| GET | `/billing/pricing` | Tier pricing |
+| GET | `/billing/usage` | Credit usage |
+| POST | `/webhook/dodo` | Dodo Payments webhook (HMAC verified) |
 
-All endpoints require `X-API-Key` header.
+All endpoints except `/`, `/health`, `/billing/pricing` and `/webhook/dodo` require the `X-API-Key` header.
+
+> Note: named-engine routes (`/scan/:engine`, `/fullreport`, `/api/rules`, `/api/audit/:id`, `/ingest`) are **not** implemented in the deployed server; use `POST /scan`, which auto-routes by content type.
 
 ---
 
