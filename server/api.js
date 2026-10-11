@@ -1,5 +1,5 @@
 /*
-  TEOS Sentinel Shield v5.0.0 — Monetized SaaS + Dodo Billing + Tiered Auth + Supabase Audit + Modular Engine
+  TEOS Sentinel Shield v5.1.0 — Monetized SaaS + Dodo Billing + Tiered Auth + Supabase Audit + Modular Engine
   Deployment: Vercel serverless (primary) + Railway (via ws-server) + Hostinger static (site)
   Data store: Upstash Redis (serverless) + Supabase Postgres (audit persistence)
 
@@ -27,6 +27,7 @@ const app     = express();
 // ── MODULAR ENGINE (258 rules across 8 engines) ──────────────
 const { executeEngine, getEngineInfo } = require('../src/engines/index');
 const { getTotalRuleCount }     = require('../lib/ruleRegistry');
+const VERSION                   = require('../package.json').version;
 
 // ── CONFIG ──────────────────────────────────────────────────
 const PORT            = process.env.PORT || 3000;
@@ -933,7 +934,7 @@ app.get('/health', async (req, res) => {
 
   res.json({
     status:         overallStatus,
-    engine:         'v5.0.0',
+    engine:         `v${VERSION}`,
     rules:          getTotalRuleCount(),
     uptime:         Math.round(uptime),
     uptimeHuman:    uptime > 86400 ? `${Math.floor(uptime/86400)}d` :
@@ -941,7 +942,7 @@ app.get('/health', async (req, res) => {
                                      `${Math.floor(uptime/60)}m`,
     env:            NODE_ENV,
     time:           new Date().toISOString(),
-    version:        '5.0.0',
+    version:        VERSION,
     store:          storeStatus,
     eventsCount:    eventCount,
     sla:            '99.95%',
@@ -966,7 +967,7 @@ app.get('/health', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     service: 'TEOS Sentinel Shield',
-    version: '5.0.0',
+    version: VERSION,
     engine:  'modular',
     rules:   getTotalRuleCount(),
     endpoints: ['/scan','/engines','/stats','/events','/events/stream','/audit','/health','/enforce','/ledger/verify','/metrics','/audit/summary','/billing/pricing','/billing/checkout','/webhook/dodo'],
@@ -990,7 +991,7 @@ app.get('/engines', (req, res) => {
     default:         'core',
     total:           engines.length,
     totalRules:      getTotalRuleCount(),
-    engineVersion:   '5.0.0',
+    engineVersion:   VERSION,
     rulePackVersion: 'rules-258',
     engines,
   });
@@ -1113,7 +1114,7 @@ app.get('/events/stream', (req, res) => {
     'X-Accel-Buffering': 'no',
   });
 
-  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Subscribed to TEOS event stream', tier: req.apiTier, version: '5.0.0' })}\n\n`);
+  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Subscribed to TEOS event stream', tier: req.apiTier, version: VERSION })}\n\n`);
 
   sseClients.add(res);
 
@@ -1155,8 +1156,8 @@ app.get('/audit', async (req, res) => {
     return res.json({
       ...result,
       generated: new Date().toISOString(),
-      engine: 'TEOS Sentinel v5.0.0',
-      version: '4.0.0',
+      engine: `TEOS Sentinel v${VERSION}`,
+      version: VERSION,
     });
   }
 
@@ -1164,8 +1165,8 @@ app.get('/audit', async (req, res) => {
   const events = await loadEvents();
   res.json({
     generated:   new Date().toISOString(),
-    engine:      'TEOS Sentinel v5.0.0',
-    version:     '4.0.0',
+    engine:      `TEOS Sentinel v${VERSION}`,
+    version:     VERSION,
     rulesActive: getTotalRuleCount(),
     totalEvents: events.length,
     events:      events.slice(-200).reverse(),
@@ -1181,8 +1182,8 @@ app.get('/audit/summary', async (req, res) => {
   res.json({
     ...summary,
     generated: new Date().toISOString(),
-    engine: 'TEOS Sentinel v5.0.0',
-    version: '4.0.0',
+    engine: `TEOS Sentinel v${VERSION}`,
+    version: VERSION,
   });
 });
 
@@ -1218,7 +1219,7 @@ app.post('/enforce', async (req, res) => {
     agentId,
     action: action.trim(),
     timestamp: new Date().toISOString(),
-    engine: 'v5.0.0',
+    engine: `v${VERSION}`,
     tier: req.apiTier,
     reqId: req.id,
   };
@@ -1284,8 +1285,8 @@ app.get('/ledger/verify', async (req, res) => {
 
   res.json({
     generated: new Date().toISOString(),
-    engine: 'v5.0.0',
-    version: '4.0.0',
+    engine: `v${VERSION}`,
+    version: VERSION,
     totalEvents: events.length,
     entries: ledger,
     verification: {
@@ -1311,7 +1312,7 @@ app.get('/metrics', async (req, res) => {
 
   const metrics = {
     teos_engine_info: {
-      version: '4.0.0',
+      version: VERSION,
       rules: getTotalRuleCount(),
       store: redis ? 'redis' : 'memory',
       auditStore: supabase ? 'supabase' : 'redis-fallback',
@@ -1402,11 +1403,11 @@ module.exports.saveEvent = saveEvent;
 module.exports.redis     = redis;
 module.exports.TIERS     = TIERS;
 module.exports.isUnlimited = isUnlimited;
-module.exports.VERSION   = '5.0.0';
+module.exports.VERSION   = VERSION;
 
 // ── START (local dev) ───────────────────────────────────────
 if (require.main === module) {
   app.listen(PORT, () => {
-    log('info', 'TEOS Sentinel Engine v5.0.0 started', { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory', audit: supabase ? 'supabase' : 'redis-fallback', rules: getTotalRuleCount() });
+    log('info', `TEOS Sentinel Engine v${VERSION} started`, { port: PORT, env: NODE_ENV, store: redis ? 'redis' : 'memory', audit: supabase ? 'supabase' : 'redis-fallback', rules: getTotalRuleCount() });
   });
 }
