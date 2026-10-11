@@ -444,55 +444,23 @@ async function handleDodoWebhook(payload) {
 
 const processedWebhooks = new Set();
 
+// DISABLED (410 Gone). Payments are credited by the SINGLE source of truth —
+// teos-activation-service (/api/dodo-webhook). Handling Dodo webhooks here too
+// would double-credit. Kept as an explicit 410 so misconfigured senders get a clear signal.
+const DODO_WEBHOOK_DISABLED_TARGET =
+  process.env.ACTIVATION_WEBHOOK_URL ||
+  'https://teos-activation-service-production.up.railway.app/api/dodo-webhook';
+
 app.post('/webhook/dodo', express.raw({ type: 'application/json' }), async (req, res) => {
   webhookTotal++;
-
-  if (!dodoClient || !process.env.DODO_PAYMENTS_WEBHOOK_KEY) {
-    log('warn', 'Dodo webhook received but not configured');
-    return res.status(500).json({ error: 'webhook_not_configured' });
-  }
-
-  const rawBody = req.body.toString();
-  const webhookId = req.headers['webhook-id'] || '';
-  const signature = req.headers['webhook-signature'] || '';
-  const timestamp = req.headers['webhook-timestamp'] || '';
-
-  if (processedWebhooks.has(webhookId)) {
-    log('info', 'Duplicate webhook skipped', { webhookId });
-    return res.status(200).json({ received: true, duplicate: true });
-  }
-
-  const eventTime = parseInt(timestamp) * 1000;
-  if (Math.abs(Date.now() - eventTime) > 300000) {
-    log('warn', 'Webhook timestamp too old', { timestamp });
-    return res.status(401).json({ error: 'timestamp_too_old' });
-  }
-
-  try {
-    const unwrapped = dodoClient.webhooks.unwrap(rawBody, {
-      headers: {
-        'webhook-id': webhookId,
-        'webhook-signature': signature,
-        'webhook-timestamp': timestamp,
-      },
-    });
-
-    processedWebhooks.add(webhookId);
-    setTimeout(() => processedWebhooks.delete(webhookId), 3600000);
-
-    log('info', 'Dodo webhook verified', { type: unwrapped.type, webhookId });
-
-    webhookProcessed++;
-    handleDodoWebhook(unwrapped).catch(e => {
-      webhookFailed++;
-      log('error', 'Dodo webhook processing failed', { error: e.message, webhookId });
-    });
-
-    res.status(200).json({ received: true });
-  } catch (e) {
-    log('warn', 'Dodo webhook signature verification failed', { error: e.message, webhookId });
-    res.status(401).json({ error: 'invalid_signature' });
-  }
+  log('warn', 'Dodo webhook disabled on sentinel — forward to activation service instead');
+  return res.status(410).json({
+    error: 'gone',
+    message:
+      'Dodo webhooks are handled by teos-activation-service (/api/dodo-webhook). ' +
+      'This endpoint is disabled to prevent double-crediting; repoint your Dodo webhook URL.',
+    target: DODO_WEBHOOK_DISABLED_TARGET,
+  });
 });
 
 // ── STRUCTURED LOGGER ───────────────────────────────────────
