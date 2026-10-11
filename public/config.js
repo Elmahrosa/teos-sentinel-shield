@@ -9,7 +9,7 @@
   var SITE = 'https://sentinel.teosegypt.com';
 
   // Railway backend (real execution engine)
-  var RAILWAY_WS = 'wss://teos-sentinel-shield-production-7f0d.up.railway.app';
+  var RAILWAY_WS = 'wss://teos-sentinel-shield-production.up.railway.app';
 
   var hasLocation = typeof global.location !== 'undefined' && global.location;
   var HOST  = hasLocation ? global.location.host : 'sentinel.teosegypt.com';

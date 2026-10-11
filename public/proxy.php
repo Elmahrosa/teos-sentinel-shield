@@ -17,7 +17,7 @@
  * the live feed to the Railway WebSocket directly (see config.js).
  */
 
-$BACKEND = 'https://teos-sentinel-shield-production-7f0d.up.railway.app';
+$BACKEND = 'https://teos-sentinel-shield-production.up.railway.app';
 
 $ALLOWED_PREFIXES = array(
     'scan',

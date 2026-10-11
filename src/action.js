@@ -22,7 +22,7 @@ const crypto  = require('crypto');
 
 const VERSION = '5.2.0';
 
-const DEFAULT_API_URL = 'https://teos-sentinel-shield-production-7f0d.up.railway.app';
+const DEFAULT_API_URL = 'https://teos-sentinel-shield-production.up.railway.app';
 
 // Verdicts accepted FROM the API. The action itself may additionally emit
 // UNVERIFIED as an output when fail-open skipped the scan (never from the API).

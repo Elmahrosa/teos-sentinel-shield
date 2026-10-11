@@ -1,5 +1,21 @@
 # Changelog
 
+## v5.2.2 (2026-10-11)
+
+### Changed
+- Repointed the remote endpoint from the retired Railway host to the live
+  production backend across `src/action.js` (`DEFAULT_API_URL`), `action.yml`
+  (`api-url` default), `public/config.js` (`RAILWAY_WS`), and `public/proxy.php`
+  (`$BACKEND`); `dist/index.js` rebuilt.
+
+### Added
+- `scripts/set-endpoint.js` — repoints every hard-coded backend host in one command.
+- Railway deploy config: `railway.json`, `.node-version`, and `engines.node` in
+  `package.json`.
+- Host-agnostic Docker + Caddy kit (`Dockerfile`, `deploy/`) for free always-on
+  VMs (Oracle Cloud Always Free / GCP e2-micro), documented in
+  `docs/deploy-free.md`.
+
 ## v5.2.1 (2026-10-11)
 
 ### Added

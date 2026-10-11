@@ -39,7 +39,7 @@ inputs:
       the default endpoint or an origin listed in the TEOS_APPROVED_API_URLS
       environment variable. Production workflows should omit this input.
     required: false
-    default: 'https://teos-sentinel-shield-production-7f0d.up.railway.app'
+    default: 'https://teos-sentinel-shield-production.up.railway.app'
   api-path:
     description: >-
       Endpoint path that accepts the scan payload (POST).

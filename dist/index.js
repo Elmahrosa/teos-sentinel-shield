@@ -2285,7 +2285,7 @@ module.exports = require("fs");
 /***/ ((module) => {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"name":"teos-sentinel-shield","version":"5.1.0","description":"Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware","main":"ws-server/index.js","bin":{"teos":"./cli/teos.js"},"scripts":{"start":"node ws-server/index.js","dev":"node server/api.js","dev:ws":"node ws-server/index.js","test":"node test/expanded-engine-test.js","test:engine":"node test/expanded-engine-test.js","vercel":"node server/api.js","build:action":"ncc build src/action.js -o dist"},"keywords":["ai-security","runtime-enforcement","deterministic-engine","execution-governance","audit-compliance","sentinel-shield"],"author":"TEOS Sovereign","license":"SEE LICENSE IN LICENSE","dependencies":{"@supabase/supabase-js":"^2.49.1","@upstash/redis":"^1.38.0","dodopayments":"^2.31.1","ioredis":"^5.11.1","express":"^5.2.1","ws":"^8.20.0"},"devDependencies":{"@vercel/ncc":"^0.38.3"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"name":"teos-sentinel-shield","version":"5.1.0","description":"Execution Control Infrastructure for Autonomous Systems — deterministic AI runtime security middleware","main":"ws-server/index.js","bin":{"teos":"./cli/teos.js"},"scripts":{"start":"node ws-server/index.js","dev":"node server/api.js","dev:ws":"node ws-server/index.js","test":"node test/expanded-engine-test.js","test:engine":"node test/expanded-engine-test.js","vercel":"node server/api.js","build:action":"ncc build src/action.js -o dist"},"keywords":["ai-security","runtime-enforcement","deterministic-engine","execution-governance","audit-compliance","sentinel-shield"],"author":"TEOS Sovereign","license":"SEE LICENSE IN LICENSE","engines":{"node":">=20"},"dependencies":{"@supabase/supabase-js":"^2.49.1","@upstash/redis":"^1.38.0","dodopayments":"^2.31.1","ioredis":"^5.11.1","express":"^5.2.1","ws":"^8.20.0"},"devDependencies":{"@vercel/ncc":"^0.38.3"}}');
 
 /***/ })
 
@@ -2355,7 +2355,7 @@ const crypto  = __nccwpck_require__(982);
 
 const VERSION = '5.2.0';
 
-const DEFAULT_API_URL = 'https://teos-sentinel-shield-production-7f0d.up.railway.app';
+const DEFAULT_API_URL = 'https://teos-sentinel-shield-production.up.railway.app';
 
 // Verdicts accepted FROM the API. The action itself may additionally emit
 // UNVERIFIED as an output when fail-open skipped the scan (never from the API).
