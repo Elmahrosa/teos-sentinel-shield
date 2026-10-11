@@ -11,6 +11,8 @@
  *   - action.yml        api-url default
  *   - public/config.js  RAILWAY_WS        (https -> wss)
  *   - public/proxy.php  $BACKEND
+ *   - public static pages  any *.up.railway.app host (command center, dashboard,
+ *                          docs, proof) in both https:// and wss:// form
  */
 
 const fs = require('fs');
@@ -53,11 +55,39 @@ function patch(rel, label, re, replacement) {
 
 console.log(`Setting endpoint to ${base}\n`);
 
+// Repoint any remaining Railway host (https:// or wss://) in a static page.
+const STATIC_PAGES = [
+  'public/command-center.html',
+  'public/dashboard.html',
+  'public/docs/api.html',
+  'public/proof/index.html',
+];
+
+function patchHosts(rel) {
+  const p = path.join(root, rel);
+  const src = fs.readFileSync(p, 'utf8');
+  if (!/[a-z0-9-]+\.up\.railway\.app/.test(src)) {
+    console.log(`  - ${rel}: no railway host found`);
+    return true;
+  }
+  const next = src
+    .replace(/(https?:\/\/)[a-z0-9-]+\.up\.railway\.app/g, `$1${url.host}`)
+    .replace(/(wss?:\/\/)[a-z0-9-]+\.up\.railway\.app/g, `$1${url.host}`);
+  if (next === src) {
+    console.log(`  = ${rel}: already current`);
+    return true;
+  }
+  fs.writeFileSync(p, next);
+  console.log(`  ok host(s) -> ${rel}`);
+  return true;
+}
+
 const all = [
   patch('src/action.js', 'DEFAULT_API_URL', /const DEFAULT_API_URL = '[^']*';/, `const DEFAULT_API_URL = '${base}';`),
   patch('action.yml', 'api-url default', /(^  api-url:[\s\S]*?\n    default: ')[^']*(')/m, `$1${base}$2`),
   patch('public/config.js', 'RAILWAY_WS', /var RAILWAY_WS = '[^']*';/, `var RAILWAY_WS = '${ws}';`),
   patch('public/proxy.php', '$BACKEND', /\$BACKEND = '[^']*';/, `$BACKEND = '${base}';`),
+  STATIC_PAGES.map(patchHosts).every(Boolean),
 ].every(Boolean);
 
 if (!all) {
