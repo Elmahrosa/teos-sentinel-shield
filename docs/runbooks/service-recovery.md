@@ -89,7 +89,7 @@ Symptoms: Dashboard unreachable, `/health` non-200
 
 ```bash
 # Check
-curl -s https://teos-sentinel-shield-production-ef7a.up.railway.app/health | jq .
+curl -s https://teos-sentinel-shield-production.up.railway.app/health | jq .
 
 # For local deployment
 docker compose restart sentinel-shield

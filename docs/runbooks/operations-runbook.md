@@ -12,7 +12,7 @@
 | Bot (Telegram Gateway) | `https://teoslinker-bot-production.up.railway.app` | `/health` |
 | Risk Engine (MCP) | `https://agent-code-risk-mcp-production-b97d.up.railway.app` | `/live`, `/health` |
 | Activation Service | `https://activation-service-production-4228.up.railway.app` | `/live` |
-| Sentinel Shield | `https://teos-sentinel-shield-production-ef7a.up.railway.app` | `/health` |
+| Sentinel Shield | `https://teos-sentinel-shield-production.up.railway.app` | `/health` |
 
 ## 2. Daily Operations
 
