@@ -25,7 +25,7 @@ const path    = require('path');
 const app     = express();
 
 // ── MODULAR ENGINE (258 rules across 8 engines) ──────────────
-const { executeEngine }         = require('../src/engines/index');
+const { executeEngine, getEngineInfo } = require('../src/engines/index');
 const { getTotalRuleCount }     = require('../lib/ruleRegistry');
 
 // ── CONFIG ──────────────────────────────────────────────────
@@ -969,10 +969,30 @@ app.get('/', (req, res) => {
     version: '5.0.0',
     engine:  'modular',
     rules:   getTotalRuleCount(),
-    endpoints: ['/scan','/stats','/events','/events/stream','/audit','/health','/enforce','/ledger/verify','/metrics','/audit/summary','/billing/pricing','/billing/checkout','/webhook/dodo'],
+    endpoints: ['/scan','/engines','/stats','/events','/events/stream','/audit','/health','/enforce','/ledger/verify','/metrics','/audit/summary','/billing/pricing','/billing/checkout','/webhook/dodo'],
     auth:    'X-API-Key required except /health /stats /billing/pricing /webhook/dodo',
     docs:    'https://github.com/Elmahrosa/teos-sentinel-shield',
     site:    'https://sentinel.teosegypt.com',
+  });
+});
+
+// GET /engines — list available engines, credit costs, and rule counts
+app.get('/engines', (req, res) => {
+  const info = getEngineInfo();
+  const engines = Object.entries(info).map(([key, val]) => ({
+    key,
+    name:       val.name,
+    creditCost: val.creditCost,
+    rules:      val.count,
+  }));
+
+  res.json({
+    default:         'core',
+    total:           engines.length,
+    totalRules:      getTotalRuleCount(),
+    engineVersion:   '5.0.0',
+    rulePackVersion: 'rules-258',
+    engines,
   });
 });
 

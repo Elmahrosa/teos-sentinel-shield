@@ -1,5 +1,24 @@
 # Changelog
 
+## v5.2.3 (2026-10-11)
+
+### Security
+- Patched the **critical** `proxy-addr` advisory (GHSA-jqcg-44mw-7w3h) via
+  `npm audit fix` (`2.0.7` → `2.0.8`); `npm audit` now reports **0
+  vulnerabilities** for the backend.
+- Bumped `next` in `teos-landing` `16.3.5` → `16.3.8` to fix the **critical**
+  Next.js `next/og` image-response remote-code-execution advisory.
+
+### Fixed
+- `GET /engines` resolves instead of falling through to the static landing page:
+  added the route to `server/api.js` and `'/engines'` to the unified server's
+  `API_PREFIXES` (`ws-server/index.js`). Returns default engine, total rules,
+  and per-engine credit costs.
+
+### Deferred
+- Dev-only `braces` / `tailwindcss` transitive advisories require a breaking
+  Tailwind 3 → 4 major upgrade; intentionally not applied pre-launch.
+
 ## v5.2.2 (2026-10-11)
 
 ### Changed

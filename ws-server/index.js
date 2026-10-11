@@ -28,7 +28,7 @@ const VERSION       = api.VERSION || '4.0.0';
 // API prefixes handled by Express (everything else may be static)
 const API_PREFIXES = [
   '/scan', '/stats', '/events', '/audit', '/health', '/enforce',
-  '/ledger', '/metrics', '/webhook', '/billing', '/openapi',
+  '/ledger', '/metrics', '/webhook', '/billing', '/openapi', '/engines',
 ];
 
 function isApiRequest(urlPath) {
