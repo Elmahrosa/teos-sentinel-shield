@@ -4,7 +4,7 @@
 
 Deterministic AI runtime security middleware that sits between AI-generated actions and execution — providing inspection, risk scoring, policy enforcement, blocking, auditability, and compliance visibility before commands, code, scripts, and agent actions are executed.
 
-**Production API:** `https://teos-sentinel-shield-production-7f0d.up.railway.app` (optional — local mode needs no API)
+**Production API:** `https://teos-sentinel-shield-production.up.railway.app` (optional — local mode needs no API)
 
 **Engine:** `v5.0.0`
 **Rules:** `258`
@@ -17,7 +17,7 @@ Deterministic AI runtime security middleware that sits between AI-generated acti
 ## Version Architecture
 
 - **Core engine:** v5.0.0 GA (258 rules, hosted scan API)
-- **GitHub Action:** v5.2.1 (zero-dependency node24; local + remote modes)
+- **GitHub Action:** v5.2.3 (zero-dependency node24; local + remote modes)
 
 ## Zero-Exfiltration Local Mode
 
@@ -32,7 +32,7 @@ your runner**:
 
 ```yaml
 - name: Gate step with TEOS Sentinel Shield (local)
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.1
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.3
   with:
     mode: local
     engine: core   # core | ci | deps | banking | solana | evm | tokenIntel | dueDiligence
@@ -224,7 +224,7 @@ GET /health
 Production endpoint:
 
 ```text
-https://teos-sentinel-shield-production-7f0d.up.railway.app/health
+https://teos-sentinel-shield-production.up.railway.app/health
 ```
 
 The health response exposes production engine information including:
@@ -255,7 +255,7 @@ Example:
 
 ```bash
 curl -X POST \
-  https://teos-sentinel-shield-production-7f0d.up.railway.app/scan \
+  https://teos-sentinel-shield-production.up.railway.app/scan \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{"command":"rm -rf /"}'
@@ -316,7 +316,7 @@ The verified production deployment runs on Railway.
 Production service:
 
 ```text
-teos-sentinel-shield-production-7f0d.up.railway.app
+teos-sentinel-shield-production.up.railway.app
 ```
 
 The production deployment is tied to the verified release commit:
@@ -455,14 +455,14 @@ before it executes.
 ```yaml
 # Local mode — runs inside the runner, no API key, no network
 - name: Gate step with TEOS Sentinel Shield (local)
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.1
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.3
   with:
     mode: local
     scan-target: 'npm run build'
 
 # Remote mode — calls the hosted API (production: pin the full commit SHA instead)
 - name: Gate step with TEOS Sentinel Shield (remote)
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.1
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.3
   with:
     mode: remote
     api-key: ${{ secrets.TEOS_API_KEY }}
@@ -481,7 +481,7 @@ step after it never executes.
 | `api-key` | remote only | — | `x-api-key` for the TEOS Sentinel Shield API. Not needed in local mode. |
 | `scan-target` | yes | `.` | Command, code file, script, or directory to inspect. |
 | `engine` | no | `core` | Rule pack in local mode: `core`, `ci`, `deps`, `banking`, `solana`, `evm`, `tokenIntel`, `dueDiligence`. |
-| `api-url` | no | `https://teos-sentinel-shield-production-7f0d.up.railway.app` | Base URL of the scan API (remote mode). |
+| `api-url` | no | `https://teos-sentinel-shield-production.up.railway.app` | Base URL of the scan API (remote mode). |
 | `api-path` | no | `/scan` | Endpoint path that accepts the scan payload (POST). |
 | `fail-open` | no | `false` | `true` = pass when the API is unreachable (not recommended). |
 

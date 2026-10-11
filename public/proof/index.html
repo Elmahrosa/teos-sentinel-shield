@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Proof: TEOS Sentinel Shield Guard v5.1.0</title>
+<title>Proof: TEOS Sentinel Shield Guard v5.2.3</title>
 <meta name="description" content="Two real GitHub Actions runs (BLOCK and ALLOW), the test suites, and the stated limits of TEOS Sentinel Shield Guard.">
 <meta property="og:site_name" content="TEOS Sentinel Shield Guard">
-<meta property="og:title" content="Proof: TEOS Sentinel Shield Guard v5.1.0">
+<meta property="og:title" content="Proof: TEOS Sentinel Shield Guard v5.2.3">
 <meta property="og:description" content="Two real GitHub Actions runs (BLOCK and ALLOW), the test suites, and the stated limits of TEOS Sentinel Shield Guard.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sentinel.teosegypt.com/proof/">
@@ -14,7 +14,7 @@
 <meta property="og:image:width" content="1280">
 <meta property="og:image:height" content="640">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Proof: TEOS Sentinel Shield Guard v5.1.0">
+<meta name="twitter:title" content="Proof: TEOS Sentinel Shield Guard v5.2.3">
 <meta name="twitter:description" content="Two real GitHub Actions runs (BLOCK and ALLOW), the test suites, and the stated limits of TEOS Sentinel Shield Guard.">
 <meta name="twitter:image" content="https://sentinel.teosegypt.com/proof/social.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,7 +60,7 @@ footer{margin-top:4rem;padding-top:1.25rem;border-top:1px solid var(--line);colo
 <body>
 <main>
 <h1>What TEOS Sentinel Shield Guard did, and what it doesn't do</h1>
-<p class="lede">Two real GitHub Actions runs, the test suites behind them, and the limits you should know before you add it to a pipeline. Action v5.1.0, engine v5.0.0.</p>
+<p class="lede">Two real GitHub Actions runs, the test suites behind them, and the limits you should know before you add it to a pipeline. Action v5.2.3, engine v5.0.0.</p>
 
 <h2>A destructive command is blocked, and the next step never runs</h2>
 <p>Each run below is a manual workflow in the public repository. The Action scans a command string. The string is never executed.</p>
@@ -101,11 +101,11 @@ RUN-AFTER-SENTINEL-GUARD</pre>
 <p><code>test/rule-grid-test.js</code> runs 16 cases and <code>test/verdict-matrix.js</code> runs 32 cases. Both pass with exit code 0 in the maintainer's run. They exercise a grid of rule categories and the verdict logic. They are not a separate test of each of the 258 rules.</p>
 
 <h2>The live service</h2>
-<p>The scan API reports its own status at <a href="https://teos-sentinel-shield-production-7f0d.up.railway.app/health">/health</a>: engine version, rule count (258), and the state of Redis. The engine is v5.0.0. The GitHub Action that calls it is v5.1.0, which is a separate version number.</p>
+<p>The scan API reports its own status at <a href="https://teos-sentinel-shield-production.up.railway.app/health">/health</a>: engine version, rule count (258), and the state of Redis. The engine is v5.0.0. The GitHub Action that calls it is v5.2.3, which is a separate version number.</p>
 
 <h2>Run the same check yourself</h2>
 <p>Add this to a workflow with <code>workflow_dispatch</code>. It needs an API key stored as the secret <code>TEOS_API_KEY</code>.</p>
-<pre>- uses: Elmahrosa/teos-sentinel-shield@v5.1.0
+<pre>- uses: Elmahrosa/teos-sentinel-shield@v5.2.3
   with:
     api-key: ${{ secrets.TEOS_API_KEY }}
     scan-target: 'rm -rf /'
