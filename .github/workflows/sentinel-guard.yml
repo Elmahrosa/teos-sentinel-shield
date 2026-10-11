@@ -7,16 +7,25 @@ on:
         description: 'Command, script, or path to scan'
         required: false
         default: 'npm run build'
+  push:
+  pull_request:
 
 jobs:
   guard:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Gate step with TEOS Sentinel Shield (Marketplace)
-        uses: Elmahrosa/teos-sentinel-shield@v5.1.0
+
+      # Local mode runs the deterministic engine INSIDE the runner:
+      # no API key, no network calls, no hosting cost, no data exfiltration.
+      # Change `uses: ./` to `Elmahrosa/teos-sentinel-shield@v5.2.1` to consume
+      # the published action from another repository.
+      - name: Gate step with TEOS Sentinel Shield (local mode)
+        uses: ./
         with:
-          api-key: ${{ secrets.TEOS_TEST_API_KEY }}
-          scan-target: ${{ inputs.scan-target }}
+          mode: local
+          engine: core
+          scan-target: ${{ inputs.scan-target || 'npm run build' }}
+
       - name: Post-guard echo (skipped when the gate BLOCKs)
         run: echo "RUN-AFTER-SENTINEL-GUARD"

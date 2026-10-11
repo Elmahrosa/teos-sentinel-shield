@@ -6,17 +6,33 @@ branding:
   color: 'blue'
 
 inputs:
+  mode:
+    description: >-
+      Execution mode. "auto" (default) runs the engine locally in the runner
+      when no api-key is supplied and against the remote API when one is.
+      "local" always runs in-runner with zero network calls and no data
+      exfiltration. "remote" always calls the hosted scan API.
+    required: false
+    default: 'auto'
   api-key:
     description: >-
-      The x-api-key required to authenticate with the TEOS Sentinel Shield
-      production API endpoint.
-    required: true
+      The x-api-key used to authenticate with the TEOS Sentinel Shield scan API.
+      Required only in remote mode (mode: remote, or mode: auto with an api-key).
+    required: false
+    default: ''
   scan-target:
     description: >-
       The command, code file, script, or directory path to inspect before
       execution.
     required: true
     default: '.'
+  engine:
+    description: >-
+      Rule pack to use in local mode. One of: core, banking, solana, evm,
+      dependency (deps), ci, tokenIntel (token-intelligence), dueDiligence
+      (due-diligence). Ignored in remote mode, which uses the API's engine.
+    required: false
+    default: 'core'
   api-url:
     description: >-
       Base URL of the TEOS Sentinel Shield scan API. Must be https and either

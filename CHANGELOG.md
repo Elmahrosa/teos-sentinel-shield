@@ -1,5 +1,29 @@
 # Changelog
 
+## v5.2.1 (2026-10-11)
+
+### Added
+- GitHub Action: **local execution mode** — the deterministic engine is bundled
+  into `dist/index.js` (via `ncc`) and runs entirely inside the runner with no
+  network calls and no data exfiltration (`mode: local`).
+- GitHub Action: `engine` input to select a rule pack in local mode
+  (`core`, `ci`, `deps`/`dependency`, `banking`, `solana`, `evm`,
+  `tokenIntel`, `dueDiligence`). Defaults to `core`.
+- GitHub Action: `mode` input — `auto` (default), `local`, or `remote`.
+  `auto` runs locally when no `api-key` is supplied and remotely when one is.
+
+### Changed
+- `package.json`: license metadata updated from `MIT` to
+  `SEE LICENSE IN LICENSE` to match the TEOS Egypt Sovereign License (TESL).
+- GitHub Action `api-key` input is no longer required — it is required only in
+  remote mode.
+- Local mode validates the requested `engine` against `ENGINE_REGISTRY` and
+  fails with a clear message on an unknown value.
+
+### Fixed
+- Remote mode with a missing `api-key` now fails with an explicit, actionable
+  message instead of an ambiguous failure.
+
 ## v4.1.0 (2026-07-08)
 
 ### Added

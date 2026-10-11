@@ -4,7 +4,7 @@
 
 Deterministic AI runtime security middleware that sits between AI-generated actions and execution — providing inspection, risk scoring, policy enforcement, blocking, auditability, and compliance visibility before commands, code, scripts, and agent actions are executed.
 
-**Production API:** `https://teos-sentinel-shield-production-7f0d.up.railway.app`
+**Production API:** `https://teos-sentinel-shield-production-7f0d.up.railway.app` (optional — local mode needs no API)
 
 **Engine:** `v5.0.0`
 **Rules:** `258`
@@ -17,7 +17,36 @@ Deterministic AI runtime security middleware that sits between AI-generated acti
 ## Version Architecture
 
 - **Core engine:** v5.0.0 GA (258 rules, hosted scan API)
-- **GitHub Action:** v5.1.0 (zero-dependency node24 wrapper)
+- **GitHub Action:** v5.2.1 (zero-dependency node24; local + remote modes)
+
+## Zero-Exfiltration Local Mode
+
+For teams with strict compliance requirements or sensitive codebases, TEOS
+Sentinel Shield can run **100% locally**. The rule engine is bundled into the
+Action (compiled with `ncc`), so it evaluates the `scan-target` **in-process on
+your runner**:
+
+- No external API calls
+- No commands or code leave your environment
+- No hosting dependency and no API key required
+
+```yaml
+- name: Gate step with TEOS Sentinel Shield (local)
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.1
+  with:
+    mode: local
+    engine: core   # core | ci | deps | banking | solana | evm | tokenIntel | dueDiligence
+    scan-target: 'npm run build'
+```
+
+| `mode` | Behaviour |
+| --- | --- |
+| `auto` (default) | `local` when no `api-key` is supplied; `remote` when one is. |
+| `local` | Runs the bundled engine inside the runner — no network calls. |
+| `remote` | Calls the hosted scan API (audit history, dashboards, tiered rules). |
+
+Local mode uses the bundled rule set. For audit logging, dashboard access and
+continuous rule updates, use `mode: remote` with your TEOS API key.
 
 ## What This Is
 
@@ -424,24 +453,35 @@ TEOS Sentinel Shield ships as a zero-dependency JavaScript GitHub Action
 before it executes.
 
 ```yaml
-- name: Gate step with TEOS Sentinel Shield
-  uses: Elmahrosa/teos-sentinel-shield@v5.2.0   # production: pin the full commit SHA instead
+# Local mode — runs inside the runner, no API key, no network
+- name: Gate step with TEOS Sentinel Shield (local)
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.1
   with:
+    mode: local
+    scan-target: 'npm run build'
+
+# Remote mode — calls the hosted API (production: pin the full commit SHA instead)
+- name: Gate step with TEOS Sentinel Shield (remote)
+  uses: Elmahrosa/teos-sentinel-shield@v5.2.1
+  with:
+    mode: remote
     api-key: ${{ secrets.TEOS_API_KEY }}
     scan-target: 'npm run build'
 ```
 
-The run fails (exit 1) whenever the engine returns a `BLOCK` verdict or when
-the scan API is unreachable (fail-closed by default) — the step after it never
-executes.
+The run fails (exit 1) whenever the engine returns a `BLOCK` verdict, or — in
+remote mode — when the scan API is unreachable (fail-closed by default). The
+step after it never executes.
 
 ## Inputs
 
 | Input | Required | Default | Description |
 | --- | --- | --- | --- |
-| `api-key` | yes | — | `x-api-key` for the TEOS Sentinel Shield API. |
+| `mode` | no | `auto` | `auto`, `local` (in-runner, no network), or `remote` (hosted API). |
+| `api-key` | remote only | — | `x-api-key` for the TEOS Sentinel Shield API. Not needed in local mode. |
 | `scan-target` | yes | `.` | Command, code file, script, or directory to inspect. |
-| `api-url` | no | `https://teos-sentinel-shield-production-7f0d.up.railway.app` | Base URL of the scan API. |
+| `engine` | no | `core` | Rule pack in local mode: `core`, `ci`, `deps`, `banking`, `solana`, `evm`, `tokenIntel`, `dueDiligence`. |
+| `api-url` | no | `https://teos-sentinel-shield-production-7f0d.up.railway.app` | Base URL of the scan API (remote mode). |
 | `api-path` | no | `/scan` | Endpoint path that accepts the scan payload (POST). |
 | `fail-open` | no | `false` | `true` = pass when the API is unreachable (not recommended). |
 
@@ -486,7 +526,7 @@ jobs:
 
 ### What is sent to the API
 
-The action sends **only** the `scan-target` string plus GitHub context (`repository`, `sha`, `ref`, `workflow`, `actor`, `runnerOs`) to the scan API. It does **not** read or upload file contents. Because `scan-target` leaves the runner:
+**Remote mode only.** In local mode nothing is sent anywhere — the engine runs in-process inside the runner. In remote mode, the action sends **only** the `scan-target` string plus GitHub context (`repository`, `sha`, `ref`, `workflow`, `actor`, `runnerOs`) to the scan API. It does **not** read or upload file contents. Because `scan-target` leaves the runner:
 
 - Never interpolate secrets into it. As a **best-effort** safety net, the action refuses to send a target that matches known credential formats (GitHub, AWS, Slack, Google, GitLab, npm, Stripe, `sk-` keys, JWTs, Bearer credentials, private-key blocks), the `api-key` itself, or a high-entropy string, and fails the step instead. It is a denylist: it does **not** catch every secret (for example plain hex keys or short passwords). Treat it as a last line of defence, not a guarantee.
 - Untrusted text (`scan-target`, API response fields) is sanitised before it reaches logs, annotations, step summaries or step outputs. `ruleId` must be a plain identifier and `score` is clamped to 0-100; a response that breaks the contract is reported as `ERROR` and fails the step.

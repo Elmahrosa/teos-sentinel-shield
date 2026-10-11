@@ -32,6 +32,33 @@ const DEFAULT_TIMEOUT_S = 15;
 const MIN_TIMEOUT_S     = 10;
 const MAX_TIMEOUT_S     = 60;
 
+// Local mode: the deterministic rule engine is bundled into dist/index.js by
+// ncc (npm run build:action), so a scan can run entirely inside the runner with
+// no network calls and no data leaving the machine.
+const { executeEngine, ENGINE_REGISTRY } = require('./engines/index');
+
+// Friendly aliases → canonical keys in ENGINE_REGISTRY.
+const ENGINE_ALIASES = {
+  'core':            'core',
+  'banking':         'banking',
+  'solana':          'solana',
+  'evm':             'evm',
+  'dependency':      'dependency',
+  'deps':            'dependency',
+  'ci':              'ci',
+  'tokenintel':      'tokenIntel',
+  'token-intelligence': 'tokenIntel',
+  'tokenintelligence':  'tokenIntel',
+  'duediligence':    'dueDiligence',
+  'due-diligence':   'dueDiligence',
+  'dd':              'dueDiligence',
+};
+
+function resolveEngine(name) {
+  const key = ENGINE_ALIASES[String(name || '').trim().toLowerCase().replace(/[_ ]/g, '-')];
+  return key || null;
+}
+
 // Statuses that mean "the backend is down / not answering", as opposed to
 // "the backend answered and said no".
 const BACKEND_DOWN_STATUSES = new Set([502, 503, 504]);
@@ -315,16 +342,46 @@ function handleBackendUnavailable(reason, failOpen) {
   process.exit(1);
 }
 
+// ── LOCAL SCAN — deterministic engine executed in-process ───────────────────
+function runLocalScan(target, engineKey) {
+  let raw;
+  try {
+    raw = executeEngine(engineKey, target, { skipCredit: true });
+  } catch (err) {
+    fail(`Local engine error: ${err && err.message ? err.message : String(err)}`);
+    process.exit(1);
+  }
+  const scoreNum = Number(raw.score);
+  return {
+    verdict:  String(raw.verdict || 'ERROR').trim().toUpperCase(),
+    ruleId:   String(raw.ruleId || raw.rule || 'R00'),
+    score:    Number.isFinite(scoreNum) ? Math.min(100, Math.max(0, Math.round(scoreNum))) : 0,
+    severity: safeText(raw.severity || 'none', 20),
+    reasons:  (Array.isArray(raw.reasons) ? raw.reasons : [])
+      .slice(0, 20).map((r) => safeText(r, 300)).filter(Boolean),
+  };
+}
+
 async function main() {
   const apiKey    = readInput('API-KEY', '');
   const target    = readInput('SCAN-TARGET', '.');
   const apiUrl    = readInput('API-URL', DEFAULT_API_URL);
   const apiPath   = readInput('API-PATH', '/scan');
+  const modeRaw   = readInput('MODE', 'auto').trim().toLowerCase() || 'auto';
+  const engineRaw = readInput('ENGINE', 'core');
   const failOpen  = readInput('FAIL-OPEN', 'false').toLowerCase() === 'true';
   const timeoutMs = clampTimeoutSeconds(readInput('TIMEOUT-SECONDS', String(DEFAULT_TIMEOUT_S))) * 1000;
 
-  if (!apiKey) {
-    fail('No API key provided. Set the required "api-key" input.');
+  // Resolve execution mode. "auto" runs locally when no api-key is supplied and
+  // remotely otherwise, so existing remote users are unaffected while new users
+  // get a working, zero-cost, zero-exfiltration gate with no setup.
+  let mode;
+  if (modeRaw === 'local' || modeRaw === 'remote') {
+    mode = modeRaw;
+  } else if (modeRaw === 'auto') {
+    mode = apiKey ? 'remote' : 'local';
+  } else {
+    fail(`Unknown mode "${safeText(modeRaw, 20)}". Use "auto", "local", or "remote".`);
     process.exit(1);
   }
 
@@ -333,58 +390,79 @@ async function main() {
     process.exit(1);
   }
 
-  const urlProblem = validateApiUrl(apiUrl) || validateApiPath(apiPath);
-  if (urlProblem) {
-    fail(`Refusing to send scan payload: ${urlProblem}`);
-    process.exit(1);
-  }
+  let result;
 
-  const secretKind = findSecretLike(target, apiKey);
-  if (secretKind) {
-    fail(`Refusing to send scan-target: it appears to contain a secret (${secretKind}).`);
-    fail('scan-target is transmitted to the scan API. Do not interpolate secrets into it.');
-    annotate('error', 'TEOS SECRET GUARD', `scan-target looks like it contains a secret (${secretKind}); nothing was sent.`);
-    process.exit(1);
-  }
-
-  log(`Scanning "${target}" against ${apiUrl}${apiPath}`);
-
-  let response;
-  try {
-    response = await scan(apiUrl, apiPath, apiKey, target, timeoutMs);
-  } catch (err) {
-    handleBackendUnavailable(err.name === 'AbortError' ? 'request timed out' : err.message, failOpen);
-  }
-
-  const { httpStatus, json } = response;
-
-  if (BACKEND_DOWN_STATUSES.has(httpStatus)) {
-    handleBackendUnavailable(`HTTP ${httpStatus} from ${apiUrl}`, failOpen);
-  }
-
-  if (httpStatus === 401 || httpStatus === 403) {
-    fail(`Authentication failed (HTTP ${httpStatus}): ${json.message || json.error || 'check the api-key input.'}`);
-    process.exit(1);
-  }
-
-  if (httpStatus === 429) {
-    const isQuota = (json.error || '').includes('day')
-      || /(day|quota)/i.test(String(json.message || ''));
-    if (isQuota) {
-      fail(`Daily request limit reached (HTTP 429): ${json.message || 'daily request quota exceeded.'}`);
-      fail('Free tier allows 100 requests/day; upgrade your plan for higher limits.');
-    } else {
-      fail(`Rate limited (HTTP 429): ${json.message || 'request quota exceeded.'} - retry shortly.`);
+  if (mode === 'local') {
+    // LOCAL MODE — the engine runs inside the runner. No network calls and no
+    // data leaves the machine, so the secret guard is intentionally not applied
+    // here (nothing is transmitted).
+    const engineKey = resolveEngine(engineRaw);
+    if (!engineKey) {
+      fail(`Unknown engine "${safeText(engineRaw, 40)}". Valid engines: ${Object.keys(ENGINE_REGISTRY).join(', ')}.`);
+      process.exit(1);
     }
-    process.exit(1);
-  }
+    log(`Scanning "${target}" in LOCAL mode [${ENGINE_REGISTRY[engineKey].name}] — nothing leaves the runner.`);
+    result = runLocalScan(target, engineKey);
+  } else {
+    // REMOTE MODE — unchanged behaviour against the hosted scan API.
+    if (!apiKey) {
+      fail('No API key provided. Set the "api-key" input, or use mode: local.');
+      process.exit(1);
+    }
 
-  if (httpStatus < 200 || httpStatus >= 300) {
-    fail(`Scan API error (HTTP ${httpStatus}): ${json.message || json.error || 'unexpected response.'}`);
-    process.exit(1);
-  }
+    const urlProblem = validateApiUrl(apiUrl) || validateApiPath(apiPath);
+    if (urlProblem) {
+      fail(`Refusing to send scan payload: ${urlProblem}`);
+      process.exit(1);
+    }
 
-  const result = extractResult(json);
+    const secretKind = findSecretLike(target, apiKey);
+    if (secretKind) {
+      fail(`Refusing to send scan-target: it appears to contain a secret (${secretKind}).`);
+      fail('scan-target is transmitted to the scan API. Do not interpolate secrets into it.');
+      annotate('error', 'TEOS SECRET GUARD', `scan-target looks like it contains a secret (${secretKind}); nothing was sent.`);
+      process.exit(1);
+    }
+
+    log(`Scanning "${target}" against ${apiUrl}${apiPath}`);
+
+    let response;
+    try {
+      response = await scan(apiUrl, apiPath, apiKey, target, timeoutMs);
+    } catch (err) {
+      handleBackendUnavailable(err.name === 'AbortError' ? 'request timed out' : err.message, failOpen);
+    }
+
+    const { httpStatus, json } = response;
+
+    if (BACKEND_DOWN_STATUSES.has(httpStatus)) {
+      handleBackendUnavailable(`HTTP ${httpStatus} from ${apiUrl}`, failOpen);
+    }
+
+    if (httpStatus === 401 || httpStatus === 403) {
+      fail(`Authentication failed (HTTP ${httpStatus}): ${json.message || json.error || 'check the api-key input.'}`);
+      process.exit(1);
+    }
+
+    if (httpStatus === 429) {
+      const isQuota = (json.error || '').includes('day')
+        || /(day|quota)/i.test(String(json.message || ''));
+      if (isQuota) {
+        fail(`Daily request limit reached (HTTP 429): ${json.message || 'daily request quota exceeded.'}`);
+        fail('Free tier allows 100 requests/day; upgrade your plan for higher limits.');
+      } else {
+        fail(`Rate limited (HTTP 429): ${json.message || 'request quota exceeded.'} - retry shortly.`);
+      }
+      process.exit(1);
+    }
+
+    if (httpStatus < 200 || httpStatus >= 300) {
+      fail(`Scan API error (HTTP ${httpStatus}): ${json.message || json.error || 'unexpected response.'}`);
+      process.exit(1);
+    }
+
+    result = extractResult(json);
+  }
 
   if (result.verdict === 'BLOCK') {
     setOutput('verdict', result.verdict);
