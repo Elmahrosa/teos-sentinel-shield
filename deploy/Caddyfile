@@ -1,0 +1,11 @@
+# Caddy reverse proxy — automatic HTTPS (Let's Encrypt) and transparent
+# WebSocket upgrades. SITE_ADDRESS comes from the environment (deploy/.env).
+#
+# Values:
+#   api.teosegypt.com        -> point an A record at this VM's public IP first
+#   203.0.113.9.sslip.io     -> no domain needed; sslip.io resolves <ip>.sslip.io to <ip>
+
+{$SITE_ADDRESS} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}

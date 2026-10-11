@@ -1,0 +1,8 @@
+node_modules
+.git
+.github
+teos-landing
+demo.mp4
+*.mp4
+*.log
+.env

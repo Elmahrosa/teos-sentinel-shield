@@ -25,6 +25,9 @@
   ],
   "author": "TEOS Sovereign",
   "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
     "@upstash/redis": "^1.38.0",

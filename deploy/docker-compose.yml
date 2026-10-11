@@ -1,0 +1,51 @@
+# TEOS Sentinel Shield backend — always-on stack.
+#
+#   app    : the Node process (Express API + WebSocket + static)  -> npm start
+#   caddy  : reverse proxy with automatic HTTPS + WebSocket upgrade
+#
+# Runs on any VPS, including free always-on VMs:
+#   Oracle Cloud Always Free (Ampere A1 / AMD micro), Google Cloud e2-micro free tier.
+#
+# Start:  cd <repo> && docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d --build
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: teos-sentinel-shield:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # e.g. api.teosegypt.com  (or 203.0.113.9.sslip.io for instant TLS with no domain)
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in deploy/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
