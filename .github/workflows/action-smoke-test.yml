@@ -1,37 +1,46 @@
 name: action-smoke-test
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
+  # NOTE: the job id `smoke` is the required status check on `main`.
+  # Do not rename it, or branch protection can never be satisfied again.
   smoke:
-    # Runs the built action against the live TEOS Sentinel Shield engine.
-    # Requires the TEOS_TEST_API_KEY secret; if it is missing or rotated, this
-    # job fails loudly on commit — treat that as an alert, not as an ignore.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
+
       - run: npm ci
       - run: npm run build:action
-      - name: Gate a benign command
-        id: benign
+
+      # Local mode: the engine runs inside the runner. No API key, no network
+      # calls to the (retired) Railway endpoint, no external secrets.
+      - name: Smoke test - ALLOW benign command
+        id: allow-test
         uses: ./
         with:
-          api-key: ${{ secrets.TEOS_TEST_API_KEY }}
+          mode: local
+          engine: core
           scan-target: 'npm run build'
-      - name: Confirm BLOCK fails the run
-        id: blocked
+
+      - name: Smoke test - BLOCK malicious command
+        id: block-test
         continue-on-error: true
         uses: ./
         with:
-          api-key: ${{ secrets.TEOS_TEST_API_KEY }}
-          scan-target: 'rm -rf /etc'
-      - name: Assert blocked step failed
-        run: test "${{ steps.blocked.outcome }}" = "failure"
-      - name: Show verdict output
-        run: echo "benign verdict=${{ steps.benign.outputs.verdict }} score=${{ steps.benign.outputs.risk-score }}"
+          mode: local
+          engine: core
+          scan-target: 'rm -rf /'
+
+      - name: Verify BLOCK verdict
+        run: |
+          if [ "${{ steps.block-test.outcome }}" != "failure" ]; then
+            echo "Smoke test FAILED: the action did not fail on a malicious command."
+            exit 1
+          fi
+          echo "Smoke test passed: local engine blocked the malicious command."
