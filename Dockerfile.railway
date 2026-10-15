@@ -34,8 +34,10 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 # ---- Node deps: teoslinker-bot ----
+# NOTE: its lockfile drifts from package.json upstream, so use `npm install`
+# (matches the service's own Dockerfile.railway) instead of `npm ci`.
 COPY services/teoslinker-bot/package.json services/teoslinker-bot/package-lock.json ./services/teoslinker-bot/
-RUN npm --prefix services/teoslinker-bot ci --omit=dev
+RUN npm --prefix services/teoslinker-bot install --omit=dev --no-audit --no-fund
 
 # ---- Node deps: teos-activation-service (native better-sqlite3) ----
 COPY services/teos-activation-service/package.json services/teos-activation-service/package-lock.json ./services/teos-activation-service/
