@@ -1,0 +1,27 @@
+{
+  "name": "teos_sentinel_check",
+  "description": "TEOS Sentinel Shield: Scans a command, code snippet, or tool input through the Sovereign AI Execution Firewall before execution. Returns ALLOW (safe), WARN (caution needed), or BLOCK (security risk). Use this tool BEFORE executing any command that modifies files, runs shell commands, or accesses the network. This ensures all actions are pre-audited by the TEOS Sentinel risk engine. Supports 28 detection rules across 7 categories: destructive commands, secret exfiltration, supply chain attacks, CI/CD tampering, crypto-mining, reconnaissance, and data destruction.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "input": {
+        "type": "string",
+        "description": "The command, code snippet, or tool input to scan. This can be a shell command, code block, or any text that will be executed. Maximum length: 100KB."
+      },
+      "context": {
+        "type": "string",
+        "enum": ["tool_execution", "code_generation", "shell_command", "file_write", "dependency_install", "network_request", "unknown"],
+        "description": "The execution context. Helps Sentinel apply appropriate risk weightings. Default: unknown."
+      },
+      "session_id": {
+        "type": "string",
+        "description": "Optional session identifier for tracking consecutive decisions. When provided, Sentinel detects patterns like repeated BLOCKs and escalates automatically."
+      },
+      "fail_closed": {
+        "type": "boolean",
+        "description": "If true, blocks execution when Sentinel is unreachable (fail-closed). If false, allows execution (fail-open). Default: true (fail-closed)."
+      }
+    },
+    "required": ["input"]
+  }
+}

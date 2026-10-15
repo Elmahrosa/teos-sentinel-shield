@@ -1,0 +1,10 @@
+FROM node:20-alpine
+RUN apk add --no-cache python3 make g++
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev && npm cache clean --force
+COPY . .
+RUN chown -R node:node /app
+USER node
+EXPOSE 8082
+CMD ["node", "--max-old-space-size=460", "src/index.js"]

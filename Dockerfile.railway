@@ -1,0 +1,61 @@
+# syntax=docker/dockerfile:1
+############################################################
+# TEOS Sentinel Shield — merged all-in-one image (Railway)
+#
+# One container, four supervised processes:
+#   sentinel           -> main Node API + WebSocket      :$PORT (3000)
+#   activation         -> credits / Dodo / sqlite        :8080
+#   linker-bot         -> Telegram bot + Express API     :8082
+#   superintelligence  -> FastAPI / uvicorn              :8000
+#
+# Each process is supervised independently by supervisord, so a
+# crash in one does not take down the others.
+############################################################
+FROM node:20-bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    NODE_ENV=production \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/opt/venv/bin:$PATH"
+
+# python3 + build tools are needed by:
+#   - node-gyp (better-sqlite3 native build)
+#   - pip wheels that fall back to source builds (chromadb deps)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      python3 python3-pip python3-venv \
+      build-essential git ca-certificates curl supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# ---- Node deps: main service ----
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# ---- Node deps: teoslinker-bot ----
+COPY services/teoslinker-bot/package.json services/teoslinker-bot/package-lock.json ./services/teoslinker-bot/
+RUN npm --prefix services/teoslinker-bot ci --omit=dev
+
+# ---- Node deps: teos-activation-service (native better-sqlite3) ----
+COPY services/teos-activation-service/package.json services/teos-activation-service/package-lock.json ./services/teos-activation-service/
+RUN npm --prefix services/teos-activation-service ci --omit=dev
+
+# ---- Python deps: teos-superintelligence (isolated venv) ----
+COPY services/teos-superintelligence/requirements.txt ./services/teos-superintelligence/
+RUN python3 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip wheel \
+    && /opt/venv/bin/pip install --no-cache-dir -r services/teos-superintelligence/requirements.txt
+
+# ---- Application source (node_modules / caches excluded via .dockerignore) ----
+COPY . .
+
+# ---- supervisord configuration ----
+COPY deploy/supervisord.conf /etc/supervisor/conf.d/teos.conf
+
+# runtime dirs (activation sqlite + chroma vector store)
+RUN mkdir -p /app/services/teos-activation-service/data /app/data/chroma /var/log/supervisor
+
+EXPOSE 3000
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/teos.conf"]

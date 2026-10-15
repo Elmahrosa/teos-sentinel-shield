@@ -1,0 +1,11 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+healthcheckPath = "/live"
+healthcheckTimeout = 30
+
+[volumes]
+"/app/data" = "activation-db-data"

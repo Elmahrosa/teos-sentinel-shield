@@ -1,0 +1,105 @@
+services:
+  teos-si:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    environment:
+      - SENTINEL_URL=http://sentinel:8001
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://teos:teos@postgres:5432/teos
+      - CHROMA_PATH=/data/chroma
+      - TEOS_QUEUE_KEY=teos:incoming_queue
+      - TEOS_DLQ_KEY=teos:dead_letter_queue
+      - PATROL_INTERVAL_SECONDS=3600
+      - PATROL_TIMEOUT_SECONDS=300
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      sentinel:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    volumes:
+      - chroma_data:/data/chroma
+    networks:
+      - teos_sovereign_net
+    restart: unless-stopped
+
+  sentinel:
+    build:
+      context: sentinel
+      dockerfile: Dockerfile
+    expose:
+      - "8001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - teos_sovereign_net
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - redis_data:/data
+    networks:
+      - teos_sovereign_net
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: teos
+      POSTGRES_PASSWORD: teos
+      POSTGRES_DB: teos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teos"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - teos_sovereign_net
+    restart: unless-stopped
+
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    expose:
+      - "8000"
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+      - PERSIST_DIRECTORY=/chroma/chroma
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - teos_sovereign_net
+    restart: unless-stopped
+
+networks:
+  teos_sovereign_net:
+    driver: bridge
+    internal: true
+
+volumes:
+  redis_data:
+  postgres_data:
+  chroma_data:

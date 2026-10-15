@@ -1,4 +1,9 @@
 node_modules
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/.venv
+**/venv
 .git
 .github
 teos-landing
@@ -6,3 +11,6 @@ demo.mp4
 *.mp4
 *.log
 .env
+**/.env
+services/teoslinker-bot/logs
+services/teos-superintelligence/tests

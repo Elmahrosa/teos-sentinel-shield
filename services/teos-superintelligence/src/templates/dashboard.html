@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEOS Admin Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 2rem; }
+  h1 { color: #38bdf8; margin-bottom: 1rem; }
+  h2 { color: #94a3b8; margin: 1.5rem 0 0.5rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .card { background: #1e293b; border-radius: 8px; padding: 1.25rem; border: 1px solid #334155; }
+  .card h3 { color: #38bdf8; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem; }
+  .card .sub { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+  table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; }
+  th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #334155; }
+  th { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; }
+  td { font-size: 0.875rem; }
+  .badge { display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; background: #334155; }
+</style>
+</head>
+<body>
+<h1>TEOS Superintelligence &mdash; Admin Dashboard</h1>
+<div class="grid">
+  <div class="card"><h3>Requests Today</h3><div class="value">{{ request_count }}</div></div>
+  <div class="card"><h3>Total Tokens</h3><div class="value">{{ "{:,}".format(total_tokens) }}</div><div class="sub">input + output</div></div>
+  <div class="card"><h3>Total Cost</h3><div class="value">${{ "%.4f"|format(total_cost) }}</div><div class="sub">USD estimated</div></div>
+  <div class="card"><h3>Active Agents</h3><div class="value">{{ agent_count }}</div></div>
+  <div class="card"><h3>Registered Tools</h3><div class="value">{{ tool_count }}</div></div>
+  <div class="card"><h3>Version</h3><div class="value">1.0.0</div><div class="sub">claude-sonnet-4-6</div></div>
+</div>
+<h2>Agents</h2>
+<table><tr><th>Name</th><th>Description</th></tr>
+{% for agent in agents %}
+<tr><td><span class="badge">{{ agent.name }}</span></td><td>{{ agent.description }}</td></tr>
+{% endfor %}
+</table>
+<h2>Tools</h2>
+<table><tr><th>Name</th><th>Description</th></tr>
+{% for tool in tools %}
+<tr><td><span class="badge">{{ tool.name }}</span></td><td>{{ tool.description }}</td></tr>
+{% endfor %}
+</table>
+<h2>Recent Usage</h2>
+<table><tr><th>User</th><th>Agent</th><th>Tokens</th><th>Cost</th><th>Time</th></tr>
+{% for r in usage[-20:] %}
+<tr>
+  <td>{{ r.get("user_id", "")[:24] }}</td>
+  <td>{{ r.get("agent", "") }}</td>
+  <td>{{ r.get("total_tokens", 0) }}</td>
+  <td>${{ "%.4f"|format(r.get("total_cost", 0)) }}</td>
+  <td>{{ r.get("timestamp", "")[:19] }}</td>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html>
