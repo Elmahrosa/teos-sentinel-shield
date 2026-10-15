@@ -55,8 +55,13 @@ COPY . .
 # ---- supervisord configuration ----
 COPY deploy/supervisord.conf /etc/supervisor/conf.d/teos.conf
 
-# runtime dirs (activation sqlite + chroma vector store)
-RUN mkdir -p /app/services/teos-activation-service/data /app/data/chroma /var/log/supervisor
+# Runtime dirs (chroma vector store + shared persistent data).
+# Railway allows a single volume per service, mounted at /app/data; point the
+# activation service's ./data (its sqlite DB) at the same volume so payment /
+# credit records survive redeploys instead of being written to ephemeral fs.
+RUN mkdir -p /app/data/chroma /var/log/supervisor \
+    && rm -rf /app/services/teos-activation-service/data \
+    && ln -s /app/data /app/services/teos-activation-service/data
 
 EXPOSE 3000
 
